@@ -1,0 +1,47 @@
+{
+  "nia": [
+    {"icon": "history", "title": "Safuria tebulö", "url": "https://nia.wikipedia.org/wiki/Spesial:Perubahan_terbaru"},
+    {"icon": "pages_outlined", "title": "Nga'örö spesial", "url": "https://nia.wikipedia.org/wiki/Spesial:Halaman_istimewa"},
+    {"icon": "campaign_outlined", "title": "Angombakhata", "url": "https://nia.wikipedia.org/wiki/Wikipedia:Angombakhata"},
+    {"icon": "people_outlined", "title": "Bawagöli zato", "url": "https://nia.wikipedia.org/wiki/Wikipedia:Bawagöli_zato"},
+    {"icon": "water_drop_outlined", "title": "Monganga afo", "url": "https://nia.wikipedia.org/wiki/Wikipedia:Monganga_afo"},
+    {"icon": "construction_outlined", "title": "Nahia wamakori", "url": "https://nia.wikipedia.org/wiki/Wikipedia:Nahia_wamakori"},
+    {"icon": "help_outlined", "title": "Fanolo", "url": "https://nia.wikipedia.org/wiki/Fanolo:Fanolo"},
+    {"icon": "support_agent_outlined", "title": "Sangai halöŵö", "url": "https://nia.wikipedia.org/wiki/Wikipedia:Sangai_halöŵö"}
+  ],
+  "en": [
+    {"icon": "history", "title": "Recent changes", "url": "https://en.wikipedia.org/wiki/Special:RecentChanges"},
+    {"icon": "newspaper_outlined", "title": "Current events", "url": "https://en.wikipedia.org/wiki/Portal:Current events"},
+    {"icon": "people_outlined", "title": "Community portal", "url": "https://en.wikipedia.org/wiki/Wikipedia:Community_portal"},
+    {"icon": "water_drop_outlined", "title": "Village pump", "url": "https://en.wikipedia.org/wiki/Wikipedia:Village_pump"},
+    {"icon": "water_drop_outlined", "title": "Teahouse", "url": "https://en.wikipedia.org/wiki/Wikipedia:Teahouse"},
+    {"icon": "help_outlined", "title": "Help desk", "url": "https://en.wikipedia.org/wiki/Wikipedia:Help_desk"},
+    {"icon": "help_outlined", "title": "Reference desk", "url": "https://en.wikipedia.org/wiki/Wikipedia:Reference_desk"},
+    {"icon": "content_copy", "title": "Content portals", "url": "https://en.wikipedia.org/wiki/Wikipedia:Content/Portals"},
+    {"icon": "pages_outlined", "title": "Special pages", "url": "https://en.wikipedia.org/wiki/Special:SpecialPages"}
+  ],
+  "id": [
+    {"icon": "history", "title": "Perubahan terbaru", "url": "https://id.wikipedia.org/wiki/Istimewa:Perubahan_terbaru"},
+    {"icon": "pages_outlined", "title": "Halaman istimewa", "url": "https://id.wikipedia.org/wiki/Istimewa:Halaman_istimewa"},
+    {"icon": "people_outlined", "title": "Portal komunitas", "url": "https://id.wikipedia.org/wiki/Portal:Komunitas"},
+    {"icon": "water_drop_outlined", "title": "Warung kopi", "url": "https://id.wikipedia.org/wiki/Wikipedia:Warung_Kopi"},
+    {"icon": "construction_outlined", "title": "Bak pasir", "url": "https://id.wikipedia.org/wiki/Wikipedia:Bak_pasir"},
+    {"icon": "help_outlined", "title": "Bantuan", "url": "https://id.wikipedia.org/wiki/Bantuan:Isi"}
+  ],
+  "jv": [
+    {"icon": "history", "title": "recent_changes", "url": "https://jv.wikipedia.org/wiki/Mirunggan:Owahan_anyar"},
+    {"icon": "newspaper_outlined", "title": "current_events", "url": "https://jv.wikipedia.org/wiki/Wikipédia:Wara-wara"},
+    {"icon": "pages_outlined", "title": "special_pages", "url": "https://jv.wikipedia.org/wiki/Mirunggan:Kaca_mirunggan"},
+    {"icon": "people_outlined", "title": "community_portal", "url": "https://jv.wikipedia.org/wiki/Gapura:Paguyuban"},
+    {"icon": "water_drop_outlined", "title": "village_pump", "url": "https://jv.wikipedia.org/wiki/Wikipédia:Angkringan"},
+    {"icon": "construction_outlined", "title": "sandbox", "url": "https://jv.wikipedia.org/wiki/Wikipédia:Bak wedhi"},
+    {"icon": "help_outlined", "title": "help", "url": "https://jv.wikipedia.org/wiki/Pitulung:Isi"}
+  ],
+  "ms": [
+    {"icon": "history", "title": "recent_changes", "url": "https://ms.wikipedia.org/wiki/Khas:Perubahan_terkini"},
+    {"icon": "newspaper_outlined", "title": "current_events", "url": "https://ms.wikipedia.org/wiki/Gerbang:Hal_semasa"},
+    {"icon": "people_outlined", "title": "community_portal", "url": "https://ms.wikipedia.org/wiki/Wikipedia:Gerbang_Komuniti"},
+    {"icon": "water_drop_outlined", "title": "village_pump", "url": "https://ms.wikipedia.org/wiki/Wikipedia:Kedai_Kopi"},
+    {"icon": "pages_outlined", "title": "special_pages", "url": "https://ms.wikipedia.org/wiki/Khas:Laman_khas"}
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "global": {
+    "remove": [".reflist", ".navbox", ".metadata", ".ambox", ".noprint"],
+    "hide": ["img", "figure", ".thumb"],
+    "referenceKeywords": ["reference", "catatan kaki", "rujukan", "lihat pula"]
+  },
+  "nia": {
+    "remove": [".infobox-ni", ".vertical-navbox"],
+    "hide": [".gallery"],
+    "referenceKeywords": ["rujukan", "catatan"]
+  },
+  "id": {
+    "remove": [".infobox"],
+    "hide": [".gallery"]
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "nia": [
+    {"main_page": "Wikipedia:Olayama"},
+    {"recent_changes": "Spesial:Perubahan_terbaru"},
+    {"community_portal": "Wikipedia:Bawagöli_zato"},
+    {"village_pump": "Wikipedia:Monganga_afo"},
+    {"sandbox": "Wikipedia:Nahia_wamakori"}
+  ],
+  "en": [
+    {"main_page": "Main_Page"},
+    {"recent_changes": "Special:RecentChanges"},
+    {"community_portal": "Wikipedia:Community_portal"},
+    {"village_pump": "Wikipedia:Village_pump"},
+    {"sandbox": "Wikipedia:Sandbox"}
+  ],
+  "id": [
+    {"main_page": "Halaman_Utama"},
+    {"recent_changes": "Spesial:Perubahan_terbaru"},
+    {"community_portal": "Portal:Komunitas"},
+    {"village_pump": "Wikipedia:Warung_Kopi"},
+    {"sandbox": "Wikipedia:Bak_pasir"}
+  ],
+  "bew": [
+    {"main_page": "Balé-balé"}
+  ],
+  "bjn": [
+    {"main_page": "Laman_Tatambaian"}
+  ],
+  "btm": [
+    {"main_page": "Alaman_Utamo"}
+  ],
+  "gor": [
+    {"main_page": "Halaman_Bungaliyo"}
+  ],
+  "jv": [
+    {"main_page": "Wikipédia:Pendhapa"}
+  ],
+  "mad": [
+    {"main_page": "Tanèyan"}
+  ],
+  "min": [
+    {"main_page": "Laman_Utamo"}
+  ],
+  "ms": [
+    {"main_page": "Laman_Utama"}
+  ],
+  "su": [
+    {"main_page": "Tepas"}
+  ]
+}
+
