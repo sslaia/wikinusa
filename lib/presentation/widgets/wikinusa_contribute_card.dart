@@ -43,7 +43,7 @@ class WikinusaContributeCard extends StatelessWidget {
             'contribute_description'.tr(),
             textAlign: TextAlign.center,
             style: GoogleFonts.offside(
-              textStyle: theme.textTheme.bodyMedium?.copyWith(
+              textStyle: theme.textTheme.bodySmall?.copyWith(
                 color: (isDark ? theme.colorScheme.onSurface : Colors.white)
                     .withValues(alpha: 0.9),
                 height: 1.5,
@@ -72,7 +72,7 @@ class WikinusaContributeCard extends StatelessWidget {
             child: Text(
               'contribute_button'.tr().toUpperCase(),
               style: GoogleFonts.offside(
-                textStyle: theme.textTheme.bodyMedium?.copyWith(
+                textStyle: theme.textTheme.bodySmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),

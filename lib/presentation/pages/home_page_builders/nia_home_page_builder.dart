@@ -367,7 +367,7 @@ class NiasHomePageBuilder implements HomePageBuilder {
               fontSize: 12,
               color: Colors.white.withValues(alpha: 0.5),
             ),
-            prefixIcon: const Icon(Icons.search, color: Colors.white),
+            prefixIcon: const Icon(Icons.search_outlined, color: Colors.white),
             border: InputBorder.none,
             // The calculation to adjust the text vertically
             // the height minus the font size divide by two

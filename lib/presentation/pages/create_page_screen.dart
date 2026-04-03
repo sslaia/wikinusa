@@ -1,17 +1,25 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../providers/language_provider.dart';
 
 class CreatePageScreen extends ConsumerStatefulWidget {
-  const CreatePageScreen({super.key});
+  final String? initialTitle;
+  const CreatePageScreen({super.key, this.initialTitle});
 
   @override
   ConsumerState<CreatePageScreen> createState() => _CreatePageScreenState();
 }
 
 class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
-  final TextEditingController _titleController = TextEditingController();
+  late final TextEditingController _titleController;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: widget.initialTitle);
+  }
 
   @override
   void dispose() {
@@ -21,42 +29,48 @@ class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
 
   String _capitalizeTitle(String text) {
     if (text.isEmpty) return text;
-    return text.trim().split(' ').map((word) {
-      if (word.isEmpty) return word;
-      return word[0].toUpperCase() + word.substring(1).toLowerCase();
-    }).join(' ');
+    return text
+        .trim()
+        .split(' ')
+        .map((word) {
+          if (word.isEmpty) return word;
+          return word[0].toUpperCase() + word.substring(1).toLowerCase();
+        })
+        .join(' ');
   }
 
   Future<void> _openEditor() async {
     final rawTitle = _titleController.text.trim();
     if (rawTitle.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a title first')),
+        const SnackBar(content: Text('enter_a_title_first')),
       );
       return;
     }
 
     final capitalizedTitle = _capitalizeTitle(rawTitle);
     final langCode = ref.read(languageProvider).code;
-    
+
     // Format: https://$langCode.wikipedia.org/wiki/$title?action=edit&section=all
-    final encodedTitle = Uri.encodeComponent(capitalizedTitle.replaceAll(' ', '_'));
+    final encodedTitle = Uri.encodeComponent(
+      capitalizedTitle.replaceAll(' ', '_'),
+    );
     final url = Uri.parse(
       'https://$langCode.wikipedia.org/wiki/$encodedTitle?action=edit&section=all',
     );
 
-    // Using inAppBrowserView ensures there is a "Close" or "Back" button 
-    // provided by the OS at the top of the browser window.
     if (await canLaunchUrl(url)) {
       await launchUrl(
-        url, 
+        url,
         mode: LaunchMode.inAppBrowserView,
         browserConfiguration: const BrowserConfiguration(showTitle: true),
       );
     } else {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not launch editor for $capitalizedTitle')),
+          SnackBar(
+            content: Text('${'could_not_launch_editor_for'.tr()} $capitalizedTitle'),
+          ),
         );
       }
     }
@@ -113,7 +127,7 @@ class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
               ),
               const SizedBox(width: 4),
               Text(
-                'NEW ENTRY',
+                'new_entry'.tr().toUpperCase(),
                 style: theme.textTheme.labelSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.5,
@@ -126,7 +140,7 @@ class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
         ),
         const SizedBox(height: 16),
         Text(
-          'Create New Page',
+          'create_new_page'.tr(),
           textAlign: TextAlign.center,
           style: theme.textTheme.headlineMedium?.copyWith(
             fontWeight: FontWeight.w800,
@@ -137,7 +151,7 @@ class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
         ),
         const SizedBox(height: 12),
         Text(
-          'Contribute to Wikipedia\nand make knowledge free for every one.',
+          'create_new_page_description'.tr(),
           textAlign: TextAlign.center,
           style: theme.textTheme.bodyLarge?.copyWith(
             fontSize: 16,
@@ -154,7 +168,7 @@ class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'TITLE',
+          'title'.tr().toUpperCase(),
           style: theme.textTheme.labelSmall?.copyWith(
             fontWeight: FontWeight.bold,
             letterSpacing: 1.5,
@@ -184,13 +198,13 @@ class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
               fontSize: 18,
             ),
             decoration: InputDecoration(
-              hintText: 'e.g., The Unexpected Island Effect',
+              hintText: 'title_example'.tr(),
               hintStyle: theme.textTheme.titleMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant.withValues(
                   alpha: 0.5,
                 ),
-                fontWeight: FontWeight.w600,
-                fontSize: 18,
+                // fontWeight: FontWeight.w600,
+                fontSize: 14,
               ),
               border: InputBorder.none,
             ),
@@ -202,7 +216,7 @@ class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
             const Icon(Icons.info, color: Color(0xFFB51A1E), size: 12),
             const SizedBox(width: 4),
             Text(
-              'Enter the title before hitting the Editor button.',
+              'enter_title_before_submit'.tr(),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: const Color(0xFFB51A1E),
                 fontSize: 10,
@@ -242,7 +256,7 @@ class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
                   const Icon(Icons.arrow_upward, color: Colors.white, size: 18),
                   const SizedBox(width: 8),
                   Text(
-                    'Open the Editor',
+                    'open_the_editor'.tr(),
                     style: theme.textTheme.labelLarge?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,

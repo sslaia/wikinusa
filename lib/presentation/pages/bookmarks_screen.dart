@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/bookmarks_provider.dart';
@@ -16,7 +17,7 @@ class BookmarksScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Bookmarks'),
+        title: const Text('bookmarks').tr(),
         backgroundColor: theme.colorScheme.surface,
         foregroundColor: theme.colorScheme.primary,
         elevation: 0,
@@ -33,7 +34,7 @@ class BookmarksScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'No bookmarks yet',
+                    'bookmarks_empty'.tr(),
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: theme.colorScheme.onSurface.withOpacity(0.5),
                     ),
@@ -57,7 +58,7 @@ class BookmarksScreen extends ConsumerWidget {
                     ),
                   ),
                   subtitle: Text(
-                    'Language: ${bookmark.langCode.toUpperCase()}',
+                    '${'language'.tr()}: ${bookmark.langCode.toUpperCase()}',
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurface.withOpacity(0.6),
                     ),

@@ -19,7 +19,7 @@ final htmlRulesProvider = FutureProvider<Map<String, dynamic>>((ref) async {
           ".ambox",
           ".gallery",
           ".gallerybox",
-          ".gallerytext"
+          ".gallerytext",
           ".infobox",
           ".metadata",
           ".mw-editsection",

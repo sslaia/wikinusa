@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:html/parser.dart' as html_parser;
@@ -28,7 +29,7 @@ class SearchResultsScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: theme.colorScheme.surfaceContainerLow,
       appBar: AppBar(
-        title: Text('Search Results: $query'),
+        title: Text('${'search_results'.tr()}: $query'),
         backgroundColor: theme.colorScheme.surface,
         elevation: 0,
       ),
@@ -46,13 +47,13 @@ class SearchResultsScreen extends ConsumerWidget {
                 children: [
                   const Icon(Icons.error_outline, size: 48, color: Colors.red),
                   const SizedBox(height: 16),
-                  Text('Failed to fetch results: ${snapshot.error}'),
+                  Text('${'search_failed'.tr()}: ${snapshot.error}'),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
                       (context as Element).markNeedsBuild();
                     },
-                    child: const Text('Retry'),
+                    child: Text('search_retry').tr(),
                   ),
                 ],
               ),
@@ -62,13 +63,13 @@ class SearchResultsScreen extends ConsumerWidget {
           final results = snapshot.data ?? [];
 
           if (results.isEmpty) {
-            return const Center(
+            return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.search_off, size: 64, color: Colors.grey),
                   SizedBox(height: 16),
-                  Text('No results found for your query.'),
+                  Text('search_no_results').tr(),
                 ],
               ),
             );

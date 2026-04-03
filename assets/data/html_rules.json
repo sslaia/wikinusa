@@ -2,15 +2,16 @@
   "global": {
     "remove": [".reflist", ".navbox", ".metadata", ".ambox", ".noprint"],
     "hide": ["img", "figure", ".thumb"],
-    "referenceKeywords": ["reference", "catatan kaki", "rujukan", "lihat pula"]
+    "referenceKeywords": ["reference", "reflist"]
   },
   "nia": {
-    "remove": [".infobox-ni", ".vertical-navbox"],
+    "remove": [".infobox", ".navbox"],
     "hide": [".gallery"],
-    "referenceKeywords": ["rujukan", "catatan"]
+    "referenceKeywords": ["umbu", "famotokhi ba gahe","reference", "reflist"]
   },
   "id": {
     "remove": [".infobox"],
-    "hide": [".gallery"]
+    "hide": [".gallery"],
+    "referenceKeywords": ["reference", "reflist", "catatan kaki", "rujukan"]
   }
 }

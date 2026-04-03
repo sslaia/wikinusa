@@ -42,8 +42,8 @@ void main() async {
         Locale('nia'),
         Locale('su'),
       ],
-      startLocale: const Locale('nia'),
-      fallbackLocale: const Locale('id'),
+      startLocale: const Locale('id'),
+      fallbackLocale: const Locale('nia'),
       path: 'assets/translations',
       child: ProviderScope(
         overrides: [
@@ -94,7 +94,7 @@ class WikinusaApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: context.supportedLocales,
-      locale: context.locale, // This is crucial for syncing with context.setLocale()
+      locale: context.locale,
       home: hasCompletedOnboarding ? const HomeScreen() : const OnboardingScreen(),
       debugShowCheckedModeBanner: false,
     );

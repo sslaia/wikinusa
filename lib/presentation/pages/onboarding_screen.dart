@@ -139,11 +139,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 icon: Icon(Icons.keyboard_arrow_down, color: theme.colorScheme.primary),
                 dropdownColor: theme.colorScheme.surfaceContainer,
                 style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.onSurface),
-                onChanged: (WikiLanguage? newValue) {
+                onChanged: (WikiLanguage? newValue) async {
                   if (newValue != null) {
                     ref.read(languageProvider.notifier).setLanguage(newValue);
                     // Update EasyLocalization locale (affects app UI strings)
-                    context.setLocale(Locale(newValue.code));
+                    await context.setLocale(Locale(newValue.code));
+                    // Refresh the widget
+                    setState(() {});
                   }
                 },
                 items: WikiLanguage.values.map<DropdownMenuItem<WikiLanguage>>((WikiLanguage value) {
@@ -199,8 +201,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 ),
                 elevation: 0,
               ),
-              onPressed: () {
+              onPressed: () async {
                 if (_currentPage == 3) {
+                  final selectedLanguage = ref.read(languageProvider);
+                  await context.setLocale(Locale(selectedLanguage.code));
                   ref.read(onboardingProvider.notifier).completeOnboarding();
                 } else {
                   _nextPage();

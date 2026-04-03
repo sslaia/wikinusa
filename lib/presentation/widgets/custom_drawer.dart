@@ -327,10 +327,8 @@ class CustomDrawer extends ConsumerWidget {
                             )
                           : null,
                       onTap: () {
-                        // 1. Update the Riverpod provider (affects Wikipedia data fetching)
                         ref.read(languageProvider.notifier).setLanguage(lang);
                         
-                        // 2. Update EasyLocalization locale (affects app UI strings)
                         context.setLocale(Locale(lang.code));
                         
                         Navigator.pop(context);

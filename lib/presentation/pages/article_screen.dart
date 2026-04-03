@@ -1,11 +1,11 @@
-import 'dart:ui';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:html/parser.dart' as html_parser;
-import 'package:html/dom.dart' as dom;
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:wikinusa/presentation/pages/create_page_screen.dart';
 import 'package:wikinusa/presentation/widgets/wikinusa_footer.dart';
 import '../widgets/custom_bottom_nav_bar.dart';
 import '../widgets/custom_drawer.dart';
@@ -21,50 +21,74 @@ class ArticleScreen extends ConsumerStatefulWidget {
 
   const ArticleScreen({super.key, required this.pageTitle});
 
-  static Future<void> handleWikipediaLink(BuildContext context, WidgetRef ref, String? url, String langCode) async {
+  static Future<void> handleWikipediaLink(
+    BuildContext context,
+    WidgetRef ref,
+    String? url,
+    String langCode,
+  ) async {
     if (url == null || url.isEmpty) return;
 
     try {
-      // 1. Normalize the URL structure
+      // Normalize the URL structure
       String absoluteUrl = url;
       if (url.startsWith('./')) {
-        absoluteUrl = 'https://$langCode.wikipedia.org/wiki/${url.substring(2)}';
+        absoluteUrl =
+            'https://$langCode.wikipedia.org/wiki/${url.substring(2)}';
       } else if (url.startsWith('/')) {
         absoluteUrl = 'https://$langCode.wikipedia.org$url';
       } else if (url.startsWith('//')) {
         absoluteUrl = 'https:$url';
       }
 
-      // 2. Safely encode the URL to handle non-ASCII chars (ö, ŵ)
+      // Safely encode the URL to handle non-ASCII chars (ö, ŵ)
       final uri = Uri.parse(Uri.encodeFull(absoluteUrl));
-      
-      final isMainWiki = uri.host == '$langCode.wikipedia.org' || uri.host.isEmpty;
+
+      final isMainWiki =
+          uri.host == '$langCode.wikipedia.org' || uri.host.isEmpty;
       final isRedLink = uri.queryParameters['action'] == 'edit';
 
-      // 3. Extract title from path segments
       String? extractedTitle;
       final pathSegments = uri.pathSegments;
       if (pathSegments.length >= 2 && pathSegments[0] == 'wiki') {
         extractedTitle = pathSegments[1].replaceAll('_', ' ');
       }
 
-      // 4. Determine if it's a "Special" page
+      if (isRedLink && extractedTitle != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => CreatePageScreen(initialTitle: extractedTitle),
+          ),
+        );
+        return;
+      }
+
+      // Determine if it's a "Special" page
       bool isSpecialPage = false;
       if (extractedTitle != null) {
         final lowerTitle = extractedTitle.toLowerCase();
-        isSpecialPage = lowerTitle.startsWith('special:') || 
-                        lowerTitle.startsWith('spesial:') || 
-                        lowerTitle.startsWith('istimewa:');
+        isSpecialPage =
+            lowerTitle.startsWith('special:') ||
+            lowerTitle.startsWith('spesial:') ||
+            lowerTitle.startsWith('istimewa:');
       }
 
       // 5. Routing Logic
-      if (extractedTitle != null && isMainWiki && !isRedLink && !isSpecialPage) {
+      if (extractedTitle != null &&
+          isMainWiki &&
+          !isRedLink &&
+          !isSpecialPage) {
         // Internal Nav: Open natively in ArticleScreen
-        ref.read(articleNavigationProvider.notifier).pushArticle(extractedTitle);
-        
+        ref
+            .read(articleNavigationProvider.notifier)
+            .pushArticle(extractedTitle);
+
         final currentRoute = ModalRoute.of(context);
-        final isAlreadyOnArticleScreen = currentRoute?.settings.name == 'ArticleScreen' || 
-                                         (currentRoute is MaterialPageRoute && currentRoute.builder(context) is ArticleScreen);
+        final isAlreadyOnArticleScreen =
+            currentRoute?.settings.name == 'ArticleScreen' ||
+            (currentRoute is MaterialPageRoute &&
+                currentRoute.builder(context) is ArticleScreen);
 
         if (!isAlreadyOnArticleScreen) {
           Navigator.push(
@@ -99,7 +123,9 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final nav = ref.read(articleNavigationProvider);
       if (nav.pageTitles.isEmpty) {
-        ref.read(articleNavigationProvider.notifier).setArticles([widget.pageTitle], 0);
+        ref.read(articleNavigationProvider.notifier).setArticles([
+          widget.pageTitle,
+        ], 0);
       }
     });
   }
@@ -111,8 +137,9 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     final currentTitle = navState.currentTitle ?? widget.pageTitle;
     final rulesAsync = ref.watch(htmlRulesProvider);
     final langCode = ref.watch(languageProvider).code;
-    
-    final String pageUrl = 'https://$langCode.wikipedia.org/wiki/${currentTitle.replaceAll(' ', '_')}';
+
+    final String pageUrl =
+        'https://$langCode.wikipedia.org/wiki/${currentTitle.replaceAll(' ', '_')}';
 
     return PopScope(
       canPop: !navState.canGoBack,
@@ -125,43 +152,76 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
       child: Scaffold(
         backgroundColor: theme.colorScheme.surface,
         drawer: const CustomDrawer(),
-        body: ref.watch(articleDetailProvider(currentTitle)).when(
-          data: (article) => rulesAsync.when(
-            data: (rules) {
-              final images = _extractImages(article.text, langCode, rules);
-              return Stack(
-                children: [
-                  SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildHeroImage(theme, article, langCode, rules, navState),
-                        _buildArticleContent(theme, article, langCode, rules),
-                        if (images.isNotEmpty) ...[
-                          const SizedBox(height: 32),
-                          _buildImageCarousel(theme, images),
-                        ],
-                        const WikinusaFooter(),
-                        const SizedBox(height: 100),
-                      ],
-                    ),
-                  ),
-                  _buildFloatingActionBar(theme, navState, pageUrl, currentTitle, langCode),
-                ],
-              );
-            },
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (err, stack) => _buildErrorContent(theme, article, navState, pageUrl, currentTitle, langCode),
-          ),
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (err, stack) => Center(child: Text('Error: $err')),
-        ),
+        body: ref
+            .watch(articleDetailProvider(currentTitle))
+            .when(
+              data: (article) => rulesAsync.when(
+                data: (rules) {
+                  final images = _extractImages(article.text, langCode, rules);
+                  return Stack(
+                    children: [
+                      SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildHeroImage(
+                              theme,
+                              article,
+                              langCode,
+                              rules,
+                              navState,
+                            ),
+                            _buildArticleContent(
+                              theme,
+                              article,
+                              langCode,
+                              rules,
+                            ),
+                            if (images.isNotEmpty) ...[
+                              const SizedBox(height: 32),
+                              _buildImageCarousel(theme, images),
+                            ],
+                            const WikinusaFooter(),
+                            const SizedBox(height: 100),
+                          ],
+                        ),
+                      ),
+                      _buildFloatingActionBar(
+                        theme,
+                        navState,
+                        pageUrl,
+                        currentTitle,
+                        langCode,
+                      ),
+                    ],
+                  );
+                },
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (err, stack) => _buildErrorContent(
+                  theme,
+                  article,
+                  navState,
+                  pageUrl,
+                  currentTitle,
+                  langCode,
+                ),
+              ),
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (err, stack) => Center(child: Text('${'error'.tr()}: $err')),
+            ),
         bottomNavigationBar: const CustomBottomNavBar(),
       ),
     );
   }
 
-  Widget _buildErrorContent(ThemeData theme, Article article, ArticleNavigationState navState, String pageUrl, String title, String langCode) {
+  Widget _buildErrorContent(
+    ThemeData theme,
+    Article article,
+    ArticleNavigationState navState,
+    String pageUrl,
+    String title,
+    String langCode,
+  ) {
     return Stack(
       children: [
         SingleChildScrollView(
@@ -179,56 +239,69 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     );
   }
 
-  List<Map<String, String>> _extractImages(String html, String langCode, Map<String, dynamic> rules) {
+  List<Map<String, String>> _extractImages(
+    String html,
+    String langCode,
+    Map<String, dynamic> rules,
+  ) {
     final doc = html_parser.parse(html);
-    
+
     final langRules = rules[langCode] ?? {};
     final globalRules = rules['global'] ?? {};
-    
+
     final List<String> toRemoveSelectors = [
       ...(globalRules['remove'] as List<dynamic>? ?? []),
       ...(langRules['remove'] as List<dynamic>? ?? []),
-      'table', '.sidebar', '.vertical-navbox'
+      'table',
+      '.sidebar',
+      '.vertical-navbox',
     ].map((e) => e.toString()).toList();
 
     if (toRemoveSelectors.isNotEmpty) {
-      doc.querySelectorAll(toRemoveSelectors.join(', ')).forEach((e) => e.remove());
+      doc
+          .querySelectorAll(toRemoveSelectors.join(', '))
+          .forEach((e) => e.remove());
     }
 
     final List<Map<String, String>> images = [];
 
-    doc.querySelectorAll('figure, .thumb, .thumbinner, .gallerybox, .mw-file-description').forEach((element) {
-      final img = element.querySelector('img');
-      final caption = element.querySelector('figcaption') ?? 
-                      element.querySelector('.thumbcaption') ?? 
-                      element.querySelector('.gallerytext');
+    doc
+        .querySelectorAll(
+          'figure, .thumb, .thumbinner, .gallerybox, .mw-file-description',
+        )
+        .forEach((element) {
+          final img = element.querySelector('img');
+          final caption =
+              element.querySelector('figcaption') ??
+              element.querySelector('.thumbcaption') ??
+              element.querySelector('.gallerytext');
 
-      if (img != null) {
-        String? src = img.attributes['src'];
-        if (src != null && src.isNotEmpty) {
-          if (src.startsWith('//')) src = 'https:$src';
-          
-          if (!images.any((item) => item['url'] == src)) {
-            images.add({
-              'url': src,
-              'caption': caption?.text.trim() ?? '',
-            });
+          if (img != null) {
+            String? src = img.attributes['src'];
+            if (src != null && src.isNotEmpty) {
+              if (src.startsWith('//')) src = 'https:$src';
+
+              if (!images.any((item) => item['url'] == src)) {
+                images.add({'url': src, 'caption': caption?.text.trim() ?? ''});
+              }
+            }
           }
-        }
-      }
-    });
+        });
 
     return images;
   }
 
-  Widget _buildImageCarousel(ThemeData theme, List<Map<String, String>> images) {
+  Widget _buildImageCarousel(
+    ThemeData theme,
+    List<Map<String, String>> images,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Text(
-            'Gallery',
+            'gallery'.tr(),
             style: theme.textTheme.titleMedium?.copyWith(
               color: theme.colorScheme.primary,
               fontWeight: FontWeight.bold,
@@ -266,7 +339,11 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                     ),
                     if (image['caption']!.isNotEmpty)
                       Padding(
-                        padding: const EdgeInsets.only(top: 8, left: 4, right: 4),
+                        padding: const EdgeInsets.only(
+                          top: 8,
+                          left: 4,
+                          right: 4,
+                        ),
                         child: Text(
                           image['caption']!,
                           style: theme.textTheme.bodySmall?.copyWith(
@@ -287,28 +364,34 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     );
   }
 
-  Widget _buildHeroImage(ThemeData theme, Article article, String langCode, Map<String, dynamic> rules, ArticleNavigationState navState) {
+  Widget _buildHeroImage(
+    ThemeData theme,
+    Article article,
+    String langCode,
+    Map<String, dynamic> rules,
+    ArticleNavigationState navState,
+  ) {
     final doc = html_parser.parse(article.text);
     final tempBody = doc.body;
 
     final langRules = rules[langCode] ?? {};
     final globalRules = rules['global'] ?? {};
-    
+
     final List<String> toRemoveSelectors = [
       ...(globalRules['remove'] as List<dynamic>? ?? []),
       ...(langRules['remove'] as List<dynamic>? ?? []),
     ].map((e) => e.toString()).toList();
 
     if (toRemoveSelectors.isNotEmpty) {
-      tempBody?.querySelectorAll(toRemoveSelectors.join(', ')).forEach((e) => e.remove());
+      tempBody
+          ?.querySelectorAll(toRemoveSelectors.join(', '))
+          .forEach((e) => e.remove());
     }
 
     final imgElement = tempBody?.querySelector('img');
-    String? imageUrl = imgElement?.attributes['src'];
-
-    if (imageUrl == null) {
-      imageUrl = doc.querySelector('img')?.attributes['src'];
-    }
+    String? imageUrl =
+        imgElement?.attributes['src'] ??
+        doc.querySelector('img')?.attributes['src'];
 
     if (imageUrl != null && imageUrl.startsWith('//')) {
       imageUrl = 'https:$imageUrl';
@@ -323,7 +406,9 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
             image: DecorationImage(
               image: imageUrl != null
                   ? NetworkImage(imageUrl)
-                  : const AssetImage('assets/images/woman_reading_a_book_on_lap.webp'),
+                  : const AssetImage(
+                      'assets/images/woman_reading_a_book_on_lap.webp',
+                    ),
               fit: BoxFit.cover,
             ),
           ),
@@ -334,7 +419,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
               gradient: LinearGradient(
                 colors: [
                   Colors.transparent,
-                  theme.colorScheme.surface.withOpacity(0.7),
+                  theme.colorScheme.surface.withValues(alpha: 0.7),
                   theme.colorScheme.surface,
                 ],
                 begin: Alignment.topCenter,
@@ -377,7 +462,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: CircleAvatar(
-              backgroundColor: theme.colorScheme.surface.withOpacity(0.5),
+              backgroundColor: theme.colorScheme.surface.withValues(alpha: 0.5),
               child: IconButton(
                 icon: Icon(Icons.arrow_back, color: theme.colorScheme.primary),
                 onPressed: () {
@@ -395,36 +480,56 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     );
   }
 
-  void _showReferencePopup(BuildContext context, String referenceId, String htmlContent) {
+  void _showReferencePopup(
+    BuildContext context,
+    String referenceId,
+    String htmlContent,
+    String langCode,
+  ) {
     final theme = Theme.of(context);
     final document = html_parser.parse(htmlContent);
 
+    // Wikipedia reference IDs might be URI encoded
     final decodedId = Uri.decodeComponent(referenceId);
-    final refElement = document.getElementById(decodedId) ?? document.getElementById(referenceId);
+    final refElement =
+        document.getElementById(decodedId) ??
+        document.getElementById(referenceId);
 
-    if (refElement == null) return;
+    if (refElement == null) {
+      debugPrint('Reference element not found: $referenceId');
+      return;
+    }
 
+    // Remove backlink arrows commonly found in Wikipedia references
     refElement.querySelectorAll('.mw-cite-backlink').forEach((e) => e.remove());
 
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
+      isScrollControlled: true,
       builder: (context) => Container(
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         padding: const EdgeInsets.all(24),
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.4,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(Icons.info_outline, size: 18, color: theme.colorScheme.secondary),
+                Icon(
+                  Icons.info_outline,
+                  size: 18,
+                  color: theme.colorScheme.secondary,
+                ),
                 const SizedBox(width: 8),
                 Text(
-                  'Reference',
+                  'reference'.tr(),
                   style: theme.textTheme.labelLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: theme.colorScheme.secondary,
@@ -441,20 +546,31 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
             const Divider(),
             Flexible(
               child: SingleChildScrollView(
-                child: Html(
-                  data: refElement.innerHtml,
-                  style: {
-                    "body": Style(
-                      margin: Margins.zero,
-                      padding: HtmlPaddings.zero,
-                      fontSize: FontSize(14),
-                      lineHeight: LineHeight(1.6),
-                      color: theme.colorScheme.onSurface,
-                    ),
-                    "a": Style(
-                      color: theme.colorScheme.primary,
-                      textDecoration: TextDecoration.none,
-                    ),
+                child: HtmlWidget(
+                  refElement.innerHtml,
+                  onTapUrl: (url) {
+                    ArticleScreen.handleWikipediaLink(
+                      context,
+                      ref,
+                      url,
+                      langCode,
+                    );
+                    return true;
+                  },
+                  textStyle: theme.textTheme.bodyMedium?.copyWith(
+                    fontSize: 14,
+                    height: 1.6,
+                    color: theme.colorScheme.onSurface,
+                  ),
+                  customStylesBuilder: (element) {
+                    if (element.localName == 'a') {
+                      return {
+                        'color':
+                            '#${theme.colorScheme.primary.toARGB32().toRadixString(16).substring(2)}',
+                        'text-decoration': 'none',
+                      };
+                    }
+                    return null;
                   },
                 ),
               ),
@@ -466,10 +582,15 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     );
   }
 
-  Widget _buildArticleContent(ThemeData theme, Article article, String langCode, Map<String, dynamic> rules) {
+  Widget _buildArticleContent(
+    ThemeData theme,
+    Article article,
+    String langCode,
+    Map<String, dynamic> rules,
+  ) {
     final langRules = rules[langCode] ?? {};
     final globalRules = rules['global'] ?? {};
-    
+
     final List<String> toRemoveSelectors = [
       ...(globalRules['remove'] as List<dynamic>? ?? []),
       ...(langRules['remove'] as List<dynamic>? ?? []),
@@ -478,51 +599,110 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     final List<String> toHideSelectors = [
       ...(globalRules['hide'] as List<dynamic>? ?? []),
       ...(langRules['hide'] as List<dynamic>? ?? []),
-      'img', 'figure', '.thumb'
+      'img',
+      'figure',
+      '.thumb',
     ].map((e) => e.toString()).toList();
 
     final List<String> referenceKeywords = [
       ...(globalRules['referenceKeywords'] as List<dynamic>? ?? []),
       ...(langRules['referenceKeywords'] as List<dynamic>? ?? []),
-      'reference', 'catatan kaki', 'rujukan'
+      'reference',
+      'catatan kaki',
+      'rujukan',
     ].map((e) => e.toString()).toList();
 
     final doc = html_parser.parse(article.text);
     if (toRemoveSelectors.isNotEmpty) {
-      doc.querySelectorAll(toRemoveSelectors.join(', ')).forEach((e) => e.remove());
+      doc
+          .querySelectorAll(toRemoveSelectors.join(', '))
+          .forEach((e) => e.remove());
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Html(
-          data: doc.body?.innerHtml ?? article.text,
-          onLinkTap: (url, attributes, element) {
-            final href = url ?? attributes['href'];
-            if (href != null && href.contains('cite_note')) {
-              final refId = href.split('#').last;
-              _showReferencePopup(context, refId, article.text);
-            } else {
-              ArticleScreen.handleWikipediaLink(context, ref, href, langCode);
-            }
-          },
-          extensions: [
-            TagExtension(
-              tagsToExtend: {"sup"},
-              builder: (extensionContext) {
-                final element = extensionContext.element;
-                if (element?.classes.contains('reference') ?? false) {
-                  final link = element?.querySelector('a');
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: HtmlWidget(
+            doc.body?.innerHtml ?? article.text,
+            onTapUrl: (url) {
+              if (url.contains('cite_note')) {
+                final refId = url.split('#').last;
+                _showReferencePopup(context, refId, article.text, langCode);
+                return true;
+              }
+              ArticleScreen.handleWikipediaLink(context, ref, url, langCode);
+              return true;
+            },
+            textStyle: theme.textTheme.bodyLarge?.copyWith(
+              fontSize: 16,
+              height: 1.8,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.85),
+            ),
+            customStylesBuilder: (element) {
+              final lowerText = element.text.toLowerCase();
+              if (element.localName?.startsWith('h') == true &&
+                  referenceKeywords.any(
+                    (k) => lowerText.contains(k.toLowerCase()),
+                  )) {
+                return {'display': 'none'};
+              }
+
+              if (toHideSelectors.any(
+                (s) =>
+                    element.classes.contains(s.replaceFirst('.', '')) ||
+                    element.localName == s,
+              )) {
+                return {'display': 'none'};
+              }
+
+              if (element.localName == 'a') {
+                return {
+                  'color':
+                      '#${theme.colorScheme.primary.toARGB32().toRadixString(16).substring(2)}',
+                  'text-decoration': 'none',
+                  'font-weight': '600',
+                };
+              }
+              if (element.classes.contains('new')) {
+                return {
+                  'color':
+                      '#${WikinusaThemeConfig.getLinkRed(theme.brightness).toARGB32().toRadixString(16).substring(2)}',
+                };
+              }
+              if (element.localName == 'p') {
+                return {'margin-bottom': '16px'};
+              }
+              if (element.localName == 'sup') {
+                return {'font-size': '0.75em', 'vertical-align': 'super'};
+              }
+              return null;
+            },
+            customWidgetBuilder: (element) {
+              if (element.localName == 'sup') {
+                final isRef =
+                    element.classes.contains('reference') ||
+                    element.classes.contains('mw-ref') ||
+                    element.attributes['role'] == 'doc-noteref';
+
+                if (isRef) {
+                  final link = element.querySelector('a');
                   final href = link?.attributes['href'];
                   if (href != null && href.contains('cite_note')) {
                     final refId = href.split('#').last;
                     return GestureDetector(
-                      onTap: () => _showReferencePopup(context, refId, article.text),
+                      onTap: () => _showReferencePopup(
+                        context,
+                        refId,
+                        article.text,
+                        langCode,
+                      ),
                       behavior: HitTestBehavior.opaque,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 2.0),
                         child: Text(
-                          element?.text ?? "",
+                          element.text,
                           style: TextStyle(
                             fontSize: 11,
                             color: theme.colorScheme.primary,
@@ -533,21 +713,20 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                     );
                   }
                 }
-                return const SizedBox.shrink();
-              },
-            ),
-            TagExtension(
-              tagsToExtend: {"h1", "h2", "h3", "h4", "h5", "h6"},
-              builder: (extensionContext) {
-                final text = extensionContext.element?.text ?? "";
+              }
+
+              if (element.localName?.startsWith('h') == true) {
+                final text = element.text;
                 final lowerText = text.toLowerCase();
-                
-                if (referenceKeywords.any((k) => lowerText.contains(k.toLowerCase()))) {
+
+                if (referenceKeywords.any(
+                  (k) => lowerText.contains(k.toLowerCase()),
+                )) {
                   return const SizedBox.shrink();
                 }
 
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
@@ -573,66 +752,25 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                     ],
                   ),
                 );
-              },
-            ),
-          ],
-          style: {
-            "body": Style(
-              margin: Margins.zero,
-              padding: HtmlPaddings.zero,
-            ),
-            "p": Style(
-              padding: HtmlPaddings.only(left: 20, right: 20),
-              margin: Margins.only(bottom: 16),
-              fontFamily: theme.textTheme.bodyLarge?.fontFamily,
-              fontSize: FontSize(16),
-              lineHeight: LineHeight(1.8),
-              color: theme.colorScheme.onSurface.withOpacity(0.85),
-            ),
-            "b": Style(
-              fontWeight: FontWeight.w700,
-              color: theme.colorScheme.onSurface,
-            ),
-            "a": Style(
-              textDecoration: TextDecoration.none,
-              color: theme.colorScheme.primary,
-              fontWeight: FontWeight.w600,
-            ),
-            "a.new": Style(
-              color: WikinusaThemeConfig.getLinkRed(theme.brightness),
-            ),
-            "ul, ol": Style(
-              padding: HtmlPaddings.only(left: 32, right: 20),
-              margin: Margins.only(bottom: 16),
-              fontFamily: theme.textTheme.bodyLarge?.fontFamily,
-              fontSize: FontSize(16),
-              lineHeight: LineHeight(1.8),
-              color: theme.colorScheme.onSurface.withOpacity(0.85),
-            ),
-            "li": Style(
-              padding: HtmlPaddings.only(left: 4),
-              margin: Margins.only(bottom: 8),
-            ),
-            "ul ul, ol ol, ul ol, ol ul": Style(
-              padding: HtmlPaddings.only(left: 16),
-            ),
-            if (toHideSelectors.isNotEmpty)
-              toHideSelectors.join(', '): Style(
-                display: Display.none,
-              ),
-            ".reference": Style(
-              fontSize: FontSize(12),
-              verticalAlign: VerticalAlign.sup,
-              padding: HtmlPaddings.only(left: 2, right: 2),
-            ),
-          },
+              }
+              return null;
+            },
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildFloatingActionBar(ThemeData theme, ArticleNavigationState navState, String pageUrl, String currentTitle, String langCode) {
-    final isBookmarked = ref.watch(bookmarksProvider).any((b) => b.title == currentTitle && b.langCode == langCode);
+  Widget _buildFloatingActionBar(
+    ThemeData theme,
+    ArticleNavigationState navState,
+    String pageUrl,
+    String currentTitle,
+    String langCode,
+  ) {
+    final isBookmarked = ref
+        .watch(bookmarksProvider)
+        .any((b) => b.title == currentTitle && b.langCode == langCode);
 
     return Positioned(
       bottom: 24,
@@ -644,10 +782,12 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
           decoration: BoxDecoration(
             color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(32),
-            border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity(0.5)),
+            border: Border.all(
+              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+            ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.08),
+                color: Colors.black.withValues(alpha: 0.08),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
@@ -659,24 +799,38 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
               _buildActionButton(
                 theme,
                 Icons.arrow_back_ios_new,
-                navState.canGoBack ? theme.colorScheme.primary : Colors.grey.withOpacity(0.5),
+                navState.canGoBack
+                    ? theme.colorScheme.primary
+                    : Colors.grey.withValues(alpha: 0.5),
                 onPressed: navState.canGoBack
-                    ? () => ref.read(articleNavigationProvider.notifier).previous()
+                    ? () => ref
+                          .read(articleNavigationProvider.notifier)
+                          .previous()
                     : null,
               ),
               _buildDivider(theme),
               _buildActionButton(
                 theme,
                 isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-                isBookmarked ? theme.colorScheme.primary : theme.colorScheme.onSurface,
+                isBookmarked
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.onSurface,
                 onPressed: () {
-                  ref.read(bookmarksProvider.notifier).toggleBookmark(currentTitle, langCode);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(isBookmarked ? 'Removed from bookmarks' : 'Added to bookmarks'),
-                      duration: const Duration(seconds: 1),
-                    ),
-                  );
+                  ref
+                      .read(bookmarksProvider.notifier)
+                      .toggleBookmark(currentTitle, langCode);
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          isBookmarked
+                              ? 'bookmarks_removed'.tr()
+                              : 'bookmarks_added'.tr(),
+                        ),
+                        duration: const Duration(seconds: 1),
+                      ),
+                    );
+                  }
                 },
               ),
               _buildDivider(theme),
@@ -685,7 +839,9 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                 Icons.share_outlined,
                 theme.colorScheme.onSurface,
                 onPressed: () {
-                  SharePlus.instance.share(ShareParams(uri: Uri.parse(pageUrl)));
+                  SharePlus.instance.share(
+                    ShareParams(uri: Uri.parse(pageUrl)),
+                  );
                 },
               ),
               _buildDivider(theme),
@@ -694,16 +850,16 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                 Icons.edit_outlined,
                 theme.colorScheme.onSurface,
                 onPressed: () async {
-                   final uri = Uri.parse('$pageUrl?action=edit&section=all');
-                   try {
-                     await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
-                   } catch (e) {
-                     if (context.mounted) {
-                       ScaffoldMessenger.of(context).showSnackBar(
-                         const SnackBar(content: Text('Could not open editor')),
-                       );
-                     }
-                   }
+                  final uri = Uri.parse('$pageUrl?action=edit&section=all');
+                  try {
+                    await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('editor_cant_open').tr()),
+                      );
+                    }
+                  }
                 },
               ),
               _buildDivider(theme),
@@ -713,22 +869,24 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                 theme.colorScheme.onSurface,
                 onPressed: () async {
                   final uri = Uri.parse(pageUrl);
-                   try {
-                     await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
-                   } catch (e) {
-                     if (context.mounted) {
-                       ScaffoldMessenger.of(context).showSnackBar(
-                         const SnackBar(content: Text('Could not open page')),
-                       );
-                     }
-                   }
+                  try {
+                    await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('page_cant_open').tr()),
+                      );
+                    }
+                  }
                 },
               ),
               _buildDivider(theme),
               _buildActionButton(
                 theme,
                 Icons.arrow_forward_ios,
-                navState.canGoForward ? theme.colorScheme.primary : Colors.grey.withOpacity(0.5),
+                navState.canGoForward
+                    ? theme.colorScheme.primary
+                    : Colors.grey.withValues(alpha: 0.5),
                 onPressed: navState.canGoForward
                     ? () => ref.read(articleNavigationProvider.notifier).next()
                     : null,
@@ -740,7 +898,12 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     );
   }
 
-  Widget _buildActionButton(ThemeData theme, IconData icon, Color color, {VoidCallback? onPressed}) {
+  Widget _buildActionButton(
+    ThemeData theme,
+    IconData icon,
+    Color color, {
+    VoidCallback? onPressed,
+  }) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -758,7 +921,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     return Container(
       height: 20,
       width: 1,
-      color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+      color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
       margin: const EdgeInsets.symmetric(horizontal: 4),
     );
   }

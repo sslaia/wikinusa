@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:html/parser.dart' as html_parser;
@@ -160,7 +161,7 @@ class DefaultHomePageBuilder implements HomePageBuilder {
           ),
           const SizedBox(height: 8),
           Text(
-            'The Free Encyclopedia',
+            'motto'.tr(),
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onPrimaryContainer.withValues(
                 alpha: 0.8,

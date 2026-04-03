@@ -46,15 +46,14 @@ final shortcutsProvider = FutureProvider<Map<String, dynamic>>((ref) async {
     print('Failed to load shortcuts from assets: $e');
     // Absolute minimum fallback to prevent app crash
     return {
-      "nia": [
-        {"icon": "history", "title": "recent_changes", "url": "https://nia.wikipedia.org/wiki/Spesial:Perubahan_terbaru"},
-        {"icon": "campaign_outlined", "title": "announcement", "url": "https://nia.wikipedia.org/wiki/Wikipedia:Angombakhata"},
-        {"icon": "people_outlined", "title": "community_portal", "url": "https://nia.wikipedia.org/wiki/Wikipedia:Bawagöli_zato"},
-        {"icon": "water_drop_outlined", "title": "village_pump", "url": "https://nia.wikipedia.org/wiki/Wikipedia:Monganga_afo"},
-        {"icon": "construction_outlined", "title": "sandbox", "url": "https://nia.wikipedia.org/wiki/Wikipedia:Nahia_wamakori"},
-        {"icon": "help_outlined", "title": "help", "url": "https://nia.wikipedia.org/wiki/Fanolo:Fanolo"},
-        {"icon": "support_agent_outlined", "title": "helpers", "url": "https://nia.wikipedia.org/wiki/Wikipedia:Sangai_halöŵö"}
-      ]
+      "id": [
+        {"icon": "history", "title": "Perubahan terbaru", "url": "https://id.wikipedia.org/wiki/Istimewa:Perubahan_terbaru"},
+        {"icon": "pages_outlined", "title": "Halaman istimewa", "url": "https://id.wikipedia.org/wiki/Istimewa:Halaman_istimewa"},
+        {"icon": "people_outlined", "title": "Portal komunitas", "url": "https://id.wikipedia.org/wiki/Portal:Komunitas"},
+        {"icon": "chat_bubble_outline", "title": "Warung kopi", "url": "https://id.wikipedia.org/wiki/Wikipedia:Warung_Kopi"},
+        {"icon": "construction_outlined", "title": "Bak pasir", "url": "https://id.wikipedia.org/wiki/Wikipedia:Bak_pasir"},
+        {"icon": "help_outlined", "title": "Bantuan", "url": "https://id.wikipedia.org/wiki/Bantuan:Isi"}
+      ],
     };
   }
 });
