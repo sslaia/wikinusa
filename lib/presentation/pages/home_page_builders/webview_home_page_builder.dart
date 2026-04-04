@@ -26,7 +26,9 @@ class WebViewHomePageBuilder implements HomePageBuilder {
             controller.runJavaScript("""
               (function() {
                 var style = document.createElement('style');
-                style.innerHTML = '.header-container.header-chrome, .mw-footer.minerva-footer { display: none !important; }';
+                style.innerHTML = '.header-container.header-chrome, .mw-footer.minerva-footer { display: none !important; }
+                a.new, a[href*="action=edit"] { color: #a77364 !important; }
+                ';
                 document.head.appendChild(style);
               })();
             """);

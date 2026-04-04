@@ -601,6 +601,17 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                     color: theme.colorScheme.onSurface,
                   ),
                   customStylesBuilder: (element) {
+                    // Fix footnote line breaks inside the popup as well
+                    if (element.localName == 'sup' ||
+                        element.classes.contains('reference')) {
+                      return {
+                        'display': 'inline',
+                        'font-size': '0.75em',
+                        'vertical-align': 'super',
+                        'line-height': '0',
+                      };
+                    }
+                    // Fix red link colors
                     if (element.localName == 'a') {
                       return {
                         'color':
@@ -632,6 +643,11 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     final List<String> toRemoveSelectors = [
       ...(globalRules['remove'] as List<dynamic>? ?? []),
       ...(langRules['remove'] as List<dynamic>? ?? []),
+      '.reflist',
+      '.references',
+      '.mw-references-wrap',
+      '.navbox',
+      'table',
     ].map((e) => e.toString()).toList();
 
     final List<String> toHideSelectors = [
@@ -680,6 +696,27 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
             ),
             customStylesBuilder: (element) {
               final lowerText = element.text.toLowerCase();
+
+              // Force inline display for superscripts to fix line breaks
+              if (element.localName == 'sup' ||
+                  element.classes.contains('reference')) {
+                return {
+                  'display': 'inline',
+                  'font-size': '0.75em',
+                  'vertical-align': 'super',
+                  'line-height': '0',
+                };
+              }
+
+              // Fix red link colors
+              if (element.localName == 'a') {
+                final href = element.attributes['href'] ?? '';
+                if (href.contains('action=edit') ||
+                    element.classes.contains('new')) {
+                  return {'color': '#a77364', 'text-decoration': 'none'};
+                }
+              }
+
               if (element.localName?.startsWith('h') == true &&
                   referenceKeywords.any(
                     (k) => lowerText.contains(k.toLowerCase()),
@@ -703,6 +740,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                   'font-weight': '600',
                 };
               }
+
               if (element.classes.contains('new')) {
                 return {
                   'color':
@@ -712,46 +750,11 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
               if (element.localName == 'p') {
                 return {'margin-bottom': '16px'};
               }
-              if (element.localName == 'sup') {
-                return {'font-size': '0.75em', 'vertical-align': 'super'};
-              }
               return null;
             },
             customWidgetBuilder: (element) {
-              if (element.localName == 'sup') {
-                final isRef =
-                    element.classes.contains('reference') ||
-                    element.classes.contains('mw-ref') ||
-                    element.attributes['role'] == 'doc-noteref';
-
-                if (isRef) {
-                  final link = element.querySelector('a');
-                  final href = link?.attributes['href'];
-                  if (href != null && href.contains('cite_note')) {
-                    final refId = href.split('#').last;
-                    return GestureDetector(
-                      onTap: () => _showReferencePopup(
-                        context,
-                        refId,
-                        article.text,
-                        langCode,
-                      ),
-                      behavior: HitTestBehavior.opaque,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                        child: Text(
-                          element.text,
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: theme.colorScheme.primary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-                }
-              }
+              // Note: sup logic is intentionally omitted here to prevent line breaks.
+              // It is handled by onTapUrl and customStylesBuilder instead.
 
               if (element.localName?.startsWith('h') == true) {
                 final text = element.text;
