@@ -1,4 +1,7 @@
 {
+  "discard_changes": "Discard changes",
+  "unfinished_editing_warning": "There are not saved editing",
+  "discard": "Discard changes",
   "enter_a_title_first": "Please enter a title first",
   "could_not_launch_editor_for": "Could not launch editor for",
   "new_entry": "New entry",
@@ -47,6 +50,7 @@
   "featured_article": "FEATURED ARTICLE",
   "featured_image": "FEATURED IMAGE",
   "fetching_random_article": "Fetching random article...",
+  "find_in_page": "Find in this page",
   "font_size": "Font size",
   "footer_disclaimer": "Disclaimer",
   "footer_license": "Text is available under the Creative Commons Attribution-ShareAlike License; additional terms may apply. By using this site, you agree to the Terms of Use and Privacy Policy. Wikipedia® is a registered trademark of the Wikimedia Foundation, Inc., a non-profit organization.",
@@ -124,6 +128,7 @@
   "small": "Small",
   "sundanese": "Sundanese",
   "system": "system",
+  "webview_error": "WebView error",
   "welcome_to": "Welcome to",
   "wiki_portals": "Wiki Portals",
   "yes": "Yes"

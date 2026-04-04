@@ -1,4 +1,7 @@
 {
+  "discard_changes": "Buang perubahan",
+  "unfinished_editing_warning": "Suntingan Anda belum disimpan",
+  "discard": "Buang suntingan",
   "enter_a_title_first": "Silakan mengisi judul lebih dahulu",
   "could_not_launch_editor_for": "Gagal membuka editor",
   "new_entry": "Entri baru",
@@ -47,6 +50,7 @@
   "featured_article": "ARTIKEL PILIHAN",
   "featured_image": "GAMBAR PILIHAN",
   "fetching_random_article": "Memuat halaman sembarang...",
+  "find_in_page": "Cari di halaman ini",
   "font_size": "Ukuran Huruf",
   "footer_disclaimer": "Penafian",
   "footer_license": "Teks berada di bawah lisensi Creative Commons Attribution-ShareAlike License; ketentuan tambahan berlaku. Dengan menggunakan situs ini Anda setuju dengan Ketentuan dan Kebijakan Privasi. Wikipedia® adalah merek terdaftar dari Wikimedia Foundation, Inc., sebuah organisasi nirlaba.",
@@ -79,7 +83,7 @@
   "onboarding1_description": "Jelajahi Wikipedia dalam bahasa lokal di Indonesia hanya dalam satu aplikasi..",
   "onboarding1": "Selamat Datang di WikiNusa",
   "onboarding2": "Buat Penanda Halaman",
-  "onboarding2_description": "Tandai halaman yang Anda ingin baca kemudian.",
+  "onboarding2_description": "Tandai halaman yang Anda ingin baca kemudian dan bangun pustaka pribadi Anda",
   "onboarding3_description": "Temukan informasi yang Anda inginkan, langsung dari Beranda.",
   "onboarding3": "Pencarian",
   "onboarding4": "Pilih Wiki Anda",
@@ -123,6 +127,7 @@
   "small": "Kecil",
   "sundanese": "Bahasa Sunda",
   "system": "sistem",
+  "webview_error": "Galat WebView",
   "welcome_to": "Selamat Datang ke",
   "wiki_portals": "Portal Wiki",
   "yes": "Ya"

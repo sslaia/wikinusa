@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:wikinusa/presentation/pages/webview_screen.dart';
 import '../providers/shortcuts_provider.dart';
 import '../providers/language_provider.dart';
 
@@ -87,6 +88,20 @@ void showShortcutsBottomSheet(BuildContext context, WidgetRef ref) {
                               final url = shortcut['url'] as String;
                               final uri = Uri.parse(url);
                               try {
+                                // Open the link in the webview window
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => WebViewScreen(
+                                      langCode: langCode,
+                                      pageTitle: uri.pathSegments.last,
+                                    ),
+                                  ),
+                                );
+
+                                // Alternatively, open the link in the in-app browser
+                                // await launchUrl(uri);
+                              } catch (e) {
                                 // Using inAppBrowserView provides a back/done button to return to the app
                                 await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
                               } catch (e) {

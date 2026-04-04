@@ -6,6 +6,7 @@ import 'package:html/parser.dart' as html_parser;
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wikinusa/presentation/pages/create_page_screen.dart';
+import 'package:wikinusa/presentation/pages/webview_screen.dart';
 import 'package:wikinusa/presentation/widgets/wikinusa_footer.dart';
 import '../widgets/custom_bottom_nav_bar.dart';
 import '../widgets/custom_drawer.dart';
@@ -71,10 +72,24 @@ class ArticleScreen extends ConsumerStatefulWidget {
         isSpecialPage =
             lowerTitle.startsWith('special:') ||
             lowerTitle.startsWith('spesial:') ||
-            lowerTitle.startsWith('istimewa:');
+            lowerTitle.startsWith('istimewa:') ||
+            lowerTitle.startsWith('khas:');
       }
 
-      // 5. Routing Logic
+      // Routing Logic
+      if (isSpecialPage && extractedTitle != null) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => WebViewScreen(
+              langCode: langCode,
+              pageTitle: extractedTitle!,
+            ),
+          ),
+        );
+        return;
+      }
+
       if (extractedTitle != null &&
           isMainWiki &&
           !isRedLink &&
@@ -100,14 +115,36 @@ class ArticleScreen extends ConsumerStatefulWidget {
           );
         }
       } else {
-        // Everything else: Open in in-app browser
-        await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
+        // Everything else: Open in in-app WebView
+        // Open in a WebView page
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => WebViewScreen(
+              langCode: langCode,
+              pageTitle: extractedTitle ?? uri.pathSegments.last,
+            ),
+          ),
+        );
+        // Alternatively: Open in in-app browser
+        // await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
       }
     } catch (e) {
       debugPrint('Link handling error: $e');
       try {
         final fallbackUri = Uri.parse(Uri.encodeFull(url));
-        await launchUrl(fallbackUri, mode: LaunchMode.inAppBrowserView);
+        // Open in a WebView page
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => WebViewScreen(
+              langCode: langCode,
+              pageTitle: fallbackUri.pathSegments.last,
+            ),
+          ),
+        );
+        // Alternatively: Open in in-app browser
+        // await launchUrl(fallbackUri, mode: LaunchMode.inAppBrowserView);
       } catch (_) {}
     }
   }
@@ -207,7 +244,8 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                 ),
               ),
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (err, stack) => Center(child: Text('${'error'.tr()}: $err')),
+              error: (err, stack) =>
+                  Center(child: Text('${'error'.tr()}: $err')),
             ),
         bottomNavigationBar: const CustomBottomNavBar(),
       ),
