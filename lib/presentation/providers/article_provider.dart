@@ -23,6 +23,8 @@ final articleRepositoryProvider = Provider<ArticleRepository>((ref) {
 
 final homePageProvider = FutureProvider<String>((ref) async {
   final langCode = ref.watch(languageProvider).code;
+  
+  // Wait for page titles to be loaded
   final titlesData = await ref.watch(pageTitlesProvider.future);
   
   String mainPageTitle = 'Main_Page';
@@ -36,10 +38,19 @@ final homePageProvider = FutureProvider<String>((ref) async {
   }
 
   final repository = ref.watch(articleRepositoryProvider);
-  final rawHtml = await repository.getHomePage(langCode, mainPageTitle);
   
-  // Pre-process the HTML before handing it to the UI
-  return HomePageProcessor.process(rawHtml, langCode);
+  try {
+    final rawHtml = await repository.getHomePage(langCode, mainPageTitle);
+    // Pre-process the HTML before handing it to the UI
+    return HomePageProcessor.process(rawHtml, langCode);
+  } catch (e) {
+    // If the localized main page fails, try fallback to generic 'Main_Page'
+    if (mainPageTitle != 'Main_Page') {
+      final fallbackHtml = await repository.getHomePage(langCode, 'Main_Page');
+      return HomePageProcessor.process(fallbackHtml, langCode);
+    }
+    rethrow;
+  }
 });
 
 final articleDetailProvider = FutureProvider.family<Article, String>((

@@ -5,6 +5,7 @@ import '../providers/bookmarks_provider.dart';
 import '../providers/article_provider.dart';
 import '../providers/language_provider.dart';
 import 'article_screen.dart';
+import 'webview_screen.dart';
 
 class BookmarksScreen extends ConsumerWidget {
   const BookmarksScreen({super.key});
@@ -74,22 +75,38 @@ class BookmarksScreen extends ConsumerWidget {
                     },
                   ),
                   onTap: () {
-                    // Update current language if it's different from the bookmark's language
-                    final currentLang = ref.read(languageProvider);
-                    if (currentLang.code != bookmark.langCode) {
-                      // Note: This assumes languageProvider has a way to change language by code.
-                      // If there's no setLanguageByCode, we might need to find the language object.
-                      // For now, we'll just navigate.
-                    }
+                    final currentLangCode = ref.read(languageProvider).code;
 
-                    // Reset navigation history and navigate to the article
-                    ref.read(articleNavigationProvider.notifier).setArticles([bookmark.title], 0);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => ArticleScreen(pageTitle: bookmark.title),
-                      ),
-                    );
+                    if (currentLangCode == bookmark.langCode) {
+                      // Update current language if it's different from the bookmark's language
+                      // (Kept for future logic if needed)
+                      /*
+                      final currentLang = ref.read(languageProvider);
+                      if (currentLang.code != bookmark.langCode) {
+                        // Note: This assumes languageProvider has a way to change language by code.
+                      }
+                      */
+
+                      // Reset navigation history and navigate to the native article screen
+                      ref.read(articleNavigationProvider.notifier).setArticles([bookmark.title], 0);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ArticleScreen(pageTitle: bookmark.title),
+                        ),
+                      );
+                    } else {
+                      // Navigate to WebViewScreen for articles in different languages
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => WebViewScreen(
+                            langCode: bookmark.langCode,
+                            pageTitle: bookmark.title,
+                          ),
+                        ),
+                      );
+                    }
                   },
                 );
               },

@@ -40,14 +40,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           if (titlesData.containsKey(language.code)) {
             final langTitles = titlesData[language.code] as List;
             final entry = langTitles.firstWhere(
-                  (e) => e.containsKey('main_page'),
+              (e) => e.containsKey('main_page'),
               orElse: () => {'main_page': 'Main_Page'},
             );
             mainPageTitle = entry['main_page'];
           }
           return SafeArea(
             bottom: false,
-            child: builder.build(context, mainPageTitle, html, language.code, orientation),
+            child: builder.build(
+              context,
+              mainPageTitle,
+              html,
+              language.code,
+              orientation,
+            ),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
