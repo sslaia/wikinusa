@@ -306,8 +306,8 @@ class NiasHomePageBuilder implements HomePageBuilder {
                   return true;
                 },
                 textStyle: theme.textTheme.bodyMedium?.copyWith(
-                  fontFamily: 'serif',
-                  fontSize: 16,
+                  // fontFamily: 'serif',
+                  // fontSize: 16,
                   height: 1.6,
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.85),
                 ),
