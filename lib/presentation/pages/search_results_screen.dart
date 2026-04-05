@@ -29,7 +29,13 @@ class SearchResultsScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: theme.colorScheme.surfaceContainerLow,
       appBar: AppBar(
-        title: Text('${'search_results'.tr()}: $query'),
+        centerTitle: false,
+        titleSpacing: 0,
+        title: Text('${'search_results'.tr()}: $query',
+          style: theme.textTheme.titleMedium?.copyWith(
+            color: theme.colorScheme.primary,
+          ),
+        ),
         backgroundColor: theme.colorScheme.surface,
         elevation: 0,
       ),

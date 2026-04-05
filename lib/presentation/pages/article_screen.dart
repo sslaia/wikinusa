@@ -81,10 +81,8 @@ class ArticleScreen extends ConsumerStatefulWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => WebViewScreen(
-              langCode: langCode,
-              pageTitle: extractedTitle!,
-            ),
+            builder: (_) =>
+                WebViewScreen(langCode: langCode, pageTitle: extractedTitle!),
           ),
         );
         return;
@@ -179,11 +177,31 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
         'https://$langCode.wikipedia.org/wiki/${currentTitle.replaceAll(' ', '_')}';
 
     return PopScope(
-      canPop: !navState.canGoBack,
-      onPopInvokedWithResult: (didPop, result) {
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
+
+        // If the internal ArticleNavigationProvider has history (pushed via pushArticle), go back internally
         if (navState.canGoBack) {
           ref.read(articleNavigationProvider.notifier).previous();
+          return;
+        }
+
+        // If no internal history, jump back to SearchResultsScreen if it exists
+        bool movedBack = false;
+        Navigator.popUntil(context, (route) {
+          if (route.settings.name == 'SearchResultsScreen') {
+            movedBack = true;
+            return true;
+          }
+          // Also stop at HomeScreen to prevent black screens
+          if (route.isFirst) return true;
+          return false;
+        });
+
+        // Fallback if popUntil didn't trigger a pop (e.g., if SearchResultsScreen wasn't in stack)
+        if (!movedBack) {
+          Navigator.of(context).pop();
         }
       },
       child: Scaffold(
@@ -504,11 +522,14 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
               child: IconButton(
                 icon: Icon(Icons.arrow_back, color: theme.colorScheme.primary),
                 onPressed: () {
-                  if (navState.canGoBack) {
-                    ref.read(articleNavigationProvider.notifier).previous();
-                  } else {
-                    Navigator.pop(context);
-                  }
+                  // Jump back to HomeScreen or to SearchResultsScreen if it exists
+                  // No need to go back in stack, as we already have FloatingActionBar for this
+                  Navigator.popUntil(
+                    context,
+                    (route) =>
+                        route.settings.name == 'SearchResultsScreen' ||
+                        route.isFirst,
+                  );
                 },
               ),
             ),
@@ -534,7 +555,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
         document.getElementById(referenceId);
 
     if (refElement == null) {
-      debugPrint('Reference element not found: $referenceId');
+      debugPrint('${'reference_not_found'.tr()}: $referenceId');
       return;
     }
 

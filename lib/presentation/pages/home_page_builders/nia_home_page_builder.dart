@@ -49,8 +49,8 @@ class NiasHomePageBuilder implements HomePageBuilder {
       'div#mp-featured-photo, div#mf-tfp',
       removeHeadings: true,
     );
-    final doYouKnow = extractHtmlSnippet('div#mp-dyk, div#mf-dyk');
-    final thisMonthInHistory = extractHtmlSnippet('div#mp-otm, div#mf-otd');
+    final doYouKnow = extractHtmlSnippet('div#mp-dyk-body, div#mf-dyk');
+    final thisMonthInHistory = extractHtmlSnippet('div#mp-otm-body, div#mf-otd');
 
     // Extract featured image URL for background
     String? featuredImageUrl;
@@ -352,7 +352,8 @@ class NiasHomePageBuilder implements HomePageBuilder {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => SearchResultsScreen(query: str),
+                  settings: const RouteSettings(name: 'SearchResultsScreen'),
+                  builder: (_) => SearchResultsScreen(query: str),
                 ),
               );
             }

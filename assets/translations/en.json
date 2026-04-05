@@ -110,6 +110,7 @@
   "recent_changes": "Recent Changes",
   "recent_events": "RECENT EVENTS",
   "reference": "Reference",
+  "reference_not_found": "Reference element not found",
   "refresh": "Reload the page",
   "refreshing_content": "Refreshing content...",
   "retry": "Retry",

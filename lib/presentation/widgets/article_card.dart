@@ -26,7 +26,7 @@ class ArticleCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: const Color(0x0F1B1C1C), // 6% black/onSurface
+              color: const Color(0x0F1B1C1C),
               blurRadius: 32,
               offset: const Offset(0, 12),
             ),
@@ -35,21 +35,6 @@ class ArticleCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // if (article.isFeatured)
-            //   Container(
-            //     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            //     margin: const EdgeInsets.only(bottom: 12),
-            //     decoration: BoxDecoration(
-            //       color: theme.colorScheme.tertiaryFixedDim,
-            //       borderRadius: BorderRadius.circular(4),
-            //     ),
-            //     child: Text(
-            //       'FEATURED',
-            //       style: theme.textTheme.labelMedium?.copyWith(
-            //         color: theme.colorScheme.onTertiaryFixed,
-            //       ),
-            //     ),
-            //   ),
             Text(article.title, style: theme.textTheme.titleLarge),
             const SizedBox(height: 8),
             Text(
@@ -58,13 +43,6 @@ class ArticleCard extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: theme.textTheme.bodyLarge,
             ),
-            // const SizedBox(height: 12),
-            // Text(
-            //   '${article.author} • ${article.lastEdited.toString().split(" ")[0]}',
-            //   style: theme.textTheme.labelMedium?.copyWith(
-            //     color: theme.colorScheme.primary,
-            //   ),
-            // ),
           ],
         ),
       ),
