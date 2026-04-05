@@ -145,8 +145,6 @@ void showShortcutsBottomSheet(BuildContext context, WidgetRef ref) {
 
 IconData _getIconData(String name) {
   switch (name) {
-    case 'history':
-      return Icons.history;
     case 'campaign_outlined':
       return Icons.campaign_outlined;
     case 'chat_bubble_outlined':
@@ -154,18 +152,22 @@ IconData _getIconData(String name) {
     case 'construction_outlined':
       return Icons.construction_outlined;
     case 'help_outlined':
-      return Icons.help_outlined;
+    case 'help_outline':
+      return Icons.help_outline;
+    case 'history':
+      return Icons.history;
     case 'newspaper_outlined':
       return Icons.newspaper_outlined;
     case 'pages_outlined':
       return Icons.pages_outlined;
     case 'people_outlined':
+    case 'people_outline':
       return Icons.people_outlined;
-    case 'water_drop_outlined':
-      return Icons.water_drop_outlined;
     case 'support_agent_outlined':
       return Icons.support_agent_outlined;
+    case 'water_drop_outlined':
+      return Icons.water_drop_outlined;
     default:
-      return Icons.content_copy;
+      return Icons.link;
   }
 }
