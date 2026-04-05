@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:html/parser.dart' as html_parser;
+import 'package:html/dom.dart' as dom;
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wikinusa/presentation/pages/create_page_screen.dart';
@@ -16,6 +17,19 @@ import '../providers/html_rules_provider.dart';
 import '../providers/bookmarks_provider.dart';
 import '../../domain/entities/article.dart';
 import '../../core/theme_config.dart';
+
+/// Helper to store extracted image data
+class ArticleImageMetadata {
+  final Map<String, String>? hero;
+  final List<Map<String, String>> bottomCarousel;
+  final List<String> usedInGalleries;
+
+  ArticleImageMetadata({
+    this.hero,
+    required this.bottomCarousel,
+    required this.usedInGalleries,
+  });
+}
 
 class ArticleScreen extends ConsumerStatefulWidget {
   final String pageTitle;
@@ -76,13 +90,15 @@ class ArticleScreen extends ConsumerStatefulWidget {
             lowerTitle.startsWith('khas:');
       }
 
-      // Routing Logic
+      // 5. Routing Logic
       if (isSpecialPage && extractedTitle != null) {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) =>
-                WebViewScreen(langCode: langCode, pageTitle: extractedTitle!),
+            builder: (_) => WebViewScreen(
+              langCode: langCode,
+              pageTitle: extractedTitle!,
+            ),
           ),
         );
         return;
@@ -212,7 +228,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
             .when(
               data: (article) => rulesAsync.when(
                 data: (rules) {
-                  final images = _extractImages(article.text, langCode, rules);
+                  final metadata = _extractMetadata(article.text, langCode, rules);
                   return Stack(
                     children: [
                       SingleChildScrollView(
@@ -222,9 +238,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                             _buildHeroImage(
                               theme,
                               article,
-                              langCode,
-                              rules,
-                              navState,
+                              metadata.hero,
                             ),
                             _buildArticleContent(
                               theme,
@@ -232,9 +246,9 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                               langCode,
                               rules,
                             ),
-                            if (images.isNotEmpty) ...[
+                            if (metadata.bottomCarousel.isNotEmpty) ...[
                               const SizedBox(height: 32),
-                              _buildImageCarousel(theme, images),
+                              _buildImageCarousel(theme, metadata.bottomCarousel),
                             ],
                             const WikinusaFooter(),
                             const SizedBox(height: 100),
@@ -259,6 +273,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                   pageUrl,
                   currentTitle,
                   langCode,
+                  rulesAsync.value ?? {},
                 ),
               ),
               loading: () => const Center(child: CircularProgressIndicator()),
@@ -277,14 +292,16 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     String pageUrl,
     String title,
     String langCode,
+    Map<String, dynamic> rules,
   ) {
+    final metadata = _extractMetadata(article.text, langCode, rules);
     return Stack(
       children: [
         SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeroImage(theme, article, '', {}, navState),
+              _buildHeroImage(theme, article, metadata.hero),
               _buildArticleContent(theme, article, '', {}),
               const SizedBox(height: 100),
             ],
@@ -295,62 +312,119 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     );
   }
 
-  List<Map<String, String>> _extractImages(
+  /// Metadata extraction to handle Hero Image selection and Bottom Carousel filtering
+  ArticleImageMetadata _extractMetadata(
     String html,
     String langCode,
     Map<String, dynamic> rules,
   ) {
     final doc = html_parser.parse(html);
+    final List<Map<String, String>> allImages = [];
+    final List<String> usedInGalleries = [];
 
-    final langRules = rules[langCode] ?? {};
-    final globalRules = rules['global'] ?? {};
-
-    final List<String> toRemoveSelectors = [
-      ...(globalRules['remove'] as List<dynamic>? ?? []),
-      ...(langRules['remove'] as List<dynamic>? ?? []),
-      'table',
-      '.sidebar',
-      '.vertical-navbox',
-    ].map((e) => e.toString()).toList();
-
-    if (toRemoveSelectors.isNotEmpty) {
-      doc
-          .querySelectorAll(toRemoveSelectors.join(', '))
-          .forEach((e) => e.remove());
+    // 1. Identify all galleries and collect their images first
+    final galleries = doc.querySelectorAll('.gallery');
+    for (var gallery in galleries) {
+      final galleryImages = _extractImagesFromElement(gallery);
+      usedInGalleries.addAll(galleryImages.map((e) => e['url']!));
     }
 
-    final List<Map<String, String>> images = [];
+    // 2. Collect all images in the document for general processing
+    doc.querySelectorAll('figure, .thumb, .mw-file-description, img').forEach((element) {
+      final images = _extractImagesFromElement(element);
+      for (var img in images) {
+        if (!allImages.any((existing) => existing['url'] == img['url'])) {
+          allImages.add(img);
+        }
+      }
+    });
 
-    doc
-        .querySelectorAll(
-          'figure, .thumb, .thumbinner, .gallerybox, .mw-file-description',
-        )
-        .forEach((element) {
-          final img = element.querySelector('img');
-          final caption =
-              element.querySelector('figcaption') ??
-              element.querySelector('.thumbcaption') ??
-              element.querySelector('.gallerytext');
+    // 3. Determine Hero Image
+    Map<String, String>? hero;
+    
+    // Prioritize the first image of the first gallery
+    if (galleries.isNotEmpty) {
+      final firstGalleryImages = _extractImagesFromElement(galleries.first);
+      if (firstGalleryImages.isNotEmpty) {
+        hero = firstGalleryImages.first;
+      }
+    }
 
-          if (img != null) {
-            String? src = img.attributes['src'];
-            if (src != null && src.isNotEmpty) {
-              if (src.startsWith('//')) src = 'https:$src';
+    // If no gallery or first gallery image is missing, find the first non-tiny image
+    if (hero == null) {
+      for (var img in allImages) {
+        final url = img['url'] ?? '';
+        // Avoid icons, SVGs or symbols
+        final isIcon = url.contains('/icon/') || url.contains('/Symbol_') || url.contains('.svg') || url.contains('/favicon');
+        if (!isIcon) {
+          hero = img;
+          break;
+        }
+      }
+    }
 
-              if (!images.any((item) => item['url'] == src)) {
-                images.add({'url': src, 'caption': caption?.text.trim() ?? ''});
-              }
-            }
+    // 4. Determine Bottom Carousel images (those not used as hero and not in any gallery)
+    final bottomCarousel = allImages.where((img) {
+      final isHero = img['url'] == hero?['url'];
+      final isInGallery = usedInGalleries.contains(img['url']);
+      return !isHero && !isInGallery;
+    }).toList();
+
+    return ArticleImageMetadata(
+      hero: hero,
+      bottomCarousel: bottomCarousel,
+      usedInGalleries: usedInGalleries,
+    );
+  }
+
+  /// Helper to extract image source and caption from a DOM element
+  List<Map<String, String>> _extractImagesFromElement(dom.Element element) {
+    final List<Map<String, String>> found = [];
+    final imgElements = element.localName == 'img' ? [element] : element.querySelectorAll('img');
+
+    for (var img in imgElements) {
+      String? src = img.attributes['src'] ?? img.attributes['data-src'];
+      if (src != null && src.isNotEmpty) {
+        if (src.startsWith('//')) src = 'https:$src';
+        
+        // Skip tiny images or icons based on width if provided
+        final widthStr = img.attributes['width'];
+        if (widthStr != null) {
+          final width = int.tryParse(widthStr);
+          if (width != null && width < 50) continue;
+        }
+
+        // Try to find a caption nearby
+        dom.Element container = element;
+        dom.Element? parent = img.parent;
+        // Traverse up to find a known container class
+        while (parent != null && parent != element.parent) {
+          if (parent.classes.contains('thumbinner') || parent.classes.contains('gallerybox')) {
+            container = parent;
+            break;
           }
-        });
+          parent = parent.parent;
+        }
 
-    return images;
+        final captionElement = container.querySelector('.thumbcaption') ?? 
+                             container.querySelector('.gallerytext') ?? 
+                             container.querySelector('figcaption');
+
+        found.add({
+          'url': src,
+          'caption': captionElement?.text.trim() ?? '',
+        });
+      }
+    }
+    return found;
   }
 
   Widget _buildImageCarousel(
     ThemeData theme,
     List<Map<String, String>> images,
   ) {
+    if (images.isEmpty) return const SizedBox.shrink();
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -423,35 +497,9 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
   Widget _buildHeroImage(
     ThemeData theme,
     Article article,
-    String langCode,
-    Map<String, dynamic> rules,
-    ArticleNavigationState navState,
+    Map<String, String>? heroData,
   ) {
-    final doc = html_parser.parse(article.text);
-    final tempBody = doc.body;
-
-    final langRules = rules[langCode] ?? {};
-    final globalRules = rules['global'] ?? {};
-
-    final List<String> toRemoveSelectors = [
-      ...(globalRules['remove'] as List<dynamic>? ?? []),
-      ...(langRules['remove'] as List<dynamic>? ?? []),
-    ].map((e) => e.toString()).toList();
-
-    if (toRemoveSelectors.isNotEmpty) {
-      tempBody
-          ?.querySelectorAll(toRemoveSelectors.join(', '))
-          .forEach((e) => e.remove());
-    }
-
-    final imgElement = tempBody?.querySelector('img');
-    String? imageUrl =
-        imgElement?.attributes['src'] ??
-        doc.querySelector('img')?.attributes['src'];
-
-    if (imageUrl != null && imageUrl.startsWith('//')) {
-      imageUrl = 'https:$imageUrl';
-    }
+    final imageUrl = heroData?['url'];
 
     return Stack(
       children: [
@@ -464,7 +512,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                   ? NetworkImage(imageUrl)
                   : const AssetImage(
                       'assets/images/woman_reading_a_book_on_lap.webp',
-                    ),
+                    ) as ImageProvider,
               fit: BoxFit.cover,
             ),
           ),
@@ -517,21 +565,23 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
         SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: CircleAvatar(
-              backgroundColor: theme.colorScheme.surface.withValues(alpha: 0.5),
-              child: IconButton(
-                icon: Icon(Icons.arrow_back, color: theme.colorScheme.primary),
-                onPressed: () {
-                  // Jump back to HomeScreen or to SearchResultsScreen if it exists
-                  // No need to go back in stack, as we already have FloatingActionBar for this
-                  Navigator.popUntil(
-                    context,
-                    (route) =>
-                        route.settings.name == 'SearchResultsScreen' ||
-                        route.isFirst,
-                  );
-                },
-              ),
+            child: Consumer(
+              builder: (context, ref, child) {
+                final navState = ref.watch(articleNavigationProvider);
+                return CircleAvatar(
+                  backgroundColor: theme.colorScheme.surface.withValues(alpha: 0.5),
+                  child: IconButton(
+                    icon: Icon(Icons.arrow_back, color: theme.colorScheme.primary),
+                    onPressed: () {
+                      if (navState.canGoBack) {
+                        ref.read(articleNavigationProvider.notifier).previous();
+                      } else {
+                        Navigator.pop(context);
+                      }
+                    },
+                  ),
+                );
+              },
             ),
           ),
         ),
@@ -555,7 +605,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
         document.getElementById(referenceId);
 
     if (refElement == null) {
-      debugPrint('${'reference_not_found'.tr()}: $referenceId');
+      debugPrint('Reference element not found: $referenceId');
       return;
     }
 
@@ -669,6 +719,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
       '.mw-references-wrap',
       '.navbox',
       'table',
+      '.sidebar',
     ].map((e) => e.toString()).toList();
 
     final List<String> toHideSelectors = [
@@ -774,8 +825,16 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
               return null;
             },
             customWidgetBuilder: (element) {
-              // Note: sup logic is intentionally omitted here to prevent line breaks.
-              // It is handled by onTapUrl and customStylesBuilder instead.
+              // DETECT GALLERY AND RENDER AS CAROUSEL
+              if (element.classes.contains('gallery')) {
+                final images = _extractImagesFromElement(element);
+                if (images.isNotEmpty) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 24.0),
+                    child: _buildImageCarousel(theme, images),
+                  );
+                }
+              }
 
               if (element.localName?.startsWith('h') == true) {
                 final text = element.text;
