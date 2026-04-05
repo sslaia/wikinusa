@@ -149,14 +149,20 @@ IconData _getIconData(String name) {
       return Icons.history;
     case 'campaign_outlined':
       return Icons.campaign_outlined;
-    case 'people_outline':
-      return Icons.people_outline;
-    case 'water_drop_outlined':
-      return Icons.water_drop_outlined;
+    case 'chat_bubble_outlined':
+      return Icons.chat_bubble_outlined;
     case 'construction_outlined':
       return Icons.construction_outlined;
-    case 'help_outline':
-      return Icons.help_outline;
+    case 'help_outlined':
+      return Icons.help_outlined;
+    case 'newspaper_outlined':
+      return Icons.newspaper_outlined;
+    case 'pages_outlined':
+      return Icons.pages_outlined;
+    case 'people_outlined':
+      return Icons.people_outlined;
+    case 'water_drop_outlined':
+      return Icons.water_drop_outlined;
     case 'support_agent_outlined':
       return Icons.support_agent_outlined;
     default:
