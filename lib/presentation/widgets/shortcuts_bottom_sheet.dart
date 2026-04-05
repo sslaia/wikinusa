@@ -168,6 +168,6 @@ IconData _getIconData(String name) {
     case 'water_drop_outlined':
       return Icons.water_drop_outlined;
     default:
-      return Icons.link;
+      return Icons.content_copy;
   }
 }

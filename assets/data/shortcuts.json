@@ -6,7 +6,7 @@
     {"icon": "people_outlined", "title": "Bawagöli zato", "url": "https://nia.wikipedia.org/wiki/Wikipedia:Bawagöli_zato"},
     {"icon": "chat_bubble_outlined", "title": "Monganga afo", "url": "https://nia.wikipedia.org/wiki/Wikipedia:Monganga_afo"},
     {"icon": "construction_outlined", "title": "Nahia wamakori", "url": "https://nia.wikipedia.org/wiki/Wikipedia:Nahia_wamakori"},
-    {"icon": "help_outlined", "title": "Fanolo", "url": "https://nia.wikipedia.org/wiki/Fanolo:Fanolo"},
+    {"icon": "help_outline", "title": "Fanolo", "url": "https://nia.wikipedia.org/wiki/Fanolo:Fanolo"},
     {"icon": "support_agent_outlined", "title": "Sangai halöŵö", "url": "https://nia.wikipedia.org/wiki/Wikipedia:Sangai_halöŵö"}
   ],
   "en": [
@@ -15,8 +15,8 @@
     {"icon": "people_outlined", "title": "Community portal", "url": "https://en.wikipedia.org/wiki/Wikipedia:Community_portal"},
     {"icon": "chat_bubble_outlined", "title": "Village pump", "url": "https://en.wikipedia.org/wiki/Wikipedia:Village_pump"},
     {"icon": "chat_bubble_outlined", "title": "Teahouse", "url": "https://en.wikipedia.org/wiki/Wikipedia:Teahouse"},
-    {"icon": "help_outlined", "title": "Help desk", "url": "https://en.wikipedia.org/wiki/Wikipedia:Help_desk"},
-    {"icon": "help_outlined", "title": "Reference desk", "url": "https://en.wikipedia.org/wiki/Wikipedia:Reference_desk"},
+    {"icon": "help_outline", "title": "Help desk", "url": "https://en.wikipedia.org/wiki/Wikipedia:Help_desk"},
+    {"icon": "help_outline", "title": "Reference desk", "url": "https://en.wikipedia.org/wiki/Wikipedia:Reference_desk"},
     {"icon": "content_copy", "title": "Content portals", "url": "https://en.wikipedia.org/wiki/Wikipedia:Content/Portals"},
     {"icon": "pages_outlined", "title": "Special pages", "url": "https://en.wikipedia.org/wiki/Special:SpecialPages"}
   ],
@@ -26,7 +26,7 @@
     {"icon": "people_outlined", "title": "Portal komunitas", "url": "https://id.wikipedia.org/wiki/Portal:Komunitas"},
     {"icon": "chat_bubble_outlined", "title": "Warung kopi", "url": "https://id.wikipedia.org/wiki/Wikipedia:Warung_Kopi"},
     {"icon": "construction_outlined", "title": "Bak pasir", "url": "https://id.wikipedia.org/wiki/Wikipedia:Bak_pasir"},
-    {"icon": "help_outlined", "title": "Bantuan", "url": "https://id.wikipedia.org/wiki/Bantuan:Isi"}
+    {"icon": "help_outline", "title": "Bantuan", "url": "https://id.wikipedia.org/wiki/Bantuan:Isi"}
   ],
   "jv": [
     {"icon": "history", "title": "Mirunggan:Owahan_anyar", "url": "https://jv.wikipedia.org/wiki/Mirunggan:Owahan_anyar"},
@@ -35,7 +35,7 @@
     {"icon": "people_outlined", "title": "Gapura:Paguyuban", "url": "https://jv.wikipedia.org/wiki/Gapura:Paguyuban"},
     {"icon": "chat_bubble_outlined", "title": "Wikipédia:Angkringan", "url": "https://jv.wikipedia.org/wiki/Wikipédia:Angkringan"},
     {"icon": "construction_outlined", "title": "Wikipédia:Bak_wedhi", "url": "https://jv.wikipedia.org/wiki/Wikipédia:Bak wedhi"},
-    {"icon": "help_outlined", "title": "Pitulung:Isi", "url": "https://jv.wikipedia.org/wiki/Pitulung:Isi"}
+    {"icon": "help_outline", "title": "Pitulung:Isi", "url": "https://jv.wikipedia.org/wiki/Pitulung:Isi"}
   ],
   "ms": [
     {"icon": "history", "title": "Khas:Perubahan_terkini", "url": "https://ms.wikipedia.org/wiki/Khas:Perubahan_terkini"},
