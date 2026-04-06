@@ -85,7 +85,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       'bew': WebViewHomePageBuilder(),
       'bjn': WebViewHomePageBuilder(),
       'btm': WebViewHomePageBuilder(),
-      'en': WebViewHomePageBuilder(),
+      'en': EnglishHomePageBuilder(),
       'gor': WebViewHomePageBuilder(),
       'id': IndonesianHomePageBuilder(),
       'jv': WebViewHomePageBuilder(),

@@ -12,6 +12,26 @@
   "id": {
     "remove": [".infobox"],
     "hide": [".gallery"],
-    "referenceKeywords": ["reference", "reflist", "catatan kaki", "rujukan"]
+    "referenceKeywords": ["reference", "reflist", "catatan kaki", "rujukan"],
+    "homePageSections": {
+      "featuredArticle": "mf-artikelpilihan",
+      "featuredImage": "mf-gambarpilihan",
+      "recentEvents": "mf-peristiwaterkini",
+      "doYouKnow": "mf-tahukahanda",
+      "onThisDay": "mf-hids"
+    }
+  },
+  "en": {
+    "remove": [".infobox"],
+    "hide": [".gallery"],
+    "referenceKeywords": ["reference", "reflist", "notes"],
+    "homePageSections": {
+      "featuredArticle": "mp-tfa",
+      "inTheNews": "mp-itn",
+      "onThisDay": "mp-otd",
+      "featuredImage": "mp-tfp",
+      "featuredList": "mp-tfl",
+      "doYouKnow": "mp-dyk"
+    }
   }
 }

@@ -13,7 +13,7 @@ import 'package:wikinusa/presentation/widgets/wikinusa_contribute_card.dart';
 import 'package:wikinusa/presentation/widgets/wikinusa_footer.dart';
 import 'home_page_builder.dart';
 
-class IndonesianHomePageBuilder implements HomePageBuilder {
+class EnglishHomePageBuilder implements HomePageBuilder {
   @override
   Widget build(
     BuildContext context,
@@ -56,28 +56,36 @@ class IndonesianHomePageBuilder implements HomePageBuilder {
 
       String finalBody = '';
 
-      if (id == 'mf-artikelpilihan') {
+      if (id == 'mp-tfa') {
         final pElements = section
             .querySelectorAll('p')
             .where((e) => e.text.trim().isNotEmpty);
         if (pElements.isNotEmpty) finalBody = pElements.first.outerHtml;
-      } else if (id == 'mf-gambarpilihan') {
-        final divElements = section
-            .querySelectorAll('div')
-            .where((e) => e.text.trim().isNotEmpty);
-        if (divElements.isNotEmpty) finalBody = divElements.first.outerHtml;
-      } else if (id == 'mf-peristiwaterkini') {
+      } else if (id == 'mp-itn') {
         final ul = section.querySelector('ul');
         if (ul != null) finalBody = ul.outerHtml;
-      } else if (id == 'mf-tahukahanda') {
-        finalBody = section.innerHtml;
-      } else if (id == 'mf-hids') {
+      } else if (id == 'mp-otd') {
         final pElements = section
             .querySelectorAll('p')
             .where((e) => e.text.trim().isNotEmpty);
         if (pElements.isNotEmpty) finalBody += pElements.first.outerHtml;
         final ul = section.querySelector('ul');
         if (ul != null) finalBody += ul.outerHtml;
+      } else if (id == 'mp-tfp') {
+        final pElements = section
+            .querySelectorAll('p')
+            .where((e) => e.text.trim().isNotEmpty);
+        if (pElements.isNotEmpty) finalBody = pElements.first.outerHtml;
+      } else if (id == 'mp-tfl') {
+        final pElements = section
+            .querySelectorAll('p')
+            .where((e) => e.text.trim().isNotEmpty);
+        if (pElements.isNotEmpty) finalBody = pElements.first.outerHtml;
+      } else if (id == 'mp-dyk') {
+        final ulElements = section
+            .querySelectorAll('ul')
+            .where((e) => e.text.trim().isNotEmpty);
+        if (ulElements.isNotEmpty) finalBody = ulElements.first.outerHtml;
       } else {
         finalBody = section.innerHtml;
       }
@@ -91,103 +99,41 @@ class IndonesianHomePageBuilder implements HomePageBuilder {
       builder: (context, ref, child) {
         final rulesAsync = ref.watch(htmlRulesProvider);
 
-        final portals = [
-          {
-            'title': 'portal_biography',
-            'pageTitle': 'Portal:Biografi',
-            'icon': Icons.person_outline,
-            'color': const Color(0xFFE8F5E9),
-            'iconColor': Colors.green[800],
-          },
-          {
-            'title': 'portal_geography',
-            'pageTitle': 'Portal:Geografi',
-            'icon': Icons.map_outlined,
-            'color': const Color(0xFFE0F7FA),
-            'iconColor': Colors.cyan[900],
-          },
-          {
-            'title': 'portal_science',
-            'pageTitle': 'Portal:Ilmu',
-            'icon': Icons.science_outlined,
-            'color': const Color(0xFFE1F5FE),
-            'iconColor': Colors.lightBlue[900],
-          },
-          {
-            'title': 'portal_chemistry',
-            'pageTitle': 'Portal:Kimia',
-            'icon': Icons.science,
-            'color': const Color(0xFFFFF8E1),
-            'iconColor': Colors.amber[900],
-          },
-          {
-            'title': 'portal_community',
-            'pageTitle': 'Portal:Komunitas',
-            'icon': Icons.groups_outlined,
-            'color': const Color(0xFFFCE4EC),
-            'iconColor': Colors.pink,
-          },
-          {
-            'title': 'portal_history',
-            'pageTitle': 'Portal:Sejarah',
-            'icon': Icons.castle_outlined,
-            'color': const Color(0xFFEFEBE9),
-            'iconColor': Colors.brown,
-          },
-          {
-            'title': 'portal_arts',
-            'pageTitle': 'Portal:Seni',
-            'icon': Icons.palette_outlined,
-            'color': const Color(0xFFF3E5F5),
-            'iconColor': Colors.deepPurple,
-          },
-          {
-            'title': 'portal_technology',
-            'pageTitle': 'Portal:Teknologi',
-            'icon': Icons.memory_outlined,
-            'color': const Color(0xFFF5F5F5),
-            'iconColor': Colors.blueGrey[700],
-          },
-        ];
-
         return rulesAsync.when(
           data: (rules) {
-            final idRules = rules['id'] as Map<String, dynamic>?;
+            final enRules = rules['en'] as Map<String, dynamic>?;
             final homePageSections =
-                idRules?['homePageSections'] as Map<String, dynamic>?;
+                enRules?['homePageSections'] as Map<String, dynamic>?;
 
             final featuredArticleId =
-                homePageSections?['featuredArticle'] as String? ??
-                'mf-artikelpilihan';
-            final featuredImageId =
-                homePageSections?['featuredImage'] as String? ??
-                'mf-gambarpilihan';
-            final didYouKnowId =
-                homePageSections?['doYouKnow'] as String? ?? 'mf-tahukahanda';
-            final currentEventsId =
-                homePageSections?['recentEvents'] as String? ??
-                'mf-peristiwaterkini';
+                homePageSections?['featuredArticle'] as String? ?? 'mp-tfa';
+            final inTheNewsId =
+                homePageSections?['inTheNews'] as String? ?? 'mp-itn';
             final onThisDayId =
-                homePageSections?['onThisDay'] as String? ?? 'mf-hids';
+                homePageSections?['onThisDay'] as String? ?? 'mp-otd';
+            final featuredImageId =
+                homePageSections?['featuredImage'] as String? ?? 'mp-tfp';
+            final featuredListId =
+                homePageSections?['featuredList'] as String? ?? 'mp-tfl';
+            final doYouKnowId =
+                homePageSections?['doYouKnow'] as String? ?? 'mp-dyk';
 
-            // Explicitly target Indonesian Wikipedia sections by IDs
+            // Explicitly target Wikipedia sections by IDs
             final featuredArticle = extractSection(
               featuredArticleId,
-              'Artikel pilihan',
+              'Featured Article',
             );
+            final inTheNews = extractSection(inTheNewsId, 'In the news');
+            final onThisDay = extractSection(onThisDayId, 'On this day');
             final featuredImage = extractSection(
               featuredImageId,
-              'Gambar pilihan',
+              'Featured picture',
             );
-            final didYouKnow = extractSection(didYouKnowId, 'Tahukah Anda');
-            final currentEvents = extractSection(
-              currentEventsId,
-              'Peristiwa terkini',
+            final featuredList = extractSection(
+              featuredListId,
+              'Featured list',
             );
-            final onThisDay = extractSection(
-              onThisDayId,
-              'Hari ini dalam sejarah',
-            );
+            final doYouKnow = extractSection(doYouKnowId, 'Did you know');
 
             // Determine header background image
             String? headerBg;
@@ -207,21 +153,9 @@ class IndonesianHomePageBuilder implements HomePageBuilder {
                   const SizedBox(height: 24),
                 ],
 
-                if (featuredImage != null) ...[
-                  _buildSectionHeader(theme, featuredImage['header']),
-                  _buildSectionCard(context, theme, featuredImage, langCode),
-                  const SizedBox(height: 24),
-                ],
-
-                if (didYouKnow != null) ...[
-                  _buildSectionHeader(theme, didYouKnow['header']),
-                  _buildSectionCard(context, theme, didYouKnow, langCode),
-                  const SizedBox(height: 24),
-                ],
-
-                if (currentEvents != null) ...[
-                  _buildSectionHeader(theme, currentEvents['header']),
-                  _buildSectionCard(context, theme, currentEvents, langCode),
+                if (inTheNews != null) ...[
+                  _buildSectionHeader(theme, inTheNews['header']),
+                  _buildSectionCard(context, theme, inTheNews, langCode),
                   const SizedBox(height: 24),
                 ],
 
@@ -231,8 +165,24 @@ class IndonesianHomePageBuilder implements HomePageBuilder {
                   const SizedBox(height: 24),
                 ],
 
-                const SizedBox(height: 32),
-                WikiPortalsCard(portals: portals, langCode: langCode),
+                if (featuredImage != null) ...[
+                  _buildSectionHeader(theme, featuredImage['header']),
+                  _buildSectionCard(context, theme, featuredImage, langCode),
+                  const SizedBox(height: 24),
+                ],
+
+                if (featuredList != null) ...[
+                  _buildSectionHeader(theme, featuredList['header']),
+                  _buildSectionCard(context, theme, featuredList, langCode),
+                  const SizedBox(height: 24),
+                ],
+
+                if (doYouKnow != null) ...[
+                  _buildSectionHeader(theme, doYouKnow['header']),
+                  _buildSectionCard(context, theme, doYouKnow, langCode),
+                  const SizedBox(height: 24),
+                ],
+
                 const SizedBox(height: 48),
                 const WikinusaContributeCard(),
                 const WikinusaFooter(),
