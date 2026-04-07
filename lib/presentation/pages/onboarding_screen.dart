@@ -54,19 +54,19 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     theme,
                     title: 'onboarding1'.tr(),
                     description: 'onboarding1_description'.tr(),
-                    icon: Icons.auto_stories,
+                    icon: Icons.mobile_friendly_outlined,
                   ),
                   _buildSlide(
                     theme,
                     title: 'onboarding2'.tr(),
                     description: 'onboarding2_description'.tr(),
-                    icon: Icons.offline_bolt,
+                    icon: Icons.book_outlined,
                   ),
                   _buildSlide(
                     theme,
                     title: 'onboarding3'.tr(),
                     description: 'onboarding3_description'.tr(),
-                    icon: Icons.auto_stories,
+                    icon: Icons.search_outlined,
                   ),
                   _buildLanguageSelectionSlide(theme),
                 ],
@@ -79,7 +79,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     );
   }
 
-  Widget _buildSlide(ThemeData theme, {required String title, required String description, required IconData icon}) {
+  Widget _buildSlide(
+    ThemeData theme, {
+    required String title,
+    required String description,
+    required IconData icon,
+  }) {
     return Padding(
       padding: const EdgeInsets.all(40.0),
       child: Column(
@@ -90,13 +95,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
+            style: theme.textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 24),
           Text(
             description,
             textAlign: TextAlign.center,
-            style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),
@@ -116,13 +125,18 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           Text(
             'onboarding4'.tr(),
             textAlign: TextAlign.center,
-            style: theme.textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold, fontSize: 24),
+            style: theme.textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontSize: 24,
+            ),
           ),
           const SizedBox(height: 16),
           Text(
             'onboarding4_description'.tr(),
             textAlign: TextAlign.center,
-            style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 48),
           Container(
@@ -136,9 +150,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               child: DropdownButton<WikiLanguage>(
                 isExpanded: true,
                 value: currentLanguage,
-                icon: Icon(Icons.keyboard_arrow_down, color: theme.colorScheme.primary),
+                icon: Icon(
+                  Icons.keyboard_arrow_down,
+                  color: theme.colorScheme.primary,
+                ),
                 dropdownColor: theme.colorScheme.surfaceContainer,
-                style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.onSurface),
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: theme.colorScheme.onSurface,
+                ),
                 onChanged: (WikiLanguage? newValue) async {
                   if (newValue != null) {
                     ref.read(languageProvider.notifier).setLanguage(newValue);
@@ -148,7 +167,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     setState(() {});
                   }
                 },
-                items: WikiLanguage.values.map<DropdownMenuItem<WikiLanguage>>((WikiLanguage value) {
+                items: WikiLanguage.values.map<DropdownMenuItem<WikiLanguage>>((
+                  WikiLanguage value,
+                ) {
                   return DropdownMenuItem<WikiLanguage>(
                     value: value,
                     child: Padding(
@@ -212,7 +233,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               },
               child: Text(
                 _currentPage == 3 ? 'get_started'.tr() : 'next'.tr(),
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),

@@ -1,30 +1,68 @@
 {
   "global": {
-    "remove": [".reflist", ".navbox", ".metadata", ".ambox", ".noprint"],
-    "hide": ["img", "figure", ".thumb"],
-    "referenceKeywords": ["reference", "reflist"]
+    "remove": [
+      ".reflist",
+      ".navbox",
+      ".metadata",
+      ".ambox",
+      ".noprint"
+    ],
+    "hide": [
+      "img",
+      "figure",
+      ".thumb"
+    ],
+    "referenceKeywords": [
+      "reference",
+      "reflist"
+    ]
   },
-  "nia": {
-    "remove": [".infobox", ".navbox"],
-    "hide": [".gallery"],
-    "referenceKeywords": ["umbu", "famotokhi ba gahe","reference", "reflist"]
+  "bew": {
+    "remove": [
+      ".infobox",
+      ".navbox"
+    ],
+    "hide": [
+      ".gallery"
+    ],
+    "referenceKeywords": [
+      "reference",
+      "reflist",
+      "rujukan",
+      "ruju'an"
+    ]
   },
-  "id": {
-    "remove": [".infobox"],
-    "hide": [".gallery"],
-    "referenceKeywords": ["reference", "reflist", "catatan kaki", "rujukan"],
+  "bjn": {
+    "remove": [
+      ".infobox",
+      ".navbox"
+    ],
+    "hide": [
+      ".gallery"
+    ],
+    "referenceKeywords": [
+      "reference",
+      "reflist",
+      "rujukan",
+      "ruju'an"
+    ],
     "homePageSections": {
-      "featuredArticle": "mf-artikelpilihan",
-      "featuredImage": "mf-gambarpilihan",
-      "recentEvents": "mf-peristiwaterkini",
-      "doYouKnow": "mf-tahukahanda",
-      "onThisDay": "mf-hids"
+      "featuredArticle": "mp-tfa",
+      "inTheNews": "mp-itn"
     }
   },
   "en": {
-    "remove": [".infobox"],
-    "hide": [".gallery"],
-    "referenceKeywords": ["reference", "reflist", "notes"],
+    "remove": [
+      ".infobox"
+    ],
+    "hide": [
+      ".gallery"
+    ],
+    "referenceKeywords": [
+      "reference",
+      "reflist",
+      "notes"
+    ],
     "homePageSections": {
       "featuredArticle": "mp-tfa",
       "inTheNews": "mp-itn",
@@ -33,5 +71,57 @@
       "featuredList": "mp-tfl",
       "doYouKnow": "mp-dyk"
     }
+  },
+  "id": {
+    "remove": [
+      ".infobox"
+    ],
+    "hide": [
+      ".gallery"
+    ],
+    "referenceKeywords": [
+      "reference",
+      "reflist",
+      "catatan kaki",
+      "rujukan"
+    ],
+    "homePageSections": {
+      "featuredArticle": "mf-artikelpilihan",
+      "featuredImage": "mf-gambarpilihan",
+      "recentEvents": "mf-peristiwaterkini",
+      "doYouKnow": "mf-tahukahanda",
+      "onThisDay": "mf-hids"
+    }
+  },
+  "jv": {
+    "remove": [
+      ".infobox",
+      ".navbox"
+    ],
+    "hide": [
+      ".gallery"
+    ],
+    "referenceKeywords": [
+      "reference",
+      "reflist",
+      "rujukan",
+      "cathetan",
+      "cathetan suku"
+    ]
+  },
+  "nia": {
+    "remove": [
+      ".infobox",
+      ".navbox"
+    ],
+    "hide": [
+      ".gallery"
+    ],
+    "referenceKeywords": [
+      "umbu",
+      "famotokhi ba gahe",
+      "reference",
+      "reflist"
+    ]
   }
 }

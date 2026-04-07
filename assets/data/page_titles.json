@@ -1,51 +1,179 @@
 {
   "nia": [
-    {"main_page": "Wikipedia:Olayama"},
-    {"recent_changes": "Spesial:Perubahan_terbaru"},
-    {"community_portal": "Wikipedia:Bawagöli_zato"},
-    {"village_pump": "Wikipedia:Monganga_afo"},
-    {"sandbox": "Wikipedia:Nahia_wamakori"}
+    {
+      "main_page": "Wikipedia:Olayama"
+    },
+    {
+      "recent_changes": "Spesial:Perubahan_terbaru"
+    },
+    {
+      "community_portal": "Wikipedia:Bawagöli_zato"
+    },
+    {
+      "village_pump": "Wikipedia:Monganga_afo"
+    },
+    {
+      "sandbox": "Wikipedia:Nahia_wamakori"
+    }
   ],
   "en": [
-    {"main_page": "Main_Page"},
-    {"recent_changes": "Special:RecentChanges"},
-    {"community_portal": "Wikipedia:Community_portal"},
-    {"village_pump": "Wikipedia:Village_pump"},
-    {"sandbox": "Wikipedia:Sandbox"}
+    {
+      "main_page": "Main_Page"
+    },
+    {
+      "recent_changes": "Special:RecentChanges"
+    },
+    {
+      "community_portal": "Wikipedia:Community_portal"
+    },
+    {
+      "village_pump": "Wikipedia:Village_pump"
+    },
+    {
+      "sandbox": "Wikipedia:Sandbox"
+    }
   ],
   "id": [
-    {"main_page": "Halaman_Utama"},
-    {"recent_changes": "Spesial:Perubahan_terbaru"},
-    {"community_portal": "Portal:Komunitas"},
-    {"village_pump": "Wikipedia:Warung_Kopi"},
-    {"sandbox": "Wikipedia:Bak_pasir"}
+    {
+      "main_page": "Halaman_Utama"
+    },
+    {
+      "recent_changes": "Spesial:Perubahan_terbaru"
+    },
+    {
+      "community_portal": "Portal:Komunitas"
+    },
+    {
+      "village_pump": "Wikipedia:Warung_Kopi"
+    },
+    {
+      "sandbox": "Wikipedia:Bak_pasir"
+    }
   ],
   "bew": [
-    {"main_page": "Balé-balé"}
+    {
+      "main_page": "Balé-balé"
+    },
+    {
+      "recent_changes": "Istimèwa:Perubahan_terbaru"
+    },
+    {
+      "community_portal": "Wikipédi:Kaca-kaca jema'ah"
+    }
   ],
   "bjn": [
-    {"main_page": "Laman_Tatambaian"}
+    {
+      "main_page": "Laman_Tatambaian"
+    },
+    {
+      "recent_changes": "Istimiwa:Paubahan pahanyarnya"
+    },
+    {
+      "village_pump": "WikipidiaWarung_Kupi"
+    }
   ],
   "btm": [
-    {"main_page": "Alaman_Utamo"}
+    {
+      "main_page": "Alaman_Utamo"
+    },
+    {
+      "recent_changes": "Husus:Perubahan terbaru"
+    },
+    {
+      "community_portal": "Wikipedia:Portal komunitas"
+    }
   ],
   "gor": [
-    {"main_page": "Halaman_Bungaliyo"}
+    {
+      "main_page": "Halaman_Bungaliyo"
+    },
+    {
+      "recent_changes": "Spesial:Boheli Loboli'a Mola"
+    },
+    {
+      "community_portal": "Wikipedia:Būbu'a_lēmbo'a"
+    },
+    {
+      "village_pump": "Wikipedia:Waro_lo_Kopi"
+    },
+    {
+      "sandbox": "Wikipedia:Baki_lo_hungayo"
+    }
   ],
   "jv": [
-    {"main_page": "Wikipédia:Pendhapa"}
+    {
+      "main_page": "Wikipédia:Pendhapa"
+    },
+    {
+      "recent_changes": "Mirunggan:Owahan_anyar"
+    },
+    {
+      "community_portal": "Gapura:Paguyuban"
+    },
+    {
+      "village_pump": "Wikipédia:Angkringan"
+    },
+    {
+      "sandbox": "Wikipédia:Bak wedhi"
+    }
   ],
   "mad": [
-    {"main_page": "Tanèyan"}
+    {
+      "main_page": "Tanèyan"
+    },
+    {
+      "recent_changes": "Spesial:Perubahan_terbaru"
+    },
+    {
+      "village_pump": "Wikipèḍia:Bârung_Kopi"
+    },
+    {
+      "sandbox": "Wikipèḍia:Bak_beddhi"
+    }
   ],
   "min": [
-    {"main_page": "Laman_Utamo"}
+    {
+      "main_page": "Laman_Utamo"
+    },
+    {
+      "recent_changes": "Istimewa:Perubahan_baru"
+    },
+    {
+      "community_portal": "Portal:Komunitas"
+    },
+    {
+      "village_pump": "Wikipedia:Kadai_Kopi"
+    },
+    {
+      "sandbox": "Wikipedia:Bak_kasiak"
+    }
   ],
   "ms": [
-    {"main_page": "Laman_Utama"}
+    {
+      "main_page": "Laman_Utama"
+    },
+    {
+      "recent_changes": "Spesial:Perubahan_terkini"
+    },
+    {
+      "community_portal": "Gerbang_Komuniti"
+    },
+    {
+      "village_pump": "Wikipedia:Kedai_Kopi"
+    }
   ],
   "su": [
-    {"main_page": "Tepas"}
+    {
+      "main_page": "Tepas"
+    },
+    {
+      "recent_changes": "Husus:AnyarRobah"
+    },
+    {
+      "community_portal": "Portal:Panglawungan"
+    },
+    {
+      "village_pump": "Wikipedia:Sawala"
+    }
   ]
 }
-

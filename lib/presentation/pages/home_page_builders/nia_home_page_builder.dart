@@ -50,7 +50,9 @@ class NiasHomePageBuilder implements HomePageBuilder {
       removeHeadings: true,
     );
     final doYouKnow = extractHtmlSnippet('div#mp-dyk-body, div#mf-dyk');
-    final thisMonthInHistory = extractHtmlSnippet('div#mp-otm-body, div#mf-otd');
+    final thisMonthInHistory = extractHtmlSnippet(
+      'div#mp-otm-body, div#mf-otd',
+    );
 
     // Extract featured image URL for background
     String? featuredImageUrl;
@@ -139,6 +141,7 @@ class NiasHomePageBuilder implements HomePageBuilder {
         children: [
           HomeHeaderCard(
             imageUrl: featuredImageUrl,
+            languageName: 'Li Niha',
             searchField: _buildSearchField(context, theme),
           ),
           const SizedBox(height: 16),
@@ -295,7 +298,7 @@ class NiasHomePageBuilder implements HomePageBuilder {
 
               // 2. Display text content second
               HtmlWidget(
-                remainingHtml,
+                '<div style="text-align: justify;">$remainingHtml</div>',
                 onTapUrl: (url) async {
                   await ArticleScreen.handleWikipediaLink(
                     context,
@@ -378,5 +381,4 @@ class NiasHomePageBuilder implements HomePageBuilder {
       ),
     );
   }
-
 }

@@ -4,11 +4,13 @@ import 'package:google_fonts/google_fonts.dart';
 
 class HomeHeaderCard extends StatelessWidget {
   final String? imageUrl;
+  final String? languageName;
   final Widget searchField;
 
   const HomeHeaderCard({
     super.key,
     required this.imageUrl,
+    required this.languageName,
     required this.searchField,
   });
 
@@ -86,6 +88,20 @@ class HomeHeaderCard extends StatelessWidget {
                     ),
                   ),
                 ),
+                if (languageName != null)
+                  Text(
+                    languageName!,
+                    style: GoogleFonts.cinzelDecorative(
+                      textStyle: theme.textTheme.titleLarge?.copyWith(
+                        color: Colors.white,
+                        fontSize: 18,
+                        // fontWeight: FontWeight.bold,
+                        shadows: [
+                          const Shadow(blurRadius: 10, color: Colors.black),
+                        ],
+                      ),
+                    ),
+                  ),
                 const SizedBox(height: 8),
                 Text(
                   'motto'.tr(),

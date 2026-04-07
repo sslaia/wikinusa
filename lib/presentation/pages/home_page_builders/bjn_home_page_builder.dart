@@ -8,13 +8,11 @@ import 'package:html/dom.dart' as dom;
 import 'package:wikinusa/presentation/pages/article_screen.dart';
 import 'package:wikinusa/presentation/pages/search_results_screen.dart';
 import 'package:wikinusa/presentation/providers/html_rules_provider.dart';
-import 'package:wikinusa/presentation/widgets/home_header_card.dart';
-import 'package:wikinusa/presentation/widgets/wiki_portals_card.dart';
 import 'package:wikinusa/presentation/widgets/wikinusa_contribute_card.dart';
 import 'package:wikinusa/presentation/widgets/wikinusa_footer.dart';
 import 'home_page_builder.dart';
 
-class IndonesianHomePageBuilder implements HomePageBuilder {
+class BanjarHomePageBuilder implements HomePageBuilder {
   @override
   Widget build(
     BuildContext context,
@@ -62,28 +60,16 @@ class IndonesianHomePageBuilder implements HomePageBuilder {
 
       String finalBody = '';
 
-      if (id == 'mf-artikelpilihan') {
+      if (id == 'mp-tfa') {
         final pElements = section
             .querySelectorAll('p')
             .where((e) => e.text.trim().isNotEmpty);
-        if (pElements.isNotEmpty) finalBody = pElements.first.outerHtml;
-      } else if (id == 'mf-gambarpilihan') {
-        final divElements = section
-            .querySelectorAll('div')
-            .where((e) => e.text.trim().isNotEmpty);
-        if (divElements.isNotEmpty) finalBody = divElements.first.outerHtml;
-      } else if (id == 'mf-peristiwaterkini') {
+        if (pElements.isNotEmpty) {
+          finalBody = pElements.map((e) => e.outerHtml).join('\n');
+        }
+      } else if (id == 'mp-itn') {
         final ul = section.querySelector('ul');
         if (ul != null) finalBody = ul.outerHtml;
-      } else if (id == 'mf-tahukahanda') {
-        finalBody = section.innerHtml;
-      } else if (id == 'mf-hids') {
-        final pElements = section
-            .querySelectorAll('p')
-            .where((e) => e.text.trim().isNotEmpty);
-        if (pElements.isNotEmpty) finalBody += pElements.first.outerHtml;
-        final ul = section.querySelector('ul');
-        if (ul != null) finalBody += ul.outerHtml;
       } else {
         finalBody = section.innerHtml;
       }
@@ -97,136 +83,47 @@ class IndonesianHomePageBuilder implements HomePageBuilder {
       builder: (context, ref, child) {
         final rulesAsync = ref.watch(htmlRulesProvider);
 
-        final portals = [
-          {
-            'title': 'portal_biography',
-            'pageTitle': 'Portal:Biografi',
-            'icon': Icons.person_outline,
-            'color': const Color(0xFFE8F5E9),
-            'iconColor': Colors.green[800],
-          },
-          {
-            'title': 'portal_geography',
-            'pageTitle': 'Portal:Geografi',
-            'icon': Icons.map_outlined,
-            'color': const Color(0xFFE0F7FA),
-            'iconColor': Colors.cyan[900],
-          },
-          {
-            'title': 'portal_science',
-            'pageTitle': 'Portal:Ilmu',
-            'icon': Icons.science_outlined,
-            'color': const Color(0xFFE1F5FE),
-            'iconColor': Colors.lightBlue[900],
-          },
-          {
-            'title': 'portal_chemistry',
-            'pageTitle': 'Portal:Kimia',
-            'icon': Icons.science,
-            'color': const Color(0xFFFFF8E1),
-            'iconColor': Colors.amber[900],
-          },
-          {
-            'title': 'portal_community',
-            'pageTitle': 'Portal:Komunitas',
-            'icon': Icons.groups_outlined,
-            'color': const Color(0xFFFCE4EC),
-            'iconColor': Colors.pink,
-          },
-          {
-            'title': 'portal_history',
-            'pageTitle': 'Portal:Sejarah',
-            'icon': Icons.castle_outlined,
-            'color': const Color(0xFFEFEBE9),
-            'iconColor': Colors.brown,
-          },
-          {
-            'title': 'portal_arts',
-            'pageTitle': 'Portal:Seni',
-            'icon': Icons.palette_outlined,
-            'color': const Color(0xFFF3E5F5),
-            'iconColor': Colors.deepPurple,
-          },
-          {
-            'title': 'portal_technology',
-            'pageTitle': 'Portal:Teknologi',
-            'icon': Icons.memory_outlined,
-            'color': const Color(0xFFF5F5F5),
-            'iconColor': Colors.blueGrey[700],
-          },
-        ];
-
         return rulesAsync.when(
           data: (rules) {
-            final idRules = rules['id'] as Map<String, dynamic>?;
+            final idRules = rules['bjn'] as Map<String, dynamic>?;
             final homePageSections =
                 idRules?['homePageSections'] as Map<String, dynamic>?;
 
             final featuredArticleId =
-                homePageSections?['featuredArticle'] as String? ??
-                'mf-artikelpilihan';
-            final featuredImageId =
-                homePageSections?['featuredImage'] as String? ??
-                'mf-gambarpilihan';
-            final didYouKnowId =
-                homePageSections?['doYouKnow'] as String? ?? 'mf-tahukahanda';
+                homePageSections?['featuredArticle'] as String? ?? 'mp-tfa';
             final currentEventsId =
-                homePageSections?['recentEvents'] as String? ??
-                'mf-peristiwaterkini';
-            final onThisDayId =
-                homePageSections?['onThisDay'] as String? ?? 'mf-hids';
+                homePageSections?['inTheNews'] as String? ?? 'mp-itn';
 
-            // Explicitly target Indonesian Wikipedia sections by IDs
+            // Explicitly target Banjar Wikipedia sections by IDs
             final featuredArticle = extractSection(
               featuredArticleId,
-              'Artikel pilihan',
+              'Tulisan Pilihan',
             );
-            final featuredImage = extractSection(
-              featuredImageId,
-              'Gambar pilihan',
-            );
-            final didYouKnow = extractSection(didYouKnowId, 'Tahukah Anda');
+
             final currentEvents = extractSection(
               currentEventsId,
-              'Peristiwa terkini',
-            );
-            final onThisDay = extractSection(
-              onThisDayId,
-              'Hari ini dalam sejarah',
+              'Garamaan',
             );
 
             // Determine header background image
             String? headerBg;
-            if (featuredImage != null && featuredImage['images'].isNotEmpty) {
-              headerBg = featuredImage['images'].first;
+            if (featuredArticle != null &&
+                featuredArticle['images'].isNotEmpty) {
+              headerBg = featuredArticle['images'].first;
+            } else if (currentEvents != null &&
+                currentEvents['images'].isNotEmpty) {
+              headerBg = currentEvents['images'].first;
             }
 
             return ListView(
               padding: EdgeInsets.zero,
               children: [
-                HomeHeaderCard(
-                  imageUrl: headerBg,
-                  languageName: 'Bahasa Indonesia',
-                  searchField: _buildSearchField(context, theme),
-                ),
+                _buildHeaderCard(context, theme, headerBg),
+                const SizedBox(height: 16),
 
-                // _buildHeaderCard(context, theme, headerBg),
-                // const SizedBox(height: 16),
                 if (featuredArticle != null) ...[
                   _buildSectionHeader(theme, featuredArticle['header']),
                   _buildSectionCard(context, theme, featuredArticle, langCode),
-                  const SizedBox(height: 24),
-                ],
-
-                if (featuredImage != null) ...[
-                  _buildSectionHeader(theme, featuredImage['header']),
-                  _buildSectionCard(context, theme, featuredImage, langCode),
-                  const SizedBox(height: 24),
-                ],
-
-                if (didYouKnow != null) ...[
-                  _buildSectionHeader(theme, didYouKnow['header']),
-                  _buildSectionCard(context, theme, didYouKnow, langCode),
                   const SizedBox(height: 24),
                 ],
 
@@ -236,14 +133,6 @@ class IndonesianHomePageBuilder implements HomePageBuilder {
                   const SizedBox(height: 24),
                 ],
 
-                if (onThisDay != null) ...[
-                  _buildSectionHeader(theme, onThisDay['header']),
-                  _buildSectionCard(context, theme, onThisDay, langCode),
-                  const SizedBox(height: 24),
-                ],
-
-                const SizedBox(height: 32),
-                WikiPortalsCard(portals: portals, langCode: langCode),
                 const SizedBox(height: 48),
                 const WikinusaContributeCard(),
                 const WikinusaFooter(),
@@ -303,7 +192,7 @@ class IndonesianHomePageBuilder implements HomePageBuilder {
                     ),
                   ),
 
-                // Display refined HTML content
+                // Display HTML content
                 HtmlWidget(
                   section['body'],
                   onTapUrl: (url) async {
@@ -380,6 +269,96 @@ class IndonesianHomePageBuilder implements HomePageBuilder {
           fontSize: 10,
         ),
       ),
+    );
+  }
+
+  Widget _buildHeaderCard(
+    BuildContext context,
+    ThemeData theme,
+    String? imageUrl,
+  ) {
+    return Stack(
+      children: [
+        Container(
+          height: 300,
+          width: double.infinity,
+          decoration: BoxDecoration(color: theme.colorScheme.surface),
+          child: imageUrl != null && imageUrl.isNotEmpty
+              ? Image.network(
+                  imageUrl,
+                  fit: BoxFit.cover,
+                  headers: const {
+                    'User-Agent':
+                        'WikinusaApp/1.0 (slaia@yahoo.com) FlutterApp',
+                  },
+                  errorBuilder: (context, error, stackTrace) =>
+                      Container(color: theme.colorScheme.primaryContainer),
+                )
+              : Container(color: theme.colorScheme.primaryContainer),
+        ),
+        Container(
+          height: 300,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.black.withValues(alpha: 0.2),
+                Colors.black.withValues(alpha: 0.8),
+              ],
+            ),
+          ),
+        ),
+        Positioned.fill(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  'welcome_to'.tr(),
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: Colors.white.withValues(alpha: 0.9),
+                    fontSize: 14,
+                    shadows: [
+                      const Shadow(blurRadius: 10, color: Colors.black),
+                    ],
+                  ),
+                ),
+                Text(
+                  'WikiNusa',
+                  style: GoogleFonts.cinzelDecorative(
+                    textStyle: theme.textTheme.titleLarge?.copyWith(
+                      color: Colors.white,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      shadows: [
+                        const Shadow(blurRadius: 10, color: Colors.black),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'motto'.tr(),
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: Colors.white.withValues(alpha: 0.9),
+                    fontSize: 14,
+                    fontStyle: FontStyle.italic,
+                    shadows: [
+                      const Shadow(blurRadius: 10, color: Colors.black),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+                _buildSearchField(context, theme),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 

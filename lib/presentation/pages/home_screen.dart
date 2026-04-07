@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wikinusa/presentation/pages/home_page_builders/bew_home_page_builder.dart';
 import 'package:wikinusa/presentation/pages/home_page_builders/webview_home_page_builder.dart';
 import '../widgets/custom_bottom_nav_bar.dart';
 import '../widgets/custom_drawer.dart';
@@ -82,13 +83,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   HomePageBuilder _getPageBuilder(String languageCode) {
     final builders = <String, HomePageBuilder>{
-      'bew': WebViewHomePageBuilder(),
-      'bjn': WebViewHomePageBuilder(),
+      'bew': BetawiHomePageBuilder(),
+      'bjn': BanjarHomePageBuilder(),
       'btm': WebViewHomePageBuilder(),
       'en': EnglishHomePageBuilder(),
       'gor': WebViewHomePageBuilder(),
       'id': IndonesianHomePageBuilder(),
-      'jv': WebViewHomePageBuilder(),
+      'jv': JavaneseHomePageBuilder(),
       'mad': WebViewHomePageBuilder(),
       'min': WebViewHomePageBuilder(),
       'ms': WebViewHomePageBuilder(),

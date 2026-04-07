@@ -22,7 +22,7 @@ class WikinusaContributeCard extends StatelessWidget {
       child: Column(
         children: [
           Icon(
-            Icons.volunteer_activism,
+            Icons.edit_note_outlined,
             color: isDark ? theme.colorScheme.primary : Colors.white,
             size: 48,
           ),
@@ -61,8 +61,12 @@ class WikinusaContributeCard extends StatelessWidget {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: isDark ? theme.colorScheme.primary : Colors.white,
-              foregroundColor: isDark ? Colors.white : theme.colorScheme.primary,
+              backgroundColor: isDark
+                  ? theme.colorScheme.primary
+                  : Colors.white,
+              foregroundColor: isDark
+                  ? Colors.white
+                  : theme.colorScheme.primary,
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
