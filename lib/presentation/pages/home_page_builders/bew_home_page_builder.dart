@@ -8,6 +8,7 @@ import 'package:html/dom.dart' as dom;
 import 'package:wikinusa/presentation/pages/article_screen.dart';
 import 'package:wikinusa/presentation/pages/search_results_screen.dart';
 import 'package:wikinusa/presentation/providers/html_rules_provider.dart';
+import 'package:wikinusa/presentation/widgets/home_header_card.dart';
 import 'package:wikinusa/presentation/widgets/wiki_portals_card.dart';
 import 'package:wikinusa/presentation/widgets/wikinusa_contribute_card.dart';
 import 'package:wikinusa/presentation/widgets/wikinusa_footer.dart';
@@ -136,7 +137,7 @@ class BetawiHomePageBuilder implements HomePageBuilder {
             return ListView(
               padding: EdgeInsets.zero,
               children: [
-                _buildHeaderCard(context, theme, headerBg),
+                HomeHeaderCard(imageUrl: headerBg, languageName: 'Basa Betawi'),
                 const SizedBox(height: 16),
 
                 for (var cardData in allCards) ...[
@@ -169,6 +170,9 @@ class BetawiHomePageBuilder implements HomePageBuilder {
     Map<String, dynamic> section,
     String langCode,
   ) {
+
+    final sectionBody = section['body'];
+
     return Consumer(
       builder: (context, ref, child) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -209,7 +213,7 @@ class BetawiHomePageBuilder implements HomePageBuilder {
 
                 // Display HTML content
                 HtmlWidget(
-                  section['body'],
+                  '<div style="text-align: justify;">$sectionBody</div>',
                   onTapUrl: (url) async {
                     await ArticleScreen.handleWikipediaLink(
                       context,

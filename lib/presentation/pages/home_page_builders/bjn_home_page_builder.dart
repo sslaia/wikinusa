@@ -1,13 +1,12 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart' as dom;
 import 'package:wikinusa/presentation/pages/article_screen.dart';
-import 'package:wikinusa/presentation/pages/search_results_screen.dart';
 import 'package:wikinusa/presentation/providers/html_rules_provider.dart';
+import 'package:wikinusa/presentation/widgets/home_header_card.dart';
+import 'package:wikinusa/presentation/widgets/section_header.dart';
 import 'package:wikinusa/presentation/widgets/wikinusa_contribute_card.dart';
 import 'package:wikinusa/presentation/widgets/wikinusa_footer.dart';
 import 'home_page_builder.dart';
@@ -93,6 +92,8 @@ class BanjarHomePageBuilder implements HomePageBuilder {
                 homePageSections?['featuredArticle'] as String? ?? 'mp-tfa';
             final currentEventsId =
                 homePageSections?['inTheNews'] as String? ?? 'mp-itn';
+            final featuredImageId =
+                homePageSections?['featuredImage'] as String? ?? 'mp-bottom';
 
             // Explicitly target Banjar Wikipedia sections by IDs
             final featuredArticle = extractSection(
@@ -100,9 +101,11 @@ class BanjarHomePageBuilder implements HomePageBuilder {
               'Tulisan Pilihan',
             );
 
-            final currentEvents = extractSection(
-              currentEventsId,
-              'Garamaan',
+            final currentEvents = extractSection(currentEventsId, 'Garamaan');
+
+            final featuredImage = extractSection(
+              featuredImageId,
+              'Gambar Pilihan',
             );
 
             // Determine header background image
@@ -118,18 +121,27 @@ class BanjarHomePageBuilder implements HomePageBuilder {
             return ListView(
               padding: EdgeInsets.zero,
               children: [
-                _buildHeaderCard(context, theme, headerBg),
+                HomeHeaderCard(
+                  imageUrl: headerBg,
+                  languageName: 'Bahasa Banjar',
+                ),
                 const SizedBox(height: 16),
 
                 if (featuredArticle != null) ...[
-                  _buildSectionHeader(theme, featuredArticle['header']),
+                  SectionHeader(theme: theme, title: featuredArticle['header']),
                   _buildSectionCard(context, theme, featuredArticle, langCode),
                   const SizedBox(height: 24),
                 ],
 
                 if (currentEvents != null) ...[
-                  _buildSectionHeader(theme, currentEvents['header']),
+                  SectionHeader(theme: theme, title: currentEvents['header']),
                   _buildSectionCard(context, theme, currentEvents, langCode),
+                  const SizedBox(height: 24),
+                ],
+
+                if (featuredImage != null) ...[
+                  SectionHeader(theme: theme, title: featuredImage['header']),
+                  _buildSectionCard(context, theme, featuredImage, langCode),
                   const SizedBox(height: 24),
                 ],
 
@@ -154,6 +166,8 @@ class BanjarHomePageBuilder implements HomePageBuilder {
     Map<String, dynamic> section,
     String langCode,
   ) {
+    final sectionBody = section['body'];
+
     return Consumer(
       builder: (context, ref, child) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -194,7 +208,7 @@ class BanjarHomePageBuilder implements HomePageBuilder {
 
                 // Display HTML content
                 HtmlWidget(
-                  section['body'],
+                  '<div style="text-align: justify;">$sectionBody</div>',
                   onTapUrl: (url) async {
                     await ArticleScreen.handleWikipediaLink(
                       context,
@@ -255,144 +269,5 @@ class BanjarHomePageBuilder implements HomePageBuilder {
         a.attributes['href'] = 'https://$langCode.wikipedia.org$href';
       }
     });
-  }
-
-  Widget _buildSectionHeader(ThemeData theme, String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Text(
-        title.toUpperCase(),
-        style: theme.textTheme.labelMedium?.copyWith(
-          color: theme.colorScheme.secondary,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 1.5,
-          fontSize: 10,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeaderCard(
-    BuildContext context,
-    ThemeData theme,
-    String? imageUrl,
-  ) {
-    return Stack(
-      children: [
-        Container(
-          height: 300,
-          width: double.infinity,
-          decoration: BoxDecoration(color: theme.colorScheme.surface),
-          child: imageUrl != null && imageUrl.isNotEmpty
-              ? Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                  headers: const {
-                    'User-Agent':
-                        'WikinusaApp/1.0 (slaia@yahoo.com) FlutterApp',
-                  },
-                  errorBuilder: (context, error, stackTrace) =>
-                      Container(color: theme.colorScheme.primaryContainer),
-                )
-              : Container(color: theme.colorScheme.primaryContainer),
-        ),
-        Container(
-          height: 300,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.black.withValues(alpha: 0.2),
-                Colors.black.withValues(alpha: 0.8),
-              ],
-            ),
-          ),
-        ),
-        Positioned.fill(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  'welcome_to'.tr(),
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: Colors.white.withValues(alpha: 0.9),
-                    fontSize: 14,
-                    shadows: [
-                      const Shadow(blurRadius: 10, color: Colors.black),
-                    ],
-                  ),
-                ),
-                Text(
-                  'WikiNusa',
-                  style: GoogleFonts.cinzelDecorative(
-                    textStyle: theme.textTheme.titleLarge?.copyWith(
-                      color: Colors.white,
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      shadows: [
-                        const Shadow(blurRadius: 10, color: Colors.black),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'motto'.tr(),
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: Colors.white.withValues(alpha: 0.9),
-                    fontSize: 14,
-                    fontStyle: FontStyle.italic,
-                    shadows: [
-                      const Shadow(blurRadius: 10, color: Colors.black),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-                _buildSearchField(context, theme),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSearchField(BuildContext context, ThemeData theme) {
-    return Container(
-      height: 50,
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
-      ),
-      child: TextField(
-        style: const TextStyle(color: Colors.white),
-        onSubmitted: (String str) {
-          if (str.isNotEmpty) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SearchResultsScreen(query: str),
-              ),
-            );
-          }
-        },
-        onTapOutside: (event) {
-          FocusManager.instance.primaryFocus?.unfocus();
-        },
-        decoration: InputDecoration(
-          hintText: 'search_wikipedia'.tr(),
-          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
-          prefixIcon: const Icon(Icons.search, color: Colors.white),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 15),
-        ),
-      ),
-    );
   }
 }

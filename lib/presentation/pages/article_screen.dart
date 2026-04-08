@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart' as dom;
 import 'package:share_plus/share_plus.dart';
@@ -86,21 +87,17 @@ class ArticleScreen extends ConsumerStatefulWidget {
         isSpecialPage =
             lowerTitle.startsWith('special:') ||
             lowerTitle.startsWith('spesial:') ||
+            lowerTitle.startsWith('mirunggan:') ||
             lowerTitle.startsWith('istimewa:') ||
-            lowerTitle.startsWith('khas:');
+            lowerTitle.startsWith('istimiwa:') ||
+            lowerTitle.startsWith('istimèwa:') ||
+            lowerTitle.startsWith('khas:') ||
+            lowerTitle.startsWith('husus:');
       }
 
-      // 5. Routing Logic
+      // Routing Logic
       if (isSpecialPage && extractedTitle != null) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => WebViewScreen(
-              langCode: langCode,
-              pageTitle: extractedTitle!,
-            ),
-          ),
-        );
+        await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
         return;
       }
 
@@ -129,36 +126,13 @@ class ArticleScreen extends ConsumerStatefulWidget {
           );
         }
       } else {
-        // Everything else: Open in in-app WebView
-        // Open in a WebView page
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => WebViewScreen(
-              langCode: langCode,
-              pageTitle: extractedTitle ?? uri.pathSegments.last,
-            ),
-          ),
-        );
-        // Alternatively: Open in in-app browser
-        // await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
+        await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
       }
     } catch (e) {
       debugPrint('Link handling error: $e');
       try {
         final fallbackUri = Uri.parse(Uri.encodeFull(url));
-        // Open in a WebView page
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => WebViewScreen(
-              langCode: langCode,
-              pageTitle: fallbackUri.pathSegments.last,
-            ),
-          ),
-        );
-        // Alternatively: Open in in-app browser
-        // await launchUrl(fallbackUri, mode: LaunchMode.inAppBrowserView);
+        await launchUrl(fallbackUri, mode: LaunchMode.inAppBrowserView);
       } catch (_) {}
     }
   }
@@ -228,18 +202,18 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
             .when(
               data: (article) => rulesAsync.when(
                 data: (rules) {
-                  final metadata = _extractMetadata(article.text, langCode, rules);
+                  final metadata = _extractMetadata(
+                    article.text,
+                    langCode,
+                    rules,
+                  );
                   return Stack(
                     children: [
                       SingleChildScrollView(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildHeroImage(
-                              theme,
-                              article,
-                              metadata.hero,
-                            ),
+                            _buildHeroImage(theme, article, metadata.hero),
                             _buildArticleContent(
                               theme,
                               article,
@@ -248,7 +222,10 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                             ),
                             if (metadata.bottomCarousel.isNotEmpty) ...[
                               const SizedBox(height: 32),
-                              _buildImageCarousel(theme, metadata.bottomCarousel),
+                              _buildImageCarousel(
+                                theme,
+                                metadata.bottomCarousel,
+                              ),
                             ],
                             const WikinusaFooter(),
                             const SizedBox(height: 100),
@@ -330,7 +307,9 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     }
 
     // 2. Collect all images in the document for general processing
-    doc.querySelectorAll('figure, .thumb, .mw-file-description, img').forEach((element) {
+    doc.querySelectorAll('figure, .thumb, .mw-file-description, img').forEach((
+      element,
+    ) {
       final images = _extractImagesFromElement(element);
       for (var img in images) {
         if (!allImages.any((existing) => existing['url'] == img['url'])) {
@@ -341,7 +320,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
 
     // 3. Determine Hero Image
     Map<String, String>? hero;
-    
+
     // Prioritize the first image of the first gallery
     if (galleries.isNotEmpty) {
       final firstGalleryImages = _extractImagesFromElement(galleries.first);
@@ -355,7 +334,11 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
       for (var img in allImages) {
         final url = img['url'] ?? '';
         // Avoid icons, SVGs or symbols
-        final isIcon = url.contains('/icon/') || url.contains('/Symbol_') || url.contains('.svg') || url.contains('/favicon');
+        final isIcon =
+            url.contains('/icon/') ||
+            url.contains('/Symbol_') ||
+            url.contains('.svg') ||
+            url.contains('/favicon');
         if (!isIcon) {
           hero = img;
           break;
@@ -380,13 +363,15 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
   /// Helper to extract image source and caption from a DOM element
   List<Map<String, String>> _extractImagesFromElement(dom.Element element) {
     final List<Map<String, String>> found = [];
-    final imgElements = element.localName == 'img' ? [element] : element.querySelectorAll('img');
+    final imgElements = element.localName == 'img'
+        ? [element]
+        : element.querySelectorAll('img');
 
     for (var img in imgElements) {
       String? src = img.attributes['src'] ?? img.attributes['data-src'];
       if (src != null && src.isNotEmpty) {
         if (src.startsWith('//')) src = 'https:$src';
-        
+
         // Skip tiny images or icons based on width if provided
         final widthStr = img.attributes['width'];
         if (widthStr != null) {
@@ -399,21 +384,20 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
         dom.Element? parent = img.parent;
         // Traverse up to find a known container class
         while (parent != null && parent != element.parent) {
-          if (parent.classes.contains('thumbinner') || parent.classes.contains('gallerybox')) {
+          if (parent.classes.contains('thumbinner') ||
+              parent.classes.contains('gallerybox')) {
             container = parent;
             break;
           }
           parent = parent.parent;
         }
 
-        final captionElement = container.querySelector('.thumbcaption') ?? 
-                             container.querySelector('.gallerytext') ?? 
-                             container.querySelector('figcaption');
+        final captionElement =
+            container.querySelector('.thumbcaption') ??
+            container.querySelector('.gallerytext') ??
+            container.querySelector('figcaption');
 
-        found.add({
-          'url': src,
-          'caption': captionElement?.text.trim() ?? '',
-        });
+        found.add({'url': src, 'caption': captionElement?.text.trim() ?? ''});
       }
     }
     return found;
@@ -424,7 +408,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     List<Map<String, String>> images,
   ) {
     if (images.isEmpty) return const SizedBox.shrink();
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -511,8 +495,9 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
               image: imageUrl != null
                   ? NetworkImage(imageUrl)
                   : const AssetImage(
-                      'assets/images/woman_reading_a_book_on_lap.webp',
-                    ) as ImageProvider,
+                          'assets/images/woman_reading_a_book_on_lap.webp',
+                        )
+                        as ImageProvider,
               fit: BoxFit.cover,
             ),
           ),
@@ -569,9 +554,14 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
               builder: (context, ref, child) {
                 final navState = ref.watch(articleNavigationProvider);
                 return CircleAvatar(
-                  backgroundColor: theme.colorScheme.surface.withValues(alpha: 0.5),
+                  backgroundColor: theme.colorScheme.surface.withValues(
+                    alpha: 0.5,
+                  ),
                   child: IconButton(
-                    icon: Icon(Icons.arrow_back, color: theme.colorScheme.primary),
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: theme.colorScheme.primary,
+                    ),
                     onPressed: () {
                       if (navState.canGoBack) {
                         ref.read(articleNavigationProvider.notifier).previous();
@@ -751,7 +741,9 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: HtmlWidget(
-            doc.body?.innerHtml ?? article.text,
+            // Wrap content in a div with text-align justify
+            '<div style="text-align: justify;">${doc.body?.innerHtml ?? article.text}</div>',
+            // doc.body?.innerHtml ?? article.text,
             onTapUrl: (url) {
               if (url.contains('cite_note')) {
                 final refId = url.split('#').last;
@@ -762,7 +754,10 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
               return true;
             },
             textStyle: theme.textTheme.bodyLarge?.copyWith(
-              fontSize: 16,
+              // Solve the issue with javanese characters
+              fontFamily: (langCode == 'jv')
+                  ? GoogleFonts.notoSansJavanese().fontFamily
+                  : GoogleFonts.notoSerif().fontFamily,
               height: 1.8,
               color: theme.colorScheme.onSurface.withValues(alpha: 0.85),
             ),
@@ -813,6 +808,15 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                 };
               }
 
+              // Solve the problem with javanese characters
+              final langAttr = element.attributes['lang'];
+              if (langAttr == 'jv') {
+                return {'font-family': 'Noto Sans Javanese'};
+              }
+              if (langAttr == 'ar') {
+                return {'font-family': 'Noto Sans Arabic', 'direction': 'rtl'};
+              }
+
               if (element.classes.contains('new')) {
                 return {
                   'color':
@@ -820,12 +824,13 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                 };
               }
               if (element.localName == 'p') {
-                return {'margin-bottom': '16px'};
+                // Align text: justify
+                return {'margin-bottom': '16px', 'text-align': 'justify'};
               }
               return null;
             },
             customWidgetBuilder: (element) {
-              // DETECT GALLERY AND RENDER AS CAROUSEL
+              // Detect gallery and render as carousel
               if (element.classes.contains('gallery')) {
                 final images = _extractImagesFromElement(element);
                 if (images.isNotEmpty) {

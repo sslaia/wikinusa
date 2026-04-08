@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../providers/bookmarks_provider.dart';
 import '../providers/article_provider.dart';
 import '../providers/language_provider.dart';
@@ -31,13 +32,13 @@ class BookmarksScreen extends ConsumerWidget {
                   Icon(
                     Icons.bookmark_border,
                     size: 64,
-                    color: theme.colorScheme.onSurface.withOpacity(0.2),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     'bookmarks_empty'.tr(),
                     style: theme.textTheme.titleMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.5),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                     ),
                   ),
                 ],
@@ -61,7 +62,7 @@ class BookmarksScreen extends ConsumerWidget {
                   subtitle: Text(
                     '${'language'.tr()}: ${bookmark.langCode.toUpperCase()}',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                   trailing: IconButton(
@@ -74,20 +75,10 @@ class BookmarksScreen extends ConsumerWidget {
                       );
                     },
                   ),
-                  onTap: () {
+                  onTap: () async {
                     final currentLangCode = ref.read(languageProvider).code;
-
+                    // Solve the problem with articles in different languages
                     if (currentLangCode == bookmark.langCode) {
-                      // Update current language if it's different from the bookmark's language
-                      // (Kept for future logic if needed)
-                      /*
-                      final currentLang = ref.read(languageProvider);
-                      if (currentLang.code != bookmark.langCode) {
-                        // Note: This assumes languageProvider has a way to change language by code.
-                      }
-                      */
-
-                      // Reset navigation history and navigate to the native article screen
                       ref.read(articleNavigationProvider.notifier).setArticles([bookmark.title], 0);
                       Navigator.push(
                         context,
@@ -96,16 +87,19 @@ class BookmarksScreen extends ConsumerWidget {
                         ),
                       );
                     } else {
-                      // Navigate to WebViewScreen for articles in different languages
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => WebViewScreen(
-                            langCode: bookmark.langCode,
-                            pageTitle: bookmark.title,
-                          ),
-                        ),
-                      );
+                      final url = 'https://${bookmark.langCode}.wikipedia.org/wiki/${bookmark.title.replaceAll(' ', '_')}';
+                      // Open in in-app browser for articles in different languages
+                      await launchUrl(Uri.parse(url), mode: LaunchMode.inAppBrowserView);
+                      // Alternatively open in WebViewScreen
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (_) => WebViewScreen(
+                      //       langCode: bookmark.langCode,
+                      //       pageTitle: bookmark.title,
+                      //     ),
+                      //   ),
+                      // );
                     }
                   },
                 );

@@ -9,6 +9,7 @@ import 'package:wikinusa/presentation/pages/article_screen.dart';
 import 'package:wikinusa/presentation/pages/search_results_screen.dart';
 import 'package:wikinusa/presentation/providers/html_rules_provider.dart';
 import 'package:wikinusa/presentation/widgets/home_header_card.dart';
+import 'package:wikinusa/presentation/widgets/section_header.dart';
 import 'package:wikinusa/presentation/widgets/wiki_portals_card.dart';
 import 'package:wikinusa/presentation/widgets/wikinusa_contribute_card.dart';
 import 'package:wikinusa/presentation/widgets/wikinusa_footer.dart';
@@ -113,13 +114,6 @@ class IndonesianHomePageBuilder implements HomePageBuilder {
             'iconColor': Colors.cyan[900],
           },
           {
-            'title': 'portal_science',
-            'pageTitle': 'Portal:Ilmu',
-            'icon': Icons.science_outlined,
-            'color': const Color(0xFFE1F5FE),
-            'iconColor': Colors.lightBlue[900],
-          },
-          {
             'title': 'portal_chemistry',
             'pageTitle': 'Portal:Kimia',
             'icon': Icons.science,
@@ -132,6 +126,13 @@ class IndonesianHomePageBuilder implements HomePageBuilder {
             'icon': Icons.groups_outlined,
             'color': const Color(0xFFFCE4EC),
             'iconColor': Colors.pink,
+          },
+          {
+            'title': 'portal_science',
+            'pageTitle': 'Portal:Ilmu',
+            'icon': Icons.science_outlined,
+            'color': const Color(0xFFE1F5FE),
+            'iconColor': Colors.lightBlue[900],
           },
           {
             'title': 'portal_history',
@@ -207,37 +208,35 @@ class IndonesianHomePageBuilder implements HomePageBuilder {
                 HomeHeaderCard(
                   imageUrl: headerBg,
                   languageName: 'Bahasa Indonesia',
-                  searchField: _buildSearchField(context, theme),
                 ),
 
-                // _buildHeaderCard(context, theme, headerBg),
-                // const SizedBox(height: 16),
+                const SizedBox(height: 16),
                 if (featuredArticle != null) ...[
-                  _buildSectionHeader(theme, featuredArticle['header']),
+                  SectionHeader(theme: theme, title: featuredArticle['header']),
                   _buildSectionCard(context, theme, featuredArticle, langCode),
                   const SizedBox(height: 24),
                 ],
 
                 if (featuredImage != null) ...[
-                  _buildSectionHeader(theme, featuredImage['header']),
+                  SectionHeader(theme: theme, title: featuredImage['header']),
                   _buildSectionCard(context, theme, featuredImage, langCode),
                   const SizedBox(height: 24),
                 ],
 
                 if (didYouKnow != null) ...[
-                  _buildSectionHeader(theme, didYouKnow['header']),
+                  SectionHeader(theme: theme, title: didYouKnow['header']),
                   _buildSectionCard(context, theme, didYouKnow, langCode),
                   const SizedBox(height: 24),
                 ],
 
                 if (currentEvents != null) ...[
-                  _buildSectionHeader(theme, currentEvents['header']),
+                  SectionHeader(theme: theme, title: currentEvents['header']),
                   _buildSectionCard(context, theme, currentEvents, langCode),
                   const SizedBox(height: 24),
                 ],
 
                 if (onThisDay != null) ...[
-                  _buildSectionHeader(theme, onThisDay['header']),
+                  SectionHeader(theme: theme, title: onThisDay['header']),
                   _buildSectionCard(context, theme, onThisDay, langCode),
                   const SizedBox(height: 24),
                 ],
@@ -265,6 +264,8 @@ class IndonesianHomePageBuilder implements HomePageBuilder {
     Map<String, dynamic> section,
     String langCode,
   ) {
+    final sectionBody = section['body'];
+
     return Consumer(
       builder: (context, ref, child) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -305,7 +306,9 @@ class IndonesianHomePageBuilder implements HomePageBuilder {
 
                 // Display refined HTML content
                 HtmlWidget(
-                  section['body'],
+                  // Remove the div style if the text should not be justify aligned
+                  '<div style="text-align: justify;">$sectionBody</div>',
+                  // section['body'],
                   onTapUrl: (url) async {
                     await ArticleScreen.handleWikipediaLink(
                       context,
@@ -316,7 +319,7 @@ class IndonesianHomePageBuilder implements HomePageBuilder {
                     return true;
                   },
                   textStyle: theme.textTheme.bodyMedium?.copyWith(
-                    fontSize: 16,
+                    // fontSize: 16,
                     height: 1.6,
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.85),
                   ),
@@ -366,54 +369,5 @@ class IndonesianHomePageBuilder implements HomePageBuilder {
         a.attributes['href'] = 'https://$langCode.wikipedia.org$href';
       }
     });
-  }
-
-  Widget _buildSectionHeader(ThemeData theme, String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Text(
-        title.toUpperCase(),
-        style: theme.textTheme.labelMedium?.copyWith(
-          color: theme.colorScheme.secondary,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 1.5,
-          fontSize: 10,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSearchField(BuildContext context, ThemeData theme) {
-    return Container(
-      height: 50,
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
-      ),
-      child: TextField(
-        style: const TextStyle(color: Colors.white),
-        onSubmitted: (String str) {
-          if (str.isNotEmpty) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SearchResultsScreen(query: str),
-              ),
-            );
-          }
-        },
-        onTapOutside: (event) {
-          FocusManager.instance.primaryFocus?.unfocus();
-        },
-        decoration: InputDecoration(
-          hintText: 'search_wikipedia'.tr(),
-          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
-          prefixIcon: const Icon(Icons.search, color: Colors.white),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 15),
-        ),
-      ),
-    );
   }
 }

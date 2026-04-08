@@ -133,7 +133,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
                     border: InputBorder.none,
                     hintStyle: TextStyle(
                       fontSize: 14,
-                      color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                   style: TextStyle(color: theme.colorScheme.onSurface),

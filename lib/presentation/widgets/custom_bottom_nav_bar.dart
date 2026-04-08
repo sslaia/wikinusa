@@ -31,12 +31,32 @@ class CustomBottomNavBar extends ConsumerWidget {
     final theme = Theme.of(context);
 
     final items = [
-      _NavBarItem(icon: Icons.menu, label: 'settings'.tr(), action: _NavBarAction.drawer),
+      _NavBarItem(
+        icon: Icons.menu,
+        label: 'settings'.tr(),
+        action: _NavBarAction.drawer,
+      ),
       if (!isHomeScreen)
-        _NavBarItem(icon: Icons.home, label: 'home'.tr(), action: _NavBarAction.home),
-      _NavBarItem(icon: Icons.refresh, label: 'refresh'.tr(), action: _NavBarAction.refresh),
-      _NavBarItem(icon: Icons.switch_access_shortcut_outlined, label: 'shortcuts'.tr(), action: _NavBarAction.shortcuts),
-      _NavBarItem(icon: Icons.shuffle, label: 'random'.tr(), action: _NavBarAction.random),
+        _NavBarItem(
+          icon: Icons.home,
+          label: 'home'.tr(),
+          action: _NavBarAction.home,
+        ),
+      _NavBarItem(
+        icon: Icons.refresh,
+        label: 'refresh'.tr(),
+        action: _NavBarAction.refresh,
+      ),
+      _NavBarItem(
+        icon: Icons.switch_access_shortcut_outlined,
+        label: 'shortcuts'.tr(),
+        action: _NavBarAction.shortcuts,
+      ),
+      _NavBarItem(
+        icon: Icons.shuffle,
+        label: 'random'.tr(),
+        action: _NavBarAction.random,
+      ),
     ];
 
     return BottomNavigationBar(
@@ -45,8 +65,8 @@ class CustomBottomNavBar extends ConsumerWidget {
       currentIndex: 0,
       showSelectedLabels: false,
       showUnselectedLabels: false,
-      selectedItemColor: theme.colorScheme.onSurface.withOpacity(0.6),
-      unselectedItemColor: theme.colorScheme.onSurface.withOpacity(0.6),
+      selectedItemColor: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+      unselectedItemColor: theme.colorScheme.onSurface.withValues(alpha: 0.6),
       items: items.map((item) {
         return BottomNavigationBarItem(
           icon: Icon(item.icon, size: 24),
@@ -68,7 +88,9 @@ class CustomBottomNavBar extends ConsumerWidget {
           if (isHomeScreen) {
             ref.invalidate(homePageProvider);
           } else {
-            final currentTitle = ref.read(articleNavigationProvider).currentTitle;
+            final currentTitle = ref
+                .read(articleNavigationProvider)
+                .currentTitle;
             if (currentTitle != null) {
               ref.invalidate(articleDetailProvider(currentTitle));
             }
@@ -96,7 +118,9 @@ class CustomBottomNavBar extends ConsumerWidget {
 
             if (context.mounted) {
               if (isHomeScreen) {
-                ref.read(articleNavigationProvider.notifier).setArticles([randomTitle], 0);
+                ref.read(articleNavigationProvider.notifier).setArticles([
+                  randomTitle,
+                ], 0);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -104,7 +128,9 @@ class CustomBottomNavBar extends ConsumerWidget {
                   ),
                 );
               } else {
-                ref.read(articleNavigationProvider.notifier).pushArticle(randomTitle);
+                ref
+                    .read(articleNavigationProvider.notifier)
+                    .pushArticle(randomTitle);
               }
             }
           } catch (e) {

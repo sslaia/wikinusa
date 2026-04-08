@@ -250,7 +250,7 @@ class CustomDrawer extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(6),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
@@ -327,11 +327,14 @@ class CustomDrawer extends ConsumerWidget {
                             )
                           : null,
                       onTap: () {
-                        ref.read(languageProvider.notifier).setLanguage(lang);
-                        
-                        context.setLocale(Locale(lang.code));
-                        
+                        // Close the bottom sheet
                         Navigator.pop(context);
+                        // Close the drawer
+                        Navigator.pop(context);
+                        // Set the language
+                        ref.read(languageProvider.notifier).setLanguage(lang);
+                        // Set the locale
+                        context.setLocale(Locale(lang.code));
                       },
                     );
                   },

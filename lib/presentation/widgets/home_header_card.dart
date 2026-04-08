@@ -1,17 +1,16 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wikinusa/presentation/widgets/search_field_widget.dart';
 
 class HomeHeaderCard extends StatelessWidget {
   final String? imageUrl;
   final String? languageName;
-  final Widget searchField;
 
   const HomeHeaderCard({
     super.key,
     required this.imageUrl,
     required this.languageName,
-    required this.searchField,
   });
 
   @override
@@ -117,7 +116,8 @@ class HomeHeaderCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                searchField,
+                // searchField,
+                SearchFieldWidget(context: context, theme: theme),
               ],
             ),
           ),

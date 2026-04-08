@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:wikinusa/presentation/pages/article_screen.dart';
 import '../providers/shortcuts_provider.dart';
 import '../providers/language_provider.dart';
@@ -36,7 +35,7 @@ void showShortcutsBottomSheet(BuildContext context, WidgetRef ref) {
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.onSurface.withOpacity(0.2),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -79,9 +78,7 @@ void showShortcutsBottomSheet(BuildContext context, WidgetRef ref) {
                               child: Icon(
                                 _getIconData(shortcut['icon'] as String),
                                 size: 20,
-                                color: theme.colorScheme.onSurface.withOpacity(
-                                  0.8,
-                                ),
+                                color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                               ),
                             ),
                             title: Text(

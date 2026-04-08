@@ -43,11 +43,32 @@
     "referenceKeywords": [
       "reference",
       "reflist",
-      "rujukan",
-      "ruju'an"
+      "jujuhutan",
+      "daptar jujuhutan"
     ],
     "homePageSections": {
       "featuredArticle": "mp-tfa",
+      "featuredImage": "mwaw",
+      "inTheNews": "mp-itn"
+    }
+  },
+  "btm": {
+    "remove": [
+      ".infobox",
+      ".navbox"
+    ],
+    "hide": [
+      ".gallery"
+    ],
+    "referenceKeywords": [
+      "reference",
+      "reflist",
+      "sumberna"
+    ],
+    "homePageSections": {
+      "featuredArticle": "mp-tfa",
+      "featuredImage": "mp-bottom",
+      "doYouKnow": "mp-dyk",
       "inTheNews": "mp-itn"
     }
   },
@@ -65,11 +86,11 @@
     ],
     "homePageSections": {
       "featuredArticle": "mp-tfa",
+      "featuredImage": "mp-tfp",
+      "doYouKnow": "mp-dyk",
       "inTheNews": "mp-itn",
       "onThisDay": "mp-otd",
-      "featuredImage": "mp-tfp",
-      "featuredList": "mp-tfl",
-      "doYouKnow": "mp-dyk"
+      "featuredList": "mp-tfl"
     }
   },
   "id": {

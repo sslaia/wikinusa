@@ -1,14 +1,12 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart' as dom;
 import 'package:wikinusa/presentation/pages/article_screen.dart';
-import 'package:wikinusa/presentation/pages/search_results_screen.dart';
 import 'package:wikinusa/presentation/providers/html_rules_provider.dart';
 import 'package:wikinusa/presentation/widgets/home_header_card.dart';
+import 'package:wikinusa/presentation/widgets/section_header.dart';
 import 'package:wikinusa/presentation/widgets/wikinusa_contribute_card.dart';
 import 'package:wikinusa/presentation/widgets/wikinusa_footer.dart';
 import 'home_page_builder.dart';
@@ -133,14 +131,13 @@ class JavaneseHomePageBuilder implements HomePageBuilder {
                 HomeHeaderCard(
                   imageUrl: headerBg,
                   languageName: 'Basa Jawa',
-                  searchField: _buildSearchField(context, theme),
                 ),
 
                 const SizedBox(height: 16),
                 for (var cardData in allCards) ...[
                   if (cardData['body']!.trim().isNotEmpty) ...[
                     if (cardData['header']!.isNotEmpty)
-                      _buildSectionHeader(theme, cardData['header']),
+                      SectionHeader(theme: theme, title: cardData['header']),
                     _buildSectionCard(context, theme, cardData, langCode),
                     const SizedBox(height: 24),
                   ],
@@ -167,6 +164,8 @@ class JavaneseHomePageBuilder implements HomePageBuilder {
     Map<String, dynamic> section,
     String langCode,
   ) {
+    final sectionBody = section['body'];
+
     return Consumer(
       builder: (context, ref, child) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -207,7 +206,8 @@ class JavaneseHomePageBuilder implements HomePageBuilder {
 
                 // Display HTML content
                 HtmlWidget(
-                  section['body'],
+                  // Remove the div style if the text should not be justify aligned
+                  '<div style="text-align: justify;">$sectionBody</div>',
                   onTapUrl: (url) async {
                     await ArticleScreen.handleWikipediaLink(
                       context,
@@ -218,7 +218,6 @@ class JavaneseHomePageBuilder implements HomePageBuilder {
                     return true;
                   },
                   textStyle: theme.textTheme.bodyMedium?.copyWith(
-                    fontSize: 16,
                     height: 1.6,
                     color: theme.colorScheme.onSurface.withValues(alpha: 0.85),
                   ),
@@ -240,55 +239,6 @@ class JavaneseHomePageBuilder implements HomePageBuilder {
               ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSectionHeader(ThemeData theme, String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Text(
-        title.toUpperCase(),
-        style: theme.textTheme.labelMedium?.copyWith(
-          color: theme.colorScheme.secondary,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 1.5,
-          fontSize: 10,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSearchField(BuildContext context, ThemeData theme) {
-    return Container(
-      height: 50,
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
-      ),
-      child: TextField(
-        style: const TextStyle(color: Colors.white),
-        onSubmitted: (String str) {
-          if (str.isNotEmpty) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SearchResultsScreen(query: str),
-              ),
-            );
-          }
-        },
-        onTapOutside: (event) {
-          FocusManager.instance.primaryFocus?.unfocus();
-        },
-        decoration: InputDecoration(
-          hintText: 'search_wikipedia'.tr(),
-          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
-          prefixIcon: const Icon(Icons.search, color: Colors.white),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 15),
         ),
       ),
     );

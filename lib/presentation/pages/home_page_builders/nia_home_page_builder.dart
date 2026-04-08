@@ -7,8 +7,8 @@ import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart' as dom;
 
 import 'package:wikinusa/presentation/pages/article_screen.dart';
-import 'package:wikinusa/presentation/pages/search_results_screen.dart';
 import 'package:wikinusa/presentation/widgets/home_header_card.dart';
+import 'package:wikinusa/presentation/widgets/section_header.dart';
 import 'package:wikinusa/presentation/widgets/wiki_portals_card.dart';
 import 'package:wikinusa/presentation/widgets/wikinusa_contribute_card.dart';
 import 'package:wikinusa/presentation/widgets/wikinusa_footer.dart';
@@ -42,16 +42,19 @@ class NiasHomePageBuilder implements HomePageBuilder {
     }
 
     final featuredArticle = extractHtmlSnippet(
-      'div#mp-featured-article, div#mf-tfa',
+      'div#mp-featured-article',
       removeHeadings: true,
     );
     final featuredPhotoHtml = extractHtmlSnippet(
-      'div#mp-featured-photo, div#mf-tfp',
+      'div#mp-featured-photo',
       removeHeadings: true,
     );
-    final doYouKnow = extractHtmlSnippet('div#mp-dyk-body, div#mf-dyk');
+    final doYouKnow = extractHtmlSnippet('div#mp-dyk-body',
+      removeHeadings: true,
+    );
     final thisMonthInHistory = extractHtmlSnippet(
-      'div#mp-otm-body, div#mf-otd',
+      'div#mp-otm-body',
+      removeHeadings: true,
     );
 
     // Extract featured image URL for background
@@ -139,14 +142,10 @@ class NiasHomePageBuilder implements HomePageBuilder {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          HomeHeaderCard(
-            imageUrl: featuredImageUrl,
-            languageName: 'Li Niha',
-            searchField: _buildSearchField(context, theme),
-          ),
+          HomeHeaderCard(imageUrl: featuredImageUrl, languageName: 'Li Niha'),
           const SizedBox(height: 16),
           if (featuredArticle.isNotEmpty) ...[
-            _buildSectionHeader(theme, 'featured_article'.tr()),
+            SectionHeader(theme: theme, title: 'featured_article'.tr()),
             _buildHtmlCard(
               context,
               theme,
@@ -157,7 +156,7 @@ class NiasHomePageBuilder implements HomePageBuilder {
             const SizedBox(height: 24),
           ],
           if (featuredPhotoHtml.isNotEmpty) ...[
-            _buildSectionHeader(theme, 'featured_image'.tr()),
+            SectionHeader(theme: theme, title: 'featured_image'.tr()),
             _buildHtmlCard(
               context,
               theme,
@@ -168,12 +167,14 @@ class NiasHomePageBuilder implements HomePageBuilder {
             const SizedBox(height: 24),
           ],
           if (doYouKnow.isNotEmpty) ...[
-            _buildSectionHeader(theme, 'dyk'.tr()),
+            // SectionHeader(theme: theme, title: 'dyk'.tr()),
+            SectionHeader(theme: theme, title: 'dyk'.tr()),
             _buildHtmlCard(context, theme, doYouKnow, langCode),
             const SizedBox(height: 24),
           ],
           if (thisMonthInHistory.isNotEmpty) ...[
-            _buildSectionHeader(theme, 'otm'.tr()),
+            // SectionHeader(theme: theme, title: 'otm'.tr()),
+            SectionHeader(theme: theme, title: 'otm'.tr()),
             _buildHtmlCard(context, theme, thisMonthInHistory, langCode),
             const SizedBox(height: 32),
           ],
@@ -224,23 +225,6 @@ class NiasHomePageBuilder implements HomePageBuilder {
     });
   }
 
-  Widget _buildSectionHeader(ThemeData theme, String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Text(
-        title.toUpperCase(),
-        style: GoogleFonts.montserratAlternates(
-          textStyle: theme.textTheme.labelMedium?.copyWith(
-            color: theme.colorScheme.secondary,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.5,
-            fontSize: 16,
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildHtmlCard(
     BuildContext context,
     ThemeData theme,
@@ -262,6 +246,10 @@ class NiasHomePageBuilder implements HomePageBuilder {
       img.remove(); // Remove from HTML to handle layout manually in a Column
     }
 
+    // Remove the image caption from the text
+    document.querySelectorAll('figcaption, .thumbcaption, .gallerytext')
+        .forEach((element) => element.remove());
+
     final remainingHtml = document.body?.innerHtml ?? '';
 
     return Consumer(
@@ -280,7 +268,7 @@ class NiasHomePageBuilder implements HomePageBuilder {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // 1. Display images first (100% width of the padded card area)
+              // Display image
               for (var url in imageUrls)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16),
@@ -296,8 +284,9 @@ class NiasHomePageBuilder implements HomePageBuilder {
                   ),
                 ),
 
-              // 2. Display text content second
+              // Display text content
               HtmlWidget(
+                // Remove the div style if the text should not be justify aligned
                 '<div style="text-align: justify;">$remainingHtml</div>',
                 onTapUrl: (url) async {
                   await ArticleScreen.handleWikipediaLink(
@@ -309,8 +298,7 @@ class NiasHomePageBuilder implements HomePageBuilder {
                   return true;
                 },
                 textStyle: theme.textTheme.bodyMedium?.copyWith(
-                  // fontFamily: 'serif',
-                  // fontSize: 16,
+                  fontFamily: GoogleFonts.notoSerif().fontFamily,
                   height: 1.6,
                   color: theme.colorScheme.onSurface.withValues(alpha: 0.85),
                 ),
@@ -333,49 +321,6 @@ class NiasHomePageBuilder implements HomePageBuilder {
                 },
               ),
             ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSearchField(BuildContext context, ThemeData theme) {
-    return Container(
-      height: 50,
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
-      ),
-      child: Consumer(
-        builder: (context, ref, child) => TextField(
-          style: const TextStyle(color: Colors.white),
-          onSubmitted: (String str) {
-            if (str.isNotEmpty) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  settings: const RouteSettings(name: 'SearchResultsScreen'),
-                  builder: (_) => SearchResultsScreen(query: str),
-                ),
-              );
-            }
-          },
-          onTapOutside: (event) {
-            FocusManager.instance.primaryFocus?.unfocus();
-          },
-          decoration: InputDecoration(
-            hintText: 'search_wikipedia'.tr(),
-            hintStyle: TextStyle(
-              fontFamily: 'sans',
-              fontSize: 12,
-              color: Colors.white.withValues(alpha: 0.5),
-            ),
-            prefixIcon: const Icon(Icons.search_outlined, color: Colors.white),
-            border: InputBorder.none,
-            // The calculation to adjust the text vertically
-            // the height minus the font size divide by two
-            contentPadding: const EdgeInsets.symmetric(vertical: 19),
           ),
         ),
       ),
