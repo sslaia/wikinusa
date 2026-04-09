@@ -747,7 +747,9 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: HtmlWidget(
             // Wrap content in a div with text-align justify
-            '<div style="text-align: justify;">${doc.body?.innerHtml ?? article.text}</div>',
+            // '<div style="text-align: justify;">${doc.body?.innerHtml ?? article.text}</div>',
+            // Alternatively left aligned
+            doc.body?.innerHtml ?? article.text,
             onTapUrl: (url) {
               if (url.contains('cite_note')) {
                 final refId = url.split('#').last;
@@ -827,10 +829,12 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                       '#${WikinusaThemeConfig.getLinkRed(theme.brightness).toARGB32().toRadixString(16).substring(2)}',
                 };
               }
-              if (element.localName == 'p') {
+              // if (element.localName == 'p') {
                 // Align text: justify
-                return {'margin-bottom': '16px', 'text-align': 'justify'};
-              }
+                // return {'margin-bottom': '16px', 'text-align': 'justify'};
+                // Alternatively left aligned
+                // return {'margin-bottom': '16px'};
+              // }
               return null;
             },
             customWidgetBuilder: (element) {

@@ -64,7 +64,7 @@ class CustomDrawer extends ConsumerWidget {
               children: [
                 _buildSectionHeader(theme, 'drawer_quick_shortcuts'),
                 ListTile(
-                  leading: Icon(Icons.add, color: theme.colorScheme.onSurface),
+                  leading: Icon(Icons.edit_note_outlined, color: theme.colorScheme.onSurface),
                   title: const Text('create_new_page').tr(),
                   onTap: () {
                     Navigator.pop(context);
