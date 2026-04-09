@@ -1,18 +1,16 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart' as dom;
+import 'package:wikinusa/core/constants/home_portals.dart';
 import 'package:wikinusa/presentation/pages/article_screen.dart';
-import 'package:wikinusa/presentation/pages/search_results_screen.dart';
 import 'package:wikinusa/presentation/providers/html_rules_provider.dart';
 import 'package:wikinusa/presentation/widgets/home_header_card.dart';
-import 'package:wikinusa/presentation/widgets/section_header.dart';
-import 'package:wikinusa/presentation/widgets/wiki_portals_card.dart';
-import 'package:wikinusa/presentation/widgets/wikinusa_contribute_card.dart';
-import 'package:wikinusa/presentation/widgets/wikinusa_footer.dart';
+import 'package:wikinusa/presentation/widgets/home_section_header.dart';
+import 'package:wikinusa/presentation/widgets/portals_card.dart';
+import 'package:wikinusa/presentation/widgets/contribute_card.dart';
+import 'package:wikinusa/presentation/widgets/wiki_footer.dart';
 import 'home_page_builder.dart';
 
 class IndonesianHomePageBuilder implements HomePageBuilder {
@@ -98,64 +96,7 @@ class IndonesianHomePageBuilder implements HomePageBuilder {
       builder: (context, ref, child) {
         final rulesAsync = ref.watch(htmlRulesProvider);
 
-        final portals = [
-          {
-            'title': 'portal_biography',
-            'pageTitle': 'Portal:Biografi',
-            'icon': Icons.person_outline,
-            'color': const Color(0xFFE8F5E9),
-            'iconColor': Colors.green[800],
-          },
-          {
-            'title': 'portal_geography',
-            'pageTitle': 'Portal:Geografi',
-            'icon': Icons.map_outlined,
-            'color': const Color(0xFFE0F7FA),
-            'iconColor': Colors.cyan[900],
-          },
-          {
-            'title': 'portal_chemistry',
-            'pageTitle': 'Portal:Kimia',
-            'icon': Icons.science,
-            'color': const Color(0xFFFFF8E1),
-            'iconColor': Colors.amber[900],
-          },
-          {
-            'title': 'portal_community',
-            'pageTitle': 'Portal:Komunitas',
-            'icon': Icons.groups_outlined,
-            'color': const Color(0xFFFCE4EC),
-            'iconColor': Colors.pink,
-          },
-          {
-            'title': 'portal_science',
-            'pageTitle': 'Portal:Ilmu',
-            'icon': Icons.science_outlined,
-            'color': const Color(0xFFE1F5FE),
-            'iconColor': Colors.lightBlue[900],
-          },
-          {
-            'title': 'portal_history',
-            'pageTitle': 'Portal:Sejarah',
-            'icon': Icons.castle_outlined,
-            'color': const Color(0xFFEFEBE9),
-            'iconColor': Colors.brown,
-          },
-          {
-            'title': 'portal_arts',
-            'pageTitle': 'Portal:Seni',
-            'icon': Icons.palette_outlined,
-            'color': const Color(0xFFF3E5F5),
-            'iconColor': Colors.deepPurple,
-          },
-          {
-            'title': 'portal_technology',
-            'pageTitle': 'Portal:Teknologi',
-            'icon': Icons.memory_outlined,
-            'color': const Color(0xFFF5F5F5),
-            'iconColor': Colors.blueGrey[700],
-          },
-        ];
+        final portals = HomePortals.getPortals(context)[langCode] ?? [];
 
         return rulesAsync.when(
           data: (rules) {
@@ -212,40 +153,41 @@ class IndonesianHomePageBuilder implements HomePageBuilder {
 
                 const SizedBox(height: 16),
                 if (featuredArticle != null) ...[
-                  SectionHeader(theme: theme, title: featuredArticle['header']),
+                  HomeSectionHeader(theme: theme, title: featuredArticle['header']),
                   _buildSectionCard(context, theme, featuredArticle, langCode),
                   const SizedBox(height: 24),
                 ],
 
                 if (featuredImage != null) ...[
-                  SectionHeader(theme: theme, title: featuredImage['header']),
+                  HomeSectionHeader(theme: theme, title: featuredImage['header']),
                   _buildSectionCard(context, theme, featuredImage, langCode),
                   const SizedBox(height: 24),
                 ],
 
                 if (didYouKnow != null) ...[
-                  SectionHeader(theme: theme, title: didYouKnow['header']),
+                  HomeSectionHeader(theme: theme, title: didYouKnow['header']),
                   _buildSectionCard(context, theme, didYouKnow, langCode),
                   const SizedBox(height: 24),
                 ],
 
                 if (currentEvents != null) ...[
-                  SectionHeader(theme: theme, title: currentEvents['header']),
+                  HomeSectionHeader(theme: theme, title: currentEvents['header']),
                   _buildSectionCard(context, theme, currentEvents, langCode),
                   const SizedBox(height: 24),
                 ],
 
                 if (onThisDay != null) ...[
-                  SectionHeader(theme: theme, title: onThisDay['header']),
+                  HomeSectionHeader(theme: theme, title: onThisDay['header']),
                   _buildSectionCard(context, theme, onThisDay, langCode),
                   const SizedBox(height: 24),
                 ],
 
                 const SizedBox(height: 32),
-                WikiPortalsCard(portals: portals, langCode: langCode),
+                if (portals.isNotEmpty)
+                  PortalsCard(portals: portals, langCode: langCode),
                 const SizedBox(height: 48),
-                const WikinusaContributeCard(),
-                const WikinusaFooter(),
+                const ContributeCard(),
+                const WikiFooter(),
                 const SizedBox(height: 80),
               ],
             );
@@ -330,7 +272,7 @@ class IndonesianHomePageBuilder implements HomePageBuilder {
                     if (element.localName == 'a') {
                       return {
                         'color':
-                            '#${theme.colorScheme.primary.value.toRadixString(16).substring(2)}',
+                            '#${theme.colorScheme.primary.toARGB32().toRadixString(16).substring(2)}',
                         'text-decoration': 'none',
                         'font-weight': '600',
                       };

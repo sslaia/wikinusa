@@ -10,6 +10,7 @@
     "hide": [
       "img",
       "figure",
+      ".gallery",
       ".thumb"
     ],
     "referenceKeywords": [
@@ -143,6 +144,12 @@
       "famotokhi ba gahe",
       "reference",
       "reflist"
-    ]
+    ],
+    "homePageSections": {
+      "featuredArticle": "mp-featured-article",
+      "featuredImage": "mp-featured-photo",
+      "doYouKnow": "mp-dyk",
+      "onThisMonth": "mp-otm"
+    }
   }
 }

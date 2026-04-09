@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../pages/create_page_screen.dart';
 
-class WikinusaContributeCard extends StatelessWidget {
-  const WikinusaContributeCard({super.key});
+class ContributeCard extends StatelessWidget {
+  const ContributeCard({super.key});
 
   @override
   Widget build(BuildContext context) {

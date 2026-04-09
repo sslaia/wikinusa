@@ -1,12 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wikinusa/presentation/pages/create_page_screen.dart';
 import 'shortcuts_bottom_sheet.dart';
 import '../providers/article_provider.dart';
 import '../providers/language_provider.dart';
 import '../pages/article_screen.dart';
 
-enum _NavBarAction { drawer, home, refresh, shortcuts, random }
+enum _NavBarAction { drawer, home, createNewPage, refresh, shortcuts, random }
 
 class _NavBarItem {
   final IconData icon;
@@ -41,6 +42,12 @@ class CustomBottomNavBar extends ConsumerWidget {
           icon: Icons.home,
           label: 'home'.tr(),
           action: _NavBarAction.home,
+        ),
+      if (isHomeScreen)
+        _NavBarItem(
+          icon: Icons.edit_note_outlined,
+          label: 'create_new_page'.tr(),
+          action: _NavBarAction.createNewPage,
         ),
       _NavBarItem(
         icon: Icons.refresh,
@@ -84,6 +91,13 @@ class CustomBottomNavBar extends ConsumerWidget {
           }
         } else if (action == _NavBarAction.home) {
           Navigator.of(context).popUntil((route) => route.isFirst);
+        } else if (action == _NavBarAction.createNewPage) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const CreatePageScreen(),
+            ),
+          );
         } else if (action == _NavBarAction.refresh) {
           if (isHomeScreen) {
             ref.invalidate(homePageProvider);

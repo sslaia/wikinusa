@@ -8,8 +8,7 @@ import 'package:html/dom.dart' as dom;
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wikinusa/presentation/pages/create_page_screen.dart';
-import 'package:wikinusa/presentation/pages/webview_screen.dart';
-import 'package:wikinusa/presentation/widgets/wikinusa_footer.dart';
+import 'package:wikinusa/presentation/widgets/wiki_footer.dart';
 import '../widgets/custom_bottom_nav_bar.dart';
 import '../widgets/custom_drawer.dart';
 import '../providers/article_provider.dart';
@@ -227,7 +226,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                                 metadata.bottomCarousel,
                               ),
                             ],
-                            const WikinusaFooter(),
+                            const WikiFooter(),
                             const SizedBox(height: 100),
                           ],
                         ),
@@ -299,26 +298,31 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     final List<Map<String, String>> allImages = [];
     final List<String> usedInGalleries = [];
 
-    // 1. Identify all galleries and collect their images first
+    // Identify all galleries and collect their images first
     final galleries = doc.querySelectorAll('.gallery');
     for (var gallery in galleries) {
       final galleryImages = _extractImagesFromElement(gallery);
       usedInGalleries.addAll(galleryImages.map((e) => e['url']!));
     }
 
-    // 2. Collect all images in the document for general processing
+    // Collect all images in the document for general processing
+    // and filter out maps
     doc.querySelectorAll('figure, .thumb, .mw-file-description, img').forEach((
       element,
     ) {
       final images = _extractImagesFromElement(element);
       for (var img in images) {
-        if (!allImages.any((existing) => existing['url'] == img['url'])) {
+        final url = img['url'] ?? '';
+        final isMap = url.contains('maps.wikimedia.org');
+        final isDuplicate = allImages.any((existing) => existing['url'] == url);
+
+        if (!isMap && !isDuplicate) {
           allImages.add(img);
         }
       }
     });
 
-    // 3. Determine Hero Image
+    // Determine Hero Image
     Map<String, String>? hero;
 
     // Prioritize the first image of the first gallery
@@ -338,6 +342,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
             url.contains('/icon/') ||
             url.contains('/Symbol_') ||
             url.contains('.svg') ||
+            url.contains('maps') ||
             url.contains('/favicon');
         if (!isIcon) {
           hero = img;
@@ -346,7 +351,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
       }
     }
 
-    // 4. Determine Bottom Carousel images (those not used as hero and not in any gallery)
+    // Determine Bottom Carousel images (those not used as hero and not in any gallery)
     final bottomCarousel = allImages.where((img) {
       final isHero = img['url'] == hero?['url'];
       final isInGallery = usedInGalleries.contains(img['url']);
@@ -376,7 +381,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
         final widthStr = img.attributes['width'];
         if (widthStr != null) {
           final width = int.tryParse(widthStr);
-          if (width != null && width < 50) continue;
+          if (width != null && width < 100) continue;
         }
 
         // Try to find a caption nearby
@@ -743,7 +748,6 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
           child: HtmlWidget(
             // Wrap content in a div with text-align justify
             '<div style="text-align: justify;">${doc.body?.innerHtml ?? article.text}</div>',
-            // doc.body?.innerHtml ?? article.text,
             onTapUrl: (url) {
               if (url.contains('cite_note')) {
                 final refId = url.split('#').last;

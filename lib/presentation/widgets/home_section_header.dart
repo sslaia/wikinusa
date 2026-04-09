@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class SectionHeader extends StatelessWidget {
-  const SectionHeader({
+class HomeSectionHeader extends StatelessWidget {
+  const HomeSectionHeader({
     super.key,
     required this.theme,
     required this.title,

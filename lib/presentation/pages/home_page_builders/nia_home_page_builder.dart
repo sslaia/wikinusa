@@ -1,19 +1,18 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:html/parser.dart' as html_parser;
-import 'package:html/dom.dart' as dom;
 
-import 'package:wikinusa/presentation/pages/article_screen.dart';
+import 'package:wikinusa/core/constants/home_portals.dart';
+import 'package:wikinusa/core/utils/wiki_html_utils.dart';
+import 'package:wikinusa/presentation/providers/html_rules_provider.dart';
 import 'package:wikinusa/presentation/widgets/home_header_card.dart';
-import 'package:wikinusa/presentation/widgets/section_header.dart';
-import 'package:wikinusa/presentation/widgets/wiki_portals_card.dart';
-import 'package:wikinusa/presentation/widgets/wikinusa_contribute_card.dart';
-import 'package:wikinusa/presentation/widgets/wikinusa_footer.dart';
+import 'package:wikinusa/presentation/widgets/home_section_body.dart';
+import 'package:wikinusa/presentation/widgets/home_section_header.dart';
+import 'package:wikinusa/presentation/widgets/portals_card.dart';
+import 'package:wikinusa/presentation/widgets/contribute_card.dart';
+import 'package:wikinusa/presentation/widgets/wiki_footer.dart';
 import 'package:wikinusa/presentation/pages/home_page_builders/home_page_builder.dart';
-import 'package:wikinusa/core/theme_config.dart';
 
 class NiasHomePageBuilder implements HomePageBuilder {
   @override
@@ -27,303 +26,189 @@ class NiasHomePageBuilder implements HomePageBuilder {
     final theme = Theme.of(context);
     final document = html_parser.parse(html);
 
-    String extractHtmlSnippet(String selector, {bool removeHeadings = false}) {
-      final element = document.querySelector(selector);
-      if (element == null) return '';
+    // Remove scripts and styles
+    document.querySelectorAll('script, style, link').forEach((e) => e.remove());
 
-      if (removeHeadings) {
-        element
-            .querySelectorAll('h2, h3, .mw-headline, .mp-h2')
-            .forEach((e) => e.remove());
-      }
+    // Helper to extract specific section data
+    Map<String, dynamic>? extractSection(String id, String header) {
+      final section = document.getElementById(id);
 
-      _fixUrls(element, langCode);
-      return element.outerHtml;
-    }
+      if (section == null) return null;
 
-    final featuredArticle = extractHtmlSnippet(
-      'div#mp-featured-article',
-      removeHeadings: true,
-    );
-    final featuredPhotoHtml = extractHtmlSnippet(
-      'div#mp-featured-photo',
-      removeHeadings: true,
-    );
-    final doYouKnow = extractHtmlSnippet('div#mp-dyk-body',
-      removeHeadings: true,
-    );
-    final thisMonthInHistory = extractHtmlSnippet(
-      'div#mp-otm-body',
-      removeHeadings: true,
-    );
+      // Fix URLs before extraction
+      WikiHtmlUtils.fixUrls(section, langCode);
 
-    // Extract featured image URL for background
-    String? featuredImageUrl;
-    if (featuredPhotoHtml.isNotEmpty) {
-      final photoDoc = html_parser.parse(featuredPhotoHtml);
-      final img = photoDoc.querySelector('img');
-      featuredImageUrl = img?.attributes['src'];
-    }
+      // Extract images to display them at the top of the card
+      final List<String> images = [];
+      section.querySelectorAll('img').forEach((img) {
+        final src = img.attributes['src'];
+        if (src != null && src.isNotEmpty) {
+          // Skip tiny icons
+          final widthAttr = img.attributes['width'];
+          if (widthAttr != null) {
+            final width = int.tryParse(widthAttr);
+            if (width != null && width < 100) return;
+          }
 
-    final portals = [
-      {
-        'title': 'portal_religion',
-        'pageTitle': 'Portal:Agama',
-        'icon': Icons.account_balance,
-        'color': const Color(0xFFE8EAF6),
-        'iconColor': Colors.indigo,
-      },
-      {
-        'title': 'portal_biology',
-        'pageTitle': 'Portal:Biologi',
-        'icon': Icons.eco,
-        'color': const Color(0xFFE8F5E9),
-        'iconColor': Colors.green,
-      },
-      {
-        'title': 'portal_government',
-        'pageTitle': 'Portal:Famatörö',
-        'icon': Icons.gavel,
-        'color': const Color(0xFFFFF8E1),
-        'iconColor': Colors.amber[900],
-      },
-      {
-        'title': 'portal_geography',
-        'pageTitle': 'Portal:Geografi',
-        'icon': Icons.public,
-        'color': const Color(0xFFE0F7FA),
-        'iconColor': Colors.cyan[900],
-      },
-      {
-        'title': 'portal_culture',
-        'pageTitle': 'Portal:Hada',
-        'icon': Icons.theater_comedy,
-        'color': const Color(0xFFFCE4EC),
-        'iconColor': Colors.pink,
-      },
-      {
-        'title': 'portal_maths',
-        'pageTitle': 'Portal:Matematika',
-        'icon': Icons.functions,
-        'color': const Color(0xFFF3E5F5),
-        'iconColor': Colors.deepPurple,
-      },
-      {
-        'title': 'portal_media',
-        'pageTitle': 'Portal:Media',
-        'icon': Icons.newspaper,
-        'color': const Color(0xFFFFF3E0),
-        'iconColor': Colors.orange[900],
-      },
-      {
-        'title': 'portal_science',
-        'pageTitle': 'Portal:Sains',
-        'icon': Icons.biotech,
-        'color': const Color(0xFFE1F5FE),
-        'iconColor': Colors.lightBlue[900],
-      },
-      {
-        'title': 'portal_history',
-        'pageTitle': 'Portal:Sejarah',
-        'icon': Icons.history,
-        'color': const Color(0xFFEFEBE9),
-        'iconColor': Colors.brown,
-      },
-      {
-        'title': 'portal_technology',
-        'pageTitle': 'Portal:Teknologi',
-        'icon': Icons.devices,
-        'color': const Color(0xFFF5F5F5),
-        'iconColor': Colors.blueGrey[700],
-      },
-    ];
-
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          HomeHeaderCard(imageUrl: featuredImageUrl, languageName: 'Li Niha'),
-          const SizedBox(height: 16),
-          if (featuredArticle.isNotEmpty) ...[
-            SectionHeader(theme: theme, title: 'featured_article'.tr()),
-            _buildHtmlCard(
-              context,
-              theme,
-              featuredArticle,
-              langCode,
-              isFeatured: true,
-            ),
-            const SizedBox(height: 24),
-          ],
-          if (featuredPhotoHtml.isNotEmpty) ...[
-            SectionHeader(theme: theme, title: 'featured_image'.tr()),
-            _buildHtmlCard(
-              context,
-              theme,
-              featuredPhotoHtml,
-              langCode,
-              isFeatured: true,
-            ),
-            const SizedBox(height: 24),
-          ],
-          if (doYouKnow.isNotEmpty) ...[
-            // SectionHeader(theme: theme, title: 'dyk'.tr()),
-            SectionHeader(theme: theme, title: 'dyk'.tr()),
-            _buildHtmlCard(context, theme, doYouKnow, langCode),
-            const SizedBox(height: 24),
-          ],
-          if (thisMonthInHistory.isNotEmpty) ...[
-            // SectionHeader(theme: theme, title: 'otm'.tr()),
-            SectionHeader(theme: theme, title: 'otm'.tr()),
-            _buildHtmlCard(context, theme, thisMonthInHistory, langCode),
-            const SizedBox(height: 32),
-          ],
-          WikiPortalsCard(portals: portals, langCode: langCode),
-          const SizedBox(height: 48),
-          const WikinusaContributeCard(),
-          const WikinusaFooter(),
-          const SizedBox(height: 32),
-        ],
-      ),
-    );
-  }
-
-  void _fixUrls(dom.Element element, String langCode) {
-    void cleanLayout(dom.Element e) {
-      e.attributes.remove('style');
-      e.attributes.remove('width');
-      e.attributes.remove('height');
-      e.attributes.remove('align');
-      e.attributes.remove('valign');
-      e.attributes.remove('border');
-      e.attributes.remove('cellpadding');
-      e.attributes.remove('cellspacing');
-    }
-
-    cleanLayout(element);
-    element.querySelectorAll('*').forEach(cleanLayout);
-
-    element.querySelectorAll('img').forEach((img) {
-      String? src = img.attributes['data-src'] ?? img.attributes['src'];
-      if (src != null) {
-        if (src.startsWith('//')) {
-          src = 'https:$src';
-        } else if (src.startsWith('/')) {
-          src = 'https://$langCode.wikipedia.org$src';
+          images.add(src);
         }
-        img.attributes['src'] = src;
-      }
-      img.attributes.remove('srcset');
-      img.attributes.remove('data-srcset');
-    });
+        img.remove(); // Remove from HTML to display manually at top
+      });
 
-    element.querySelectorAll('a').forEach((a) {
-      final href = a.attributes['href'];
-      if (href != null && href.startsWith('/')) {
-        a.attributes['href'] = 'https://$langCode.wikipedia.org$href';
-      }
-    });
-  }
+      String finalBody = '';
 
-  Widget _buildHtmlCard(
-    BuildContext context,
-    ThemeData theme,
-    String htmlContent,
-    String langCode, {
-    bool isFeatured = false,
-  }) {
-    final document = html_parser.parse(htmlContent);
-
-    // Extract all images to display them at the top of the card
-    // ensuring they are not constrained by nested HTML layout elements.
-    final imgElements = document.querySelectorAll('img');
-    final List<String> imageUrls = [];
-    for (var img in imgElements) {
-      final src = img.attributes['src'];
-      if (src != null && src.isNotEmpty) {
-        imageUrls.add(src);
+      if (id == 'mp-featured-article') {
+        final bodyContainer = section.querySelector(
+          '#mp-featured-article-body',
+        );
+        if (bodyContainer != null) {
+          finalBody = bodyContainer.innerHtml;
+        } else {
+          section
+              .querySelectorAll('.mp-h2, #mp-featured-article')
+              .forEach((e) => e.remove());
+          finalBody = section.innerHtml;
+        }
+      } else if (id == 'mp-featured-photo') {
+        final pElements = section
+            .querySelectorAll('span')
+            .where((e) => e.text.trim().isNotEmpty);
+        if (pElements.isNotEmpty) finalBody = pElements.first.outerHtml;
+      } else if (id == 'mp-dyk') {
+        final ulElements = section
+            .querySelectorAll('ul')
+            .where((e) => e.text.trim().isNotEmpty);
+        if (ulElements.isNotEmpty) finalBody = ulElements.first.outerHtml;
+      } else if (id == 'mp-otm') {
+        final pElements = section
+            .querySelectorAll('ul')
+            .where((e) => e.text.trim().isNotEmpty);
+        if (pElements.isNotEmpty) finalBody = pElements.first.outerHtml;
+      } else {
+        finalBody = section.innerHtml;
       }
-      img.remove(); // Remove from HTML to handle layout manually in a Column
+
+      if (finalBody.trim().isEmpty) return null;
+
+      return {'header': header, 'body': finalBody, 'images': images};
     }
-
-    // Remove the image caption from the text
-    document.querySelectorAll('figcaption, .thumbcaption, .gallerytext')
-        .forEach((element) => element.remove());
-
-    final remainingHtml = document.body?.innerHtml ?? '';
 
     return Consumer(
-      builder: (context, ref, child) => Card(
-        margin: const EdgeInsets.symmetric(horizontal: 16),
-        elevation: 0,
-        color: theme.colorScheme.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(
-            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Display image
-              for (var url in imageUrls)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      url,
-                      width: double.infinity,
-                      fit: BoxFit.fitWidth,
-                      errorBuilder: (ctx, err, stack) =>
-                          const SizedBox.shrink(),
-                    ),
-                  ),
-                ),
+      builder: (context, ref, child) {
+        final rulesAsync = ref.watch(htmlRulesProvider);
 
-              // Display text content
-              HtmlWidget(
-                // Remove the div style if the text should not be justify aligned
-                '<div style="text-align: justify;">$remainingHtml</div>',
-                onTapUrl: (url) async {
-                  await ArticleScreen.handleWikipediaLink(
-                    context,
-                    ref,
-                    url,
-                    langCode,
-                  );
-                  return true;
-                },
-                textStyle: theme.textTheme.bodyMedium?.copyWith(
-                  fontFamily: GoogleFonts.notoSerif().fontFamily,
-                  height: 1.6,
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.85),
-                ),
-                customStylesBuilder: (element) {
-                  if (element.localName == 'p') {
-                    return {'margin-bottom': '12px', 'text-align': 'justify'};
-                  }
-                  if (element.localName == 'a') {
-                    final href = element.attributes['href'] ?? '';
-                    final isRedLink = href.contains('action=edit');
-                    return {
-                      'color': isRedLink
-                          ? '#${WikinusaThemeConfig.getLinkRed(theme.brightness).value.toRadixString(16).substring(2)}'
-                          : '#${theme.colorScheme.primary.value.toRadixString(16).substring(2)}',
-                      'text-decoration': 'none',
-                      'font-weight': '600',
-                    };
-                  }
-                  return null;
-                },
+        return rulesAsync.when(
+          data: (rules) {
+            final niaRules = rules['nia'] as Map<String, dynamic>?;
+            final homePageSections =
+                niaRules?['homePageSections'] as Map<String, dynamic>?;
+
+            final featuredArticleId =
+                homePageSections?['featuredArticle'] as String? ??
+                'mp-featured-article';
+            final featuredImageId =
+                homePageSections?['featuredImage'] as String? ??
+                'mp-featured-photo';
+            final doYouKnowId =
+                homePageSections?['doYouKnow'] as String? ?? 'mp-dyk';
+            final onThisMonthId =
+                homePageSections?['onThisMonth'] as String? ?? 'mp-otm';
+
+            // Explicitly target Wikipedia sections by IDs
+            final featuredArticle = extractSection(
+              featuredArticleId,
+              'Sura amilita',
+            );
+            final featuredImage = extractSection(
+              featuredImageId,
+              'Gamara amilita',
+            );
+            final doYouKnow = extractSection(doYouKnowId, "Hadia ö'ila");
+            final onThisMonth = extractSection(onThisMonthId, 'Salua föna');
+
+            // Determine header background image
+            String? headerBg;
+            if (featuredImage != null && featuredImage['images'].isNotEmpty) {
+              headerBg = featuredImage['images'].first;
+            }
+
+            final portals = HomePortals.getPortals(context)[langCode] ?? [];
+
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  HomeHeaderCard(imageUrl: headerBg, languageName: 'Li Niha'),
+                  const SizedBox(height: 16),
+
+                  if (featuredArticle != null) ...[
+                    HomeSectionHeader(
+                      theme: theme,
+                      title: featuredArticle['header'],
+                    ),
+                    HomeSectionBody(
+                      context: context,
+                      theme: theme,
+                      section: featuredArticle,
+                      langCode: langCode,
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+
+                  if (featuredImage != null) ...[
+                    HomeSectionHeader(
+                      theme: theme,
+                      title: featuredImage['header'],
+                    ),
+                    HomeSectionBody(
+                      context: context,
+                      theme: theme,
+                      section: featuredImage,
+                      langCode: langCode,
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+
+                  if (doYouKnow != null) ...[
+                    HomeSectionHeader(theme: theme, title: doYouKnow['header']),
+                    HomeSectionBody(
+                      context: context,
+                      theme: theme,
+                      section: doYouKnow,
+                      langCode: langCode,
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+
+                  if (onThisMonth != null) ...[
+                    HomeSectionHeader(
+                      theme: theme,
+                      title: onThisMonth['header'],
+                    ),
+                    HomeSectionBody(
+                      context: context,
+                      theme: theme,
+                      section: onThisMonth,
+                      langCode: langCode,
+                    ),
+                    const SizedBox(height: 32),
+                  ],
+
+                  if (portals.isNotEmpty)
+                    PortalsCard(portals: portals, langCode: langCode),
+                  const SizedBox(height: 48),
+                  const ContributeCard(),
+                  const WikiFooter(),
+                  const SizedBox(height: 32),
+                ],
               ),
-            ],
-          ),
-        ),
-      ),
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (err, stack) =>
+              Center(child: Text('error_loading_rules').tr()),
+        );
+      },
     );
   }
 }

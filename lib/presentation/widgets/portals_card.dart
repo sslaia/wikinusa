@@ -4,11 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../pages/article_screen.dart';
 
-class WikiPortalsCard extends ConsumerWidget {
+class PortalsCard extends ConsumerWidget {
   final List<Map<String, dynamic>> portals;
   final String langCode;
 
-  const WikiPortalsCard({
+  const PortalsCard({
     super.key,
     required this.portals,
     required this.langCode,

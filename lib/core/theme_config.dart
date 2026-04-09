@@ -30,9 +30,8 @@ class WikinusaThemeConfig {
       surface: isDark ? const Color(0xFF121212) : const Color(0xFFFBF9F8),
     );
 
-    final displayFont = GoogleFonts.plusJakartaSans().fontFamily;
-    // Literata is specifically designed for screen reading (Google Play Books font)
-    final bodyFont = GoogleFonts.gelasio().fontFamily;
+    final displayFont = GoogleFonts.literata().fontFamily;
+    final bodyFont = GoogleFonts.notoSerif().fontFamily;
     final labelFont = GoogleFonts.inter().fontFamily;
 
     return ThemeData(

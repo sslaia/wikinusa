@@ -1,65 +1,69 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:wikinusa/core/constants/disclaimer.dart';
+import 'package:wikinusa/core/constants/license_notice.dart';
+import 'package:wikinusa/presentation/widgets/spacer_image.dart';
 
-class WikinusaFooter extends StatelessWidget {
-  const WikinusaFooter({super.key});
+class WikiFooter extends StatelessWidget {
+  const WikiFooter({super.key});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final String disclaimerUrl = 'https://wikinusa.blogspot.com/2026/04/disclaimer.html';
+    final String privacyPolicyUrl = 'https://wikinusa.blogspot.com/2026/04/wikinusa-privacy-policy.html';
+
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
       child: Column(
         children: [
-          const Divider(),
-          const SizedBox(height: 24),
+          const SpacerImage(),
+          const SizedBox(height: 16),
           Text(
             'WikiNusa',
             style: GoogleFonts.cinzelDecorative(
               textStyle: theme.textTheme.labelLarge?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                 fontSize: 14,
+                fontWeight: FontWeight.bold,
                 letterSpacing: 2.0,
               ),
             ),
           ),
           const SizedBox(height: 16),
-          Text(
-            'footer_license'.tr(),
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodySmall?.copyWith(
-              fontFamily: 'sans',
+          HtmlWidget(
+            '<div style="text-align: center;">$disclaimer</div>',
+            textStyle: theme.textTheme.bodyMedium?.copyWith(
               fontSize: 10,
               height: 1.6,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'footer_disclaimer'.tr(),
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodySmall?.copyWith(
-              fontFamily: 'sans',
-              fontSize: 10,
-              height: 1.6,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.85),
             ),
           ),
           const SizedBox(height: 24),
+          HtmlWidget(
+            '<div style="text-align: center;">$licenseNotice</div>',
+            textStyle: theme.textTheme.bodyMedium?.copyWith(
+              fontSize: 10,
+              height: 1.6,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.85),
+            ),
+          ),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _FooterLink(
                 label: 'Disclaimer',
-                url: 'https://wikinusa.blogspot.com/2026/04/disclaimer.html',
+                url: disclaimerUrl,
               ),
               const SizedBox(width: 16),
               _FooterLink(
                 label: 'Privacy Policy',
-                url: 'https://wikinusa.blogspot.com/2026/04/wikinusa-privacy-policy.html',
+                url: privacyPolicyUrl,
               ),
             ],
           ),

@@ -9,9 +9,9 @@ import 'package:wikinusa/presentation/pages/article_screen.dart';
 import 'package:wikinusa/presentation/pages/search_results_screen.dart';
 import 'package:wikinusa/presentation/providers/html_rules_provider.dart';
 import 'package:wikinusa/presentation/widgets/home_header_card.dart';
-import 'package:wikinusa/presentation/widgets/wiki_portals_card.dart';
-import 'package:wikinusa/presentation/widgets/wikinusa_contribute_card.dart';
-import 'package:wikinusa/presentation/widgets/wikinusa_footer.dart';
+import 'package:wikinusa/presentation/widgets/portals_card.dart';
+import 'package:wikinusa/presentation/widgets/contribute_card.dart';
+import 'package:wikinusa/presentation/widgets/wiki_footer.dart';
 import 'home_page_builder.dart';
 
 class BetawiHomePageBuilder implements HomePageBuilder {
@@ -150,8 +150,8 @@ class BetawiHomePageBuilder implements HomePageBuilder {
                 ],
 
                 const SizedBox(height: 48),
-                const WikinusaContributeCard(),
-                const WikinusaFooter(),
+                const ContributeCard(),
+                const WikiFooter(),
                 const SizedBox(height: 80),
               ],
             );

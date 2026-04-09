@@ -3,12 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart' as dom;
+import 'package:wikinusa/core/constants/home_portals.dart';
 import 'package:wikinusa/presentation/pages/article_screen.dart';
 import 'package:wikinusa/presentation/providers/html_rules_provider.dart';
 import 'package:wikinusa/presentation/widgets/home_header_card.dart';
-import 'package:wikinusa/presentation/widgets/section_header.dart';
-import 'package:wikinusa/presentation/widgets/wikinusa_contribute_card.dart';
-import 'package:wikinusa/presentation/widgets/wikinusa_footer.dart';
+import 'package:wikinusa/presentation/widgets/home_section_header.dart';
+import 'package:wikinusa/presentation/widgets/portals_card.dart';
+import 'package:wikinusa/presentation/widgets/contribute_card.dart';
+import 'package:wikinusa/presentation/widgets/wiki_footer.dart';
 import 'home_page_builder.dart';
 
 class JavaneseHomePageBuilder implements HomePageBuilder {
@@ -81,6 +83,8 @@ class JavaneseHomePageBuilder implements HomePageBuilder {
       return {'header': headerText, 'body': finalBody, 'images': images};
     }
 
+    final portals = HomePortals.getPortals(context)[langCode] ?? [];
+
     return Consumer(
       builder: (context, ref, child) {
         final rulesAsync = ref.watch(htmlRulesProvider);
@@ -137,15 +141,17 @@ class JavaneseHomePageBuilder implements HomePageBuilder {
                 for (var cardData in allCards) ...[
                   if (cardData['body']!.trim().isNotEmpty) ...[
                     if (cardData['header']!.isNotEmpty)
-                      SectionHeader(theme: theme, title: cardData['header']),
+                      HomeSectionHeader(theme: theme, title: cardData['header']),
                     _buildSectionCard(context, theme, cardData, langCode),
                     const SizedBox(height: 24),
                   ],
                 ],
 
                 const SizedBox(height: 48),
-                const WikinusaContributeCard(),
-                const WikinusaFooter(),
+                if (portals.isNotEmpty)
+                  PortalsCard(portals: portals, langCode: langCode),
+                const ContributeCard(),
+                const WikiFooter(),
                 const SizedBox(height: 80),
               ],
             );
@@ -228,7 +234,7 @@ class JavaneseHomePageBuilder implements HomePageBuilder {
                     if (element.localName == 'a') {
                       return {
                         'color':
-                            '#${theme.colorScheme.primary.value.toRadixString(16).substring(2)}',
+                            '#${theme.colorScheme.primary.toARGB32().toRadixString(16).substring(2)}',
                         'text-decoration': 'none',
                         'font-weight': '600',
                       };

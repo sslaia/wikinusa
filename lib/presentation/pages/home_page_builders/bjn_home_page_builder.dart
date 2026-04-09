@@ -6,9 +6,9 @@ import 'package:html/dom.dart' as dom;
 import 'package:wikinusa/presentation/pages/article_screen.dart';
 import 'package:wikinusa/presentation/providers/html_rules_provider.dart';
 import 'package:wikinusa/presentation/widgets/home_header_card.dart';
-import 'package:wikinusa/presentation/widgets/section_header.dart';
-import 'package:wikinusa/presentation/widgets/wikinusa_contribute_card.dart';
-import 'package:wikinusa/presentation/widgets/wikinusa_footer.dart';
+import 'package:wikinusa/presentation/widgets/home_section_header.dart';
+import 'package:wikinusa/presentation/widgets/contribute_card.dart';
+import 'package:wikinusa/presentation/widgets/wiki_footer.dart';
 import 'home_page_builder.dart';
 
 class BanjarHomePageBuilder implements HomePageBuilder {
@@ -128,26 +128,26 @@ class BanjarHomePageBuilder implements HomePageBuilder {
                 const SizedBox(height: 16),
 
                 if (featuredArticle != null) ...[
-                  SectionHeader(theme: theme, title: featuredArticle['header']),
+                  HomeSectionHeader(theme: theme, title: featuredArticle['header']),
                   _buildSectionCard(context, theme, featuredArticle, langCode),
                   const SizedBox(height: 24),
                 ],
 
                 if (currentEvents != null) ...[
-                  SectionHeader(theme: theme, title: currentEvents['header']),
+                  HomeSectionHeader(theme: theme, title: currentEvents['header']),
                   _buildSectionCard(context, theme, currentEvents, langCode),
                   const SizedBox(height: 24),
                 ],
 
                 if (featuredImage != null) ...[
-                  SectionHeader(theme: theme, title: featuredImage['header']),
+                  HomeSectionHeader(theme: theme, title: featuredImage['header']),
                   _buildSectionCard(context, theme, featuredImage, langCode),
                   const SizedBox(height: 24),
                 ],
 
                 const SizedBox(height: 48),
-                const WikinusaContributeCard(),
-                const WikinusaFooter(),
+                const ContributeCard(),
+                const WikiFooter(),
                 const SizedBox(height: 80),
               ],
             );
