@@ -1,12 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:wikinusa/presentation/pages/home_page_builders/webview_home_page_builder.dart';
-import '../widgets/custom_bottom_nav_bar.dart';
-import '../widgets/custom_drawer.dart';
-import '../providers/article_provider.dart';
-import '../providers/language_provider.dart';
-import 'home_page_builders/home_page_builders.dart';
+import 'package:wikinusa/presentation/widgets/custom_bottom_nav_bar.dart';
+import 'package:wikinusa/presentation/widgets/custom_drawer.dart';
+import 'package:wikinusa/presentation/providers/article_provider.dart';
+import 'package:wikinusa/presentation/providers/language_provider.dart';
+import 'package:wikinusa/presentation/pages/home_page_builders/home_page_builders.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});

@@ -7,16 +7,18 @@ import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart' as dom;
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import 'package:wikinusa/presentation/pages/create_page_screen.dart';
+import 'package:wikinusa/presentation/pages/image_screen.dart';
 import 'package:wikinusa/presentation/widgets/wiki_footer.dart';
-import '../widgets/custom_bottom_nav_bar.dart';
-import '../widgets/custom_drawer.dart';
-import '../providers/article_provider.dart';
-import '../providers/language_provider.dart';
-import '../providers/html_rules_provider.dart';
-import '../providers/bookmarks_provider.dart';
-import '../../domain/entities/article.dart';
-import '../../core/theme_config.dart';
+import 'package:wikinusa/presentation/widgets/custom_bottom_nav_bar.dart';
+import 'package:wikinusa/presentation/widgets/custom_drawer.dart';
+import 'package:wikinusa/presentation/providers/article_provider.dart';
+import 'package:wikinusa/presentation/providers/language_provider.dart';
+import 'package:wikinusa/presentation/providers/html_rules_provider.dart';
+import 'package:wikinusa/presentation/providers/bookmarks_provider.dart';
+import 'package:wikinusa/domain/entities/article.dart';
+import 'package:wikinusa/core/theme_config.dart';
 
 /// Helper to store extracted image data
 class ArticleImageMetadata {
@@ -128,7 +130,7 @@ class ArticleScreen extends ConsumerStatefulWidget {
         await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
       }
     } catch (e) {
-      debugPrint('Link handling error: $e');
+      debugPrint('${'link_handling_error'.tr()}: $e');
       try {
         final fallbackUri = Uri.parse(Uri.encodeFull(url));
         await launchUrl(fallbackUri, mode: LaunchMode.inAppBrowserView);
@@ -227,7 +229,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                               ),
                             ],
                             const WikiFooter(),
-                            const SizedBox(height: 100),
+                            const SizedBox(height: 70),
                           ],
                         ),
                       ),
@@ -435,45 +437,29 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             itemCount: images.length,
             itemBuilder: (context, index) {
-              final image = images[index];
-              return Container(
-                width: 300,
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.network(
-                          image['url']!,
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                          errorBuilder: (ctx, err, stack) => Container(
-                            color: Colors.grey[200],
-                            child: const Icon(Icons.broken_image),
-                          ),
-                        ),
+              final imageUrl = images[index]['url'] ?? '';
+
+              return GestureDetector(
+                onTap: () {
+                  if (imageUrl.isNotEmpty) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ImageScreen(imagePath: imageUrl),
                       ),
+                    );
+                  }
+                },
+                child: Container(
+                  width: 300,
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    image: DecorationImage(
+                      image: NetworkImage(imageUrl),
+                      fit: BoxFit.cover,
                     ),
-                    if (image['caption']!.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 8,
-                          left: 4,
-                          right: 4,
-                        ),
-                        child: Text(
-                          image['caption']!,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            fontStyle: FontStyle.italic,
-                            fontSize: 10,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                  ],
+                  ),
                 ),
               );
             },
@@ -830,10 +816,10 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                 };
               }
               // if (element.localName == 'p') {
-                // Align text: justify
-                // return {'margin-bottom': '16px', 'text-align': 'justify'};
-                // Alternatively left aligned
-                // return {'margin-bottom': '16px'};
+              // Align text: justify
+              // return {'margin-bottom': '16px', 'text-align': 'justify'};
+              // Alternatively left aligned
+              // return {'margin-bottom': '16px'};
               // }
               return null;
             },

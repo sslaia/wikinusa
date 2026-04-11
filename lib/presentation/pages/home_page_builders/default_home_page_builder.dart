@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:html/parser.dart' as html_parser;
-import 'package:html/dom.dart' as dom;
+import 'package:wikinusa/core/utils/wiki_html_utils.dart';
 import 'home_page_builder.dart';
 
 class DefaultHomePageBuilder implements HomePageBuilder {
@@ -25,7 +25,7 @@ class DefaultHomePageBuilder implements HomePageBuilder {
         document.querySelector('.mw-parser-output') ?? document.body!;
 
     // Fix URLs for images and links
-    _fixUrls(contentElement, langCode);
+    WikiHtmlUtils.fixUrls(contentElement, langCode);
 
     return ListView(
       padding: EdgeInsets.zero,
@@ -94,7 +94,7 @@ class DefaultHomePageBuilder implements HomePageBuilder {
                 'font-weight': 'bold',
                 'font-size': '1.2em',
                 'color':
-                    '#${theme.colorScheme.primary.value.toRadixString(16).substring(2)}',
+                    '#${theme.colorScheme.primary.toARGB32().toRadixString(16).substring(2)}',
                 'margin-bottom': '8px',
               };
             }
@@ -104,7 +104,7 @@ class DefaultHomePageBuilder implements HomePageBuilder {
             if (element.localName == 'a') {
               return {
                 'color':
-                    '#${theme.colorScheme.primary.value.toRadixString(16).substring(2)}',
+                    '#${theme.colorScheme.primary.toARGB32().toRadixString(16).substring(2)}',
                 'text-decoration': 'none',
                 'font-weight': '600',
               };
@@ -117,29 +117,6 @@ class DefaultHomePageBuilder implements HomePageBuilder {
         ),
       ],
     );
-  }
-
-  void _fixUrls(dom.Element element, String langCode) {
-    element.querySelectorAll('img').forEach((img) {
-      String? src = img.attributes['data-src'] ?? img.attributes['src'];
-      if (src != null) {
-        if (src.startsWith('//')) {
-          src = 'https:$src';
-        } else if (src.startsWith('/')) {
-          src = 'https://$langCode.wikipedia.org$src';
-        }
-        img.attributes['src'] = src;
-      }
-      img.attributes.remove('srcset');
-      img.attributes.remove('data-srcset');
-    });
-
-    element.querySelectorAll('a').forEach((a) {
-      final href = a.attributes['href'];
-      if (href != null && href.startsWith('/')) {
-        a.attributes['href'] = 'https://$langCode.wikipedia.org$href';
-      }
-    });
   }
 
   Widget _buildHeaderCard(ThemeData theme) {
