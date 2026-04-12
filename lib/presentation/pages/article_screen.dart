@@ -9,6 +9,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:wikinusa/presentation/pages/create_page_screen.dart';
+import 'package:wikinusa/presentation/pages/gallery_carousel_screen.dart';
 import 'package:wikinusa/presentation/pages/image_screen.dart';
 import 'package:wikinusa/presentation/widgets/wiki_footer.dart';
 import 'package:wikinusa/presentation/widgets/custom_bottom_nav_bar.dart';
@@ -410,62 +411,45 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     return found;
   }
 
-  Widget _buildImageCarousel(
-    ThemeData theme,
-    List<Map<String, String>> images,
-  ) {
-    if (images.isEmpty) return const SizedBox.shrink();
+  Widget _buildImageCarousel(ThemeData theme, List<Map<String, String>> images) {
+    final List<String> galleryUrls = images
+        .map((img) => img['url'] ?? '')
+        .where((url) => url.isNotEmpty)
+        .toList();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Text(
-            'gallery'.tr(),
-            style: theme.textTheme.titleMedium?.copyWith(
-              color: theme.colorScheme.primary,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-        SizedBox(
-          height: 250,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: images.length,
-            itemBuilder: (context, index) {
-              final imageUrl = images[index]['url'] ?? '';
+    return SizedBox(
+      height: 250,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: images.length,
+        itemBuilder: (context, index) {
+          final imageUrl = images[index]['url'] ?? '';
 
-              return GestureDetector(
-                onTap: () {
-                  if (imageUrl.isNotEmpty) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ImageScreen(imagePath: imageUrl),
-                      ),
-                    );
-                  }
-                },
-                child: Container(
-                  width: 300,
-                  margin: const EdgeInsets.symmetric(horizontal: 8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    image: DecorationImage(
-                      image: NetworkImage(imageUrl),
-                      fit: BoxFit.cover,
-                    ),
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => GalleryCarouselScreen(
+                    galleryImages: galleryUrls,
                   ),
                 ),
               );
             },
-          ),
-        ),
-      ],
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 8.0),
+              width: 300,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                image: DecorationImage(
+                  image: NetworkImage(imageUrl),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 
