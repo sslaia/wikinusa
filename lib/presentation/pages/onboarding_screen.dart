@@ -23,7 +23,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   void _nextPage() {
-    if (_currentPage < 8) {
+    if (_currentPage < 9) {
       _pageController.animateToPage(
         _currentPage + 1,
         duration: const Duration(milliseconds: 300),
@@ -67,6 +67,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     title: 'onboarding_bookmark'.tr(),
                     description: 'onboarding_bookmark_description'.tr(),
                       imagePath: 'assets/images/bookmark.webp',
+                  ),
+                  _buildSlide(
+                    theme,
+                    title: 'onboarding_share'.tr(),
+                    description: 'onboarding_share_description'.tr(),
+                    imagePath: 'assets/images/share-edit.webp',
                   ),
                   _buildSlide(
                     theme,
@@ -255,7 +261,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 elevation: 0,
               ),
               onPressed: () async {
-                if (_currentPage == 7) {
+                if (_currentPage == 8) {
                   final selectedLanguage = ref.read(languageProvider);
                   await context.setLocale(Locale(selectedLanguage.code));
                   ref.read(onboardingProvider.notifier).completeOnboarding();
@@ -264,7 +270,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 }
               },
               child: Text(
-                _currentPage == 7 ? 'get_started'.tr() : 'next'.tr(),
+                _currentPage == 8 ? 'get_started'.tr() : 'next'.tr(),
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
