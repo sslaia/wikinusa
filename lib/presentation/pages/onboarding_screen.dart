@@ -23,7 +23,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   void _nextPage() {
-    if (_currentPage < 3) {
+    if (_currentPage < 8) {
       _pageController.animateToPage(
         _currentPage + 1,
         duration: const Duration(milliseconds: 300),
@@ -52,21 +52,45 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 children: [
                   _buildSlide(
                     theme,
-                    title: 'onboarding1'.tr(),
-                    description: 'onboarding1_description'.tr(),
-                    icon: Icons.mobile_friendly_outlined,
+                    title: 'onboarding_greeting'.tr(),
+                    description: 'onboarding_greeting_description'.tr(),
+                      imagePath: 'assets/images/greeting.webp'
                   ),
                   _buildSlide(
                     theme,
-                    title: 'onboarding2'.tr(),
-                    description: 'onboarding2_description'.tr(),
-                    icon: Icons.book_outlined,
+                    title: 'onboarding_language'.tr(),
+                    description: 'onboarding_language_description'.tr(),
+                      imagePath: 'assets/images/language.webp',
                   ),
                   _buildSlide(
                     theme,
-                    title: 'onboarding3'.tr(),
-                    description: 'onboarding3_description'.tr(),
-                    icon: Icons.search_outlined,
+                    title: 'onboarding_bookmark'.tr(),
+                    description: 'onboarding_bookmark_description'.tr(),
+                      imagePath: 'assets/images/bookmark.webp',
+                  ),
+                  _buildSlide(
+                    theme,
+                    title: 'onboarding_search'.tr(),
+                    description: 'onboarding_search_description'.tr(),
+                      imagePath: 'assets/images/search.webp',
+                  ),
+                  _buildSlide(
+                    theme,
+                    title: 'onboarding_shortcuts'.tr(),
+                    description: 'onboarding_shortcuts_description'.tr(),
+                      imagePath: 'assets/images/shortcuts.webp',
+                  ),
+                  _buildSlide(
+                    theme,
+                    title: 'onboarding_reference'.tr(),
+                    description: 'onboarding_reference_description'.tr(),
+                      imagePath: 'assets/images/reference.webp',
+                  ),
+                  _buildSlide(
+                    theme,
+                    title: 'onboarding_setting'.tr(),
+                    description: 'onboarding_setting_description'.tr(),
+                      imagePath: 'assets/images/setting.webp',
                   ),
                   _buildLanguageSelectionSlide(theme),
                 ],
@@ -83,15 +107,23 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     ThemeData theme, {
     required String title,
     required String description,
-    required IconData icon,
+    required String imagePath,
   }) {
     return Padding(
       padding: const EdgeInsets.all(40.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 100, color: theme.colorScheme.primary),
-          const SizedBox(height: 48),
+          Flexible(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 300),
+              child: Image.asset(
+                imagePath,
+                fit: BoxFit.contain, // Keeps aspect ratio within constraints
+              ),
+            ),
+          ),
+          const SizedBox(height: 32),
           Text(
             title,
             textAlign: TextAlign.center,
@@ -99,7 +131,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           Text(
             description,
             textAlign: TextAlign.center,
@@ -123,7 +155,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           Icon(Icons.language, size: 80, color: theme.colorScheme.primary),
           const SizedBox(height: 32),
           Text(
-            'onboarding4'.tr(),
+            'onboarding_wiki'.tr(),
             textAlign: TextAlign.center,
             style: theme.textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.bold,
@@ -132,7 +164,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            'onboarding4_description'.tr(),
+            'onboarding_wiki_description'.tr(),
             textAlign: TextAlign.center,
             style: theme.textTheme.bodyLarge?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
@@ -195,7 +227,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(
-              4,
+              8,
               (index) => Container(
                 margin: const EdgeInsets.symmetric(horizontal: 4),
                 width: 8,
@@ -223,7 +255,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 elevation: 0,
               ),
               onPressed: () async {
-                if (_currentPage == 3) {
+                if (_currentPage == 7) {
                   final selectedLanguage = ref.read(languageProvider);
                   await context.setLocale(Locale(selectedLanguage.code));
                   ref.read(onboardingProvider.notifier).completeOnboarding();
@@ -232,7 +264,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 }
               },
               child: Text(
-                _currentPage == 3 ? 'get_started'.tr() : 'next'.tr(),
+                _currentPage == 7 ? 'get_started'.tr() : 'next'.tr(),
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
