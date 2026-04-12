@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -9,7 +9,7 @@ final shortcutsProvider = FutureProvider<Map<String, dynamic>>((ref) async {
   const remoteUrl = 'https://raw.githubusercontent.com/sslaia/wikinusa/refs/heads/main/assets/data/shortcuts.json';
   final prefs = ref.watch(sharedPreferencesProvider);
   
-  // 1. Try to fetch remote shortcuts
+  // Fetch remote shortcuts
   try {
     final response = await http.get(Uri.parse(remoteUrl)).timeout(const Duration(seconds: 5));
     
@@ -24,26 +24,25 @@ final shortcutsProvider = FutureProvider<Map<String, dynamic>>((ref) async {
       return json.decode(remoteJson) as Map<String, dynamic>;
     }
   } catch (e) {
-    // Silently fail and fallback to cache or assets
-    print('Failed to fetch remote shortcuts: $e');
+    debugPrint('ShortcutsProvider: Failed to fetch remote shortcuts: $e');
   }
 
-  // 2. Fallback to cached shortcuts if available
+  // Fallback to cached shortcuts if available
   final cachedJson = prefs.getString('cached_shortcuts');
   if (cachedJson != null) {
     try {
       return json.decode(cachedJson) as Map<String, dynamic>;
     } catch (e) {
-      print('Failed to decode cached shortcuts: $e');
+      debugPrint('ShortcutsProvider: Failed to decode cached shortcuts: $e');
     }
   }
 
-  // 3. Final fallback: Load from local assets
+  // Final fallback: Load from local assets
   try {
     final assetJson = await rootBundle.loadString('assets/data/shortcuts.json');
     return json.decode(assetJson) as Map<String, dynamic>;
   } catch (e) {
-    print('Failed to load shortcuts from assets: $e');
+    debugPrint('ShortcutsProvider: Failed to load shortcuts from assets: $e');
     // Absolute minimum fallback to prevent app crash
     return {
       "id": [

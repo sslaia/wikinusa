@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class WikinusaThemeConfig {
-  // WikiNusa Brand Identity Colors
+  // Brand identity colors
   static const Color indigoBrandLight = Color(0xff121298);
   static const Color indigoBrandDark = Color(0xff8c9eff); // Lighter for Dark Mode contrast
 
-  // Wikipedia Link Colors (Light Mode - Standard)
+  // Link colors (Light mode - standard)
   static const Color linkBlueLight = Color(0xff0645ad);
   static const Color linkRedLight = Color(0xffba0000);
 
-  // Wikipedia Link Colors (Dark Mode - Accessible/Desaturated)
+  // Link colors (Dark mode - accessible/desaturated)
   static const Color linkBlueDark = Color(0xffc0bcfc);
   static const Color linkRedDark = Color(0xffa0482f);
 

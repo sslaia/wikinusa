@@ -1,15 +1,11 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart' as dom;
 import 'package:wikinusa/presentation/pages/article_screen.dart';
-import 'package:wikinusa/presentation/pages/search_results_screen.dart';
 import 'package:wikinusa/presentation/providers/html_rules_provider.dart';
 import 'package:wikinusa/presentation/widgets/home_header_card.dart';
-import 'package:wikinusa/presentation/widgets/portals_card.dart';
 import 'package:wikinusa/presentation/widgets/contribute_card.dart';
 import 'package:wikinusa/presentation/widgets/wiki_footer.dart';
 import 'home_page_builder.dart';
@@ -235,7 +231,7 @@ class BetawiHomePageBuilder implements HomePageBuilder {
                     if (element.localName == 'a') {
                       return {
                         'color':
-                            '#${theme.colorScheme.primary.value.toRadixString(16).substring(2)}',
+                            '#${theme.colorScheme.primary.toARGB32().toRadixString(16).substring(2)}',
                         'text-decoration': 'none',
                         'font-weight': '600',
                       };
@@ -261,130 +257,6 @@ class BetawiHomePageBuilder implements HomePageBuilder {
           fontWeight: FontWeight.bold,
           letterSpacing: 1.5,
           fontSize: 10,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeaderCard(
-    BuildContext context,
-    ThemeData theme,
-    String? imageUrl,
-  ) {
-    return Stack(
-      children: [
-        Container(
-          height: 300,
-          width: double.infinity,
-          decoration: BoxDecoration(color: theme.colorScheme.surface),
-          child: imageUrl != null && imageUrl.isNotEmpty
-              ? Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                  headers: const {
-                    'User-Agent':
-                        'WikinusaApp/1.0 (slaia@yahoo.com) FlutterApp',
-                  },
-                  errorBuilder: (context, error, stackTrace) =>
-                      Container(color: theme.colorScheme.primaryContainer),
-                )
-              : Container(color: theme.colorScheme.primaryContainer),
-        ),
-        Container(
-          height: 300,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.black.withValues(alpha: 0.2),
-                Colors.black.withValues(alpha: 0.8),
-              ],
-            ),
-          ),
-        ),
-        Positioned.fill(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  'welcome_to'.tr(),
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: Colors.white.withValues(alpha: 0.9),
-                    fontSize: 14,
-                    shadows: [
-                      const Shadow(blurRadius: 10, color: Colors.black),
-                    ],
-                  ),
-                ),
-                Text(
-                  'WikiNusa',
-                  style: GoogleFonts.cinzelDecorative(
-                    textStyle: theme.textTheme.titleLarge?.copyWith(
-                      color: Colors.white,
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      shadows: [
-                        const Shadow(blurRadius: 10, color: Colors.black),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'motto'.tr(),
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: Colors.white.withValues(alpha: 0.9),
-                    fontSize: 14,
-                    fontStyle: FontStyle.italic,
-                    shadows: [
-                      const Shadow(blurRadius: 10, color: Colors.black),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-                _buildSearchField(context, theme),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSearchField(BuildContext context, ThemeData theme) {
-    return Container(
-      height: 50,
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
-      ),
-      child: TextField(
-        style: const TextStyle(color: Colors.white),
-        onSubmitted: (String str) {
-          if (str.isNotEmpty) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SearchResultsScreen(query: str),
-              ),
-            );
-          }
-        },
-        onTapOutside: (event) {
-          FocusManager.instance.primaryFocus?.unfocus();
-        },
-        decoration: InputDecoration(
-          hintText: 'search_wikipedia'.tr(),
-          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
-          prefixIcon: const Icon(Icons.search, color: Colors.white),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 15),
         ),
       ),
     );

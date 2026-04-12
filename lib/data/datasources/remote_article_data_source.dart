@@ -162,9 +162,8 @@ class RemoteArticleDataSource {
     });
   }
 
-  // Helper for debug logging in this context
+  // Helper for debug logging
   void debugPrint(String message) {
-    // In a real app, use a logger or developer.log
-    print('RemoteArticleDataSource: $message');
+    debugPrint('RemoteArticleDataSource: $message');
   }
 }

@@ -6,7 +6,6 @@ import '../providers/bookmarks_provider.dart';
 import '../providers/article_provider.dart';
 import '../providers/language_provider.dart';
 import 'article_screen.dart';
-import 'webview_screen.dart';
 
 class BookmarksScreen extends ConsumerWidget {
   const BookmarksScreen({super.key});
@@ -90,16 +89,6 @@ class BookmarksScreen extends ConsumerWidget {
                       final url = 'https://${bookmark.langCode}.wikipedia.org/wiki/${bookmark.title.replaceAll(' ', '_')}';
                       // Open in in-app browser for articles in different languages
                       await launchUrl(Uri.parse(url), mode: LaunchMode.inAppBrowserView);
-                      // Alternatively open in WebViewScreen
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (_) => WebViewScreen(
-                      //       langCode: bookmark.langCode,
-                      //       pageTitle: bookmark.title,
-                      //     ),
-                      //   ),
-                      // );
                     }
                   },
                 );

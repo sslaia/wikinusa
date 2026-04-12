@@ -75,7 +75,7 @@ class HomeSectionBody extends StatelessWidget {
                     return true;
                   },
                   textStyle: theme.textTheme.bodyMedium?.copyWith(
-                    // Support a very wide range of characters including Arabic, Javanese, etc.
+                    // Provide support for a very wide range of characters including Arabic, Javanese, etc.
                     fontFamily: GoogleFonts.notoSerif().fontFamily,
                     // Ensures that the HTML text scales based on the global font size provider
                     fontSize: theme.textTheme.bodyMedium?.fontSize,

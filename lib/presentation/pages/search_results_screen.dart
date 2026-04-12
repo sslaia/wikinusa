@@ -12,12 +12,10 @@ class SearchResultsScreen extends ConsumerWidget {
   const SearchResultsScreen({super.key, required this.query});
 
   String _cleanSnippet(String snippet) {
-    // 1. Parse the HTML snippet to decode entities like &#039;
+    // Decode entities like &#039;
     final document = html_parser.parse(snippet);
     final String decodedText = document.body?.text ?? '';
     
-    // 2. The parser already handles the character decoding (ö, ŵ, etc.) 
-    // and stripping of tags. We just return the text.
     return decodedText.trim();
   }
 
