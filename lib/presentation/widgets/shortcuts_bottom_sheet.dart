@@ -57,10 +57,10 @@ void showShortcutsBottomSheet(BuildContext context, WidgetRef ref) {
                       final list =
                           (allShortcuts[langCode] as List<dynamic>?) ?? [];
                       if (list.isEmpty) {
-                        return const Padding(
+                        return Padding(
                           padding: EdgeInsets.all(24.0),
                           child: Text(
-                            'No shortcuts available for this language.',
+                            'no_shortcuts_available'.tr(),
                           ),
                         );
                       }

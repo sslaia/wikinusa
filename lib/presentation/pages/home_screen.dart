@@ -68,7 +68,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => ref.invalidate(homePageProvider),
-                child: const Text('retry').tr(),
+                child: Text('retry').tr(),
               ),
             ],
           ),

@@ -43,7 +43,7 @@ class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
     final rawTitle = _titleController.text.trim();
     if (rawTitle.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('enter_a_title_first')),
+        SnackBar(content: Text('enter_a_title_first').tr()),
       );
       return;
     }

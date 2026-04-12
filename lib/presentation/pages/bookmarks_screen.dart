@@ -19,7 +19,7 @@ class BookmarksScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
-        title: const Text('bookmarks').tr(),
+        title: Text('bookmarks').tr(),
         backgroundColor: theme.colorScheme.surface,
         foregroundColor: theme.colorScheme.primary,
         elevation: 0,

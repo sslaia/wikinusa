@@ -65,7 +65,7 @@ class CustomDrawer extends ConsumerWidget {
                 _buildSectionHeader(theme, 'drawer_quick_shortcuts'),
                 ListTile(
                   leading: Icon(Icons.edit_note_outlined, color: theme.colorScheme.onSurface),
-                  title: const Text('create_new_page').tr(),
+                  title: Text('create_new_page').tr(),
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.push(
@@ -81,7 +81,7 @@ class CustomDrawer extends ConsumerWidget {
                     Icons.bookmark,
                     color: theme.colorScheme.onSurface,
                   ),
-                  title: const Text('bookmarks').tr(),
+                  title: Text('bookmarks').tr(),
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.push(
@@ -115,7 +115,7 @@ class CustomDrawer extends ConsumerWidget {
                     isDark ? Icons.dark_mode : Icons.light_mode,
                     color: theme.colorScheme.onSurface,
                   ),
-                  title: const Text('dark_mode').tr(),
+                  title: Text('dark_mode').tr(),
                   value: isDark,
                   onChanged: (val) {
                     ref
