@@ -57,68 +57,73 @@ class HomeHeaderCard extends StatelessWidget {
         ),
 
         Positioned.fill(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  'welcome_to'.tr(),
-                  style: GoogleFonts.offside(
-                    textStyle: theme.textTheme.bodyLarge?.copyWith(
-                      color: Colors.white.withValues(alpha: 0.9),
-                      fontSize: 14,
-                      shadows: [
-                        const Shadow(blurRadius: 10, color: Colors.black),
-                      ],
-                    ),
-                  ),
-                ),
-                Text(
-                  'WikiNusa',
-                  style: GoogleFonts.cinzelDecorative(
-                    textStyle: theme.textTheme.titleLarge?.copyWith(
-                      color: Colors.white,
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      shadows: [
-                        const Shadow(blurRadius: 10, color: Colors.black),
-                      ],
-                    ),
-                  ),
-                ),
-                if (languageName != null)
+          child: MediaQuery(
+            // Overriding the textScaleFactor to 1.0 to prevent overflow
+            // and maintain the UI design regardless of system font settings.
+            data: MediaQuery.of(context).copyWith(
+              textScaler: TextScaler.noScaling,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
                   Text(
-                    languageName!,
-                    style: GoogleFonts.cinzelDecorative(
-                      textStyle: theme.textTheme.titleLarge?.copyWith(
-                        color: Colors.white,
-                        fontSize: 18,
-                        // fontWeight: FontWeight.bold,
+                    'welcome_to'.tr(),
+                    style: GoogleFonts.offside(
+                      textStyle: theme.textTheme.bodyLarge?.copyWith(
+                        color: Colors.white.withValues(alpha: 0.9),
+                        fontSize: 14,
                         shadows: [
                           const Shadow(blurRadius: 10, color: Colors.black),
                         ],
                       ),
                     ),
                   ),
-                const SizedBox(height: 8),
-                Text(
-                  'motto'.tr(),
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.offside(
-                    textStyle: theme.textTheme.bodyLarge?.copyWith(
-                      color: Colors.white.withValues(alpha: 0.9),
-                      fontSize: 14,
-                      shadows: [
-                        const Shadow(blurRadius: 10, color: Colors.black),
-                      ],
+                  Text(
+                    'WikiNusa',
+                    style: GoogleFonts.cinzelDecorative(
+                      textStyle: theme.textTheme.titleLarge?.copyWith(
+                        color: Colors.white,
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        shadows: [
+                          const Shadow(blurRadius: 10, color: Colors.black),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 24),
-                // searchField,
-                SearchFieldWidget(context: context, theme: theme),
-              ],
+                  if (languageName != null)
+                    Text(
+                      languageName!,
+                      style: GoogleFonts.cinzelDecorative(
+                        textStyle: theme.textTheme.titleLarge?.copyWith(
+                          color: Colors.white,
+                          fontSize: 18,
+                          shadows: [
+                            const Shadow(blurRadius: 10, color: Colors.black),
+                          ],
+                        ),
+                      ),
+                    ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'motto'.tr(),
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.offside(
+                      textStyle: theme.textTheme.bodyLarge?.copyWith(
+                        color: Colors.white.withValues(alpha: 0.9),
+                        fontSize: 14,
+                        shadows: [
+                          const Shadow(blurRadius: 10, color: Colors.black),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  SearchFieldWidget(context: context, theme: theme),
+                ],
+              ),
             ),
           ),
         ),

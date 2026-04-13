@@ -172,7 +172,7 @@ class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
           style: theme.textTheme.labelSmall?.copyWith(
             fontWeight: FontWeight.bold,
             letterSpacing: 1.5,
-            fontSize: 10,
+            fontSize: 14,
             color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
@@ -203,7 +203,6 @@ class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
                 color: theme.colorScheme.onSurfaceVariant.withValues(
                   alpha: 0.5,
                 ),
-                // fontWeight: FontWeight.w600,
                 fontSize: 14,
               ),
               border: InputBorder.none,
@@ -212,14 +211,20 @@ class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
         ),
         const SizedBox(height: 8),
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(Icons.info, color: Color(0xFFB51A1E), size: 12),
+            const Padding(
+              padding: EdgeInsets.only(top: 2.0),
+              child: Icon(Icons.info, color: Color(0xFFB51A1E), size: 12),
+            ),
             const SizedBox(width: 4),
-            Text(
-              'enter_title_before_submit'.tr(),
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: const Color(0xFFB51A1E),
-                fontSize: 10,
+            Expanded(
+              child: Text(
+                'enter_title_before_submit'.tr(),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: const Color(0xFFB51A1E),
+                  fontSize: 10,
+                ),
               ),
             ),
           ],

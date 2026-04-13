@@ -15,13 +15,14 @@ class SearchFieldWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 50,
+      constraints: const BoxConstraints(minHeight: 50),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(25),
         border: Border.all(color: Colors.white.withValues(alpha: 0.5)),
       ),
       child: TextField(
+        textAlignVertical: TextAlignVertical.center,
         style: const TextStyle(color: Colors.white),
         onSubmitted: (String str) {
           if (str.isNotEmpty) {
@@ -38,11 +39,17 @@ class SearchFieldWidget extends StatelessWidget {
         },
         decoration: InputDecoration(
           hintText: 'search_wikipedia'.tr(),
-          hintStyle: TextStyle(fontSize: 16, color: Colors.white.withValues(alpha: 0.5)),
+          hintStyle: TextStyle(
+            fontSize: 14,
+            color: Colors.white.withValues(alpha: 0.5),
+          ),
           isDense: true,
           prefixIcon: const Icon(Icons.search, color: Colors.white),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 15),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
+          ),
         ),
       ),
     );
