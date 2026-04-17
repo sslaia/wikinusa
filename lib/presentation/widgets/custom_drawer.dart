@@ -64,7 +64,10 @@ class CustomDrawer extends ConsumerWidget {
               children: [
                 _buildSectionHeader(theme, 'drawer_quick_shortcuts'),
                 ListTile(
-                  leading: Icon(Icons.edit_note_outlined, color: theme.colorScheme.onSurface),
+                  leading: Icon(
+                    Icons.edit_note_outlined,
+                    color: theme.colorScheme.onSurface,
+                  ),
                   title: Text('create_new_page').tr(),
                   onTap: () {
                     Navigator.pop(context);
@@ -169,40 +172,49 @@ class CustomDrawer extends ConsumerWidget {
                 const Divider(),
                 _buildSectionHeader(theme, 'drawer_about'),
                 ListTile(
-                  leading: Icon(Icons.groups_2_outlined),
+                  leading: const Icon(Icons.groups_2_outlined),
                   title: Text('about_community').tr(),
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const AboutScreen(title: 'about_community', body: aboutCommunity),
+                        builder: (_) => const AboutScreen(
+                          title: 'about_community',
+                          body: aboutCommunity,
+                        ),
                       ),
                     );
                   },
                 ),
                 ListTile(
-                  leading: Icon(Icons.newspaper_outlined),
+                  leading: const Icon(Icons.newspaper_outlined),
                   title: Text('about_whats_new').tr(),
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const AboutScreen(title: 'about_whats_new', body: whatsNew),
+                        builder: (_) => const AboutScreen(
+                          title: 'about_whats_new',
+                          body: whatsNew,
+                        ),
                       ),
                     );
                   },
                 ),
                 ListTile(
-                  leading: Icon(Icons.smartphone_outlined),
+                  leading: const Icon(Icons.smartphone_outlined),
                   title: Text('about_app').tr(),
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const AboutScreen(title: 'about_app', body: aboutApp),
+                        builder: (_) => const AboutScreen(
+                          title: 'about_app',
+                          body: aboutApp,
+                        ),
                       ),
                     );
                   },
@@ -327,10 +339,10 @@ class CustomDrawer extends ConsumerWidget {
                             )
                           : null,
                       onTap: () {
-                        // Close the bottom sheet
-                        Navigator.pop(context);
-                        // Close the drawer
-                        Navigator.pop(context);
+                        // Pop everything until we reach the root (HomeScreen)
+                        // This handles cases where user changes language while inside an article
+                        Navigator.popUntil(context, (route) => route.isFirst);
+
                         // Set the language
                         ref.read(languageProvider.notifier).setLanguage(lang);
                         // Set the locale

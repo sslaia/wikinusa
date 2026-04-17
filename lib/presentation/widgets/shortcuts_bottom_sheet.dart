@@ -35,7 +35,9 @@ void showShortcutsBottomSheet(BuildContext context, WidgetRef ref) {
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.2,
+                        ),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -58,65 +60,75 @@ void showShortcutsBottomSheet(BuildContext context, WidgetRef ref) {
                           (allShortcuts[langCode] as List<dynamic>?) ?? [];
                       if (list.isEmpty) {
                         return Padding(
-                          padding: EdgeInsets.all(24.0),
-                          child: Text(
-                            'no_shortcuts_available'.tr(),
-                          ),
+                          padding: const EdgeInsets.all(24.0),
+                          child: Text('no_shortcuts_available'.tr()),
                         );
                       }
 
-                      return Column(
-                        children: list.map((item) {
-                          final shortcut = item as Map<String, dynamic>;
-                          return ListTile(
-                            leading: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: theme.colorScheme.surfaceContainerLow,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Icon(
-                                _getIconData(shortcut['icon'] as String),
-                                size: 20,
-                                color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-                              ),
-                            ),
-                            title: Text(
-                              shortcut['title'] as String,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            onTap: () async {
-                              Navigator.pop(consumerContext);
-                              final url = shortcut['url'] as String;
-                              ArticleScreen.handleWikipediaLink(
-                                context,
-                                ref,
-                                url,
-                                langCode,
-                              );
-                            },
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 4,
-                            ),
-                          );
-                        }).toList(),
+                      return Flexible(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children:
+                                list.map((item) {
+                                  final shortcut = item as Map<String, dynamic>;
+                                  return ListTile(
+                                    leading: Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color:
+                                            theme.colorScheme.surfaceContainerLow,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Icon(
+                                        _getIconData(
+                                          shortcut['icon'] as String,
+                                        ),
+                                        size: 20,
+                                        color: theme.colorScheme.onSurface
+                                            .withValues(alpha: 0.8),
+                                      ),
+                                    ),
+                                    title: Text(
+                                      shortcut['title'] as String,
+                                      style: theme.textTheme.bodyMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                    ),
+                                    onTap: () async {
+                                      Navigator.pop(consumerContext);
+                                      final url = shortcut['url'] as String;
+                                      ArticleScreen.handleWikipediaLink(
+                                        context,
+                                        ref,
+                                        url,
+                                        langCode,
+                                      );
+                                    },
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 4,
+                                    ),
+                                  );
+                                }).toList(),
+                          ),
+                        ),
                       );
                     },
-                    loading: () => const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(32.0),
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
-                    error: (err, stack) => Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(32.0),
-                        child: Text('Error loading shortcuts: $err'),
-                      ),
-                    ),
+                    loading:
+                        () => const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(32.0),
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                    error:
+                        (err, stack) => Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(32.0),
+                            child: Text('Error loading shortcuts: $err'),
+                          ),
+                        ),
                   ),
                 ],
               ),

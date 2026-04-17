@@ -13,7 +13,7 @@ class WikiFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final String disclaimerUrl = 'https://wikinusa.blogspot.com/2026/04/disclaimer.html';
-    final String privacyPolicyUrl = 'https://wikinusa.blogspot.com/2026/04/wikinusa-privacy-policy.html';
+    final String privacyPolicyUrl = 'https://wikinusa.blogspot.com/2026/04/privacy-policy_16.html';
 
 
     return Container(
