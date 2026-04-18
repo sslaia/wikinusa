@@ -1,132 +1,4 @@
 {
-  "nia": {
-    "wikipedia": [
-      {
-        "icon": "history",
-        "title": "Safuria tebulö",
-        "url": "https://nia.wikipedia.org/wiki/Spesial:Perubahan_terbaru"
-      },
-      {
-        "icon": "pages_outlined",
-        "title": "Nga'örö spesial",
-        "url": "https://nia.wikipedia.org/wiki/Spesial:Halaman_istimewa"
-      },
-      {
-        "icon": "campaign_outlined",
-        "title": "Angombakhata",
-        "url": "https://nia.wikipedia.org/wiki/Wikipedia:Angombakhata"
-      },
-      {
-        "icon": "people_outlined",
-        "title": "Bawagöli zato",
-        "url": "https://nia.wikipedia.org/wiki/Wikipedia:Bawagöli_zato"
-      },
-      {
-        "icon": "chat_bubble_outlined",
-        "title": "Monganga afo",
-        "url": "https://nia.wikipedia.org/wiki/Wikipedia:Monganga_afo"
-      },
-      {
-        "icon": "construction_outlined",
-        "title": "Nahia wamakori",
-        "url": "https://nia.wikipedia.org/wiki/Wikipedia:Nahia_wamakori"
-      },
-      {
-        "icon": "help_outline",
-        "title": "Fanolo",
-        "url": "https://nia.wikipedia.org/wiki/Fanolo:Fanolo"
-      },
-      {
-        "icon": "support_agent_outlined",
-        "title": "Sangai halöŵö",
-        "url": "https://nia.wikipedia.org/wiki/Wikipedia:Sangai_halöŵö"
-      }
-    ],
-    "wiktionary": [
-      {
-        "icon": "history",
-        "title": "Safuria tebulö",
-        "url": "https://nia.wikipedia.org/wiki/Spesial:Perubahan_terbaru"
-      },
-      {
-        "icon": "pages_outlined",
-        "title": "Nga'örö spesial",
-        "url": "https://nia.wikipedia.org/wiki/Spesial:Halaman_istimewa"
-      },
-      {
-        "icon": "campaign_outlined",
-        "title": "Angombakhata",
-        "url": "https://nia.wikipedia.org/wiki/Wikipedia:Angombakhata"
-      },
-      {
-        "icon": "people_outlined",
-        "title": "Bawagöli zato",
-        "url": "https://nia.wikipedia.org/wiki/Wikipedia:Bawagöli_zato"
-      },
-      {
-        "icon": "chat_bubble_outlined",
-        "title": "Monganga afo",
-        "url": "https://nia.wikipedia.org/wiki/Wikipedia:Monganga_afo"
-      },
-      {
-        "icon": "construction_outlined",
-        "title": "Nahia wamakori",
-        "url": "https://nia.wikipedia.org/wiki/Wikipedia:Nahia_wamakori"
-      },
-      {
-        "icon": "help_outline",
-        "title": "Fanolo",
-        "url": "https://nia.wikipedia.org/wiki/Fanolo:Fanolo"
-      },
-      {
-        "icon": "support_agent_outlined",
-        "title": "Sangai halöŵö",
-        "url": "https://nia.wikipedia.org/wiki/Wikipedia:Sangai_halöŵö"
-      }
-    ],
-    "wikibooks": [
-      {
-        "icon": "history",
-        "title": "Safuria tebulö",
-        "url": "https://nia.wikipedia.org/wiki/Spesial:Perubahan_terbaru"
-      },
-      {
-        "icon": "pages_outlined",
-        "title": "Nga'örö spesial",
-        "url": "https://nia.wikipedia.org/wiki/Spesial:Halaman_istimewa"
-      },
-      {
-        "icon": "campaign_outlined",
-        "title": "Angombakhata",
-        "url": "https://nia.wikipedia.org/wiki/Wikipedia:Angombakhata"
-      },
-      {
-        "icon": "people_outlined",
-        "title": "Bawagöli zato",
-        "url": "https://nia.wikipedia.org/wiki/Wikipedia:Bawagöli_zato"
-      },
-      {
-        "icon": "chat_bubble_outlined",
-        "title": "Monganga afo",
-        "url": "https://nia.wikipedia.org/wiki/Wikipedia:Monganga_afo"
-      },
-      {
-        "icon": "construction_outlined",
-        "title": "Nahia wamakori",
-        "url": "https://nia.wikipedia.org/wiki/Wikipedia:Nahia_wamakori"
-      },
-      {
-        "icon": "help_outline",
-        "title": "Fanolo",
-        "url": "https://nia.wikipedia.org/wiki/Fanolo:Fanolo"
-      },
-      {
-        "icon": "support_agent_outlined",
-        "title": "Sangai halöŵö",
-        "url": "https://nia.wikipedia.org/wiki/Wikipedia:Sangai_halöŵö"
-      }
-    ]
-  },
   "bew": {
     "wikipedia": [
       {
@@ -149,34 +21,24 @@
       {
         "icon": "history",
         "title": "Perubahan terbaru",
-        "url": "https://bew.wikipedia.org/wiki/Istimèwa:Perubahan_terbaru"
+        "url": "https://bew.wiktionary.org/wiki/Istimèwa:Perubahan_terbaru"
       },
       {
         "icon": "pages_outlined",
         "title": "Halaman istimewa",
-        "url": "https://bew.wikipedia.org/wiki/Istimèwa:Halaman_istimewa"
-      },
-      {
-        "icon": "people_outlined",
-        "title": "Kaca-kaca jema'ah",
-        "url": "https://bew.wikipedia.org/wiki/Wikipédi:Kaca-kaca jema'ah"
+        "url": "https://bew.wiktionary.org/wiki/Istimèwa:Halaman_istimewa"
       }
     ],
     "wikibooks": [
       {
         "icon": "history",
         "title": "Perubahan terbaru",
-        "url": "https://bew.wikipedia.org/wiki/Istimèwa:Perubahan_terbaru"
+        "url": "https://incubator.wikimedia.org/wiki/Istimèwa:Perubahan_terbaru"
       },
       {
         "icon": "pages_outlined",
         "title": "Halaman istimewa",
-        "url": "https://bew.wikipedia.org/wiki/Istimèwa:Halaman_istimewa"
-      },
-      {
-        "icon": "people_outlined",
-        "title": "Kaca-kaca jema'ah",
-        "url": "https://bew.wikipedia.org/wiki/Wikipédi:Kaca-kaca jema'ah"
+        "url": "https://incubator.wikimedia.org/wiki/Istimèwa:Halaman_istimewa"
       }
     ]
   },
@@ -193,6 +55,11 @@
         "url": "https://bjn.wikipedia.org/wiki/Istimiwa:Tungkaran_istimiwa"
       },
       {
+        "icon": "people_outlined",
+        "title": "Pawadahan",
+        "url": "https://bjn.wikipedia.org/wiki/Wikipidia:Pawadahan"
+      },
+      {
         "icon": "chat_bubble_outlined",
         "title": "Warung Kupi",
         "url": "https://bjn.wikipedia.org/wiki/Wikipidia:Warung_Kupi"
@@ -207,44 +74,34 @@
       {
         "icon": "history",
         "title": "Paubahan pahanyarnya",
-        "url": "https://bjn.wikipedia.org/wiki/Istimiwa:Paubahan_pahanyarnya"
+        "url": "https://bjn.wiktionary.org/wiki/Istimiwa:Paubahan_pahanyarnya"
       },
       {
         "icon": "pages_outlined",
         "title": "Tungkaran istimiwa",
-        "url": "https://bjn.wikipedia.org/wiki/Istimiwa:Tungkaran_istimiwa"
+        "url": "https://bjn.wiktionary.org/wiki/Istimiwa:Tungkaran_istimiwa"
       },
       {
         "icon": "chat_bubble_outlined",
         "title": "Warung Kupi",
-        "url": "https://bjn.wikipedia.org/wiki/Wikipidia:Warung_Kupi"
+        "url": "https://bjn.wiktionary.org/wiki/Wikikamus:Warung_Kupi"
       },
       {
         "icon": "construction_outlined",
         "title": "Bak karangan",
-        "url": "https://bjn.wikipedia.org/wiki/Wikipidia:Bak_karangan"
+        "url": "https://bjn.wiktionary.org/wiki/Wikikamus:Bak_karangan"
       }
     ],
     "wikibooks": [
       {
         "icon": "history",
         "title": "Paubahan pahanyarnya",
-        "url": "https://bjn.wikipedia.org/wiki/Istimiwa:Paubahan_pahanyarnya"
+        "url": "https://bjn.wikibooks.org/wiki/Istimiwa:Paubahan_pahanyarnya"
       },
       {
         "icon": "pages_outlined",
         "title": "Tungkaran istimiwa",
-        "url": "https://bjn.wikipedia.org/wiki/Istimiwa:Tungkaran_istimiwa"
-      },
-      {
-        "icon": "chat_bubble_outlined",
-        "title": "Warung Kupi",
-        "url": "https://bjn.wikipedia.org/wiki/Wikipidia:Warung_Kupi"
-      },
-      {
-        "icon": "construction_outlined",
-        "title": "Bak karangan",
-        "url": "https://bjn.wikipedia.org/wiki/Wikipidia:Bak_karangan"
+        "url": "https://bjn.wikibooks.org/wiki/Istimiwa:Tungkaran_istimiwa"
       }
     ]
   },
@@ -270,34 +127,29 @@
       {
         "icon": "history",
         "title": "Perubahan terbaru",
-        "url": "https://btm.wikipedia.org/wiki/Husus:Perubahan_terbaru"
+        "url": "https://btm.wiktionary.org/wiki/Husus:Perubahan_terbaru"
       },
       {
         "icon": "pages_outlined",
         "title": "Halaman_istimewa",
-        "url": "https://btm.wikipedia.org/wiki/Husus:Halaman_istimewa"
+        "url": "https://btm.wiktionary.org/wiki/Husus:Halaman_istimewa"
       },
       {
         "icon": "people_outlined",
         "title": "Portal komunitas",
-        "url": "https://btm.wikipedia.org/wiki/Wikipedia:Portal komunitas"
+        "url": "https://btm.wiktionary.org/wiki/Wikikamus:Portal komunitas"
       }
     ],
     "wikibooks": [
       {
         "icon": "history",
         "title": "Perubahan terbaru",
-        "url": "https://btm.wikipedia.org/wiki/Husus:Perubahan_terbaru"
+        "url": "https://btm.wikibooks.org/wiki/Husus:Perubahan_terbaru"
       },
       {
         "icon": "pages_outlined",
         "title": "Halaman_istimewa",
-        "url": "https://btm.wikipedia.org/wiki/Husus:Halaman_istimewa"
-      },
-      {
-        "icon": "people_outlined",
-        "title": "Portal komunitas",
-        "url": "https://btm.wikipedia.org/wiki/Wikipedia:Portal komunitas"
+        "url": "https://btm.wikibooks.org/wiki/Husus:Halaman_istimewa"
       }
     ]
   },
@@ -353,94 +205,44 @@
       {
         "icon": "history",
         "title": "Recent changes",
-        "url": "https://en.wikipedia.org/wiki/Special:RecentChanges"
-      },
-      {
-        "icon": "newspaper_outlined",
-        "title": "Current events",
-        "url": "https://en.wikipedia.org/wiki/Portal:Current events"
-      },
-      {
-        "icon": "people_outlined",
-        "title": "Community portal",
-        "url": "https://en.wikipedia.org/wiki/Wikipedia:Community_portal"
-      },
-      {
-        "icon": "chat_bubble_outlined",
-        "title": "Village pump",
-        "url": "https://en.wikipedia.org/wiki/Wikipedia:Village_pump"
-      },
-      {
-        "icon": "chat_bubble_outlined",
-        "title": "Teahouse",
-        "url": "https://en.wikipedia.org/wiki/Wikipedia:Teahouse"
-      },
-      {
-        "icon": "help_outline",
-        "title": "Help desk",
-        "url": "https://en.wikipedia.org/wiki/Wikipedia:Help_desk"
-      },
-      {
-        "icon": "help_outline",
-        "title": "Reference desk",
-        "url": "https://en.wikipedia.org/wiki/Wikipedia:Reference_desk"
-      },
-      {
-        "icon": "content_copy",
-        "title": "Content portals",
-        "url": "https://en.wikipedia.org/wiki/Wikipedia:Content/Portals"
+        "url": "https://en.wiktionary.org/wiki/Special:RecentChanges"
       },
       {
         "icon": "pages_outlined",
         "title": "Special pages",
-        "url": "https://en.wikipedia.org/wiki/Special:SpecialPages"
+        "url": "https://en.wiktionary.org/wiki/Special:SpecialPages"
+      },
+      {
+        "icon": "people_outlined",
+        "title": "Community portal",
+        "url": "https://en.wiktionary.org/wiki/Wiktionary:Community_portal"
+      },
+      {
+        "icon": "help_outline",
+        "title": "Help desk",
+        "url": "https://en.wiktionary.org/wiki/Help:Contents"
       }
     ],
     "wikibooks": [
       {
         "icon": "history",
         "title": "Recent changes",
-        "url": "https://en.wikipedia.org/wiki/Special:RecentChanges"
-      },
-      {
-        "icon": "newspaper_outlined",
-        "title": "Current events",
-        "url": "https://en.wikipedia.org/wiki/Portal:Current events"
-      },
-      {
-        "icon": "people_outlined",
-        "title": "Community portal",
-        "url": "https://en.wikipedia.org/wiki/Wikipedia:Community_portal"
-      },
-      {
-        "icon": "chat_bubble_outlined",
-        "title": "Village pump",
-        "url": "https://en.wikipedia.org/wiki/Wikipedia:Village_pump"
-      },
-      {
-        "icon": "chat_bubble_outlined",
-        "title": "Teahouse",
-        "url": "https://en.wikipedia.org/wiki/Wikipedia:Teahouse"
-      },
-      {
-        "icon": "help_outline",
-        "title": "Help desk",
-        "url": "https://en.wikipedia.org/wiki/Wikipedia:Help_desk"
-      },
-      {
-        "icon": "help_outline",
-        "title": "Reference desk",
-        "url": "https://en.wikipedia.org/wiki/Wikipedia:Reference_desk"
-      },
-      {
-        "icon": "content_copy",
-        "title": "Content portals",
-        "url": "https://en.wikipedia.org/wiki/Wikipedia:Content/Portals"
+        "url": "https://en.wikibooks.org/wiki/Special:RecentChanges"
       },
       {
         "icon": "pages_outlined",
         "title": "Special pages",
-        "url": "https://en.wikipedia.org/wiki/Special:SpecialPages"
+        "url": "https://en.wikibooks.org/wiki/Special:SpecialPages"
+      },
+      {
+        "icon": "people_outlined",
+        "title": "Community portal",
+        "url": "https://en.wikibooks.org/wiki/Wikibooks:Community_portal"
+      },
+      {
+        "icon": "chat_bubble_outlined",
+        "title": "Wikijunior",
+        "url": "https://en.wikibooks.org/wiki/Wikijunior"
       }
     ]
   },
@@ -476,54 +278,29 @@
       {
         "icon": "history",
         "title": "Boheli Loboli'a Mola",
-        "url": "https://gor.wikipedia.org/wiki/Spesial:BoheliLoboli%27aMola"
+        "url": "https://gor.wiktionary.org/wiki/Spesial:BoheliLoboli%27aMola"
       },
       {
         "icon": "pages_outlined",
         "title": "Halaman spesial",
-        "url": "https://gor.wikipedia.org/wiki/Spesial:HalamanSpesial"
+        "url": "https://gor.wiktionary.org/wiki/Spesial:HalamanSpesial"
       },
       {
         "icon": "people_outlined",
         "title": "Būbu'a lēmbo'a",
-        "url": "https://gor.wikipedia.org/wiki/Wikipedia:Būbu%27a_lēmbo%27a"
-      },
-      {
-        "icon": "chat_bubble_outlined",
-        "title": "Waro lo Kopi",
-        "url": "https://gor.wikipedia.org/wiki/Wikipedia:Waro_lo_Kopi"
-      },
-      {
-        "icon": "construction_outlined",
-        "title": "Baki lo hungayo",
-        "url": "https://gor.wikipedia.org/wiki/Wikipedia:Baki_lo_hungayo"
+        "url": "https://gor.wiktionary.org/wiki/Wikikamus:Būbu%27a_lēmbo%27a"
       }
     ],
     "wikibooks": [
       {
         "icon": "history",
         "title": "Boheli Loboli'a Mola",
-        "url": "https://gor.wikipedia.org/wiki/Spesial:BoheliLoboli%27aMola"
+        "url": "https://gor.wikibooks.org/wiki/Spesial:BoheliLoboli%27aMola"
       },
       {
         "icon": "pages_outlined",
         "title": "Halaman spesial",
-        "url": "https://gor.wikipedia.org/wiki/Spesial:HalamanSpesial"
-      },
-      {
-        "icon": "people_outlined",
-        "title": "Būbu'a lēmbo'a",
-        "url": "https://gor.wikipedia.org/wiki/Wikipedia:Būbu%27a_lēmbo%27a"
-      },
-      {
-        "icon": "chat_bubble_outlined",
-        "title": "Waro lo Kopi",
-        "url": "https://gor.wikipedia.org/wiki/Wikipedia:Waro_lo_Kopi"
-      },
-      {
-        "icon": "construction_outlined",
-        "title": "Baki lo hungayo",
-        "url": "https://gor.wikipedia.org/wiki/Wikipedia:Baki_lo_hungayo"
+        "url": "https://gor.wikibooks.org/wiki/Spesial:HalamanSpesial"
       }
     ]
   },
@@ -564,64 +341,54 @@
       {
         "icon": "history",
         "title": "Perubahan terbaru",
-        "url": "https://id.wikipedia.org/wiki/Istimewa:Perubahan_terbaru"
+        "url": "https://id.wiktionary.org/wiki/Istimewa:Perubahan_terbaru"
       },
       {
         "icon": "pages_outlined",
         "title": "Halaman istimewa",
-        "url": "https://id.wikipedia.org/wiki/Istimewa:Halaman_istimewa"
-      },
-      {
-        "icon": "people_outlined",
-        "title": "Portal komunitas",
-        "url": "https://id.wikipedia.org/wiki/Portal:Komunitas"
+        "url": "https://id.wiktionary.org/wiki/Istimewa:Halaman_istimewa"
       },
       {
         "icon": "chat_bubble_outlined",
         "title": "Warung kopi",
-        "url": "https://id.wikipedia.org/wiki/Wikipedia:Warung_Kopi"
+        "url": "https://id.wiktionary.org/wiki/Wikikamus:Warung_Kopi"
       },
       {
         "icon": "construction_outlined",
         "title": "Bak pasir",
-        "url": "https://id.wikipedia.org/wiki/Wikipedia:Bak_pasir"
+        "url": "https://id.wiktionary.org/wiki/Wikikamus:Bak_pasir"
       },
       {
         "icon": "help_outline",
         "title": "Bantuan",
-        "url": "https://id.wikipedia.org/wiki/Bantuan:Isi"
+        "url": "https://id.wiktionary.org/wiki/Bantuan:Isi"
       }
     ],
     "wikibuku": [
       {
         "icon": "history",
         "title": "Perubahan terbaru",
-        "url": "https://id.wikipedia.org/wiki/Istimewa:Perubahan_terbaru"
+        "url": "https://id.wikibooks.org/wiki/Istimewa:Perubahan_terbaru"
       },
       {
         "icon": "pages_outlined",
         "title": "Halaman istimewa",
-        "url": "https://id.wikipedia.org/wiki/Istimewa:Halaman_istimewa"
-      },
-      {
-        "icon": "people_outlined",
-        "title": "Portal komunitas",
-        "url": "https://id.wikipedia.org/wiki/Portal:Komunitas"
+        "url": "https://id.wikibooks.org/wiki/Istimewa:Halaman_istimewa"
       },
       {
         "icon": "chat_bubble_outlined",
         "title": "Warung kopi",
-        "url": "https://id.wikipedia.org/wiki/Wikipedia:Warung_Kopi"
+        "url": "https://id.wikibooks.org/wiki/Wikibuku:Warung_Kopi"
       },
       {
         "icon": "construction_outlined",
         "title": "Bak pasir",
-        "url": "https://id.wikipedia.org/wiki/Wikipedia:Bak_pasir"
+        "url": "https://id.wikibooks.org/wiki/Wikibuku:Bak_pasir"
       },
       {
         "icon": "help_outline",
         "title": "Bantuan",
-        "url": "https://id.wikipedia.org/wiki/Bantuan:Isi"
+        "url": "https://id.wikibooks.org/wiki/Bantuan:Isi"
       }
     ]
   },
@@ -667,74 +434,39 @@
       {
         "icon": "history",
         "title": "Owahan anyar",
-        "url": "https://jv.wikipedia.org/wiki/Mirunggan:Owahan_anyar"
+        "url": "https://jv.wiktionary.org/wiki/Mirunggan:Owahan_anyar"
       },
       {
         "icon": "pages_outlined",
         "title": "Kaca mirunggan",
-        "url": "https://jv.wikipedia.org/wiki/Mirunggan:Kaca_mirunggan"
-      },
-      {
-        "icon": "newspaper_outlined",
-        "title": "Wara-wara",
-        "url": "https://jv.wikipedia.org/wiki/Wikipédia:Wara-wara"
+        "url": "https://jv.wiktionary.org/wiki/Mirunggan:Kaca_mirunggan"
       },
       {
         "icon": "people_outlined",
-        "title": "Gapura Paguyuban",
-        "url": "https://jv.wikipedia.org/wiki/Gapura:Paguyuban"
-      },
-      {
-        "icon": "chat_bubble_outlined",
         "title": "Angkringan",
-        "url": "https://jv.wikipedia.org/wiki/Wikipédia:Angkringan"
+        "url": "https://jv.wiktionary.org/wiki/Wikisastra:Angkringan"
       },
       {
         "icon": "construction_outlined",
         "title": "Bak wedhi",
-        "url": "https://jv.wikipedia.org/wiki/Wikipédia:Bak wedhi"
+        "url": "https://jv.wiktionary.org/wiki/Wikisastra:Bak wedhi"
       },
       {
         "icon": "help_outline",
         "title": "Pitulung",
-        "url": "https://jv.wikipedia.org/wiki/Pitulung:Isi"
+        "url": "https://jv.wiktionary.org/wiki/Pitulung:Pambesutan"
       }
     ],
     "wikibooks": [
       {
         "icon": "history",
         "title": "Owahan anyar",
-        "url": "https://jv.wikipedia.org/wiki/Mirunggan:Owahan_anyar"
+        "url": "https://incubator.wikimedia.org/wiki/Special:RecentChanges"
       },
       {
         "icon": "pages_outlined",
         "title": "Kaca mirunggan",
-        "url": "https://jv.wikipedia.org/wiki/Mirunggan:Kaca_mirunggan"
-      },
-      {
-        "icon": "newspaper_outlined",
-        "title": "Wara-wara",
-        "url": "https://jv.wikipedia.org/wiki/Wikipédia:Wara-wara"
-      },
-      {
-        "icon": "people_outlined",
-        "title": "Gapura Paguyuban",
-        "url": "https://jv.wikipedia.org/wiki/Gapura:Paguyuban"
-      },
-      {
-        "icon": "chat_bubble_outlined",
-        "title": "Angkringan",
-        "url": "https://jv.wikipedia.org/wiki/Wikipédia:Angkringan"
-      },
-      {
-        "icon": "construction_outlined",
-        "title": "Bak wedhi",
-        "url": "https://jv.wikipedia.org/wiki/Wikipédia:Bak wedhi"
-      },
-      {
-        "icon": "help_outline",
-        "title": "Pitulung",
-        "url": "https://jv.wikipedia.org/wiki/Pitulung:Isi"
+        "url": "https://incubator.wikimedia.org/wiki/Special:SpecialPages"
       }
     ]
   },
@@ -765,44 +497,29 @@
       {
         "icon": "history",
         "title": "Perubahan terbaru",
-        "url": "https://mad.wikipedia.org/wiki/Spesial:Perubahan_terbaru"
+        "url": "https://mad.wiktionary.org/wiki/Spesial:Perubahan_terbaru"
       },
       {
         "icon": "pages_outlined",
         "title": "Kaca khosos",
-        "url": "https://mad.wikipedia.org/wiki/Spesial:Halaman_istimewa"
+        "url": "https://mad.wiktionary.org/wiki/Spesial:Halaman_istimewa"
       },
       {
         "icon": "chat_bubble_outlined",
         "title": "Bârung Kopi",
-        "url": "https://mad.wikipedia.org/wiki/Wikipèḍia:Bârung_Kopi"
-      },
-      {
-        "icon": "construction_outlined",
-        "title": "Bak beddhi",
-        "url": "https://mad.wikipedia.org/wiki/Wikipèḍia:Bak_beddhi"
+        "url": "https://mad.wiktionary.org/wiki/Wikipèḍia:Bârung_Kopi"
       }
     ],
     "wikibooks": [
       {
         "icon": "history",
         "title": "Perubahan terbaru",
-        "url": "https://mad.wikipedia.org/wiki/Spesial:Perubahan_terbaru"
+        "url": "https://mad.wikibooks.org/wiki/Spesial:Perubahan_terbaru"
       },
       {
         "icon": "pages_outlined",
         "title": "Kaca khosos",
-        "url": "https://mad.wikipedia.org/wiki/Spesial:Halaman_istimewa"
-      },
-      {
-        "icon": "chat_bubble_outlined",
-        "title": "Bârung Kopi",
-        "url": "https://mad.wikipedia.org/wiki/Wikipèḍia:Bârung_Kopi"
-      },
-      {
-        "icon": "construction_outlined",
-        "title": "Bak beddhi",
-        "url": "https://mad.wikipedia.org/wiki/Wikipèḍia:Bak_beddhi"
+        "url": "https://mad.wikibooks.org/wiki/Spesial:Halaman_istimewa"
       }
     ]
   },
@@ -838,54 +555,49 @@
       {
         "icon": "history",
         "title": "Perubahan baru",
-        "url": "https://min.wikipedia.org/wiki/Istimewa:ParubahanBaru"
+        "url": "https://min.wiktionary.org/wiki/Istimewa:ParubahanBaru"
       },
       {
         "icon": "pages_outlined",
         "title": "Laman istimewa",
-        "url": "https://min.wikipedia.org/wiki/Istimewa:LamanIstimewa"
+        "url": "https://min.wiktionary.org/wiki/Istimewa:LamanIstimewa"
       },
       {
         "icon": "people_outlined",
         "title": "Portal komunitas",
-        "url": "https://min.wikipedia.org/wiki/Portal:Komunitas"
+        "url": "https://min.wiktionary.org/wiki/Portal:Komunitas"
       },
       {
         "icon": "chat_bubble_outlined",
         "title": "Kadai Kopi",
-        "url": "https://min.wikipedia.org/wiki/Wikipedia:Kadai_Kopi"
+        "url": "https://min.wiktionary.org/wiki/Wikikato:Kadai_Kopi"
       },
       {
         "icon": "construction_outlined",
         "title": "Bak kasiak",
-        "url": "https://min.wikipedia.org/wiki/Wikipedia:Bak_kasiak"
+        "url": "https://min.wiktionary.org/wiki/Wikikato:Bak_kasiak"
       }
     ],
     "wikibooks": [
       {
         "icon": "history",
         "title": "Perubahan baru",
-        "url": "https://min.wikipedia.org/wiki/Istimewa:ParubahanBaru"
+        "url": "https://min.wikibooks.org/wiki/Istimewa:ParubahanBaru"
       },
       {
         "icon": "pages_outlined",
         "title": "Laman istimewa",
-        "url": "https://min.wikipedia.org/wiki/Istimewa:LamanIstimewa"
+        "url": "https://min.wikibooks.org/wiki/Istimewa:LamanIstimewa"
       },
       {
         "icon": "people_outlined",
         "title": "Portal komunitas",
-        "url": "https://min.wikipedia.org/wiki/Portal:Komunitas"
-      },
-      {
-        "icon": "chat_bubble_outlined",
-        "title": "Kadai Kopi",
-        "url": "https://min.wikipedia.org/wiki/Wikipedia:Kadai_Kopi"
+        "url": "https://min.wikibooks.org/wiki/Wikibuku:Portal komunitas"
       },
       {
         "icon": "construction_outlined",
         "title": "Bak kasiak",
-        "url": "https://min.wikipedia.org/wiki/Wikipedia:Bak_kasiak"
+        "url": "https://min.wikibooks.org/wiki/Wikibuku:Bak_kasiak"
       }
     ]
   },
@@ -921,54 +633,182 @@
       {
         "icon": "history",
         "title": "Perubahan terkini",
-        "url": "https://ms.wikipedia.org/wiki/Khas:Perubahan_terkini"
+        "url": "https://ms.wiktionary.org/wiki/Khas:Perubahan_terkini"
       },
       {
         "icon": "newspaper_outlined",
         "title": "Hal semasa",
-        "url": "https://ms.wikipedia.org/wiki/Gerbang:Hal_semasa"
+        "url": "https://ms.wiktionary.org/wiki/Gerbang:Hal_semasa"
       },
       {
         "icon": "people_outlined",
         "title": "Gerbang Komuniti",
-        "url": "https://ms.wikipedia.org/wiki/Wikipedia:Gerbang_Komuniti"
+        "url": "https://ms.wiktionary.org/wiki/Wikikamus:Gerbang komuniti"
       },
       {
         "icon": "chat_bubble_outlined",
         "title": "Kedai Kopi",
-        "url": "https://ms.wikipedia.org/wiki/Wikipedia:Kedai_Kopi"
+        "url": "https://ms.wiktionary.org/wiki/Wikikamus:Kedai Kopi"
       },
       {
         "icon": "pages_outlined",
         "title": "Laman khas",
-        "url": "https://ms.wikipedia.org/wiki/Khas:Laman_khas"
+        "url": "https://ms.wiktionary.org/wiki/Khas:Laman_khas"
       }
     ],
     "wikibooks": [
       {
         "icon": "history",
         "title": "Perubahan terkini",
-        "url": "https://ms.wikipedia.org/wiki/Khas:Perubahan_terkini"
-      },
-      {
-        "icon": "newspaper_outlined",
-        "title": "Hal semasa",
-        "url": "https://ms.wikipedia.org/wiki/Gerbang:Hal_semasa"
-      },
-      {
-        "icon": "people_outlined",
-        "title": "Gerbang Komuniti",
-        "url": "https://ms.wikipedia.org/wiki/Wikipedia:Gerbang_Komuniti"
-      },
-      {
-        "icon": "chat_bubble_outlined",
-        "title": "Kedai Kopi",
-        "url": "https://ms.wikipedia.org/wiki/Wikipedia:Kedai_Kopi"
+        "url": "https://ms.wikibooks.org/wiki/Khas:Perubahan_terkini"
       },
       {
         "icon": "pages_outlined",
         "title": "Laman khas",
-        "url": "https://ms.wikipedia.org/wiki/Khas:Laman_khas"
+        "url": "https://ms.wikibooks.org/wiki/Khas:Laman_khas"
+      },
+      {
+        "icon": "newspaper_outlined",
+        "title": "Hal semasa",
+        "url": "https://ms.wikibooks.org/wiki/Gerbang:Hal_semasa"
+      },
+      {
+        "icon": "people_outlined",
+        "title": "Gerbang Komuniti",
+        "url": "https://ms.wikibooks.org/wiki/Wikibuku:Gerbang Komuniti"
+      },
+      {
+        "icon": "chat_bubble_outlined",
+        "title": "Kedai Kopi",
+        "url": "https://ms.wikibooks.org/wiki/Wikibuku:Kedai Kopi"
+      }
+    ]
+  },
+  "nia": {
+    "wikipedia": [
+      {
+        "icon": "history",
+        "title": "Safuria tebulö",
+        "url": "https://nia.wikipedia.org/wiki/Spesial:Perubahan_terbaru"
+      },
+      {
+        "icon": "pages_outlined",
+        "title": "Nga'örö spesial",
+        "url": "https://nia.wikipedia.org/wiki/Spesial:Halaman_istimewa"
+      },
+      {
+        "icon": "campaign_outlined",
+        "title": "Angombakhata",
+        "url": "https://nia.wikipedia.org/wiki/Wikipedia:Angombakhata"
+      },
+      {
+        "icon": "people_outlined",
+        "title": "Bawagöli zato",
+        "url": "https://nia.wikipedia.org/wiki/Wikipedia:Bawagöli_zato"
+      },
+      {
+        "icon": "chat_bubble_outlined",
+        "title": "Monganga afo",
+        "url": "https://nia.wikipedia.org/wiki/Wikipedia:Monganga_afo"
+      },
+      {
+        "icon": "construction_outlined",
+        "title": "Nahia wamakori",
+        "url": "https://nia.wikipedia.org/wiki/Wikipedia:Nahia_wamakori"
+      },
+      {
+        "icon": "help_outline",
+        "title": "Fanolo",
+        "url": "https://nia.wikipedia.org/wiki/Fanolo:Fanolo"
+      },
+      {
+        "icon": "support_agent_outlined",
+        "title": "Sangai halöŵö",
+        "url": "https://nia.wikipedia.org/wiki/Wikipedia:Sangai_halöŵö"
+      }
+    ],
+    "wiktionary": [
+      {
+        "icon": "history",
+        "title": "Safuria tebulö",
+        "url": "https://nia.wiktionary.org/wiki/Spesial:Perubahan_terbaru"
+      },
+      {
+        "icon": "pages_outlined",
+        "title": "Nga'örö spesial",
+        "url": "https://nia.wiktionary.org/wiki/Spesial:Halaman_istimewa"
+      },
+      {
+        "icon": "campaign_outlined",
+        "title": "Angombakhata",
+        "url": "https://nia.wiktionary.org/wiki/Wikikamus:Angombakhata"
+      },
+      {
+        "icon": "people_outlined",
+        "title": "Bawagöli zato",
+        "url": "https://nia.wiktionary.org/wiki/Wikikamus:Bawagöli_zato"
+      },
+      {
+        "icon": "chat_bubble_outlined",
+        "title": "Monganga afo",
+        "url": "https://nia.wiktionary.org/wiki/Wikikamus:Monganga_afo"
+      },
+      {
+        "icon": "construction_outlined",
+        "title": "Nahia wamakori",
+        "url": "https://nia.wiktionary.org/wiki/Wikikamus:Nahia_wamakori"
+      },
+      {
+        "icon": "help_outline",
+        "title": "Fanolo",
+        "url": "https://nia.wiktionary.org/wiki/Fanolo:Fanolo"
+      },
+      {
+        "icon": "support_agent_outlined",
+        "title": "Sangai halöŵö",
+        "url": "https://nia.wiktionary.org/wiki/Wikikamus:Sangai_halöŵö"
+      }
+    ],
+    "wikibooks": [
+      {
+        "icon": "history",
+        "title": "Safuria tebulö",
+        "url": "https://incubator.wikimedia.org/wiki/Special:PRecentChanges?hidebots=1&translations=filter&hidecategorization=1&hideWikibase=1&hideWikifunctions=1&limit=250&days=30&urlversion=2&rc-testwiki-project=b&rc-testwiki-code=nia"
+      },
+      {
+        "icon": "pages_outlined",
+        "title": "Nga'örö spesial",
+        "url": "https://incubator.wikimedia.org/wiki/Special:SpecialPages"
+      },
+      {
+        "icon": "campaign_outlined",
+        "title": "Angombakhata",
+        "url": "https://incubator.wikimedia.org/wiki/Wb/nia/Wikibooks:Angombakhata"
+      },
+      {
+        "icon": "people_outlined",
+        "title": "Bawagöli zato",
+        "url": "https://incubator.wikimedia.org/wiki/Wb/nia/Wikibooks:Bawagöli_zato"
+      },
+      {
+        "icon": "chat_bubble_outlined",
+        "title": "Monganga afo",
+        "url": "https://incubator.wikimedia.org/wiki/Wb/nia/Wikibooks:Monganga_afo"
+      },
+      {
+        "icon": "construction_outlined",
+        "title": "Nahia wamakori",
+        "url": "https://incubator.wikimedia.org/wiki/Wb/nia/Wikibooks:Nahia_wamakori"
+      },
+      {
+        "icon": "help_outline",
+        "title": "Fanolo",
+        "url": "https://incubator.wikimedia.org/wiki/Wb/nia/Help:Fanolo"
+      },
+      {
+        "icon": "support_agent_outlined",
+        "title": "Sangai halöŵö",
+        "url": "https://incubator.wikimedia.org/wiki/Wb/nia/Wikibooks:Sangai_halöŵö"
       }
     ]
   },
@@ -999,44 +839,24 @@
       {
         "icon": "history",
         "title": "Anyar robah",
-        "url": "https://su.wikipedia.org/wiki/Husus:AnyarRobah"
+        "url": "https://su.wiktionary.org/wiki/Husus:AnyarRobah"
       },
       {
         "icon": "pages_outlined",
         "title": "Kaca husus",
-        "url": "https://su.wikipedia.org/wiki/Husus:KacaHusus"
-      },
-      {
-        "icon": "people_outlined",
-        "title": "Panglawungan",
-        "url": "https://su.wikipedia.org/wiki/Portal:Panglawungan"
-      },
-      {
-        "icon": "chat_bubble_outlined",
-        "title": "Sawala",
-        "url": "https://su.wikipedia.org/wiki/Wikipedia:Sawala"
+        "url": "https://su.wiktionary.org/wiki/Husus:KacaHusus"
       }
     ],
     "wikibooks": [
       {
         "icon": "history",
         "title": "Anyar robah",
-        "url": "https://su.wikipedia.org/wiki/Husus:AnyarRobah"
+        "url": "https://su.wikibooks.org/wiki/Husus:AnyarRobah"
       },
       {
         "icon": "pages_outlined",
         "title": "Kaca husus",
-        "url": "https://su.wikipedia.org/wiki/Husus:KacaHusus"
-      },
-      {
-        "icon": "people_outlined",
-        "title": "Panglawungan",
-        "url": "https://su.wikipedia.org/wiki/Portal:Panglawungan"
-      },
-      {
-        "icon": "chat_bubble_outlined",
-        "title": "Sawala",
-        "url": "https://su.wikipedia.org/wiki/Wikipedia:Sawala"
+        "url": "https://su.wikibooks.org/wiki/Husus:KacaHusus"
       }
     ]
   }

@@ -1,43 +1,10 @@
 {
-  "nia": {
-    "wikipedia": {
-      "main_page": "Wikipedia:Olayama"
-    },
-    "wiktionary": {
-      "main_page": "Wikikamus:Olayama"
-    },
-    "wikibooks": {
-      "main_page": "Olayama"
-    }
-  },
-  "en": {
-    "wikipedia": {
-      "main_page": "Main Page"
-    },
-    "wiktionary": {
-      "main_page": "Main Page"
-    },
-    "wikibooks": {
-      "main_page": "Main Page"
-    }
-  },
-  "id": {
-    "wikipedia": {
-      "main_page": "Halaman Utama"
-    },
-    "wiktionary": {
-      "main_page": "Halaman Utama"
-    },
-    "wikibooks": {
-      "main_page": "Halaman Utama"
-    }
-  },
   "bew": {
     "wikipedia": {
       "main_page": "Balé-balé"
     },
     "wiktionary": {
-      "main_page": "Balé-balé"
+      "main_page": "Wikikamus:Balé-balé"
     },
     "wikibooks": {
       "main_page": "Balé-balé"
@@ -56,13 +23,24 @@
   },
   "btm": {
     "wikipedia": {
-      "main_page": "Alaman Utamo"
+      "main_page": "Alaman_Utamo"
     },
     "wiktionary": {
-      "main_page": "Alaman Utamo"
+      "main_page": "Wikikamus:Alaman_Utamo"
     },
     "wikibooks": {
-      "main_page": "Alaman Utamo"
+      "main_page": "Alaman_Utamo"
+    }
+  },
+  "en": {
+    "wikipedia": {
+      "main_page": "Main Page"
+    },
+    "wiktionary": {
+      "main_page": "Main Page"
+    },
+    "wikibooks": {
+      "main_page": "Main Page"
     }
   },
   "gor": {
@@ -70,10 +48,21 @@
       "main_page": "Halaman Bungaliyo"
     },
     "wiktionary": {
-      "main_page": "Halaman Bungaliyo"
+      "main_page": "Palepelo"
     },
     "wikibooks": {
       "main_page": "Halaman Bungaliyo"
+    }
+  },
+  "id": {
+    "wikipedia": {
+      "main_page": "Halaman Utama"
+    },
+    "wiktionary": {
+      "main_page": "Halaman Utama"
+    },
+    "wikibooks": {
+      "main_page": "Halaman Utama"
     }
   },
   "jv": {
@@ -81,15 +70,15 @@
       "main_page": "Wikipédia:Pendhapa"
     },
     "wiktionary": {
-      "main_page": "Wikipédia:Pendhapa"
+      "main_page": "Wikisastra:Pendhapa"
     },
     "wikibooks": {
-      "main_page": "Wikipédia:Pendhapa"
+      "main_page": "Kaca_Utama"
     }
   },
   "mad": {
     "wikipedia": {
-      "main_page": "Wikipédia:Tanèyan"
+      "main_page": "Tanèyan"
     },
     "wiktionary": {
       "main_page": "Wikikamus:Tanèyan"
@@ -100,24 +89,35 @@
   },
   "min": {
     "wikipedia": {
-      "main_page": "Wikipedia:Laman Utamo"
+      "main_page": "Laman Utamo"
     },
     "wiktionary": {
-      "main_page": "Wikikamus:Laman Utamo"
+      "main_page": "Wikikato:Laman Utamo"
     },
     "wikibooks": {
-      "main_page": "Wikibuku:Laman Utamo"
+      "main_page": "Palanta"
     }
   },
   "ms": {
     "wikipedia": {
-      "main_page": "Wikipedia:Laman Utama"
+      "main_page": "Laman Utama"
     },
     "wiktionary": {
       "main_page": "Wikikamus:Laman Utama"
     },
     "wikibooks": {
-      "main_page": "Wikibuku:Laman Utama"
+      "main_page": "Laman Utama"
+    }
+  },
+  "nia": {
+    "wikipedia": {
+      "main_page": "Wikipedia:Olayama"
+    },
+    "wiktionary": {
+      "main_page": "Wikikamus:Olayama"
+    },
+    "wikibooks": {
+      "main_page": "Olayama"
     }
   },
   "su": {
