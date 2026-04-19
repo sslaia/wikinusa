@@ -860,8 +860,8 @@
         "reflist"
       ],
       "homePageSections": {
-        "featuredArticle": "mp-featured-article",
-        "featuredImage": "mp-featured-photo",
+        "featuredArticle": "mp-featured-article-body",
+        "featuredImage": "mp-featured-photo-body",
         "doYouKnow": "mp-dyk",
         "onThisMonth": "mp-otm"
       }
@@ -878,10 +878,8 @@
         "reference"
       ],
       "homePageSections": {
-        "featuredWord": "mp-featured-word",
-        "featuredImage": "mp-featured-image",
-        "doYouKnow": "mp-dyk",
-        "onThisMonth": "mp-otm"
+        "featuredWord": "mp-featured-word-body",
+        "doYouKnow": "mp-dyk"
       }
     },
     "wikibooks": {
@@ -897,10 +895,9 @@
         "reference"
       ],
       "homePageSections": {
-        "featuredStory": "mp-featured-story",
-        "featuredImage": "mp-featured-image",
-        "doYouKnow": "mp-dyk",
-        "onThisMonth": "mp-otm"
+        "featuredStory": "mp-featured-article-body",
+        "featuredImage": "mp-featured-photo-body",
+        "doYouKnow": "mp-dyk"
       }
     }
   },
