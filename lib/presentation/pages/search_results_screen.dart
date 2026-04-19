@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:html/parser.dart' as html_parser;
 import '../providers/article_provider.dart';
 import '../providers/language_provider.dart';
+import '../providers/project_provider.dart';
 import 'article_screen.dart';
 
 class SearchResultsScreen extends ConsumerWidget {
@@ -23,6 +24,7 @@ class SearchResultsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final langCode = ref.watch(languageProvider).code;
+    final project = ref.watch(projectProvider);
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surfaceContainerLow,
@@ -38,7 +40,7 @@ class SearchResultsScreen extends ConsumerWidget {
         elevation: 0,
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: ref.read(remoteArticleDataSourceProvider).searchArticles(query, langCode),
+        future: ref.read(remoteArticleDataSourceProvider).searchArticles(query, langCode, project),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

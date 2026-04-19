@@ -4,6 +4,7 @@ import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart' as dom;
 import 'package:wikinusa/core/constants/home_portals.dart';
 import 'package:wikinusa/core/utils/wiki_html_utils.dart';
+import 'package:wikinusa/domain/entities/wiki_project.dart';
 import 'package:wikinusa/presentation/providers/html_rules_provider.dart';
 import 'package:wikinusa/presentation/widgets/home_header_card.dart';
 import 'package:wikinusa/presentation/widgets/home_section_body.dart';
@@ -21,6 +22,7 @@ class JavaneseHomePageBuilder implements HomePageBuilder {
     String html,
     String langCode,
     Orientation orientation,
+    WikiProject project,
   ) {
     final theme = Theme.of(context);
     final document = html_parser.parse(html);

@@ -3,13 +3,19 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+import '../../domain/entities/wiki_project.dart';
 import 'shared_prefs_provider.dart';
+import 'language_provider.dart';
+import 'project_provider.dart';
 
-final shortcutsProvider = FutureProvider<Map<String, dynamic>>((ref) async {
+final shortcutsProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
   const remoteUrl = 'https://raw.githubusercontent.com/sslaia/wikinusa/refs/heads/main/assets/data/shortcuts.json';
   final prefs = ref.watch(sharedPreferencesProvider);
+  final langCode = ref.watch(languageProvider).code;
+  final project = ref.watch(projectProvider);
   
-  // Fetch remote shortcuts
+  Map<String, dynamic> shortcutsData;
+
   try {
     final response = await http.get(Uri.parse(remoteUrl)).timeout(const Duration(seconds: 5));
     
@@ -17,42 +23,45 @@ final shortcutsProvider = FutureProvider<Map<String, dynamic>>((ref) async {
       final remoteJson = response.body;
       final localJson = prefs.getString('cached_shortcuts');
       
-      // If different from what we have cached, update cache
       if (remoteJson != localJson) {
         await prefs.setString('cached_shortcuts', remoteJson);
       }
-      return json.decode(remoteJson) as Map<String, dynamic>;
+      shortcutsData = json.decode(remoteJson) as Map<String, dynamic>;
+    } else {
+      shortcutsData = await _getCachedOrAssetShortcuts(prefs);
     }
   } catch (e) {
     debugPrint('ShortcutsProvider: Failed to fetch remote shortcuts: $e');
+    shortcutsData = await _getCachedOrAssetShortcuts(prefs);
   }
 
-  // Fallback to cached shortcuts if available
+  // Resolve the list based on langCode and project
+  if (shortcutsData.containsKey(langCode)) {
+    final langData = shortcutsData[langCode];
+    
+    // Check if new structure (nested by project)
+    if (langData is Map) {
+      final projectData = langData[project.name];
+      if (projectData is List) {
+        return projectData.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+      }
+    } 
+    // Fallback for old structure (direct list for Wikipedia)
+    else if (langData is List && project == WikiProject.wikipedia) {
+      return langData.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+    }
+  }
+
+  return [];
+});
+
+Future<Map<String, dynamic>> _getCachedOrAssetShortcuts(var prefs) async {
   final cachedJson = prefs.getString('cached_shortcuts');
   if (cachedJson != null) {
     try {
       return json.decode(cachedJson) as Map<String, dynamic>;
-    } catch (e) {
-      debugPrint('ShortcutsProvider: Failed to decode cached shortcuts: $e');
-    }
+    } catch (e) {}
   }
-
-  // Final fallback: Load from local assets
-  try {
-    final assetJson = await rootBundle.loadString('assets/data/shortcuts.json');
-    return json.decode(assetJson) as Map<String, dynamic>;
-  } catch (e) {
-    debugPrint('ShortcutsProvider: Failed to load shortcuts from assets: $e');
-    // Absolute minimum fallback to prevent app crash
-    return {
-      "id": [
-        {"icon": "history", "title": "Perubahan terbaru", "url": "https://id.wikipedia.org/wiki/Istimewa:Perubahan_terbaru"},
-        {"icon": "pages_outlined", "title": "Halaman istimewa", "url": "https://id.wikipedia.org/wiki/Istimewa:Halaman_istimewa"},
-        {"icon": "people_outlined", "title": "Portal komunitas", "url": "https://id.wikipedia.org/wiki/Portal:Komunitas"},
-        {"icon": "chat_bubble_outline", "title": "Warung kopi", "url": "https://id.wikipedia.org/wiki/Wikipedia:Warung_Kopi"},
-        {"icon": "construction_outlined", "title": "Bak pasir", "url": "https://id.wikipedia.org/wiki/Wikipedia:Bak_pasir"},
-        {"icon": "help_outlined", "title": "Bantuan", "url": "https://id.wikipedia.org/wiki/Bantuan:Isi"}
-      ],
-    };
-  }
-});
+  final assetJson = await rootBundle.loadString('assets/data/shortcuts.json');
+  return json.decode(assetJson) as Map<String, dynamic>;
+}

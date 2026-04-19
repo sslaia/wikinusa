@@ -19,6 +19,26 @@ class HomeSectionBody extends StatelessWidget {
   final Map<String, dynamic> section;
   final String langCode;
 
+  String _getHighResUrl(String url) {
+    if (!url.contains('/thumb/')) return url;
+
+    // Wikimedia thumb URLs pattern: .../thumb/path/image.jpg/XXXpx-image.jpg
+    // Trim everything after the first occurrence of a common image extension followed by a slash
+    final extensions = ['.png', '.jpg', '.jpeg', '.svg', '.bmp', '.tiff', '.webp'];
+    String processedUrl = url;
+
+    for (final ext in extensions) {
+      final lowerUrl = url.toLowerCase();
+      if (lowerUrl.contains('$ext/')) {
+        processedUrl = url.substring(0, lowerUrl.indexOf('$ext/') + ext.length);
+        break;
+      }
+    }
+
+    // Removing '/thumb/' and replacing it with '/' points to the original high-res image
+    return processedUrl.replaceFirst('/thumb/', '/');
+  }
+
   @override
   Widget build(BuildContext context) {
     final String sectionBody = section['body'];
@@ -48,7 +68,7 @@ class HomeSectionBody extends StatelessWidget {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: Image.network(
-                        url,
+                        _getHighResUrl(url),
                         width: double.infinity,
                         fit: BoxFit.fitWidth,
                         headers: const {

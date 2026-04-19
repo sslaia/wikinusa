@@ -1,9 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wikinusa/presentation/widgets/search_field_widget.dart';
+import '../providers/project_provider.dart';
 
-class HomeHeaderCard extends StatelessWidget {
+class HomeHeaderCard extends ConsumerWidget {
   final String? imageUrl;
   final String? languageName;
 
@@ -14,8 +16,9 @@ class HomeHeaderCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final currentProject = ref.watch(projectProvider);
 
     return Stack(
       children: [
@@ -81,7 +84,7 @@ class HomeHeaderCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'WikiNusa',
+                    currentProject.displayName.toString().toLowerCase().tr(),
                     style: GoogleFonts.cinzelDecorative(
                       textStyle: theme.textTheme.titleLarge?.copyWith(
                         color: Colors.white,

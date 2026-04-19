@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../domain/entities/wiki_project.dart';
 
 abstract class HomePageBuilder {
   Widget build(
@@ -7,5 +8,6 @@ abstract class HomePageBuilder {
     String html,
     String langCode,
     Orientation orientation,
+    WikiProject project,
   );
 }

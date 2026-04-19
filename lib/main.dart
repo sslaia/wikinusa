@@ -15,6 +15,7 @@ import 'package:wikinusa/presentation/localizations/su_material_localizations.da
 import 'core/theme_config.dart';
 import 'presentation/providers/theme_provider.dart';
 import 'presentation/providers/language_provider.dart';
+import 'presentation/providers/project_provider.dart';
 import 'presentation/providers/font_size_provider.dart';
 import 'presentation/providers/onboarding_provider.dart';
 import 'presentation/providers/shared_prefs_provider.dart';
@@ -63,12 +64,12 @@ class WikinusaApp extends ConsumerWidget {
     final themeMode = ref.watch(themeModeProvider);
     final hasCompletedOnboarding = ref.watch(onboardingProvider);
     final fontSize = ref.watch(fontSizeProvider);
-    final selectedLanguage = ref.watch(languageProvider);
+    final selectedProject = ref.watch(projectProvider);
 
     return MaterialApp(
       title: 'WikiNusa',
-      theme: WikinusaThemeConfig.createTheme(selectedLanguage.seedColor, Brightness.light),
-      darkTheme: WikinusaThemeConfig.createTheme(selectedLanguage.seedColor, Brightness.dark),
+      theme: WikinusaThemeConfig.createTheme(selectedProject.seedColor, Brightness.light),
+      darkTheme: WikinusaThemeConfig.createTheme(selectedProject.seedColor, Brightness.dark),
       themeMode: themeMode,
       builder: (context, child) {
         return MediaQuery(

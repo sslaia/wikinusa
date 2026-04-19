@@ -7,7 +7,9 @@ import 'package:wikinusa/presentation/widgets/custom_bottom_nav_bar.dart';
 import 'package:wikinusa/presentation/widgets/custom_drawer.dart';
 import 'package:wikinusa/presentation/providers/article_provider.dart';
 import 'package:wikinusa/presentation/providers/language_provider.dart';
+import 'package:wikinusa/presentation/providers/project_provider.dart';
 import 'package:wikinusa/presentation/pages/home_page_builders/home_page_builders.dart';
+import 'package:wikinusa/domain/entities/wiki_project.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -23,6 +25,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final language = ref.watch(languageProvider);
+    final currentProject = ref.watch(projectProvider);
     final homePage = ref.watch(homePageProvider);
     final orientation = MediaQuery.of(context).orientation;
 
@@ -30,22 +33,43 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       key: _scaffoldKey,
       backgroundColor: theme.colorScheme.surfaceContainerLow,
       drawer: const CustomDrawer(),
+      // appBar: AppBar(
+      //   title: Text(currentProject.displayName),
+      //   backgroundColor: Colors.transparent,
+      //   elevation: 0,
+      // ),
       body: homePage.when(
         data: (html) {
           final builder = _getPageBuilder(language.code);
-          // Get the titles map from the provider
           final titlesData = ref.watch(pageTitlesProvider).value ?? {};
 
-          // Resolve the localized "Main Page" title
           String mainPageTitle = 'Main_Page';
           if (titlesData.containsKey(language.code)) {
-            final langTitles = titlesData[language.code] as List;
-            final entry = langTitles.firstWhere(
-              (e) => e.containsKey('main_page'),
-              orElse: () => {'main_page': 'Main_Page'},
-            );
-            mainPageTitle = entry['main_page'];
+            final langData = titlesData[language.code];
+            
+            // Handle nested structure: titlesData[langCode][project.name]
+            if (langData is Map<String, dynamic> && langData.containsKey(currentProject.name)) {
+              final projectData = langData[currentProject.name];
+              if (projectData is List) {
+                final entry = projectData.firstWhere(
+                  (e) => e is Map && e.containsKey('main_page'),
+                  orElse: () => {'main_page': 'Main_Page'},
+                );
+                mainPageTitle = entry['main_page'];
+              } else if (projectData is Map && projectData.containsKey('main_page')) {
+                mainPageTitle = projectData['main_page'];
+              }
+            } 
+            // Fallback for old flat list structure
+            else if (langData is List) {
+              final entry = langData.firstWhere(
+                (e) => e is Map && e.containsKey('main_page'),
+                orElse: () => {'main_page': 'Main_Page'},
+              );
+              mainPageTitle = entry['main_page'];
+            }
           }
+          
           return SafeArea(
             bottom: false,
             child: builder.build(
@@ -54,6 +78,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               html,
               language.code,
               orientation,
+              currentProject,
             ),
           );
         },

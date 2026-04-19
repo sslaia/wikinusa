@@ -8,8 +8,10 @@ import 'package:wikinusa/data/whats_new.dart';
 import 'package:wikinusa/presentation/pages/about_screen.dart';
 import '../providers/language_provider.dart';
 import '../providers/theme_provider.dart';
+import '../providers/project_provider.dart';
 import '../providers/font_size_provider.dart';
 import '../../domain/entities/wiki_language.dart';
+import '../../domain/entities/wiki_project.dart';
 import '../pages/bookmarks_screen.dart';
 import '../pages/create_page_screen.dart';
 
@@ -21,6 +23,7 @@ class CustomDrawer extends ConsumerWidget {
     final theme = Theme.of(context);
     final themeMode = ref.watch(themeModeProvider);
     final currentLanguage = ref.watch(languageProvider);
+    final currentProject = ref.watch(projectProvider);
     final currentFontSize = ref.watch(fontSizeProvider);
 
     final isDark =
@@ -95,130 +98,223 @@ class CustomDrawer extends ConsumerWidget {
                     );
                   },
                 ),
-                const Divider(),
-                _buildSectionHeader(theme, 'drawer_language'),
-                ListTile(
-                  leading: Icon(
-                    Icons.language,
-                    color: theme.colorScheme.onSurface,
-                  ),
-                  title: Text(currentLanguage.displayName),
-                  trailing: const Icon(Icons.keyboard_arrow_right, size: 20),
-                  onTap: () => _showLanguageSelector(
-                    context,
-                    ref,
-                    theme,
-                    currentLanguage,
-                  ),
-                ),
-                const Divider(),
-                _buildSectionHeader(theme, 'drawer_appearance'),
-                SwitchListTile(
-                  secondary: Icon(
-                    isDark ? Icons.dark_mode : Icons.light_mode,
-                    color: theme.colorScheme.onSurface,
-                  ),
-                  title: Text('dark_mode').tr(),
-                  value: isDark,
-                  onChanged: (val) {
-                    ref
-                        .read(themeModeProvider.notifier)
-                        .setThemeMode(val ? ThemeMode.dark : ThemeMode.light);
-                  },
-                ),
-                const Divider(),
-                _buildSectionHeader(theme, 'drawer_font_size'),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainerLow,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        _buildSegmentButton(
-                          ref,
-                          theme,
-                          AppFontSize.small,
-                          currentFontSize,
-                        ),
-                        _buildSegmentButton(
-                          ref,
-                          theme,
-                          AppFontSize.normal,
-                          currentFontSize,
-                        ),
-                        _buildSegmentButton(
-                          ref,
-                          theme,
-                          AppFontSize.large,
-                          currentFontSize,
-                        ),
-                        _buildSegmentButton(
-                          ref,
-                          theme,
-                          AppFontSize.extraLarge,
-                          currentFontSize,
-                        ),
-                      ],
+                ExpansionTile(
+                  title: Text(
+                    'drawer_project'.tr(),
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
                     ),
                   ),
-                ),
-                const Divider(),
-                _buildSectionHeader(theme, 'drawer_about'),
-                ListTile(
-                  leading: const Icon(Icons.groups_2_outlined),
-                  title: Text('about_community').tr(),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const AboutScreen(
-                          title: 'about_community',
-                          body: aboutCommunity,
+                  children: WikiProject.values.map((project) {
+                    final isSelected = project == currentProject;
+                    final isSupported =
+                        currentLanguage.isProjectSupported(project);
+
+                    return RadioListTile<WikiProject>(
+                      value: project,
+                      groupValue: currentProject,
+                      dense: true,
+                      controlAffinity: ListTileControlAffinity.trailing,
+                      title: Text(
+                        project.displayName,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight:
+                              isSelected ? FontWeight.bold : FontWeight.normal,
+                          color: isSupported
+                              ? (isSelected
+                                  ? theme.colorScheme.primary
+                                  : theme.colorScheme.onSurface)
+                              : theme.colorScheme.onSurface.withValues(
+                                  alpha: 0.4,
+                                ),
                         ),
                       ),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.newspaper_outlined),
-                  title: Text('about_whats_new').tr(),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const AboutScreen(
-                          title: 'about_whats_new',
-                          body: whatsNew,
-                        ),
+                      secondary: Icon(
+                        project.icon,
+                        color: isSupported
+                            ? (isSelected
+                                ? theme.colorScheme.primary
+                                : theme.colorScheme.onSurface)
+                            : theme.colorScheme.onSurface.withValues(
+                                alpha: 0.4,
+                              ),
                       ),
+                      onChanged: (WikiProject? value) {
+                        if (value != null) {
+                          if (!currentLanguage.isProjectSupported(value)) {
+                            _showUnsupportedProjectAlert(
+                              context,
+                              currentLanguage,
+                              value,
+                            );
+                            return;
+                          }
+                          ref.read(projectProvider.notifier).setProject(value);
+                        }
+                      },
                     );
-                  },
+                  }).toList(),
                 ),
-                ListTile(
-                  leading: const Icon(Icons.smartphone_outlined),
-                  title: Text('about_app').tr(),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const AboutScreen(
-                          title: 'about_app',
-                          body: aboutApp,
-                        ),
+                ExpansionTile(
+                  title: Text(
+                    'drawer_language'.tr(),
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                  children: [
+                    ListTile(
+                      leading: Icon(
+                        Icons.language,
+                        color: theme.colorScheme.onSurface,
                       ),
-                    );
-                  },
+                      title: Text(currentLanguage.displayName),
+                      trailing: const Icon(Icons.keyboard_arrow_right, size: 20),
+                      onTap: () => _showLanguageSelector(
+                        context,
+                        ref,
+                        theme,
+                        currentLanguage,
+                      ),
+                    )
+                  ],
                 ),
+                ExpansionTile(
+                  title: Text(
+                    'drawer_appearance'.tr(),
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                  children: [
+                    SwitchListTile(
+                      secondary: Icon(
+                        isDark ? Icons.dark_mode : Icons.light_mode,
+                        color: theme.colorScheme.onSurface,
+                      ),
+                      title: Text('dark_mode').tr(),
+                      value: isDark,
+                      onChanged: (val) {
+                        ref
+                            .read(themeModeProvider.notifier)
+                            .setThemeMode(val ? ThemeMode.dark : ThemeMode.light);
+                      },
+                    )
+                  ],
+                ),
+                ExpansionTile(
+                  title: Text(
+                    'drawer_font_size'.tr(),
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.surfaceContainerLow,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          _buildSegmentButton(
+                            ref,
+                            theme,
+                            AppFontSize.small,
+                            currentFontSize,
+                          ),
+                          _buildSegmentButton(
+                            ref,
+                            theme,
+                            AppFontSize.normal,
+                            currentFontSize,
+                          ),
+                          _buildSegmentButton(
+                            ref,
+                            theme,
+                            AppFontSize.large,
+                            currentFontSize,
+                          ),
+                          _buildSegmentButton(
+                            ref,
+                            theme,
+                            AppFontSize.extraLarge,
+                            currentFontSize,
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+                ExpansionTile(
+                  title: Text(
+                    'drawer_about'.tr(),
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                  children: [
+                    ListTile(
+                      leading: const Icon(Icons.groups_2_outlined),
+                      title: Text('about_community').tr(),
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AboutScreen(
+                              title: 'about_community',
+                              body: aboutCommunity,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.newspaper_outlined),
+                      title: Text('about_whats_new').tr(),
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AboutScreen(
+                              title: 'about_whats_new',
+                              body: whatsNew,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.smartphone_outlined),
+                      title: Text('about_app').tr(),
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AboutScreen(
+                              title: 'about_app',
+                              body: aboutApp,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                )
               ],
             ),
           ),
@@ -284,6 +380,31 @@ class CustomDrawer extends ConsumerWidget {
     );
   }
 
+  void _showUnsupportedProjectAlert(
+    BuildContext context,
+    WikiLanguage language,
+    WikiProject project,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('project_unavailable'.tr()),
+        content: Text(
+          'project_not_supported_desc'.tr(args: [
+            language.displayName,
+            project.displayName,
+          ]),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('ok').tr(),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showLanguageSelector(
     BuildContext context,
     WidgetRef ref,
@@ -340,7 +461,6 @@ class CustomDrawer extends ConsumerWidget {
                           : null,
                       onTap: () {
                         // Pop everything until we reach the root (HomeScreen)
-                        // This handles cases where user changes language while inside an article
                         Navigator.popUntil(context, (route) => route.isFirst);
 
                         // Set the language

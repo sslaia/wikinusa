@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:wikinusa/domain/entities/wiki_project.dart';
 import 'package:wikinusa/presentation/providers/webview_warning_provider.dart';
 import 'home_page_builder.dart';
 
@@ -13,6 +14,7 @@ class WebViewHomePageBuilder implements HomePageBuilder {
     String html,
     String langCode,
     Orientation orientation,
+    WikiProject project,
   ) {
     return Consumer(
       builder: (context, ref, child) {

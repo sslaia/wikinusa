@@ -32,6 +32,7 @@
   "drawer_appearance": "APPEARANCE",
   "drawer_font_size": "FONT SIZE",
   "drawer_language": "LANGUAGE",
+  "drawer_project": "PROJECT",
   "drawer_quick_shortcuts": "QUICK SHORTCUTS",
   "dyk": "DO YOU KNOW",
   "edit": "Edit in external browser",
@@ -147,5 +148,8 @@
   "webview_mobile_warning": "This Main Page is not yet fully mobile friendly. Some contents may not display as intended. You can help improve this page, i.e. encourage the administrator to improve the Main Page by following the Wikimedia's recommendations for mobile-friendly articles (Search for \"Recommendations for mobile friendly articles on Wikimedia wikis\")",
   "welcome_to": "Welcome to",
   "wiki_portals": "Wiki Portals",
+  "wikibooks": "Wikibooks",
+  "wikipedia": "Nusapedia",
+  "wiktionary": "Wiktionary",
   "yes": "Yes"
 }

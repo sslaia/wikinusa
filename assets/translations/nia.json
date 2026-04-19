@@ -32,6 +32,7 @@
   "drawer_appearance": "SIKHALA",
   "drawer_font_size": "FA'EBUA HURUFO",
   "drawer_language": "LI",
+  "drawer_project": "FAOSATÖ HALÖŴÖ",
   "drawer_quick_shortcuts": "LALA SADOGO",
   "dyk": "HADIA Ö'ILA",
   "edit": "Bulö'ö ba wuka gu'ö eksternal",
@@ -147,5 +148,8 @@
   "webview_mobile_warning": "Lö nifaudugö wamazökhi nga'örö andre ba telepon seluler. Tola manö wa so nösi si lö oroma ma lö enahöi wangoroma'ö ya'ia. Fahuhuo khö administrator wiki ena'ö la'ehaogö nga'örö andre molo'ö rekomendasi Wikimedia (Alui ba Google: \"Recommendations for mobile friendly articles on Wikimedia wikis\")",
   "welcome_to": "Ya'ahowu. No örugi",
   "wiki_portals": "Bawagöli Nösi Wiki",
+  "wikibooks": "Wikibuku",
+  "wikipedia": "Nusapedia",
+  "wiktionary": "Wikikamus",
   "yes": "Ya'ia"
 }

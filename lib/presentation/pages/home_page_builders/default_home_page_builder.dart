@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:html/parser.dart' as html_parser;
 import 'package:wikinusa/core/utils/wiki_html_utils.dart';
+import 'package:wikinusa/domain/entities/wiki_project.dart';
 import 'home_page_builder.dart';
 
 class DefaultHomePageBuilder implements HomePageBuilder {
@@ -13,6 +14,7 @@ class DefaultHomePageBuilder implements HomePageBuilder {
     String html,
     String langCode,
     Orientation orientation,
+    WikiProject project,
   ) {
     final theme = Theme.of(context);
     final document = html_parser.parse(html);

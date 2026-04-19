@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart'; // Required for StateNotifier in this project version
+import 'package:wikinusa/domain/entities/wiki_project.dart';
 import '../../data/datasources/remote_article_data_source.dart';
 import '../../data/repositories/article_repository_impl.dart';
 import '../../domain/entities/article.dart';
 import '../../domain/repositories/article_repository.dart';
 import '../pages/home_page_builders/home_page_processor.dart';
 import 'language_provider.dart';
+import 'project_provider.dart';
 
 final remoteArticleDataSourceProvider = Provider((ref) => RemoteArticleDataSource());
 
@@ -23,31 +24,46 @@ final articleRepositoryProvider = Provider<ArticleRepository>((ref) {
 
 final homePageProvider = FutureProvider<String>((ref) async {
   final langCode = ref.watch(languageProvider).code;
+  final project = ref.watch(projectProvider);
   
-  // Wait for page titles to be loaded
   final titlesData = await ref.watch(pageTitlesProvider.future);
   
   String mainPageTitle = 'Main_Page';
   if (titlesData.containsKey(langCode)) {
-    final langTitles = titlesData[langCode] as List;
-    final mainPageEntry = langTitles.firstWhere(
-      (entry) => entry.containsKey('main_page'),
-      orElse: () => {'main_page': 'Main_Page'},
-    );
-    mainPageTitle = mainPageEntry['main_page'];
+    final langData = titlesData[langCode];
+    
+    // Support nested structure: titlesData[langCode][project.name]
+    if (langData is Map<String, dynamic> && langData.containsKey(project.name)) {
+      final projectData = langData[project.name];
+      if (projectData is List) {
+         final mainPageEntry = projectData.firstWhere(
+          (entry) => entry.containsKey('main_page'),
+          orElse: () => {'main_page': 'Main_Page'},
+        );
+        mainPageTitle = mainPageEntry['main_page'];
+      } else if (projectData is Map && projectData.containsKey('main_page')) {
+        mainPageTitle = projectData['main_page'];
+      }
+    } 
+    // Fallback for old list structure (Wikipedia only)
+    else if (langData is List && project == WikiProject.wikipedia) {
+      final mainPageEntry = langData.firstWhere(
+        (entry) => entry.containsKey('main_page'),
+        orElse: () => {'main_page': 'Main_Page'},
+      );
+      mainPageTitle = mainPageEntry['main_page'];
+    }
   }
 
   final repository = ref.watch(articleRepositoryProvider);
   
   try {
-    final rawHtml = await repository.getHomePage(langCode, mainPageTitle);
-    // Pre-process the HTML before handing it to the UI
-    return HomePageProcessor.process(rawHtml, langCode);
+    final rawHtml = await repository.getHomePage(langCode, mainPageTitle, project);
+    return HomePageProcessor.process(rawHtml, langCode, project);
   } catch (e) {
-    // If the localized main page fails, try fallback to generic 'Main_Page'
     if (mainPageTitle != 'Main_Page') {
-      final fallbackHtml = await repository.getHomePage(langCode, 'Main_Page');
-      return HomePageProcessor.process(fallbackHtml, langCode);
+      final fallbackHtml = await repository.getHomePage(langCode, 'Main_Page', project);
+      return HomePageProcessor.process(fallbackHtml, langCode, project);
     }
     rethrow;
   }
@@ -59,10 +75,9 @@ final articleDetailProvider = FutureProvider.family<Article, String>((
 ) async {
   final repository = ref.watch(articleRepositoryProvider);
   final langCode = ref.watch(languageProvider).code;
-  return await repository.getArticleByTitle(pageTitle, langCode);
+  final project = ref.watch(projectProvider);
+  return await repository.getArticleByTitle(pageTitle, langCode, project);
 });
-
-// --- Navigation Logic ---
 
 class ArticleNavigationState {
   final List<String> pageTitles;
@@ -88,8 +103,11 @@ class ArticleNavigationState {
   }
 }
 
-class ArticleNavigationNotifier extends StateNotifier<ArticleNavigationState> {
-  ArticleNavigationNotifier() : super(ArticleNavigationState());
+class ArticleNavigationNotifier extends Notifier<ArticleNavigationState> {
+  @override
+  ArticleNavigationState build() {
+    return ArticleNavigationState();
+  }
 
   void setArticles(List<String> titles, int initialIndex) {
     state = ArticleNavigationState(pageTitles: titles, currentIndex: initialIndex);
@@ -124,6 +142,6 @@ class ArticleNavigationNotifier extends StateNotifier<ArticleNavigationState> {
 }
 
 final articleNavigationProvider =
-    StateNotifierProvider<ArticleNavigationNotifier, ArticleNavigationState>((ref) {
+    NotifierProvider<ArticleNavigationNotifier, ArticleNavigationState>(() {
   return ArticleNavigationNotifier();
 });

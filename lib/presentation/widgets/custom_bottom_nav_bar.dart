@@ -5,6 +5,7 @@ import 'package:wikinusa/presentation/pages/create_page_screen.dart';
 import 'shortcuts_bottom_sheet.dart';
 import '../providers/article_provider.dart';
 import '../providers/language_provider.dart';
+import '../providers/project_provider.dart';
 import '../pages/article_screen.dart';
 
 enum _NavBarAction { drawer, home, createNewPage, refresh, shortcuts, random }
@@ -127,8 +128,9 @@ class CustomBottomNavBar extends ConsumerWidget {
 
           try {
             final langCode = ref.read(languageProvider).code;
+            final project = ref.read(projectProvider);
             final dataSource = ref.read(remoteArticleDataSourceProvider);
-            final randomTitle = await dataSource.getRandomTitle(langCode);
+            final randomTitle = await dataSource.getRandomTitle(langCode, project);
 
             if (context.mounted) {
               if (isHomeScreen) {

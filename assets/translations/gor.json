@@ -32,6 +32,7 @@
   "drawer_appearance": "TAMPILAN",
   "drawer_font_size": "UKURAN HURUF",
   "drawer_language": "BAHASA",
+  "drawer_project": "PROYEK",
   "drawer_quick_shortcuts": "PINTASAN CEPAT",
   "dyk": "TAHUKAH ANDA",
   "editor_cant_open": "Could not open editor",
@@ -147,5 +148,8 @@
   "webview_mobile_warning": "Halaman Utama ini belum sepenuhnya ramah seluler. Beberapa konten mungkin tidak tampil sebagaimana mestinya. Anda dapat membantu membuat halaman ini ramah seluler dengan mendorong administrator wiki untuk mengikuti rekomendasi Wikimedia (Cari di Google: \"Recommendations for mobile friendly articles on Wikimedia wikis\")",
   "welcome_to": "Selamat Datang ke",
   "wiki_portals": "Portal Wiki",
+  "wikibooks": "Wikibuku",
+  "wikipedia": "Nusapedia",
+  "wiktionary": "Wikikamus",
   "yes": "Ya"
 }
