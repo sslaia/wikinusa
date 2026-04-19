@@ -47,4 +47,25 @@ class WikiHtmlUtils {
       }
     });
   }
+
+  static String getHighResUrl(String url) {
+    final extensions = [
+      '.png',
+      '.jpg',
+      '.jpeg',
+      '.svg',
+      '.bmp',
+      '.tiff',
+      '.webp',
+    ];
+    String processedUrl = url;
+    for (final ext in extensions) {
+      final lowerUrl = url.toLowerCase();
+      if (lowerUrl.contains('$ext/')) {
+        processedUrl = url.substring(0, lowerUrl.indexOf('$ext/') + ext.length);
+        break;
+      }
+    }
+    return processedUrl.replaceFirst('/thumb/', '/');
+  }
 }

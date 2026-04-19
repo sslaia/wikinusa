@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart' as dom;
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import '../../domain/entities/article.dart';
 import '../../domain/entities/wiki_project.dart';
 import '../../domain/entities/wiki_language.dart';
@@ -134,7 +135,6 @@ class RemoteArticleDataSource {
     }
 
     String title = randomList[0]['title'] as String;
-    // Strip prefix if it exists to keep UI clean
     if (prefix.isNotEmpty && title.startsWith(prefix)) {
       title = title.replaceFirst(prefix, '');
     }
@@ -150,8 +150,6 @@ class RemoteArticleDataSource {
     final baseUrl = _getBaseUrl(langCode, project);
     final language = WikiLanguage.fromCode(langCode);
     final prefix = language.getPagePrefix(project);
-    
-    // If there's a prefix (like Incubator), we should include it in the search or handle it via namespace
     final fullQuery = prefix.isNotEmpty ? '$prefix$query' : query;
 
     final url = Uri.parse(
@@ -172,7 +170,6 @@ class RemoteArticleDataSource {
     final data = json.decode(response.body);
     final List<Map<String, dynamic>> results = List<Map<String, dynamic>>.from(data['query']['search']);
     
-    // Clean up results for Incubator
     if (prefix.isNotEmpty) {
       for (var result in results) {
         if (result['title'].toString().startsWith(prefix)) {
@@ -187,7 +184,6 @@ class RemoteArticleDataSource {
   void _processHtml(dom.Element element, String langCode, WikiProject project, bool isFeaturedArticle) {
     final baseUrl = _getBaseUrl(langCode, project);
 
-    // Fix Image URLs
     element.querySelectorAll('img').forEach((img) {
       String? src = img.attributes['src'];
       if (src != null) {
@@ -200,14 +196,12 @@ class RemoteArticleDataSource {
 
         if (isFeaturedArticle) {
           img.attributes['align'] = 'left';
-          img.attributes['style'] =
-              'margin-right: 12px; margin-bottom: 8px; max-width: 150px;';
+          img.attributes['style'] = 'margin-right: 12px; margin-bottom: 8px; max-width: 150px;';
         }
       }
       img.attributes.remove('srcset');
     });
 
-    // Fix Links
     element.querySelectorAll('a').forEach((a) {
       final href = a.attributes['href'];
       if (href != null && href.startsWith('/')) {
@@ -215,7 +209,6 @@ class RemoteArticleDataSource {
       }
     });
 
-    // Project-specific cleaning
     switch (project) {
       case WikiProject.wiktionary:
         _cleanWiktionaryHtml(element);
@@ -225,7 +218,6 @@ class RemoteArticleDataSource {
         break;
       case WikiProject.wikipedia:
       default:
-        // Already handled general fixes
         break;
     }
   }
@@ -240,6 +232,8 @@ class RemoteArticleDataSource {
   }
 
   void debugPrint(String message) {
-    print('RemoteArticleDataSource: $message');
+    if (kDebugMode) {
+      print('RemoteArticleDataSource: $message');
+    }
   }
 }
