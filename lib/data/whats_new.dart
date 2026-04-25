@@ -17,5 +17,5 @@ This is the first version. The features are:
 
 <p>The GitHub repository for the app is: <a href="https://github.com/sslaia/wikinusa">https://github.com/sslaia/wikinusa</a>.</p>
 
-<p>Other related apps are at <a href="https://sslaia.github.io/">Nias Apps</a></p>
+<p>Other related apps are at <a href="https://sslaia.github.io/">Nusa Apps</a></p>
 ''';

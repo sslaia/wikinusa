@@ -16,7 +16,7 @@ lebih bernilai daripada sekedar menghitung keuntungan finansial.</p>
 <p>Karena itu: angkat topi setinggi-tingginya bagi para relawan wiki!</p>
 
 <p>Salah satu dari komunitas tsb. adalah komunitas WikiNias,
-di mana pembuat aplikasi WikiNusa ini aktif.</p>
+di mana pembuat aplikasi Wikinusa ini aktif.</p>
 
 <h3>Komunitas dan aplikasi</h3>
 
@@ -27,11 +27,11 @@ Hal itu mendorong saya untuk menulis aplikasi WikiNias (dan juga aplikasi khusus
 <p>Baru kemudian saya berpikir untuk membuka aplikasi tsb. ke bahasa daerah lain,
 sehingga anggota komunitas lain bisa juga menggunakannya <strong>kalau mau</strong>.</p>
 
-<p>Dari situ lahirlah aplikasi <strong>Wikikamus</strong> dan kini aplikasi <strong>WikiNusa</strong> ini.
+<p>Dari situ lahirlah aplikasi <strong>Wikikamus</strong> dan kini aplikasi <strong>Wikinusa</strong> ini.
 Sementara Wikikamus fokus pada akses ke berbagai situs Wikikamus dalam bahasa daerah,
-aplikasi WikiNusa fokus pada akses ke berbagai situs Wikipedia di Indonesia.</p>
+aplikasi Wikinusa fokus pada akses ke berbagai situs Wikipedia di Indonesia.</p>
 
-<h3>Berbagai tulisan seputar kegiatan komunitas</h3>
+<h3>Berbagai tulisan saya seputar kegiatan komunitas</h3>
 <ol>
 <li><a href="https://nia.wikipedia.org/wiki/Sangoguna:Slaia/Introduksi_ke_program_bahasa_Nias_dalam_tiga_diagram">Program Pengembangan Bahasa Nias 2020-2025</a> (So yaŵa ba nga'örö zangoguna Slaia ba Wikikamus)</li>
 <li><a href="https://nia.wiktionary.org/wiki/Sangoguna:Slaia/Tantangan_mengembangkan_bahasa_Nias_di_Wikimedia">Tantangan mengembangkan bahasa Nias di Wikimedia</a> (So yaŵa ba nga'örö zangoguna Slaia ba Wikikamus)</li>
@@ -43,5 +43,5 @@ aplikasi WikiNusa fokus pada akses ke berbagai situs Wikipedia di Indonesia.</p>
 <li><a href="https://nia.wikipedia.org/wiki/Sangoguna:Slaia/Strategi_Mengembangkan_Bahasa_Nias_Melalui_Konten_Bermutu">Strategi mengembangkan bahasa Nias melalui konten bermutu</a> (So yaŵa ba nga'örö zangoguna Slaia ba Wikikamus)</li>
 </ol>
 
-<p>Selamat menggunakan aplikasi WikiNusa. Ya'ahowu!</p>
+<p>Selamat menggunakan aplikasi Wikinusa. Ya'ahowu!</p>
 ''';

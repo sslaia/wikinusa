@@ -58,357 +58,85 @@
       ]
     }
   },
-  "bew": {
-    "wikipedia": {
-      "remove": [
-        ".infobox",
-        ".navbox"
-      ],
-      "hide": [
-        ".nomobile",
-        ".gallery"
-      ],
-      "referenceKeywords": [
-        "reference",
-        "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
-      ],
-      "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
-      }
-    },
-    "wiktionary": {
-      "remove": [
-        ".nomobile"
-      ],
-      "hide": [
-        ".nomobile"
-      ],
-      "referenceKeywords": [
-        "reference",
-        "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
-      ],
-      "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
-      }
-    },
-    "wikibooks": {
-      "remove": [
-        ".nomobile"
-      ],
-      "hide": [
-        ".nomobile"
-      ],
-      "referenceKeywords": [
-        "reference",
-        "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
-      ],
-      "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
-      }
-    }
-  },
-  "bjn": {
-    "wikipedia": {
-      "remove": [
-        ".infobox",
-        ".navbox"
-      ],
-      "hide": [
-        ".nomobile",
-        ".gallery"
-      ],
-      "referenceKeywords": [
-        "reference",
-        "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
-      ],
-      "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
-      }
-    },
-    "wiktionary": {
-      "remove": [
-        ".nomobile"
-      ],
-      "hide": [
-        ".nomobile"
-      ],
-      "referenceKeywords": [
-        "reference",
-        "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
-      ],
-      "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
-      }
-    },
-    "wikibooks": {
-      "remove": [
-        ".nomobile"
-      ],
-      "hide": [
-        ".nomobile"
-      ],
-      "referenceKeywords": [
-        "reference",
-        "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
-      ],
-      "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
-      }
-    }
-  },
-  "btm": {
-    "wikipedia": {
-      "remove": [
-        ".infobox",
-        ".navbox"
-      ],
-      "hide": [
-        ".nomobile",
-        ".gallery"
-      ],
-      "referenceKeywords": [
-        "reference",
-        "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
-      ],
-      "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
-      }
-    },
-    "wiktionary": {
-      "remove": [
-        ".nomobile"
-      ],
-      "hide": [
-        ".nomobile"
-      ],
-      "referenceKeywords": [
-        "reference",
-        "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
-      ],
-      "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
-      }
-    },
-    "wikibooks": {
-      "remove": [
-        ".nomobile"
-      ],
-      "hide": [
-        ".nomobile"
-      ],
-      "referenceKeywords": [
-        "reference",
-        "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
-      ],
-      "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
-      }
-    }
-  },
   "en": {
-    "remove": [
-      ".infobox"
-    ],
-    "hide": [
-      ".gallery"
-    ],
-    "referenceKeywords": [
-      "reference",
-      "reflist",
-      "notes"
-    ],
-    "homePageSections": {
-      "featuredArticle": "mp-tfa",
-      "featuredImage": "mp-tfp",
-      "doYouKnow": "mp-dyk",
-      "inTheNews": "mp-itn",
-      "onThisDay": "mp-otd",
-      "featuredList": "mp-tfl"
-    }
-  },
-  "gor": {
     "wikipedia": {
       "remove": [
         ".infobox",
-        ".navbox"
+        ".navbox",
+        ".ambox",
+        ".hatnote",
+        ".catlinks",
+        ".mw-editsection"
       ],
       "hide": [
-        ".nomobile",
+        ".references"
+      ],
+      "referenceKeywords": [
+        "reference",
+        "reflist",
+        "notes"
+      ],
+      "homePageSections": {
+        "featuredArticle": {
+          "selector": "mp-tfa",
+          "keep": "p",
+          "firstOnly": true
+        },
+        "featuredImage": {
+          "selector": "mp-tfp",
+          "keep": "p",
+          "firstOnly": true
+        },
+        "doYouKnow": {
+          "selector": "mp-dyk",
+          "keep": "ul",
+          "firstOnly": true
+        },
+        "inTheNews": {
+          "selector": "mp-itn",
+          "keep": "ul",
+          "firstOnly": true
+        },
+        "onThisDay": {
+          "selector": "mp-otd",
+          "keep": ["p", "ul"],
+          "firstOnly": true
+        },
+        "featuredList": {
+          "selector": "mp-tfl",
+          "keep": "p",
+          "firstOnly": true
+        }
+      }
+    },
+    "wiktionary": {
+      "remove": [
+        ".infobox"
+      ],
+      "hide": [
         ".gallery"
       ],
       "referenceKeywords": [
         "reference",
         "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
+        "notes"
       ],
       "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
-      }
-    },
-    "wiktionary": {
-      "remove": [
-        ".nomobile"
-      ],
-      "hide": [
-        ".nomobile"
-      ],
-      "referenceKeywords": [
-        "reference",
-        "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
-      ],
-      "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
+        "wordOfTheDay": "mf-wotd",
+        "foreignWordOfTheDay": "mf-fwotd"
       }
     },
     "wikibooks": {
       "remove": [
-        ".nomobile"
+        ".infobox"
       ],
       "hide": [
-        ".nomobile"
+        ".gallery"
       ],
       "referenceKeywords": [
         "reference",
         "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
+        "notes"
       ],
       "homePageSections": {
         "featuredArticle": "mf-artikelpilihan",
@@ -423,7 +151,11 @@
     "wikipedia": {
       "remove": [
         ".infobox",
-        ".navbox"
+        ".navbox",
+        ".mw-editsection",
+        "style",
+        "script",
+        ".noprint"
       ],
       "hide": [
         ".nomobile",
@@ -442,11 +174,32 @@
         "daptar jujuhutan"
       ],
       "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
+        "featuredArticle": {
+          "selector": "mf-artikelpilihan",
+          "keep": "p",
+          "firstOnly": true
+        },
+        "featuredImage": {
+          "selector": "mf-gambarpilihan",
+          "keep": "div",
+          "firstOnly": true,
+          "stripStyle": true
+        },
+        "recentEvents": {
+          "selector": "mf-peristiwaterkini",
+          "keep": "ul",
+          "firstOnly": true
+        },
+        "doYouKnow": {
+          "selector": "mf-tahukahanda",
+          "keep": "ul",
+          "firstOnly": true
+        },
+        "onThisDay": {
+          "selector": "mf-hids",
+          "keep": "ul",
+          "firstOnly": true
+        }
       }
     },
     "wiktionary": {
@@ -469,11 +222,7 @@
         "daptar jujuhutan"
       ],
       "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
+        "mainContent": "mf-index"
       }
     },
     "wikibooks": {
@@ -496,351 +245,7 @@
         "daptar jujuhutan"
       ],
       "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
-      }
-    }
-  },
-  "jv": {
-    "wikipedia": {
-      "remove": [
-        ".infobox",
-        ".navbox"
-      ],
-      "hide": [
-        ".nomobile",
-        ".gallery"
-      ],
-      "referenceKeywords": [
-        "reference",
-        "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
-      ],
-      "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
-      }
-    },
-    "wiktionary": {
-      "remove": [
-        ".nomobile"
-      ],
-      "hide": [
-        ".nomobile"
-      ],
-      "referenceKeywords": [
-        "reference",
-        "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
-      ],
-      "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
-      }
-    },
-    "wikibooks": {
-      "remove": [
-        ".nomobile"
-      ],
-      "hide": [
-        ".nomobile"
-      ],
-      "referenceKeywords": [
-        "reference",
-        "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
-      ],
-      "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
-      }
-    }
-  },
-  "mad": {
-    "wikipedia": {
-      "remove": [
-        ".infobox",
-        ".navbox"
-      ],
-      "hide": [
-        ".nomobile",
-        ".gallery"
-      ],
-      "referenceKeywords": [
-        "reference",
-        "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
-      ],
-      "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
-      }
-    },
-    "wiktionary": {
-      "remove": [
-        ".nomobile"
-      ],
-      "hide": [
-        ".nomobile"
-      ],
-      "referenceKeywords": [
-        "reference",
-        "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
-      ],
-      "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
-      }
-    },
-    "wikibooks": {
-      "remove": [
-        ".nomobile"
-      ],
-      "hide": [
-        ".nomobile"
-      ],
-      "referenceKeywords": [
-        "reference",
-        "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
-      ],
-      "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
-      }
-    }
-  },
-  "min": {
-    "wikipedia": {
-      "remove": [
-        ".infobox",
-        ".navbox"
-      ],
-      "hide": [
-        ".nomobile",
-        ".gallery"
-      ],
-      "referenceKeywords": [
-        "reference",
-        "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
-      ],
-      "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
-      }
-    },
-    "wiktionary": {
-      "remove": [
-        ".nomobile"
-      ],
-      "hide": [
-        ".nomobile"
-      ],
-      "referenceKeywords": [
-        "reference",
-        "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
-      ],
-      "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
-      }
-    },
-    "wikibooks": {
-      "remove": [
-        ".nomobile"
-      ],
-      "hide": [
-        ".nomobile"
-      ],
-      "referenceKeywords": [
-        "reference",
-        "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
-      ],
-      "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
-      }
-    }
-  },
-  "ms": {
-    "wikipedia": {
-      "remove": [
-        ".infobox",
-        ".navbox"
-      ],
-      "hide": [
-        ".nomobile",
-        ".gallery"
-      ],
-      "referenceKeywords": [
-        "reference",
-        "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
-      ],
-      "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
-      }
-    },
-    "wiktionary": {
-      "remove": [
-        ".nomobile"
-      ],
-      "hide": [
-        ".nomobile"
-      ],
-      "referenceKeywords": [
-        "reference",
-        "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
-      ],
-      "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
-      }
-    },
-    "wikibooks": {
-      "remove": [
-        ".nomobile"
-      ],
-      "hide": [
-        ".nomobile"
-      ],
-      "referenceKeywords": [
-        "reference",
-        "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
-      ],
-      "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
+        "featuredBook": "Buku_bagus"
       }
     }
   },
@@ -851,7 +256,9 @@
         ".navbox"
       ],
       "hide": [
-        ".gallery"
+        ".mw-editsection",
+        ".references",
+        "#Umbu"
       ],
       "referenceKeywords": [
         "umbu",
@@ -862,8 +269,8 @@
       "homePageSections": {
         "featuredArticle": "mp-featured-article-body",
         "featuredImage": "mp-featured-photo-body",
-        "doYouKnow": "mp-dyk",
-        "onThisMonth": "mp-otm"
+        "doYouKnow": "mp-dyk-body",
+        "onThisMonth": "mp-otm-body"
       }
     },
     "wiktionary": {
@@ -879,7 +286,7 @@
       ],
       "homePageSections": {
         "featuredWord": "mp-featured-word-body",
-        "doYouKnow": "mp-dyk"
+        "doYouKnow": "mp-dyk-body"
       }
     },
     "wikibooks": {
@@ -897,92 +304,7 @@
       "homePageSections": {
         "featuredStory": "mp-featured-article-body",
         "featuredImage": "mp-featured-photo-body",
-        "doYouKnow": "mp-dyk"
-      }
-    }
-  },
-  "su": {
-    "wikipedia": {
-      "remove": [
-        ".infobox",
-        ".navbox"
-      ],
-      "hide": [
-        ".nomobile",
-        ".gallery"
-      ],
-      "referenceKeywords": [
-        "reference",
-        "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
-      ],
-      "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
-      }
-    },
-    "wiktionary": {
-      "remove": [
-        ".nomobile"
-      ],
-      "hide": [
-        ".nomobile"
-      ],
-      "referenceKeywords": [
-        "reference",
-        "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
-      ],
-      "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
-      }
-    },
-    "wikibooks": {
-      "remove": [
-        ".nomobile"
-      ],
-      "hide": [
-        ".nomobile"
-      ],
-      "referenceKeywords": [
-        "reference",
-        "reflist",
-        "catatan kaki",
-        "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
-      ],
-      "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
+        "doYouKnow": "mp-dyk-body"
       }
     }
   }

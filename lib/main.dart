@@ -1,47 +1,42 @@
+import 'dart:io';
+
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:wikinusa/presentation/localizations/bew_material_localizations.dart';
-import 'package:wikinusa/presentation/localizations/bjn_material_localizations.dart';
-import 'package:wikinusa/presentation/localizations/btm_material_localizations.dart';
-import 'package:wikinusa/presentation/localizations/gor_material_localizations.dart';
-import 'package:wikinusa/presentation/localizations/jv_material_localizations.dart';
-import 'package:wikinusa/presentation/localizations/mad_material_localizations.dart';
-import 'package:wikinusa/presentation/localizations/min_material_localizations.dart';
-import 'package:wikinusa/presentation/localizations/nia_material_localizations.dart';
-import 'package:wikinusa/presentation/localizations/su_material_localizations.dart';
-import 'core/theme_config.dart';
-import 'presentation/providers/theme_provider.dart';
-import 'presentation/providers/language_provider.dart';
-import 'presentation/providers/project_provider.dart';
-import 'presentation/providers/font_size_provider.dart';
-import 'presentation/providers/onboarding_provider.dart';
-import 'presentation/providers/shared_prefs_provider.dart';
-import 'presentation/pages/home_screen.dart';
-import 'presentation/pages/onboarding_screen.dart';
+import 'package:wikinusa/localizations/nia_material_localizations.dart';
+import 'package:wikinusa/providers/shared_prefs_provider.dart';
+import 'package:wikinusa/providers/theme_provider.dart';
+import 'package:wikinusa/providers/font_size_provider.dart';
+
+import 'providers/app_state.dart';
+import 'screens/home_screen.dart';
+import 'theme/app_theme.dart';
+
+class WikiHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..userAgent = 'WikiNusa/1.0 (https://io.github.sslaia.wikinusa; sslaia@gmail.com) Flutter/3.x';
+  }
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
+  
+  // Set global User-Agent to comply with Wikimedia's API policy and avoid 429 errors.
+  HttpOverrides.global = WikiHttpOverrides();
+  
   final prefs = await SharedPreferences.getInstance();
 
   runApp(
     EasyLocalization(
       supportedLocales: const [
-        Locale('bew'),
-        Locale('bjn'),
-        Locale('btm'),
         Locale('en'),
-        Locale('gor'),
         Locale('id'),
-        Locale('jv'),
-        Locale('mad'),
-        Locale('min'),
-        Locale('ms'),
         Locale('nia'),
-        Locale('su'),
       ],
       startLocale: const Locale('id'),
       fallbackLocale: const Locale('nia'),
@@ -50,27 +45,42 @@ void main() async {
         overrides: [
           sharedPreferencesProvider.overrideWithValue(prefs),
         ],
-        child: const WikinusaApp(),
+        child: const WikiNusaApp(),
       ),
     ),
   );
 }
 
-class WikinusaApp extends ConsumerWidget {
-  const WikinusaApp({super.key});
+class WikiNusaApp extends ConsumerWidget {
+  const WikiNusaApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final currentProject = ref.watch(appStateProvider);
     final themeMode = ref.watch(themeModeProvider);
-    final hasCompletedOnboarding = ref.watch(onboardingProvider);
     final fontSize = ref.watch(fontSizeProvider);
-    final selectedProject = ref.watch(projectProvider);
 
     return MaterialApp(
       title: 'WikiNusa',
-      theme: WikinusaThemeConfig.createTheme(selectedProject.seedColor, Brightness.light),
-      darkTheme: WikinusaThemeConfig.createTheme(selectedProject.seedColor, Brightness.dark),
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.getTheme(
+        currentProject,
+        brightness: Brightness.light,
+      ),
+      darkTheme: AppTheme.getTheme(
+        currentProject,
+        brightness: Brightness.dark,
+      ),
       themeMode: themeMode,
+      localizationsDelegates: [
+        EasyLocalization.of(context)!.delegate,
+        const NiaMaterialLocalizationsDelegate(),
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
       builder: (context, child) {
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(
@@ -79,25 +89,7 @@ class WikinusaApp extends ConsumerWidget {
           child: child!,
         );
       },
-      localizationsDelegates: [
-        EasyLocalization.of(context)!.delegate,
-        const BewMaterialLocalizationsDelegate(),
-        const BjnMaterialLocalizationsDelegate(),
-        const BtmMaterialLocalizationsDelegate(),
-        const GorMaterialLocalizationsDelegate(),
-        const JvMaterialLocalizationsDelegate(),
-        const MadMaterialLocalizationsDelegate(),
-        const MinMaterialLocalizationsDelegate(),
-        const NiaMaterialLocalizationsDelegate(),
-        const SuMaterialLocalizationsDelegate(),
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: context.supportedLocales,
-      locale: context.locale,
-      home: hasCompletedOnboarding ? const HomeScreen() : const OnboardingScreen(),
-      debugShowCheckedModeBanner: false,
+      home: const HomeScreen(),
     );
   }
 }

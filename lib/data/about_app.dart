@@ -12,10 +12,10 @@ maupun membuat halaman baru.</p>
 untuk berkontribusi langsung membebaskan pengetahuan pengetahuan
 dalam bahasa yang Anda kuasai</p>
 
-<p>Situs aplikasi ini ada di <a href="https://wikinusa.blogspot.com/">situs WikiNusa</a>.</p>
+<p>Situs aplikasi ini ada di <a href="https://wikinusa.blogspot.com/">situs Wikinusa</a>.</p>
 
 <p>Kode aplikasi tersedia di <a href="https://github.com/sslaia/wikinusa">https://github.com/sslaia/wikinusa</a>. Silakan menyumbang kode bagi penyempurnaan aplikasi ini di sana.</p>
 
 <p>Beberapa aplikasi lainnya yang saya buat untuk mendukung pembebasan pengetahuan
-ada di <a href="https://sslaia.github.io/">Nias Apps</a></p>
+ada di <a href="https://sslaia.github.io/">Wiki Apps</a></p>
 ''';
