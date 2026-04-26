@@ -40,13 +40,13 @@ class HomePageBuilder {
         String selector;
         dynamic keepSelector;
         bool firstOnly = false;
-        bool stripStyle = false;
+        bool stripStyle = true; // Always strip style for consistency
 
         if (config is Map) {
           selector = config['selector'] ?? '';
           keepSelector = config['keep'];
           firstOnly = config['firstOnly'] ?? false;
-          stripStyle = config['stripStyle'] ?? false;
+          // stripStyle = config['stripStyle'] ?? true; // Default to true
         } else {
           selector = config.toString();
         }
@@ -85,6 +85,7 @@ class HomePageBuilder {
               'mainContent',
               languageCode: languageCode,
               projectStr: projectStr,
+              stripStyle: true,
             ));
             break;
           }

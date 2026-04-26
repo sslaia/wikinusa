@@ -2,21 +2,28 @@
   "global": {
     "wikipedia": {
       "remove": [
-        ".reflist",
+        ".infobox",
         ".navbox",
         ".metadata",
         ".ambox",
-        ".noprint"
+        ".noprint",
+        ".mw-editsection",
+        ".hatnote",
+        ".catlinks",
+        "style",
+        "script"
       ],
       "hide": [
-        "img",
-        "figure",
-        ".gallery",
-        ".thumb"
+        ".references",
+        ".reflist"
       ],
       "referenceKeywords": [
         "reference",
-        "reflist"
+        "reflist",
+        "referensi",
+        "umbu",
+        "famotokhi ba gahe",
+        "catatan kaki"
       ]
     },
     "wiktionary": {
@@ -25,14 +32,12 @@
         ".navbox",
         ".metadata",
         ".ambox",
-        ".noprint"
+        ".noprint",
+        ".mw-editsection",
+        "style",
+        "script"
       ],
-      "hide": [
-        "img",
-        "figure",
-        ".gallery",
-        ".thumb"
-      ],
+      "hide": [],
       "referenceKeywords": [
         "reference",
         "reflist"
@@ -44,14 +49,12 @@
         ".navbox",
         ".metadata",
         ".ambox",
-        ".noprint"
+        ".noprint",
+        ".mw-editsection",
+        "style",
+        "script"
       ],
-      "hide": [
-        "img",
-        "figure",
-        ".gallery",
-        ".thumb"
-      ],
+      "hide": [],
       "referenceKeywords": [
         "reference",
         "reflist"
@@ -66,7 +69,10 @@
         ".ambox",
         ".hatnote",
         ".catlinks",
-        ".mw-editsection"
+        ".mw-editsection",
+        ".side-box-flex",
+        ".toc",
+        "toc"
       ],
       "hide": [
         ".references"
@@ -119,7 +125,10 @@
       "referenceKeywords": [
         "reference",
         "reflist",
-        "notes"
+        "notes",
+        ".side-box-flex",
+        ".toc",
+        "toc"
       ],
       "homePageSections": {
         "wordOfTheDay": "mf-wotd",
@@ -155,15 +164,18 @@
         ".mw-editsection",
         "style",
         "script",
-        ".noprint"
+        ".noprint",
+        ".side-box-flex",
+        ".toc",
+        "toc"
       ],
       "hide": [
         ".nomobile",
-        ".gallery"
+        ".references",
+        ".reflist"
       ],
       "referenceKeywords": [
-        "reference",
-        "reflist",
+        "referensi",
         "catatan kaki",
         "rujukan",
         "sumber",
@@ -204,14 +216,16 @@
     },
     "wiktionary": {
       "remove": [
-        ".nomobile"
+        ".nomobile",
+        ".side-box-flex",
+        ".toc",
+        "toc"
       ],
       "hide": [
         ".nomobile"
       ],
       "referenceKeywords": [
-        "reference",
-        "reflist",
+        "referensi",
         "catatan kaki",
         "rujukan",
         "sumber",
@@ -233,8 +247,7 @@
         ".nomobile"
       ],
       "referenceKeywords": [
-        "reference",
-        "reflist",
+        "referensi",
         "catatan kaki",
         "rujukan",
         "sumber",
@@ -253,11 +266,15 @@
     "wikipedia": {
       "remove": [
         ".infobox",
-        ".navbox"
+        ".navbox",
+        ".side-box-flex",
+        ".toc",
+        "toc"
       ],
       "hide": [
         ".mw-editsection",
         ".references",
+        ".reflist",
         "#Umbu"
       ],
       "referenceKeywords": [
@@ -275,7 +292,10 @@
     },
     "wiktionary": {
       "remove": [
-        ".nomobile"
+        ".nomobile",
+        ".side-box-flex",
+        ".toc",
+        "toc"
       ],
       "hide": [
         ".nomobile"

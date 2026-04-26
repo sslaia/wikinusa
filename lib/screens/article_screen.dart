@@ -1,9 +1,9 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:html/parser.dart' as html_parser;
+import 'package:html/dom.dart' as dom;
+import 'package:wikinusa/utils/wiki_utils.dart';
 
 import '../widgets/wiki_footer.dart';
 import '../providers/app_state.dart';
@@ -28,7 +28,6 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
   Widget build(BuildContext context) {
     final currentProject = ref.watch(appStateProvider);
     final wikiContent = ref.watch(wikiApiProvider(widget.title));
-    final languageCode = context.locale.languageCode;
 
     return PopScope(
       child: Scaffold(
@@ -64,18 +63,40 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                       textStyle: GoogleFonts.notoSerif(
                         fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
                         height: 1.8,
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.9),
                       ),
-                      onTapUrl: (url) {
-                        if (url.contains('cite_note')) {
-                          final refId = url.split('#').last;
-                          _showReferencePopup(context, refId, htmlContent, languageCode);
-                          return true;
+                      onTapUrl: (url) => WikiUtils.handleTapUrl(context, url, htmlContent),
+                      customStylesBuilder: (element) => WikiUtils.customStyles(context, element),
+                      customWidgetBuilder: (element) {
+                        // Priority 1: Use shared utils (for h2 short underline, etc.)
+                        final sharedWidget = WikiUtils.customWidgetBuilder(context, element);
+                        if (sharedWidget != null) return sharedWidget;
+
+                        // Priority 2: Screen-specific logic (Galleries)
+                        if (element.classes.contains('gallery')) {
+                          return _buildNativeGallery(element);
                         }
-                        // ArticleScreen.handleWikipediaLink(context, ref, url, languageCode);
-                        return true;
-                      },                    ),
+
+                        // Priority 3: Screen-specific logic (Full-width body images)
+                        if (element.localName == 'img' || element.classes.contains('thumb') || element.localName == 'figure') {
+                           if (element.classes.contains('hidden-hero-container')) {
+                             return const SizedBox.shrink();
+                           }
+                           
+                           final img = element.localName == 'img' ? element : element.querySelector('img');
+                           if (img != null) {
+                             final caption = element.querySelector('.caption')?.text ?? 
+                                             element.querySelector('.thumbcaption')?.text ??
+                                             element.querySelector('figcaption')?.text;
+                                             
+                             return _buildFullWidthImage(img, caption);
+                           }
+                        }
+                        return null;
+                      },
+                    ),
                   ),
-                  WikiFooter(),
+                  const WikiFooter(),
                 ],
               ),
             );
@@ -99,115 +120,102 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     );
   }
 
-  void _showReferencePopup(
-      BuildContext context,
-      String referenceId,
-      String htmlContent,
-      String langCode,
-      ) {
-    final theme = Theme.of(context);
-    final document = html_parser.parse(htmlContent);
+  Widget _buildNativeGallery(dom.Element galleryElement) {
+    final items = galleryElement.querySelectorAll('.gallerybox');
+    if (items.isEmpty) return const SizedBox.shrink();
 
-    // Wikipedia reference IDs might be URI encoded
-    final decodedId = Uri.decodeComponent(referenceId);
-    final refElement =
-        document.getElementById(decodedId) ??
-            document.getElementById(referenceId);
+    return Container(
+      height: 280,
+      margin: const EdgeInsets.symmetric(vertical: 24),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          final box = items[index];
+          final img = box.querySelector('img');
+          final caption = box.querySelector('.gallerytext')?.text ?? '';
+          
+          if (img == null) return const SizedBox.shrink();
+          final src = img.attributes['src'] ?? '';
 
-    if (refElement == null) {
-      debugPrint('Reference element not found: $referenceId');
-      return;
-    }
-
-    // Remove backlink arrows commonly found in Wikipedia references
-    refElement.querySelectorAll('.mw-cite-backlink').forEach((e) => e.remove());
-
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        padding: const EdgeInsets.all(24),
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.4,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.info_outline,
-                  size: 18,
-                  color: theme.colorScheme.secondary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'reference'.tr(),
-                  style: theme.textTheme.labelLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.secondary,
-                    letterSpacing: 1.1,
+          return Container(
+            width: MediaQuery.of(context).size.width * 0.8,
+            margin: const EdgeInsets.only(right: 16),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.network(
+                    src.startsWith('http') ? src : 'https:$src',
+                    fit: BoxFit.cover,
                   ),
-                ),
-                const Spacer(),
-                IconButton(
-                  icon: const Icon(Icons.close, size: 20),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ],
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Colors.transparent, Colors.black.withValues(alpha: 0.8)],
+                        ),
+                      ),
+                      child: Text(
+                        caption,
+                        style: const TextStyle(
+                          color: Colors.white, 
+                          fontSize: 12, 
+                          fontStyle: FontStyle.italic
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const Divider(),
-            Flexible(
-              child: SingleChildScrollView(
-                child: HtmlWidget(
-                  refElement.innerHtml,
-                  onTapUrl: (url) {
-                    // ArticleScreen.handleWikipediaLink(
-                    //   context,
-                    //   ref,
-                    //   url,
-                    //   langCode,
-                    // );
-                    return true;
-                  },
-                  textStyle: theme.textTheme.bodyMedium?.copyWith(
-                    fontSize: 14,
-                    height: 1.6,
-                    color: theme.colorScheme.onSurface,
-                  ),
-                  customStylesBuilder: (element) {
-                    // Fix footnote line breaks inside the popup as well
-                    if (element.localName == 'sup' ||
-                        element.classes.contains('reference')) {
-                      return {
-                        'display': 'inline',
-                        'font-size': '0.75em',
-                        'vertical-align': 'super',
-                        'line-height': '0',
-                      };
-                    }
-                    // Fix red link colors
-                    if (element.localName == 'a') {
-                      return {
-                        'color':
-                        '#${theme.colorScheme.primary.toARGB32().toRadixString(16).substring(2)}',
-                        'text-decoration': 'none',
-                      };
-                    }
-                    return null;
-                  },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildFullWidthImage(dom.Element img, String? caption) {
+    final src = img.attributes['src'] ?? '';
+    if (src.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.network(
+              src.startsWith('http') ? src : 'https:$src',
+              width: double.infinity,
+              fit: BoxFit.fitWidth,
+            ),
+          ),
+          if (caption != null && caption.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
+              child: Text(
+                caption,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  fontStyle: FontStyle.italic,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             ),
-            const SizedBox(height: 16),
-          ],
-        ),
+        ],
       ),
     );
   }

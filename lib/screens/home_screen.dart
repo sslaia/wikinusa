@@ -3,17 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wikinusa/theme/app_theme.dart';
-import 'package:wikinusa/widgets/wiki_footer.dart';
+import 'package:wikinusa/models/project_type.dart';
 
+import '../utils/wiki_utils.dart';
+import '../widgets/wiki_footer.dart';
 import '../models/home_page_section.dart';
 import '../widgets/search_field_widget.dart';
 import '../widgets/custom_bottom_app_bar.dart';
-import '../models/project_type.dart';
 import '../providers/app_state.dart';
 import '../providers/wiki_api_provider.dart';
 import '../widgets/drawer_menu.dart';
-import '../services/home_page_builder.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -40,15 +39,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               data: (content) {
                 String? featuredImageUrl;
                 if (content is List<HomePageSection>) {
-                  // Prioritize the 'featuredImage' section for the hero image
                   for (var section in content) {
                     if (section.titleKey == 'featuredImage') {
                       featuredImageUrl = section.imageUrl;
                       break;
                     }
                   }
-
-                  // Fallback to the first available image if 'featuredImage' section is not found
                   if (featuredImageUrl == null || featuredImageUrl.isEmpty) {
                     for (var section in content) {
                       if (section.imageUrl != null &&
@@ -78,7 +74,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ),
                       ),
                     ),
-                    // Gradient Overlay for Text Readability
                     Container(
                       height: 300,
                       width: double.infinity,
@@ -93,11 +88,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ),
                       ),
                     ),
-
                     Positioned.fill(
                       child: MediaQuery(
-                        // Overriding the textScaleFactor to 1.0 to prevent overflow
-                        // and maintain the UI design regardless of system font settings.
                         data: MediaQuery.of(
                           context,
                         ).copyWith(textScaler: TextScaler.noScaling),
@@ -227,6 +219,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate((context, index) {
                       final section = content[index];
+                      final sectionBody = section.textHtml;
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -234,13 +227,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             padding: const EdgeInsets.only(left: 4, bottom: 8),
                             child: Text(
                               section.titleKey.tr(),
-                              style: Theme.of(context).textTheme.titleMedium
-                                  ?.copyWith(
-                                    fontFeatures: [FontFeature.enable('smcp')],
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1.5,
-                                    color: currentProject.primaryColor,
-                                  ),
+                              style: GoogleFonts.montserratAlternates(
+                                textStyle: Theme.of(context)
+                                    .textTheme
+                                    .labelMedium
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.secondary,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1.5,
+                                      fontSize: 16,
+                                    ),
+                              ),
                             ),
                           ),
                           Card(
@@ -256,60 +255,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 if (section.imageHtml != null)
                                   HtmlWidget(
                                     section.imageHtml!,
-                                    onTapUrl: (url) {
-                                      debugPrint('Tapped Image URL: $url');
-                                      return true;
-                                    },
+                                    onTapUrl: (url) => WikiUtils.handleTapUrl(
+                                      context,
+                                      url,
+                                      null,
+                                    ),
                                   ),
                                 Padding(
                                   padding: const EdgeInsets.all(16),
                                   child: HtmlWidget(
-                                    section.textHtml,
-                                    onTapUrl: (url) {
-                                      debugPrint('Tapped URL: $url');
-                                      return true;
-                                    },
+                                    // Remove the div style if the text should not be justify aligned
+                                    '<div style="text-align: justify;">$sectionBody</div>',
+                                    onTapUrl: (url) => WikiUtils.handleTapUrl(
+                                      context,
+                                      url,
+                                      null,
+                                    ),
                                     textStyle: Theme.of(context)
                                         .textTheme
                                         .bodyMedium
                                         ?.copyWith(
                                           fontFamily: GoogleFonts.notoSerif()
                                               .fontFamily,
-                                          fontSize: Theme.of(
-                                            context,
-                                          ).textTheme.bodyMedium?.fontSize,
                                           height: 1.8,
                                           color: Theme.of(context)
                                               .colorScheme
                                               .onSurface
                                               .withValues(alpha: 0.85),
                                         ),
-                                    customStylesBuilder: (element) {
-                                      if (element.localName == 'p') {
-                                        return {
-                                          'margin-bottom': '12px',
-                                          'text-align': 'justify',
-                                        };
-                                      }
-                                      if (element.localName == 'a') {
-                                        final href =
-                                            element.attributes['href'] ?? '';
-                                        final isRedLink = href.contains(
-                                          'action=edit',
-                                        );
-                                        final color = AppTheme.getLinkColor(
+                                    customStylesBuilder: (element) =>
+                                        WikiUtils.customStyles(
                                           context,
-                                          isRedLink: isRedLink,
-                                        );
-                                        return {
-                                          'color':
-                                              '#${color.toARGB32().toRadixString(16).substring(2)}',
-                                          'text-decoration': 'none',
-                                          'font-weight': '600',
-                                        };
-                                      }
-                                      return null;
-                                    },
+                                          element,
+                                        ),
                                   ),
                                 ),
                               ],
@@ -328,9 +306,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
               );
             },
-            loading: () => const SliverFillRemaining(
-              child: SizedBox.shrink(), // Loading handled in hero section
-            ),
+            loading: () => const SliverFillRemaining(child: SizedBox.shrink()),
             error: (error, stack) => SliverFillRemaining(
               child: Center(
                 child: Padding(
@@ -343,7 +319,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
           ),
-          SliverToBoxAdapter(child: WikiFooter()),
+          const SliverToBoxAdapter(child: WikiFooter()),
         ],
       ),
       bottomNavigationBar: CustomBottomAppBar(

@@ -146,7 +146,8 @@ class DrawerMenu extends ConsumerWidget {
                       // Update EasyLocalization locale
                       context.setLocale(Locale(newValue));
 
-                      Navigator.pop(context); // Close drawer on language change
+                      // Navigate back to the root (HomeScreen) and close drawer
+                      Navigator.of(context).popUntil((route) => route.isFirst);
                     }
                   },
                   items: [
