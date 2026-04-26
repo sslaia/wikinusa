@@ -34,7 +34,8 @@ class HtmlProcessor {
       wrapper.attributes['style'] = 'overflow-x: auto; width: 100%; margin: 16px 0; border: 1px solid #ddd; border-radius: 8px;';
       wrapper.classes.add('table-scroll-wrapper');
       
-      table.parentNode?.replaceChild(wrapper, table);
+      // Use replaceWith to wrap the table correctly
+      table.replaceWith(wrapper);
       wrapper.append(table);
       
       // Basic styling for table inside the scrollable wrapper
