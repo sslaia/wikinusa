@@ -64,7 +64,6 @@ class DrawerMenu extends ConsumerWidget {
                 leading: const Icon(Icons.edit_note_outlined),
                 title: Text('create_new_page').tr(),
                 onTap: () {
-                  Navigator.pop(context);
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => CreatePageScreen()),

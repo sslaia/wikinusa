@@ -101,7 +101,6 @@ class _CustomBottomAppBarState extends ConsumerState<CustomBottomAppBar> {
               IconButton(
                 icon: const Icon(Icons.edit_note_outlined),
                 onPressed: () {
-                  Navigator.pop(context); // Close drawer if open
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -114,7 +113,6 @@ class _CustomBottomAppBarState extends ConsumerState<CustomBottomAppBar> {
               icon: const Icon(Icons.refresh),
               onPressed: () async {
                 final langCode = ref.read(languageProvider);
-                // 1. Manually clear the cache for this specific page
                 await WikiApiService.clearCache(
                   widget.currentProject, 
                   langCode, 
