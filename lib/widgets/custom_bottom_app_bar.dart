@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wikinusa/models/project_type.dart';
+import 'package:wikinusa/providers/app_state.dart';
 import 'package:wikinusa/providers/wiki_api_provider.dart';
 import 'package:wikinusa/screens/article_screen.dart';
 import 'package:wikinusa/services/wiki_api_service.dart';
@@ -100,6 +101,7 @@ class _CustomBottomAppBarState extends ConsumerState<CustomBottomAppBar> {
               IconButton(
                 icon: const Icon(Icons.edit_note_outlined),
                 onPressed: () {
+                  Navigator.pop(context); // Close drawer if open
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -110,9 +112,27 @@ class _CustomBottomAppBarState extends ConsumerState<CustomBottomAppBar> {
               ),
             IconButton(
               icon: const Icon(Icons.refresh),
-              onPressed: () {
+              onPressed: () async {
+                final langCode = ref.read(languageProvider);
+                // 1. Manually clear the cache for this specific page
+                await WikiApiService.clearCache(
+                  widget.currentProject, 
+                  langCode, 
+                  widget.isHomeScreen ? null : widget.pageTitle
+                );
+                
+                // 2. Invalidate the provider to trigger a fresh rebuild
                 final targetTitle = widget.isHomeScreen ? null : widget.pageTitle;
                 ref.invalidate(wikiApiProvider(targetTitle));
+                
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('refreshing').tr(),
+                      duration: const Duration(seconds: 1),
+                    ),
+                  );
+                }
               },
             ),
             IconButton(

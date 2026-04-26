@@ -5,6 +5,8 @@ import 'package:html/dom.dart' as dom;
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/history_provider.dart';
 import '../screens/article_screen.dart';
 import '../screens/create_page_screen.dart';
 import '../theme/app_theme.dart';
@@ -49,6 +51,10 @@ class WikiUtils {
       }
 
       if (decodedTitle.isNotEmpty) {
+        // Register this title in the history stack before navigating
+        final container = ProviderScope.containerOf(context);
+        container.read(historyProvider.notifier).push(decodedTitle);
+
         if (isRedLink) {
           Navigator.push(
             context,
@@ -80,7 +86,9 @@ class WikiUtils {
   }
 
   static Map<String, String>? customStyles(BuildContext context, dom.Element element) {
-    // Heading 2 is now handled by customWidgetBuilder for the short underline effect
+    if (element.localName == 'h2') {
+      // Styling handled by customWidgetBuilder
+    }
     if (element.localName == 'sup' || element.classes.contains('reference')) {
       return {
         'display': 'inline-block',

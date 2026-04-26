@@ -1,10 +1,15 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:html/dom.dart' as dom;
+import 'package:url_launcher/url_launcher.dart';
 import 'package:wikinusa/utils/wiki_utils.dart';
+import 'package:share_plus/share_plus.dart';
 
+import '../providers/history_provider.dart';
+import '../providers/bookmarks_provider.dart';
 import '../widgets/wiki_footer.dart';
 import '../providers/app_state.dart';
 import '../providers/wiki_api_provider.dart';
@@ -25,91 +30,107 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
+  void initState() {
+    super.initState();
+    // Register this article in history when opened
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(historyProvider.notifier).push(widget.title);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final currentProject = ref.watch(appStateProvider);
     final wikiContent = ref.watch(wikiApiProvider(widget.title));
+    final langCode = context.locale.languageCode;
+    final theme = Theme.of(context);
+    
+    final pageUrl = 'https://$langCode.${currentProject.name.toLowerCase()}.org/wiki/${widget.title.replaceAll(' ', '_')}';
 
     return PopScope(
       child: Scaffold(
         key: _scaffoldKey,
         drawer: const DrawerMenu(),
-        body: wikiContent.when(
-          data: (data) {
-            String htmlContent;
-            String? imageUrl;
+        body: Stack(
+          children: [
+            wikiContent.when(
+              data: (data) {
+                String htmlContent;
+                String? imageUrl;
 
-            if (data is Map<String, dynamic>) {
-              htmlContent = data['html'] ?? '';
-              imageUrl = data['imageUrl'];
-            } else if (data is String) {
-              htmlContent = data;
-            } else {
-              htmlContent = '';
-            }
+                if (data is Map<String, dynamic>) {
+                  htmlContent = data['html'] ?? '';
+                  imageUrl = data['imageUrl'];
+                } else if (data is String) {
+                  htmlContent = data;
+                } else {
+                  htmlContent = '';
+                }
 
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ArticleHeroImage(
-                    theme: Theme.of(context),
-                    title: widget.title,
-                    imageUrl: imageUrl ?? '',
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: HtmlWidget(
-                      htmlContent,
-                      textStyle: GoogleFonts.notoSerif(
-                        fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
-                        height: 1.8,
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.9),
+                return SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ArticleHeroImage(
+                        theme: Theme.of(context),
+                        title: widget.title,
+                        imageUrl: imageUrl ?? '',
                       ),
-                      onTapUrl: (url) => WikiUtils.handleTapUrl(context, url, htmlContent),
-                      customStylesBuilder: (element) => WikiUtils.customStyles(context, element),
-                      customWidgetBuilder: (element) {
-                        // Priority 1: Use shared utils (for h2 short underline, etc.)
-                        final sharedWidget = WikiUtils.customWidgetBuilder(context, element);
-                        if (sharedWidget != null) return sharedWidget;
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: HtmlWidget(
+                          htmlContent,
+                          textStyle: GoogleFonts.notoSerif(
+                            fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
+                            height: 1.8,
+                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.9),
+                          ),
+                          onTapUrl: (url) => WikiUtils.handleTapUrl(context, url, htmlContent),
+                          customStylesBuilder: (element) => WikiUtils.customStyles(context, element),
+                          customWidgetBuilder: (element) {
+                            final sharedWidget = WikiUtils.customWidgetBuilder(context, element);
+                            if (sharedWidget != null) return sharedWidget;
 
-                        // Priority 2: Screen-specific logic (Galleries)
-                        if (element.classes.contains('gallery')) {
-                          return _buildNativeGallery(element);
-                        }
+                            if (element.classes.contains('gallery')) {
+                              return _buildNativeGallery(element);
+                            }
 
-                        // Priority 3: Screen-specific logic (Full-width body images)
-                        if (element.localName == 'img' || element.classes.contains('thumb') || element.localName == 'figure') {
-                           if (element.classes.contains('hidden-hero-container')) {
-                             return const SizedBox.shrink();
-                           }
-                           
-                           final img = element.localName == 'img' ? element : element.querySelector('img');
-                           if (img != null) {
-                             final caption = element.querySelector('.caption')?.text ?? 
-                                             element.querySelector('.thumbcaption')?.text ??
-                                             element.querySelector('figcaption')?.text;
-                                             
-                             return _buildFullWidthImage(img, caption);
-                           }
-                        }
-                        return null;
-                      },
-                    ),
+                            if (element.localName == 'img' || element.classes.contains('thumb') || element.localName == 'figure') {
+                               if (element.classes.contains('hidden-hero-container')) {
+                                 return const SizedBox.shrink();
+                               }
+                               
+                               final img = element.localName == 'img' ? element : element.querySelector('img');
+                               if (img != null) {
+                                 final caption = element.querySelector('.caption')?.text ?? 
+                                                 element.querySelector('.thumbcaption')?.text ??
+                                                 element.querySelector('figcaption')?.text;
+                                                 
+                                 return _buildFullWidthImage(img, caption);
+                               }
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      const WikiFooter(),
+                      const SizedBox(height: 100), // Space for floating action bar
+                    ],
                   ),
-                  const WikiFooter(),
-                ],
+                );
+              },
+              loading: () => const Center(
+                child: CircularProgressIndicator(),
               ),
-            );
-          },
-          loading: () => const Center(
-            child: CircularProgressIndicator(),
-          ),
-          error: (error, stack) => Center(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text('Error loading article: $error'),
+              error: (error, stack) => Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text('Error loading article: $error'),
+                ),
+              ),
             ),
-          ),
+            _buildFloatingActionBar(theme, pageUrl, widget.title, langCode, currentProject.name),
+          ],
         ),
         bottomNavigationBar: CustomBottomAppBar(
           scaffoldKey: _scaffoldKey,
@@ -217,6 +238,179 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
             ),
         ],
       ),
+    );
+  }
+
+  Widget _buildFloatingActionBar(
+      ThemeData theme,
+      String pageUrl,
+      String currentTitle,
+      String langCode,
+      String projectName,
+      ) {
+    final bookmarks = ref.watch(bookmarksProvider);
+    final history = ref.watch(historyProvider);
+    
+    final isBookmarked = bookmarks.any(
+      (b) => b.title == currentTitle && b.langCode == langCode && b.projectName == projectName
+    );
+
+    return Positioned(
+      bottom: 12,
+      left: 0,
+      right: 0,
+      child: Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(32),
+            border: Border.all(
+              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.08),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildActionButton(
+                theme,
+                Icons.arrow_back_ios_new,
+                history.canGoBack 
+                    ? theme.colorScheme.primary 
+                    : theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                onPressed: history.canGoBack ? () {
+                  ref.read(historyProvider.notifier).goBack();
+                  Navigator.of(context).pop();
+                } : null,
+              ),
+              _buildDivider(theme),
+              _buildActionButton(
+                theme,
+                isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                isBookmarked
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.onSurface,
+                onPressed: () {
+                  ref
+                      .read(bookmarksProvider.notifier)
+                      .toggleBookmark(currentTitle, langCode, projectName);
+                  
+                  ScaffoldMessenger.of(context).clearSnackBars();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        isBookmarked
+                            ? 'bookmarks_removed'.tr()
+                            : 'bookmarks_added'.tr(),
+                      ),
+                      duration: const Duration(seconds: 1),
+                    ),
+                  );
+                },
+              ),
+              _buildDivider(theme),
+              _buildActionButton(
+                theme,
+                Icons.share_outlined,
+                theme.colorScheme.onSurface,
+                onPressed: () {
+                  SharePlus.instance.share(
+                    ShareParams(uri: Uri.parse(pageUrl)),
+                  );
+                },
+              ),
+              _buildDivider(theme),
+              _buildActionButton(
+                theme,
+                Icons.edit_outlined,
+                theme.colorScheme.onSurface,
+                onPressed: () async {
+                  final uri = Uri.parse('$pageUrl?action=edit&section=all');
+                  try {
+                    await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('editor_cant_open').tr()),
+                      );
+                    }
+                  }
+                },
+              ),
+              _buildDivider(theme),
+              _buildActionButton(
+                theme,
+                Icons.visibility_outlined,
+                theme.colorScheme.onSurface,
+                onPressed: () async {
+                  final uri = Uri.parse(pageUrl);
+                  try {
+                    await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('page_cant_open').tr()),
+                      );
+                    }
+                  }
+                },
+              ),
+              _buildDivider(theme),
+              _buildActionButton(
+                theme,
+                Icons.arrow_forward_ios,
+                history.canGoForward 
+                    ? theme.colorScheme.primary 
+                    : theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                onPressed: history.canGoForward ? () {
+                  final nextTitle = ref.read(historyProvider.notifier).goForward();
+                  if (nextTitle != null) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => ArticleScreen(title: nextTitle)),
+                    );
+                  }
+                } : null,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButton(
+      ThemeData theme,
+      IconData icon,
+      Color color, {
+        VoidCallback? onPressed,
+      }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(24),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Icon(icon, color: color, size: 18),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDivider(ThemeData theme) {
+    return Container(
+      height: 20,
+      width: 1,
+      color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+      margin: const EdgeInsets.symmetric(horizontal: 4),
     );
   }
 }

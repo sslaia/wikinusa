@@ -7,6 +7,21 @@ import 'home_page_builder.dart';
 import 'html_processor.dart';
 
 class WikiApiService {
+  static String _getCacheKey(ProjectType project, String languageCode, String pageTitle, bool isArticle) {
+    final projectStr = project.name.toLowerCase();
+    return isArticle
+        ? 'article_${projectStr}_${languageCode}_$pageTitle'
+        : 'home_page_${projectStr}_$languageCode';
+  }
+
+  static Future<void> clearCache(ProjectType project, String languageCode, String? pageTitle) async {
+    final prefs = await SharedPreferences.getInstance();
+    final isArticle = pageTitle != null && pageTitle.isNotEmpty;
+    final cacheKey = _getCacheKey(project, languageCode, pageTitle ?? 'Main Page', isArticle);
+    await prefs.remove(cacheKey);
+    await prefs.remove('${cacheKey}_timestamp');
+  }
+
   static Future<dynamic> fetchPageHtml(
     ProjectType project,
     String languageCode,
@@ -15,15 +30,14 @@ class WikiApiService {
     bool forceRefresh = false,
   }) async {
     final projectStr = project.name.toLowerCase();
-
-    final cacheKey = isArticle
-        ? 'article_${projectStr}_${languageCode}_$pageTitle'
-        : 'home_page_${projectStr}_$languageCode';
+    final cacheKey = _getCacheKey(project, languageCode, pageTitle, isArticle);
     final cacheTimestampKey = '${cacheKey}_timestamp';
 
     final prefs = await SharedPreferences.getInstance();
 
-    if (!forceRefresh) {
+    // Only use cache for Home Page (isArticle == false) and if not forcing refresh.
+    // Articles themselves are always fetched fresh as per user request.
+    if (!forceRefresh && !isArticle) {
       final cachedTimestampStr = prefs.getString(cacheTimestampKey);
       if (cachedTimestampStr != null) {
         final cachedTimestamp = DateTime.parse(cachedTimestampStr);
@@ -32,16 +46,12 @@ class WikiApiService {
         if (difference.inHours < 24) {
           final cachedData = prefs.getString(cacheKey);
           if (cachedData != null && cachedData.isNotEmpty) {
-            if (!isArticle) {
-              try {
-                final List<dynamic> jsonList = jsonDecode(cachedData);
-                return jsonList.map((e) => HomePageSection.fromJson(e)).toList();
-              } catch (e) {
-                await prefs.remove(cacheKey);
-                await prefs.remove(cacheTimestampKey);
-              }
-            } else {
-              return jsonDecode(cachedData);
+            try {
+              final List<dynamic> jsonList = jsonDecode(cachedData);
+              return jsonList.map((e) => HomePageSection.fromJson(e)).toList();
+            } catch (e) {
+              await prefs.remove(cacheKey);
+              await prefs.remove(cacheTimestampKey);
             }
           }
         }
@@ -71,6 +81,7 @@ class WikiApiService {
             project,
           );
 
+          // Still save to cache for potential future use (e.g. offline mode), but we don't read it above
           await prefs.setString(cacheKey, jsonEncode(processedResult));
           await prefs.setString(cacheTimestampKey, DateTime.now().toIso8601String());
           return processedResult;

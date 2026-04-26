@@ -11,6 +11,7 @@ import '../providers/app_state.dart';
 import '../providers/font_size_provider.dart';
 import '../providers/theme_provider.dart';
 import '../screens/about_screen.dart';
+import '../screens/bookmarks_screen.dart';
 
 class DrawerMenu extends ConsumerWidget {
   const DrawerMenu({super.key});
@@ -78,12 +79,12 @@ class DrawerMenu extends ConsumerWidget {
                 title: Text('bookmarks').tr(),
                 onTap: () {
                   Navigator.pop(context);
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (_) => const BookmarksScreen(),
-                  //   ),
-                  // );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const BookmarksScreen(),
+                    ),
+                  );
                 },
               ),
             ],
