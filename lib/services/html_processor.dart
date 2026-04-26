@@ -24,6 +24,29 @@ class HtmlProcessor {
     });
     document.querySelectorAll('.lazy-image-placeholder').forEach((el) => el.remove());
 
+    // 0.1 Handle Tables: Wrap in scrollable div and clean up width constraints
+    document.querySelectorAll('table').forEach((table) {
+      // Remove explicit width attributes that force squishing
+      table.attributes.remove('width');
+      table.attributes.remove('style'); // Remove inline styles that often have width:100%
+      
+      final wrapper = dom.Element.tag('div');
+      wrapper.attributes['style'] = 'overflow-x: auto; width: 100%; margin: 16px 0; border: 1px solid #ddd; border-radius: 8px;';
+      wrapper.classes.add('table-scroll-wrapper');
+      
+      table.parentNode?.replaceChild(wrapper, table);
+      wrapper.append(table);
+      
+      // Basic styling for table inside the scrollable wrapper
+      table.attributes['style'] = 'border-collapse: collapse; min-width: 100%;';
+      table.querySelectorAll('th, td').forEach((cell) {
+        cell.attributes['style'] = 'border: 1px solid #ddd; padding: 8px; text-align: left;';
+      });
+      table.querySelectorAll('th').forEach((th) {
+        th.attributes['style'] = (th.attributes['style'] ?? '') + ' background-color: #f5f5f5; font-weight: bold;';
+      });
+    });
+
     // Load rules
     final jsonString = await rootBundle.loadString('assets/data/html_rules.json');
     final htmlRules = jsonDecode(jsonString);
@@ -83,7 +106,7 @@ class HtmlProcessor {
     }
 
     // HIDE references sections instead of stripping them
-    if (refKeywords != null && refKeywords.isNotEmpty) {
+    if (refKeywords.isNotEmpty) {
       final headings = document.querySelectorAll('h2, h3, h4');
       for (var h in headings) {
         final text = h.text.toLowerCase();
