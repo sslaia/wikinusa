@@ -50,4 +50,14 @@ extension ProjectTypeExtension on ProjectType {
         return 'assets/images/wajah-nias.webp';
     }
   }
+
+  bool isSupported(String langCode) {
+    if (this == ProjectType.wikibooks && (langCode == 'en' || langCode == 'id')) {
+      return false;
+    }
+    if (this == ProjectType.wiktionary && (langCode == 'en' || langCode == 'id')) {
+      return false;
+    }
+    return true;
+  }
 }

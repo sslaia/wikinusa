@@ -9,8 +9,10 @@ class AppStateNotifier extends Notifier<ProjectType> {
     return ProjectType.wikipedia;
   }
 
-  void setProject(ProjectType project) {
-    state = project;
+  void setProject(ProjectType project, String langCode) {
+    if (project.isSupported(langCode)) {
+      state = project;
+    }
   }
 }
 
@@ -25,13 +27,19 @@ class LanguageNotifier extends Notifier<String> {
   @override
   String build() {
     final prefs = ref.watch(sharedPreferencesProvider);
-    return prefs.getString(_languageKey) ?? 'id';
+    return prefs.getString(_languageKey) ?? 'nia';
   }
 
   void setLanguage(String code) {
     if (state != code) {
       state = code;
       ref.read(sharedPreferencesProvider).setString(_languageKey, code);
+      
+      // Safety check: if current project is not supported in new language, revert to Wikipedia
+      final currentProject = ref.read(appStateProvider);
+      if (!currentProject.isSupported(code)) {
+        ref.read(appStateProvider.notifier).setProject(ProjectType.wikipedia, code);
+      }
     }
   }
 }

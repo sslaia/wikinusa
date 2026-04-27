@@ -2,7 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:wikinusa/providers/app_state.dart';
+
+import '../providers/app_state.dart';
 import '../providers/bookmarks_provider.dart';
 import 'article_screen.dart';
 
@@ -77,7 +78,7 @@ class BookmarksScreen extends ConsumerWidget {
                   ),
                   onTap: () async {
                     final currentLangCode = context.locale.languageCode;
-                    // Solve the problem with articles in different languages
+                    // Check if current view matches bookmark's lang and project
                     if (currentLangCode == bookmark.langCode && bookmark.projectName == currentProject.name) {
                       Navigator.push(
                         context,
@@ -86,8 +87,7 @@ class BookmarksScreen extends ConsumerWidget {
                         ),
                       );
                     } else {
-                      final url = 'https://${bookmark.langCode}.${bookmark.projectName}.org/wiki/${bookmark.title.replaceAll(' ', '_')}';
-                      // Open in in-app browser for articles in different languages
+                      final url = 'https://${bookmark.langCode}.${bookmark.projectName.toLowerCase()}.org/wiki/${bookmark.title.replaceAll(' ', '_')}';
                       await launchUrl(Uri.parse(url), mode: LaunchMode.inAppBrowserView);
                     }
                   },

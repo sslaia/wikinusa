@@ -12,9 +12,53 @@ import '../screens/create_page_screen.dart';
 import '../theme/app_theme.dart';
 
 class WikiUtils {
+  static bool isIcon(String src) {
+    final lowerSrc = src.toLowerCase();
+    return lowerSrc.contains('/static/images/mobile/copyright/') ||
+        lowerSrc.contains('/static/images/footer/') ||
+        lowerSrc.contains('.svg') ||
+        lowerSrc.contains('px-gnome-') ||
+        lowerSrc.contains('px-icon-') ||
+        lowerSrc.contains('px-symbol_') ||
+        lowerSrc.contains('px-help-') ||
+        lowerSrc.contains('px-information_') ||
+        lowerSrc.contains('px-ambox_') ||
+        lowerSrc.contains('px-question_mark') ||
+        lowerSrc.contains('px-edit-clear') ||
+        lowerSrc.contains('px-magnifying_glass') ||
+        lowerSrc.contains('px-search_icon') ||
+        lowerSrc.contains('px-crystal_clear') ||
+        lowerSrc.contains('px-c_icon') ||
+        lowerSrc.contains('px-system-') ||
+        lowerSrc.contains('px-padlock-');
+  }
+
+  static String optimizeImageUrl(String url,
+      {String? langCode, String? projectStr, int width = 600}) {
+    String normalized = url;
+
+    // Handle relative URLs
+    if (url.startsWith('//')) {
+      normalized = 'https:$url';
+    } else if (url.startsWith('/') && langCode != null && projectStr != null) {
+      normalized = 'https://$langCode.$projectStr.org$url';
+    } else if (!url.startsWith('http') && !url.startsWith('/')) {
+      normalized = 'https:$url';
+    }
+
+    // Convert thumbnail to high resolution
+    if (normalized.contains('/thumb/')) {
+      final regExp = RegExp(r'\/(\d+)px-');
+      if (regExp.hasMatch(normalized)) {
+        return normalized.replaceFirst(regExp, '/${width}px-');
+      }
+    }
+    return normalized;
+  }
+
   static bool handleTapUrl(BuildContext context, String url, String? htmlContent) {
     debugPrint('WikiUtils: handling URL: $url');
-    
+
     if (url.startsWith('#') || url.contains('cite_note')) {
       if (htmlContent != null) {
         final refId = url.split('#').last;
@@ -38,7 +82,10 @@ class WikiUtils {
         final match = RegExp(r'title=([^&]+)').firstMatch(url);
         title = match?.group(1);
       }
-    } else if (!url.contains(':') && !url.contains('/') && url.isNotEmpty && !url.startsWith('http')) {
+    } else if (!url.contains(':') &&
+        !url.contains('/') &&
+        url.isNotEmpty &&
+        !url.startsWith('http')) {
       title = url.split('?').first.split('#').first;
     }
 
@@ -58,12 +105,14 @@ class WikiUtils {
         if (isRedLink) {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => CreatePageScreen(initialTitle: decodedTitle)),
+            MaterialPageRoute(
+                builder: (_) => CreatePageScreen(initialTitle: decodedTitle)),
           );
         } else {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => ArticleScreen(title: decodedTitle)),
+            MaterialPageRoute(
+                builder: (_) => ArticleScreen(title: decodedTitle)),
           );
         }
         return true;
@@ -85,10 +134,8 @@ class WikiUtils {
     }
   }
 
-  static Map<String, String>? customStyles(BuildContext context, dom.Element element) {
-    if (element.localName == 'h2') {
-      // Styling handled by customWidgetBuilder
-    }
+  static Map<String, String>? customStyles(
+      BuildContext context, dom.Element element) {
     if (element.localName == 'sup' || element.classes.contains('reference')) {
       return {
         'display': 'inline-block',
@@ -102,7 +149,8 @@ class WikiUtils {
     }
     if (element.localName == 'a') {
       final href = element.attributes['href'] ?? '';
-      final isRedLink = href.contains('action=edit') || href.contains('redlink=1');
+      final isRedLink =
+          href.contains('action=edit') || href.contains('redlink=1');
       final color = AppTheme.getLinkColor(context, isRedLink: isRedLink);
       return {
         'color': '#${color.toARGB32().toRadixString(16).substring(2)}',
@@ -113,7 +161,8 @@ class WikiUtils {
     return null;
   }
 
-  static Widget? customWidgetBuilder(BuildContext context, dom.Element element) {
+  static Widget? customWidgetBuilder(
+      BuildContext context, dom.Element element) {
     if (element.localName == 'h2') {
       final theme = Theme.of(context);
       return Padding(
@@ -146,15 +195,16 @@ class WikiUtils {
   }
 
   static void _showReferencePopup(
-      BuildContext context,
-      String referenceId,
-      String htmlContent,
-      ) {
+    BuildContext context,
+    String referenceId,
+    String htmlContent,
+  ) {
     final theme = Theme.of(context);
     final document = html_parser.parse(htmlContent);
 
     final decodedId = Uri.decodeComponent(referenceId);
-    final refElement = document.getElementById(decodedId) ?? document.getElementById(referenceId);
+    final refElement =
+        document.getElementById(decodedId) ?? document.getElementById(referenceId);
 
     if (refElement == null) return;
 
@@ -179,7 +229,8 @@ class WikiUtils {
           children: [
             Row(
               children: [
-                Icon(Icons.info_outline, size: 18, color: theme.colorScheme.secondary),
+                Icon(Icons.info_outline,
+                    size: 18, color: theme.colorScheme.secondary),
                 const SizedBox(width: 8),
                 Text(
                   'reference'.tr(),

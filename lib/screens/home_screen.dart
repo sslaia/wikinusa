@@ -68,8 +68,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         featuredImageUrl ??
                             'https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Reading_-_Hugues_Merle.jpg/960px-Reading_-_Hugues_Merle.jpg',
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Image.network(
-                          'https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Reading_-_Hugues_Merle.jpg/960px-Reading_-_Hugues_Merle.jpg',
+                        errorBuilder: (context, error, stackTrace) => Image.asset(
+                          currentProject.homeHeroImagePath,
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -264,7 +264,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 Padding(
                                   padding: const EdgeInsets.all(16),
                                   child: HtmlWidget(
-                                    // Remove the div style if the text should not be justify aligned
                                     '<div style="text-align: justify;">$sectionBody</div>',
                                     onTapUrl: (url) => WikiUtils.handleTapUrl(
                                       context,
@@ -284,10 +283,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                               .withValues(alpha: 0.85),
                                         ),
                                     customStylesBuilder: (element) =>
-                                        WikiUtils.customStyles(
-                                          context,
-                                          element,
-                                        ),
+                                        WikiUtils.customStyles(context, element),
                                   ),
                                 ),
                               ],
@@ -302,11 +298,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               return SliverPadding(
                 padding: const EdgeInsets.all(16.0),
                 sliver: SliverToBoxAdapter(
-                  child: HtmlWidget(content as String),
+                  child: HtmlWidget(
+                    content as String,
+                    onTapUrl: (url) => WikiUtils.handleTapUrl(
+                      context,
+                      url,
+                      content,
+                    ),
+                    customStylesBuilder: (element) =>
+                        WikiUtils.customStyles(context, element),
+                  ),
                 ),
               );
             },
-            loading: () => const SliverFillRemaining(child: SizedBox.shrink()),
+            loading: () => const SliverFillRemaining(
+              child: SizedBox.shrink(),
+            ),
             error: (error, stack) => SliverFillRemaining(
               child: Center(
                 child: Padding(

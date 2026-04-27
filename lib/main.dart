@@ -18,7 +18,7 @@ class WikiHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
-      ..userAgent = 'WikiNusa/1.0 (https://io.github.sslaia.wikinusa; sslaia@gmail.com) Flutter/3.x';
+      ..userAgent = 'WikiNusa/1.0 (https://io.github.sslaia.wikinusa; sslaia@yahoo.com) Flutter/3.x';
   }
 }
 
@@ -38,8 +38,8 @@ void main() async {
         Locale('id'),
         Locale('nia'),
       ],
-      startLocale: const Locale('id'),
-      fallbackLocale: const Locale('nia'),
+      startLocale: const Locale('nia'),
+      fallbackLocale: const Locale('id'),
       path: 'assets/translations',
       child: ProviderScope(
         overrides: [
