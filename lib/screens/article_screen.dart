@@ -101,6 +101,12 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                                }
                                
                                final img = element.localName == 'img' ? element : element.querySelector('img');
+                               
+                               // If it's an inline icon, don't build a full-width block, let it render naturally
+                               if (img != null && img.classes.contains('wiki-inline-icon')) {
+                                 return null;
+                               }
+
                                if (img != null) {
                                  final caption = element.querySelector('.caption')?.text ?? 
                                                  element.querySelector('.thumbcaption')?.text ??

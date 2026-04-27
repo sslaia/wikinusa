@@ -105,52 +105,39 @@ void showShortcutsBottomSheet(BuildContext context, WidgetRef ref) {
                                 onTap: () async {
                                   Navigator.pop(consumerContext);
                                   final url = shortcut['url'] as String;
-
-                                  // Extract title from Wikipedia URL: .../wiki/Title
                                   final uri = Uri.parse(url);
                                   final pathSegments = uri.pathSegments;
+                                  
                                   String title = '';
+                                  // Extract title from Wikipedia URL segments
                                   if (pathSegments.contains('wiki')) {
                                     final index = pathSegments.indexOf('wiki');
                                     if (index + 1 < pathSegments.length) {
-                                      title = Uri.decodeComponent(
-                                        pathSegments[index + 1],
-                                      ).replaceAll('_', ' ');
+                                      // uri.pathSegments are already decoded by Dart
+                                      title = pathSegments[index + 1].replaceAll('_', ' ');
                                     }
                                   }
 
-                                  String? extractedTitle;
-                                  if (pathSegments.length >= 2 &&
-                                      pathSegments[0] == 'wiki') {
-                                    extractedTitle = pathSegments[1].replaceAll(
-                                      '_',
-                                      ' ',
-                                    );
-                                  }
+                                  if (title.isEmpty) return;
 
                                   // Determine if it's a "Special" page
-                                  bool isSpecialPage = false;
-                                  if (extractedTitle != null) {
-                                    final lowerTitle = extractedTitle
-                                        .toLowerCase();
-                                    isSpecialPage =
-                                        lowerTitle.startsWith('special:') ||
-                                        lowerTitle.startsWith('spesial:') ||
-                                        lowerTitle.startsWith('mirunggan:') ||
-                                        lowerTitle.startsWith('istimewa:') ||
-                                        lowerTitle.startsWith('istimiwa:') ||
-                                        lowerTitle.startsWith('istimèwa:') ||
-                                        lowerTitle.startsWith('khas:') ||
-                                        lowerTitle.startsWith('husus:');
-                                  }
+                                  final lowerTitle = title.toLowerCase();
+                                  bool isSpecialPage =
+                                      lowerTitle.startsWith('special:') ||
+                                      lowerTitle.startsWith('spesial:') ||
+                                      lowerTitle.startsWith('mirunggan:') ||
+                                      lowerTitle.startsWith('istimewa:') ||
+                                      lowerTitle.startsWith('istimiwa:') ||
+                                      lowerTitle.startsWith('istimèwa:') ||
+                                      lowerTitle.startsWith('khas:') ||
+                                      lowerTitle.startsWith('husus:');
 
                                   // Routing Logic
-                                  if (isSpecialPage && extractedTitle != null) {
+                                  if (isSpecialPage) {
                                     await launchUrl(
                                       uri,
                                       mode: LaunchMode.inAppBrowserView,
                                     );
-                                    return;
                                   } else {
                                     Navigator.push(
                                       context,

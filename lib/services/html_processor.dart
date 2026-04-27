@@ -75,7 +75,17 @@ class HtmlProcessor {
     document.querySelectorAll('img').forEach((img) {
        var src = img.attributes['src'] ?? '';
        if (src.isNotEmpty) {
-          img.attributes['src'] = WikiUtils.optimizeImageUrl(src, langCode: languageCode, projectStr: projectStr, width: 600);
+          // Detect if it's an inline icon by size
+          final widthAttr = int.tryParse(img.attributes['width'] ?? '');
+          final heightAttr = int.tryParse(img.attributes['height'] ?? '');
+          
+          if ((widthAttr != null && widthAttr <= 48) || (heightAttr != null && heightAttr <= 48)) {
+             img.classes.add('wiki-inline-icon');
+             // For inline icons, we don't scale up to 600px
+             img.attributes['src'] = WikiUtils.optimizeImageUrl(src, langCode: languageCode, projectStr: projectStr, width: 100);
+          } else {
+             img.attributes['src'] = WikiUtils.optimizeImageUrl(src, langCode: languageCode, projectStr: projectStr, width: 600);
+          }
        }
     });
 
