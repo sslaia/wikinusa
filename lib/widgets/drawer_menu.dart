@@ -77,10 +77,7 @@ class DrawerMenu extends ConsumerWidget {
                 ),
                 title: Text('bookmarks').tr(),
                 onTap: () {
-<<<<<<< HEAD
                   Navigator.pop(context);
-=======
->>>>>>> features
                   Navigator.push(
                     context,
                     MaterialPageRoute(
