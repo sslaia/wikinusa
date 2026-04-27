@@ -2,16 +2,16 @@
   "global": {
     "wikipedia": {
       "remove": [
-        ".infobox",
-        ".navbox",
-        ".metadata",
         ".ambox",
-        ".noprint",
-        ".mw-editsection",
-        ".hatnote",
         ".catlinks",
-        "style",
-        "script"
+        ".hatnote",
+        ".metadata",
+        ".mw-editsection",
+        ".navbox",
+        ".nomobile",
+        ".noprint",
+        "script",
+        "style"
       ],
       "hide": [
         ".references",
@@ -290,36 +290,30 @@
       ],
       "hide": [
         ".mw-editsection",
-        ".references",
-        ".reflist",
-        "#Umbu"
+        "umbu"
       ],
       "referenceKeywords": [
-        "umbu",
         "famotokhi ba gahe",
-        "reference",
-        "reflist"
+        "referensi",
+        "umbu"
       ],
       "homePageSections": {
         "featuredArticle": "mp-featured-article-body",
-        "featuredImage": "mp-featured-photo-body",
         "doYouKnow": "mp-dyk-body",
+        "featuredImage": "mp-featured-photo-body",
         "onThisMonth": "mp-otm-body"
       }
     },
     "wiktionary": {
       "remove": [
-        ".nomobile",
         ".side-box-flex",
         ".toc",
         "toc"
       ],
       "hide": [
-        ".nomobile"
       ],
       "referenceKeywords": [
-        "umbu",
-        "reference"
+        "umbu"
       ],
       "homePageSections": {
         "featuredWord": "mp-featured-word-body",

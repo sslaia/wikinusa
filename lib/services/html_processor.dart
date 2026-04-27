@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:beautiful_soup_dart/beautiful_soup.dart';
 import 'package:flutter/services.dart';
 import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart' as dom;
@@ -112,9 +113,19 @@ class HtmlProcessor {
         }
       }
     }
+
+    // 3. Final cleanup and Nias Wiktionary specific processing
+    String processedHtml = document.body?.innerHtml ?? '';
+
+    if (languageCode == 'nia' && project == ProjectType.wiktionary) {
+      final soup = BeautifulSoup(processedHtml);
+      _removeEmptySections(soup);
+      _removeEmptyImageSections(soup);
+      processedHtml = soup.toString();
+    }
     
     return {
-      'html': document.body?.innerHtml ?? '',
+      'html': processedHtml,
       'imageUrl': imageUrl,
     };
   }
@@ -141,5 +152,57 @@ class HtmlProcessor {
       parent = parent.parent;
     }
     containerToHide?.attributes['class'] = '${containerToHide.attributes['class'] ?? ''} hidden-hero-container';
+  }
+
+  /// Helper function to find and remove headings followed by "Lö hadöi"
+  /// in either <dd> or <li> tags.
+  static void _removeEmptySections(BeautifulSoup root) {
+    // Find all 'dd' and 'li' elements.
+    final potentialMarkers = root.findAll('dd') + root.findAll('li');
+
+    // Use Dart's .where() to filter them based on their content
+    final emptyMarkers = potentialMarkers.where((element) {
+      return element.string.trim() == 'Lö hadöi';
+    });
+
+    for (final marker in emptyMarkers) {
+      Bs4Element? listContainer;
+
+      // Determine the parent list container
+      if (marker.name == 'dd') {
+        listContainer = marker.findParent('dl');
+      } else if (marker.name == 'li') {
+        // It could be in a <ul> or <ol>
+        listContainer = marker.findParent('ul') ?? marker.findParent('ol');
+      }
+
+      if (listContainer == null) continue;
+
+      // Find the heading element that comes just before the list container
+      final headingDiv = listContainer.findPreviousSibling('div');
+
+      // To be safe, check if the found sibling is actually a heading container.
+      if (headingDiv != null && headingDiv.className.contains('mw-heading')) {
+        // Remove the heading and the list container.
+        headingDiv.extract();
+        listContainer.extract();
+      }
+    }
+  }
+
+  /// Helper function to remove the "Gambara" heading if it has no pictures.
+  static void _removeEmptyImageSections(BeautifulSoup root) {
+    final imageHeadings = root.findAll('h3', id: 'Gambara');
+
+    for (final h3 in imageHeadings) {
+      final headingContainer = h3.findParent('div');
+      if (headingContainer == null) continue;
+
+      final Bs4Element? nextElement = headingContainer.nextSibling;
+
+      if (nextElement == null || nextElement.name != 'figure') {
+        headingContainer.extract();
+      }
+    }
   }
 }
