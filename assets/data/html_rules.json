@@ -131,8 +131,16 @@
         "toc"
       ],
       "homePageSections": {
-        "wordOfTheDay": "mf-wotd",
-        "foreignWordOfTheDay": "mf-fwotd"
+        "wordOfTheDay": {
+          "selector": "mf-wotd",
+          "keep": "p",
+          "firstOnly": true
+        },
+        "foreignWordOfTheDay": {
+          "selector": "mf-fwotd",
+          "keep": "p",
+          "firstOnly": true
+        }
       }
     },
     "wikibooks": {
@@ -228,15 +236,24 @@
         "referensi",
         "catatan kaki",
         "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
+        "sumber"
       ],
       "homePageSections": {
-        "mainContent": "mf-index"
+        "featuredWord": {
+          "selector": "mf-lematerpilih",
+          "keep": "p",
+          "firstOnly": true
+        },
+        "doYouKnow": {
+          "selector": "mf-tahukahanda",
+          "keep": "ul",
+          "firstOnly": true
+        },
+        "newWords": {
+          "selector": "mf-lemabaru",
+          "keep": "ul",
+          "firstOnly": true
+        }
       }
     },
     "wikibooks": {

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart' as dom;
 import '../models/project_type.dart';
+import '../utils/wiki_utils.dart';
 
 class HtmlProcessor {
   static Future<Map<String, dynamic>> processArticleHtml(
@@ -13,7 +14,7 @@ class HtmlProcessor {
     final projectStr = project.name.toLowerCase();
     final document = html_parser.parse(rawHtml);
 
-    // 0. Resolve Wikipedia lazy loading by unwrapping <noscript> and removing placeholders
+    // 0. Resolve Wikipedia lazy loading
     document.querySelectorAll('noscript').forEach((ns) {
       final nsHtml = ns.innerHtml;
       if (nsHtml.contains('<img')) {
@@ -24,27 +25,21 @@ class HtmlProcessor {
     });
     document.querySelectorAll('.lazy-image-placeholder').forEach((el) => el.remove());
 
-    // 0.1 Handle Tables: Wrap in scrollable div and clean up width constraints
+    // 0.1 Handle Tables: Wrap in scrollable div
     document.querySelectorAll('table').forEach((table) {
-      // Remove explicit width attributes that force squishing
       table.attributes.remove('width');
-      table.attributes.remove('style'); // Remove inline styles that often have width:100%
+      table.attributes.remove('style');
       
       final wrapper = dom.Element.tag('div');
       wrapper.attributes['style'] = 'overflow-x: auto; width: 100%; margin: 16px 0; border: 1px solid #ddd; border-radius: 8px;';
       wrapper.classes.add('table-scroll-wrapper');
       
-      // Use replaceWith to wrap the table correctly
       table.replaceWith(wrapper);
       wrapper.append(table);
       
-      // Basic styling for table inside the scrollable wrapper
       table.attributes['style'] = 'border-collapse: collapse; min-width: 100%;';
       table.querySelectorAll('th, td').forEach((cell) {
         cell.attributes['style'] = 'border: 1px solid #ddd; padding: 8px; text-align: left;';
-      });
-      table.querySelectorAll('th').forEach((th) {
-        th.attributes['style'] = (th.attributes['style'] ?? '') + ' background-color: #f5f5f5; font-weight: bold;';
       });
     });
 
@@ -60,60 +55,45 @@ class HtmlProcessor {
 
     String? imageUrl;
     
-    // 1. Find first image that is not an icon for the Hero image
+    // 1. Find Hero image using centralized WikiUtils logic
     final images = document.querySelectorAll('img');
     dom.Element? heroImageElement;
     for (var img in images) {
        final src = img.attributes['src'] ?? '';
-       final isIcon = _isIcon(src);
-       
-       if (!isIcon) {
-          imageUrl = src;
-          if (!imageUrl.startsWith('http')) imageUrl = 'https:$imageUrl';
-          if (imageUrl.contains('/thumb/')) {
-            final regExp = RegExp(r'\/(\d+)px-');
-            if (regExp.hasMatch(imageUrl)) imageUrl = imageUrl.replaceFirst(regExp, '/800px-');
-          }
+       if (!WikiUtils.isIcon(src)) {
+          imageUrl = WikiUtils.optimizeImageUrl(src, langCode: languageCode, projectStr: projectStr, width: 800);
           heroImageElement = img;
           break;
        }
     }
 
-    // Mark ONLY the first image (Hero image) in the body so ArticleScreen can hide it
     if (heroImageElement != null) {
        _markImageContainerForHiding(heroImageElement);
     }
 
-    // 2. Process all other images: add high-res
+    // 2. Process all other images using centralized WikiUtils logic
     document.querySelectorAll('img').forEach((img) {
        var src = img.attributes['src'] ?? '';
        if (src.isNotEmpty) {
-          if (!src.startsWith('http')) src = 'https:$src';
-          if (src.contains('/thumb/')) {
-             final regExp = RegExp(r'\/(\d+)px-');
-             if (regExp.hasMatch(src)) src = src.replaceFirst(regExp, '/600px-');
-          }
-          img.attributes['src'] = src;
+          img.attributes['src'] = WikiUtils.optimizeImageUrl(src, langCode: languageCode, projectStr: projectStr, width: 600);
        }
     });
 
-    // Apply removals
+    // Apply removals/hides
     for (var s in removeSelectors) {
       document.querySelectorAll(s).forEach((el) => el.remove());
     }
-    // Apply hides
     for (var s in hideSelectors) {
       document.querySelectorAll(s).forEach((el) => el.attributes['style'] = 'display: none;');
     }
 
-    // HIDE references sections instead of stripping them
+    // Process reference sections
     if (refKeywords.isNotEmpty) {
       final headings = document.querySelectorAll('h2, h3, h4');
       for (var h in headings) {
         final text = h.text.toLowerCase();
         if (refKeywords.any((kw) => text.contains(kw.toLowerCase()))) {
           h.attributes['style'] = 'display: none;';
-          
           var next = h.nextElementSibling;
           while (next != null && !['h2', 'h3', 'h4'].contains(next.localName)) {
              next.attributes['style'] = 'display: none;';
@@ -140,28 +120,11 @@ class HtmlProcessor {
     return list;
   }
 
-  static bool _isIcon(String src) {
-    return src.contains('/static/images/mobile/copyright/') || 
-           src.contains('/static/images/footer/') ||
-           src.contains('.svg') ||
-           src.contains('px-Gnome-') || 
-           src.contains('px-Icon-') ||
-           src.contains('px-Symbol_') ||
-           src.contains('px-Help-') ||
-           src.contains('px-Information_') ||
-           src.contains('px-Ambox_') ||
-           src.contains('px-Question_mark') ||
-           src.contains('px-Edit-clear') ||
-           src.contains('px-Magnifying_glass');
-  }
-
   static void _markImageContainerForHiding(dom.Element img) {
     dom.Element? containerToHide = img;
     var parent = img.parent;
     while (parent != null && parent.localName != 'body') {
-      if (parent.localName == 'figure' || 
-          parent.classes.contains('thumb') || 
-          parent.classes.contains('infobox-image')) {
+      if (parent.localName == 'figure' || parent.classes.contains('thumb') || parent.classes.contains('infobox-image')) {
         containerToHide = parent;
         break;
       }

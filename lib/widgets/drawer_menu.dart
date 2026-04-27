@@ -11,6 +11,7 @@ import '../providers/app_state.dart';
 import '../providers/font_size_provider.dart';
 import '../providers/theme_provider.dart';
 import '../screens/about_screen.dart';
+import '../screens/bookmarks_screen.dart';
 
 class DrawerMenu extends ConsumerWidget {
   const DrawerMenu({super.key});
@@ -77,13 +78,12 @@ class DrawerMenu extends ConsumerWidget {
                 ),
                 title: Text('bookmarks').tr(),
                 onTap: () {
-                  Navigator.pop(context);
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (_) => const BookmarksScreen(),
-                  //   ),
-                  // );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const BookmarksScreen(),
+                    ),
+                  );
                 },
               ),
             ],
@@ -102,24 +102,26 @@ class DrawerMenu extends ConsumerWidget {
                   underline: const SizedBox(),
                   icon: const Icon(Icons.arrow_drop_down),
                   onChanged: (ProjectType? newValue) {
-                    if (newValue != null) {
-                      ref.read(appStateProvider.notifier).setProject(newValue);
-                      // Navigate back to the root (HomeScreen) and close drawer
+                    if (newValue != null && newValue.isSupported(currentLanguage)) {
+                      ref.read(appStateProvider.notifier).setProject(newValue, currentLanguage);
                       Navigator.of(context).popUntil((route) => route.isFirst);
                     }
                   },
                   items: ProjectType.values.map((project) {
+                    final isSupported = project.isSupported(currentLanguage);
                     return DropdownMenuItem<ProjectType>(
                       value: project,
+                      enabled: isSupported,
                       child: Text(
                         project.name.toLowerCase().tr(),
                         style: TextStyle(
-                          color: project == currentProject
-                              ? project.primaryColor
-                              : null,
+                          color: !isSupported 
+                              ? Colors.grey.withValues(alpha: 0.5)
+                              : (project == currentProject ? project.primaryColor : null),
                           fontWeight: project == currentProject
                               ? FontWeight.bold
                               : FontWeight.normal,
+                          decoration: !isSupported ? TextDecoration.lineThrough : null,
                         ),
                       ),
                     );
@@ -140,13 +142,8 @@ class DrawerMenu extends ConsumerWidget {
                   underline: const SizedBox(),
                   onChanged: (String? newValue) {
                     if (newValue != null) {
-                      // Update Riverpod state (persists via SharedPreferences)
                       ref.read(languageProvider.notifier).setLanguage(newValue);
-
-                      // Update EasyLocalization locale
                       context.setLocale(Locale(newValue));
-
-                      // Navigate back to the root (HomeScreen) and close drawer
                       Navigator.of(context).popUntil((route) => route.isFirst);
                     }
                   },

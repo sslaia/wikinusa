@@ -4,6 +4,7 @@ import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart' as dom;
 import '../models/home_page_section.dart';
 import '../models/project_type.dart';
+import '../utils/wiki_utils.dart';
 
 class HomePageBuilder {
   static Future<List<HomePageSection>> build(
@@ -40,13 +41,12 @@ class HomePageBuilder {
         String selector;
         dynamic keepSelector;
         bool firstOnly = false;
-        bool stripStyle = true; // Always strip style for consistency
+        bool stripStyle = true; 
 
         if (config is Map) {
           selector = config['selector'] ?? '';
           keepSelector = config['keep'];
           firstOnly = config['firstOnly'] ?? false;
-          // stripStyle = config['stripStyle'] ?? true; // Default to true
         } else {
           selector = config.toString();
         }
@@ -73,22 +73,45 @@ class HomePageBuilder {
           ));
         }
       }
-    } else {
-      // Fallback logic
-      final mwContentText = document.querySelector('#mw-content-text');
-      if (mwContentText != null) {
-        final fallbackSections = mwContentText.querySelectorAll('section');
-        for (var section in fallbackSections) {
-          if (section.querySelector('#mwAQ') != null) {
-            sections.add(_extractSection(
-              section, 
-              'mainContent',
-              languageCode: languageCode,
-              projectStr: projectStr,
-              stripStyle: true,
-            ));
-            break;
-          }
+    } 
+
+    // Enhanced Fallback Logic for Wiktionary and pages with different structures
+    if (sections.isEmpty) {
+      final containers = [
+        '#mw-content-text', 
+        '.mw-parser-output', 
+        '#bodyContent',
+        '.mf-index'
+      ];
+      
+      dom.Element? mainContent;
+      for (var selector in containers) {
+        mainContent = document.querySelector(selector);
+        if (mainContent != null) break;
+      }
+
+      if (mainContent != null) {
+        final fallbackSections = mainContent.querySelectorAll('section, .mf-section-0');
+        if (fallbackSections.isNotEmpty) {
+           for (var section in fallbackSections) {
+             if (section.text.trim().length > 50) {
+               sections.add(_extractSection(
+                 section, 
+                 'mainContent',
+                 languageCode: languageCode,
+                 projectStr: projectStr,
+                 stripStyle: true,
+               ));
+             }
+           }
+        } else {
+          sections.add(_extractSection(
+            mainContent, 
+            'mainContent',
+            languageCode: languageCode,
+            projectStr: projectStr,
+            stripStyle: true,
+          ));
         }
       }
     }
@@ -115,25 +138,6 @@ class HomePageBuilder {
     return list;
   }
 
-  static String _optimizeImageUrl(String url, String languageCode, String projectStr) {
-    String normalized = url;
-    if (url.startsWith('//')) {
-      normalized = 'https:$url';
-    } else if (url.startsWith('/')) {
-      normalized = 'https://$languageCode.$projectStr.org$url';
-    }
-
-    // Optimize Wikipedia thumbnails for mobile by construction a 500px version.
-    // This ensures we download a resolution appropriate for mobile and reuse it across widgets (cache).
-    if (normalized.contains('/thumb/')) {
-      final regExp = RegExp(r'\/(\d+)px-');
-      if (regExp.hasMatch(normalized)) {
-        return normalized.replaceFirst(regExp, '/500px-');
-      }
-    }
-    return normalized;
-  }
-
   static HomePageSection _extractSection(
     dom.Element element,
     String titleKey, {
@@ -145,34 +149,39 @@ class HomePageBuilder {
     bool firstOnly = false,
     bool stripStyle = false,
   }) {
-    // 1. Extract image first (before removals)
-    final imgElement = element.querySelector('img');
+    // 1. Find the first valid image that is NOT an icon
+    final allImages = element.querySelectorAll('img');
+    dom.Element? validImg;
+    
+    for (var img in allImages) {
+      final src = img.attributes['src'] ?? '';
+      if (!WikiUtils.isIcon(src)) {
+        validImg = img;
+        break;
+      }
+    }
+
     String? imageHtml;
     String? imageUrl;
 
-    if (imgElement != null) {
-      final imgClone = imgElement.clone(true);
-      
-      // We force a 500px version for both hero and section display to optimize loading and memory.
-      // We take the original 'src' as the base and transform it into a 500px thumbnail.
+    if (validImg != null) {
+      final imgClone = validImg.clone(true);
       String? src = imgClone.attributes['src'];
       if (src != null) {
-        imageUrl = _optimizeImageUrl(src, languageCode, projectStr);
+        imageUrl = WikiUtils.optimizeImageUrl(src, langCode: languageCode, projectStr: projectStr, width: 600);
         imgClone.attributes['src'] = imageUrl;
       }
       
-      // Remove srcset to ensure consistent behavior across widgets and avoid downloading extra resolutions.
       imgClone.attributes.remove('srcset');
-
       imgClone.attributes.remove('width');
       imgClone.attributes.remove('height');
-      imgClone.attributes['style'] = 'width: 100%; height: auto; display: block;';
+      imgClone.attributes['style'] = 'width: 100%; height: auto; display: block; border-radius: 12px;';
       
       imageHtml = imgClone.outerHtml;
-      imgElement.remove();
+      validImg.remove();
     }
 
-    // 2. Apply removals to remaining content
+    // 2. Apply removals
     for (var s in removeSelectors) {
       if (s == 'img' || s == 'figure') continue;
       element.querySelectorAll(s).forEach((el) => el.remove());
@@ -182,7 +191,7 @@ class HomePageBuilder {
       element.querySelectorAll(s).forEach((el) => el.remove());
     }
 
-    // 3. Filter content if keepSelector is provided
+    // 3. Filter content
     String textHtml;
     if (keepSelector != null) {
       final List<String> selectors = keepSelector is List
