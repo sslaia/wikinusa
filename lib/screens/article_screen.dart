@@ -75,6 +75,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                         theme: Theme.of(context),
                         title: widget.title,
                         imageUrl: imageUrl ?? '',
+                        project: currentProject,
                       ),
                       Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -102,7 +103,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                                
                                final img = element.localName == 'img' ? element : element.querySelector('img');
                                
-                               // If it's an inline icon, don't build a full-width block, let it render naturally
+                               // If it's marked as an inline icon, don't build a full-width block
                                if (img != null && img.classes.contains('wiki-inline-icon')) {
                                  return null;
                                }

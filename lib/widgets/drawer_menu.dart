@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wikinusa/screens/create_entry_screen.dart';
 import 'package:wikinusa/screens/create_page_screen.dart';
 import '../data/about_app.dart';
 import '../data/about_community.dart';
@@ -30,308 +31,390 @@ class DrawerMenu extends ConsumerWidget {
             MediaQuery.of(context).platformBrightness == Brightness.dark);
 
     return Drawer(
-      backgroundColor: theme.colorScheme.surface,
-      child: ListView(
-        padding: EdgeInsets.zero,
+      backgroundColor: theme.colorScheme.surfaceContainerLow,
+      child: Column(
         children: [
-          DrawerHeader(
-            decoration: BoxDecoration(
-              color: currentProject.primaryColor,
-              image: const DecorationImage(
-                image: AssetImage(
-                  'assets/images/woman_reading_a_book_on_lap.webp',
-                ),
-                fit: BoxFit.cover,
-              ),
-            ),
-            child: Text(
-              'WikiNusa',
-              style: GoogleFonts.cinzelDecorative(
-                textStyle: theme.textTheme.titleLarge?.copyWith(
-                  color: theme.colorScheme.onPrimary,
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  shadows: const [Shadow(blurRadius: 10, color: Colors.black)],
-                ),
-              ),
-            ),
-          ),
-          ExpansionTile(
-            initiallyExpanded: true,
-            title: _buildSectionHeader(theme, 'drawer_quick_shortcuts'),
-            children: [
-              ListTile(
-                leading: const Icon(Icons.edit_note_outlined),
-                title: Text('create_new_page').tr(),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => CreatePageScreen()),
-                  );
-                },
-              ),
-              ListTile(
-                leading: Icon(
-                  Icons.bookmark,
-                  color: theme.colorScheme.onSurface,
-                ),
-                title: Text('bookmarks').tr(),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const BookmarksScreen(),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-          ExpansionTile(
-            title: _buildSectionHeader(theme, 'drawer_project'),
-            children: [
-              ListTile(
-                leading: Icon(
-                  Icons.book_outlined,
-                  color: currentProject.primaryColor,
-                ),
-                title: DropdownButton<ProjectType>(
-                  value: currentProject,
-                  isExpanded: true,
-                  underline: const SizedBox(),
-                  icon: const Icon(Icons.arrow_drop_down),
-                  onChanged: (ProjectType? newValue) {
-                    if (newValue != null && newValue.isSupported(currentLanguage)) {
-                      ref.read(appStateProvider.notifier).setProject(newValue, currentLanguage);
-                      Navigator.of(context).popUntil((route) => route.isFirst);
-                    }
-                  },
-                  items: ProjectType.values.map((project) {
-                    final isSupported = project.isSupported(currentLanguage);
-                    return DropdownMenuItem<ProjectType>(
-                      value: project,
-                      enabled: isSupported,
-                      child: Text(
-                        project.name.toLowerCase().tr(),
-                        style: TextStyle(
-                          color: !isSupported 
-                              ? Colors.grey.withValues(alpha: 0.5)
-                              : (project == currentProject ? project.primaryColor : null),
-                          fontWeight: project == currentProject
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                          decoration: !isSupported ? TextDecoration.lineThrough : null,
-                        ),
+          _buildHeader(context, theme, currentProject),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              children: [
+                _buildSectionLabel(theme, 'drawer_quick_shortcuts'),
+                _buildDrawerItem(
+                  theme,
+                  icon: Icons.edit_note_rounded,
+                  title: 'create_new_page'.tr(),
+                  onTap: () {
+                    final isNiaWiktionary = currentLanguage == 'nia' && currentProject == ProjectType.wiktionary;
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => isNiaWiktionary ? const CreateEntryScreen() : const CreatePageScreen(),
                       ),
                     );
-                  }).toList(),
-                ),
-              ),
-            ],
-          ),
-
-          ExpansionTile(
-            title: _buildSectionHeader(theme, 'drawer_language'),
-            children: [
-              ListTile(
-                leading: const Icon(Icons.language),
-                title: DropdownButton<String>(
-                  value: currentLanguage,
-                  isExpanded: true,
-                  underline: const SizedBox(),
-                  onChanged: (String? newValue) {
-                    if (newValue != null) {
-                      ref.read(languageProvider.notifier).setLanguage(newValue);
-                      context.setLocale(Locale(newValue));
-                      Navigator.of(context).popUntil((route) => route.isFirst);
-                    }
                   },
-                  items: [
-                    DropdownMenuItem(value: 'en', child: Text('english').tr()),
-                    DropdownMenuItem(
-                      value: 'id',
-                      child: Text('indonesian').tr(),
-                    ),
-                    DropdownMenuItem(value: 'nia', child: Text('nias').tr()),
-                  ],
                 ),
-              ),
-            ],
-          ),
-          ExpansionTile(
-            title: _buildSectionHeader(theme, 'drawer_appearance'),
-            children: [
-              SwitchListTile(
-                secondary: Icon(
-                  isDark ? Icons.dark_mode : Icons.light_mode,
-                  color: theme.colorScheme.onSurface,
+                _buildDrawerItem(
+                  theme,
+                  icon: Icons.bookmark_rounded,
+                  title: 'bookmarks'.tr(),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const BookmarksScreen(),
+                      ),
+                    );
+                  },
                 ),
-                title: isDark
-                    ? Text('dark_mode').tr()
-                    : Text('light_mode').tr(),
-                value: isDark,
-                onChanged: (val) {
-                  ref
-                      .read(themeModeProvider.notifier)
-                      .setThemeMode(val ? ThemeMode.dark : ThemeMode.light);
-                },
-              ),
-            ],
-          ),
-          ExpansionTile(
-            title: _buildSectionHeader(theme, 'drawer_font_size'),
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
+                const SizedBox(height: 16),
+                _buildSectionLabel(theme, 'drawer_project'),
+                _buildProjectSelector(context, ref, theme, currentProject, currentLanguage),
+                const SizedBox(height: 16),
+                _buildSectionLabel(theme, 'drawer_language'),
+                _buildLanguageSelector(context, ref, theme, currentLanguage),
+                const SizedBox(height: 16),
+                _buildSectionLabel(theme, 'drawer_appearance'),
+                _buildAppearanceToggle(ref, theme, isDark),
+                const SizedBox(height: 16),
+                _buildSectionLabel(theme, 'drawer_font_size'),
+                _buildFontSizeSelector(ref, theme, currentFontSize),
+                const SizedBox(height: 16),
+                _buildSectionLabel(theme, 'drawer_about'),
+                _buildDrawerItem(
+                  theme,
+                  icon: Icons.groups_2_rounded,
+                  title: 'about_community'.tr(),
+                  onTap: () => _navigateToAbout(context, 'about_community', aboutCommunity),
                 ),
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerLow,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      _buildSegmentButton(
-                        ref,
-                        theme,
-                        AppFontSize.small,
-                        currentFontSize,
-                      ),
-                      _buildSegmentButton(
-                        ref,
-                        theme,
-                        AppFontSize.normal,
-                        currentFontSize,
-                      ),
-                      _buildSegmentButton(
-                        ref,
-                        theme,
-                        AppFontSize.large,
-                        currentFontSize,
-                      ),
-                      _buildSegmentButton(
-                        ref,
-                        theme,
-                        AppFontSize.extraLarge,
-                        currentFontSize,
-                      ),
-                    ],
-                  ),
+                _buildDrawerItem(
+                  theme,
+                  icon: Icons.newspaper_rounded,
+                  title: 'about_whats_new'.tr(),
+                  onTap: () => _navigateToAbout(context, 'about_whats_new', whatsNew),
                 ),
-              ),
-            ],
-          ),
-          ExpansionTile(
-            title: _buildSectionHeader(theme, 'drawer_about'),
-            children: [
-              ListTile(
-                leading: const Icon(Icons.groups_2_outlined),
-                title: Text('about_community').tr(),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => AboutScreen(
-                        title: 'about_community',
-                        body: aboutCommunity,
-                      ),
-                    ),
-                  );
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.newspaper_outlined),
-                title: Text('about_whats_new').tr(),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) =>
-                          AboutScreen(title: 'about_whats_new', body: whatsNew),
-                    ),
-                  );
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.smartphone_outlined),
-                title: Text('about_app').tr(),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) =>
-                          AboutScreen(title: 'about_app', body: aboutApp),
-                    ),
-                  );
-                },
-              ),
-            ],
+                _buildDrawerItem(
+                  theme,
+                  icon: Icons.info_rounded,
+                  title: 'about_app'.tr(),
+                  onTap: () => _navigateToAbout(context, 'about_app', aboutApp),
+                ),
+                const SizedBox(height: 32),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSectionHeader(ThemeData theme, String title) {
+  Widget _buildHeader(BuildContext context, ThemeData theme, ProjectType currentProject) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.only(top: 60, bottom: 24, left: 24, right: 24),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: const BorderRadius.only(bottomRight: Radius.circular(32)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 64,
+            width: 64,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              image: const DecorationImage(
+                image: AssetImage('assets/images/woman_reading_a_book_on_lap.webp'),
+                fit: BoxFit.cover,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: currentProject.primaryColor.withValues(alpha: 0.2),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'WikiNusa',
+            style: GoogleFonts.cinzelDecorative(
+              textStyle: theme.textTheme.headlineMedium?.copyWith(
+                color: theme.colorScheme.primary,
+                fontWeight: FontWeight.bold,
+                fontSize: 28,
+              ),
+            ),
+          ),
+          Text(
+            'motto'.tr(),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionLabel(ThemeData theme, String labelKey) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 16, 16, 8),
-      child: Text(
-        title.tr(),
-        style: theme.textTheme.labelSmall?.copyWith(
-          color: theme.colorScheme.primary,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 1.2,
+      padding: const EdgeInsets.only(left: 8, bottom: 8, top: 8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.primary.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Text(
+          labelKey.tr().toUpperCase(),
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: theme.colorScheme.primary.withValues(alpha: 0.7),
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.2,
+            fontSize: 10,
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildSegmentButton(
-    WidgetRef ref,
-    ThemeData theme,
-    AppFontSize targetSize,
-    AppFontSize currentSize,
-  ) {
-    final isSelected = targetSize == currentSize;
-    return Expanded(
-      child: InkWell(
-        onTap: () {
-          ref.read(fontSizeProvider.notifier).setFontSize(targetSize);
-        },
-        borderRadius: BorderRadius.circular(6),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          decoration: isSelected
-              ? BoxDecoration(
-                  color: theme.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(6),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                )
-              : null,
-          alignment: Alignment.center,
-          child: Text(
-            targetSize.label[0].toUpperCase(),
-            style: theme.textTheme.labelSmall?.copyWith(
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-              color: isSelected
-                  ? theme.colorScheme.primary
-                  : theme.colorScheme.onSurfaceVariant,
+  Widget _buildDrawerItem(ThemeData theme, {required IconData icon, required String title, required VoidCallback onTap}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.02),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: ListTile(
+          leading: Icon(icon, color: theme.colorScheme.onSurface.withValues(alpha: 0.7), size: 22),
+          title: Text(
+            title,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: theme.colorScheme.onSurface,
             ),
           ),
+          onTap: onTap,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
+      ),
+    );
+  }
+
+  Widget _buildProjectSelector(BuildContext context, WidgetRef ref, ThemeData theme, ProjectType currentProject, String currentLanguage) {
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: DropdownButton<ProjectType>(
+        value: currentProject,
+        isExpanded: true,
+        underline: const SizedBox(),
+        icon: Icon(Icons.keyboard_arrow_down_rounded, color: theme.colorScheme.primary),
+        onChanged: (ProjectType? newValue) {
+          if (newValue != null && newValue.isSupported(currentLanguage)) {
+            ref.read(appStateProvider.notifier).setProject(newValue, currentLanguage);
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          }
+        },
+        items: ProjectType.values.map((project) {
+          final isSupported = project.isSupported(currentLanguage);
+          return DropdownMenuItem<ProjectType>(
+            value: project,
+            enabled: isSupported,
+            child: Row(
+              children: [
+                Icon(
+                  Icons.circle, 
+                  size: 8, 
+                  color: isSupported ? project.primaryColor : Colors.grey.withValues(alpha: 0.3)
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  project.name.toLowerCase().tr(),
+                  style: TextStyle(
+                    color: !isSupported 
+                        ? Colors.grey.withValues(alpha: 0.5)
+                        : (project == currentProject ? project.primaryColor : theme.colorScheme.onSurface),
+                    fontWeight: project == currentProject ? FontWeight.bold : FontWeight.normal,
+                    decoration: !isSupported ? TextDecoration.lineThrough : null,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildLanguageSelector(BuildContext context, WidgetRef ref, ThemeData theme, String currentLanguage) {
+    final languages = [
+      {'code': 'en', 'name': 'english'},
+      {'code': 'id', 'name': 'indonesian'},
+      {'code': 'nia', 'name': 'nias'},
+    ];
+
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: DropdownButton<String>(
+        value: currentLanguage,
+        isExpanded: true,
+        underline: const SizedBox(),
+        icon: Icon(Icons.keyboard_arrow_down_rounded, color: theme.colorScheme.primary, size: 20),
+        onChanged: (String? newValue) {
+          if (newValue != null) {
+            ref.read(languageProvider.notifier).setLanguage(newValue);
+            context.setLocale(Locale(newValue));
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          }
+        },
+        items: languages.map((lang) {
+          return DropdownMenuItem(
+            value: lang['code'],
+            child: Text(
+              lang['name']!.tr(),
+              style: TextStyle(
+                color: theme.colorScheme.onSurface,
+                fontWeight: currentLanguage == lang['code'] ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildAppearanceToggle(WidgetRef ref, ThemeData theme, bool isDark) {
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: SwitchListTile(
+        secondary: Icon(
+          isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
+          color: theme.colorScheme.primary,
+          size: 20,
+        ),
+        title: Text(
+          isDark ? 'dark_mode'.tr() : 'light_mode'.tr(),
+          style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+        ),
+        value: isDark,
+        onChanged: (val) {
+          ref.read(themeModeProvider.notifier).setThemeMode(val ? ThemeMode.dark : ThemeMode.light);
+        },
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+    );
+  }
+
+  Widget _buildFontSizeSelector(WidgetRef ref, ThemeData theme, AppFontSize currentFontSize) {
+    return Container(
+      padding: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: AppFontSize.values.map((size) {
+          final isSelected = size == currentFontSize;
+          return Expanded(
+            child: InkWell(
+              onTap: () => ref.read(fontSizeProvider.notifier).setFontSize(size),
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                decoration: isSelected
+                    ? BoxDecoration(
+                        color: theme.colorScheme.primary,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      )
+                    : null,
+                alignment: Alignment.center,
+                child: Text(
+                  size.label[0].toUpperCase(),
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: isSelected ? Colors.white : theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  void _navigateToAbout(BuildContext context, String titleKey, String body) {
+    Navigator.pop(context);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AboutScreen(title: titleKey, body: body),
       ),
     );
   }

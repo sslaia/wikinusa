@@ -290,7 +290,7 @@
       ],
       "hide": [
         ".mw-editsection",
-        "umbu"
+        "#Umbu"
       ],
       "referenceKeywords": [
         "famotokhi ba gahe",
@@ -313,7 +313,6 @@
       "hide": [
       ],
       "referenceKeywords": [
-        "umbu"
       ],
       "homePageSections": {
         "featuredWord": "mp-featured-word-body",
@@ -328,9 +327,7 @@
         ".nomobile"
       ],
       "referenceKeywords": [
-        "umbu",
-        "reflist",
-        "reference"
+        "umbu"
       ],
       "homePageSections": {
         "featuredStory": "mp-featured-article-body",

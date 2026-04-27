@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import '../models/project_type.dart';
 
 class ArticleHeroImage extends StatelessWidget {
   const ArticleHeroImage({
@@ -7,11 +7,13 @@ class ArticleHeroImage extends StatelessWidget {
     required this.theme,
     required this.title,
     required this.imageUrl,
+    required this.project,
   });
 
   final ThemeData theme;
   final String title;
   final String imageUrl;
+  final ProjectType project;
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +26,7 @@ class ArticleHeroImage extends StatelessWidget {
             image: DecorationImage(
               image: imageUrl.isNotEmpty
                   ? NetworkImage(imageUrl)
-                  : const AssetImage(
-                          'assets/images/woman_reading_a_book_on_lap.webp',
-                        )
-                        as ImageProvider,
+                  : AssetImage(project.articleHeroImagePath) as ImageProvider,
               fit: BoxFit.cover,
             ),
           ),
@@ -58,7 +57,7 @@ class ArticleHeroImage extends StatelessWidget {
               Text(
                 title,
                 style: theme.textTheme.titleLarge?.copyWith(
-                  fontFeatures:[FontFeature.enable('smcp')],
+                  fontFeatures: const [FontFeature.enable('smcp')],
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                   color: theme.colorScheme.primary,

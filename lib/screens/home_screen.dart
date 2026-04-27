@@ -64,15 +64,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.surface,
                       ),
-                      child: Image.network(
-                        featuredImageUrl ??
-                            'https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Reading_-_Hugues_Merle.jpg/960px-Reading_-_Hugues_Merle.jpg',
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Image.asset(
-                          currentProject.homeHeroImagePath,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                      child: featuredImageUrl != null && featuredImageUrl.isNotEmpty
+                          ? Image.network(
+                              featuredImageUrl,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) => Image.asset(
+                                currentProject.homeHeroImagePath,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          : Image.asset(
+                              currentProject.homeHeroImagePath,
+                              fit: BoxFit.cover,
+                            ),
                     ),
                     Container(
                       height: 300,
@@ -262,28 +266,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     ),
                                   ),
                                 Padding(
-                                  padding: const EdgeInsets.all(16),
+                                  padding: const EdgeInsets.all(16.0),
                                   child: HtmlWidget(
-                                    '<div style="text-align: justify;">$sectionBody</div>',
+                                    sectionBody,
                                     onTapUrl: (url) => WikiUtils.handleTapUrl(
                                       context,
                                       url,
                                       null,
                                     ),
-                                    textStyle: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(
-                                          fontFamily: GoogleFonts.notoSerif()
-                                              .fontFamily,
-                                          height: 1.8,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSurface
-                                              .withValues(alpha: 0.85),
-                                        ),
-                                    customStylesBuilder: (element) =>
-                                        WikiUtils.customStyles(context, element),
+                                    textStyle: GoogleFonts.notoSerif(
+                                      textStyle: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            height: 1.6,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface
+                                                .withValues(alpha: 0.8),
+                                          ),
+                                    ),
                                   ),
                                 ),
                               ],
@@ -295,38 +297,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 );
               }
-              return SliverPadding(
-                padding: const EdgeInsets.all(16.0),
-                sliver: SliverToBoxAdapter(
-                  child: HtmlWidget(
-                    content as String,
-                    onTapUrl: (url) => WikiUtils.handleTapUrl(
-                      context,
-                      url,
-                      content,
-                    ),
-                    customStylesBuilder: (element) =>
-                        WikiUtils.customStyles(context, element),
-                  ),
-                ),
-              );
+              return const SliverToBoxAdapter(child: SizedBox.shrink());
             },
-            loading: () => const SliverFillRemaining(
-              child: SizedBox.shrink(),
-            ),
-            error: (error, stack) => SliverFillRemaining(
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    '${'error_loading_content'.tr()}: $error',
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-            ),
+            loading: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
+            error: (err, stack) => const SliverToBoxAdapter(child: SizedBox.shrink()),
           ),
           const SliverToBoxAdapter(child: WikiFooter()),
+          const SliverToBoxAdapter(child: SizedBox(height: 80)),
         ],
       ),
       bottomNavigationBar: CustomBottomAppBar(

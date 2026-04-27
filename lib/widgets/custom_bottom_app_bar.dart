@@ -8,6 +8,7 @@ import 'package:wikinusa/providers/wiki_api_provider.dart';
 import 'package:wikinusa/screens/article_screen.dart';
 import 'package:wikinusa/services/wiki_api_service.dart';
 
+import '../screens/create_entry_screen.dart';
 import '../screens/create_page_screen.dart';
 import 'shortcuts_bottom_sheet.dart';
 
@@ -65,6 +66,7 @@ class _CustomBottomAppBarState extends ConsumerState<CustomBottomAppBar> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final langCode = context.locale.languageCode;
 
     return BottomAppBar(
       color: colorScheme.primary,
@@ -101,10 +103,11 @@ class _CustomBottomAppBarState extends ConsumerState<CustomBottomAppBar> {
               IconButton(
                 icon: const Icon(Icons.edit_note_outlined),
                 onPressed: () {
+                  final isNiaWiktionary = langCode == 'nia' && widget.currentProject == ProjectType.wiktionary;
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => const CreatePageScreen(),
+                      builder: (_) => isNiaWiktionary ? const CreateEntryScreen() : const CreatePageScreen(),
                     ),
                   );
                 },
@@ -126,7 +129,7 @@ class _CustomBottomAppBarState extends ConsumerState<CustomBottomAppBar> {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('refreshing').tr(),
+                      content: Text('refreshing_content').tr(),
                       duration: const Duration(seconds: 1),
                     ),
                   );
