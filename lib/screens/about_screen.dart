@@ -5,8 +5,6 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wikinusa/widgets/wiki_footer.dart';
-import '../providers/app_state.dart';
-import '../models/project_type.dart';
 
 class AboutScreen extends ConsumerWidget {
   final String title;
@@ -14,22 +12,9 @@ class AboutScreen extends ConsumerWidget {
 
   const AboutScreen({super.key, required this.title, required this.body});
 
-  static const List<String> galleryImages = [
-    'assets/images/greeting.webp',
-    'assets/images/language.webp',
-    'assets/images/bookmark.webp',
-    'assets/images/share-edit.webp',
-    'assets/images/search.webp',
-    'assets/images/shortcuts.webp',
-    'assets/images/reference.webp',
-    'assets/images/setting.webp',
-    'assets/images/woman_reading_a_book_on_lap.webp',
-  ];
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final currentProject = ref.watch(appStateProvider);
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surfaceContainerLow,
