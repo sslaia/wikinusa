@@ -46,6 +46,12 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     final langCode = context.locale.languageCode;
     final theme = Theme.of(context);
     
+    // Fallback fonts for Javanese and other scripts
+    final List<String> fontFallbacks = [
+      GoogleFonts.notoSansJavanese().fontFamily!,
+      'Roboto',
+    ];
+
     // TEMP: Nias Wikibooks is currently in the Incubator
     String pageUrl;
     if (langCode == 'nia' && currentProject == ProjectType.wikibooks) {
@@ -93,7 +99,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                             fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
                             height: 1.8,
                             color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.9),
-                          ),
+                          ).copyWith(fontFamilyFallback: fontFallbacks),
                           onTapUrl: (url) => WikiUtils.handleTapUrl(context, url, htmlContent),
                           customStylesBuilder: (element) => WikiUtils.customStyles(context, element),
                           customWidgetBuilder: (element) {

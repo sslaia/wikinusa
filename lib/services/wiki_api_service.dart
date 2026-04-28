@@ -149,7 +149,9 @@ class WikiApiService {
     try {
       final response = await http.get(url).timeout(const Duration(seconds: 10));
       if (response.statusCode != 200) throw Exception('Failed to search Wiki');
-      final data = json.decode(response.body);
+      
+      // Fixed: Use utf8.decode for correct character encoding
+      final data = json.decode(utf8.decode(response.bodyBytes));
       
       final List<Map<String, dynamic>> results = List<Map<String, dynamic>>.from(data['query']['search']);
       
@@ -182,7 +184,7 @@ class WikiApiService {
         );
         final response = await http.get(url).timeout(const Duration(seconds: 10));
         if (response.statusCode == 200) {
-          final data = json.decode(response.body);
+          final data = json.decode(utf8.decode(response.bodyBytes));
           final searchResults = data['query']?['search'] as List?;
           if (searchResults != null && searchResults.isNotEmpty) {
             final randomIndex = (DateTime.now().millisecondsSinceEpoch % searchResults.length);
@@ -204,7 +206,7 @@ class WikiApiService {
     try {
       final response = await http.get(url).timeout(const Duration(seconds: 10));
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final data = json.decode(utf8.decode(response.bodyBytes));
         final randomList = data['query']?['random'] as List?;
         if (randomList != null && randomList.isNotEmpty) {
           return randomList[0]['title'] as String;
