@@ -32,7 +32,7 @@ extension ProjectTypeExtension on ProjectType {
   String get homeHeroImagePath {
     switch (this) {
       case ProjectType.wikipedia:
-        return 'assets/images/woman_reading_a_book_on_lap.webp';
+        return 'assets/images/blessing-plate.webp';
       case ProjectType.wiktionary:
         return 'assets/images/tolögu.webp';
       case ProjectType.wikibooks:
@@ -43,7 +43,7 @@ extension ProjectTypeExtension on ProjectType {
   String get articleHeroImagePath {
     switch (this) {
       case ProjectType.wikipedia:
-        return "assets/images/woman_reading_a_book_on_lap.webp";
+        return "assets/images/blessing-plate.webp";
       case ProjectType.wiktionary:
         return 'assets/images/tolögu.webp';
       case ProjectType.wikibooks:

@@ -144,7 +144,7 @@ class DrawerMenu extends ConsumerWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               image: const DecorationImage(
-                image: AssetImage('assets/images/woman_reading_a_book_on_lap.webp'),
+                image: AssetImage('assets/images/blessing-plate.webp'),
                 fit: BoxFit.cover,
               ),
               boxShadow: [

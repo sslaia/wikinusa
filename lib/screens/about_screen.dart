@@ -40,7 +40,7 @@ class AboutScreen extends ConsumerWidget {
                 fit: StackFit.expand,
                 children: [
                   Image.asset(
-                    'assets/images/woman_reading_a_book_on_lap.webp',
+                    'assets/images/blessing-plate.webp',
                     fit: BoxFit.cover,
                   ),
                   DecoratedBox(

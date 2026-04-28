@@ -27,7 +27,7 @@ class ArticleHeroImage extends StatelessWidget {
               image: imageUrl.isNotEmpty
                   ? NetworkImage(imageUrl)
                   : AssetImage(project.articleHeroImagePath) as ImageProvider,
-              fit: BoxFit.cover,
+              fit: BoxFit.fitWidth,
             ),
           ),
         ),
