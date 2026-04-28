@@ -41,7 +41,12 @@ class WikiUtils {
     if (url.startsWith('//')) {
       normalized = 'https:$url';
     } else if (url.startsWith('/') && langCode != null && projectStr != null) {
-      normalized = 'https://$langCode.$projectStr.org$url';
+      // TEMP: Nias Wikibooks is currently in the Incubator
+      if (langCode == 'nia' && projectStr == 'wikibooks') {
+        normalized = 'https://incubator.wikimedia.org$url';
+      } else {
+        normalized = 'https://$langCode.$projectStr.org$url';
+      }
     } else if (!url.startsWith('http') && !url.startsWith('/')) {
       normalized = 'https:$url';
     }
@@ -95,6 +100,11 @@ class WikiUtils {
         decodedTitle = Uri.decodeComponent(title).replaceAll('_', ' ');
       } catch (e) {
         decodedTitle = title.replaceAll('_', ' ');
+      }
+      
+      // TEMP: Strip Nias Wikibooks prefix from taps for cleaner navigation
+      if (decodedTitle.startsWith('Wb/nia/')) {
+        decodedTitle = decodedTitle.replaceFirst('Wb/nia/', '');
       }
 
       if (decodedTitle.isNotEmpty) {

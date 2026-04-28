@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:wikinusa/utils/wiki_utils.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../models/project_type.dart';
 import '../providers/history_provider.dart';
 import '../providers/bookmarks_provider.dart';
 import '../widgets/wiki_footer.dart';
@@ -45,7 +46,14 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     final langCode = context.locale.languageCode;
     final theme = Theme.of(context);
     
-    final pageUrl = 'https://$langCode.${currentProject.name.toLowerCase()}.org/wiki/${widget.title.replaceAll(' ', '_')}';
+    // TEMP: Nias Wikibooks is currently in the Incubator
+    String pageUrl;
+    if (langCode == 'nia' && currentProject == ProjectType.wikibooks) {
+      final incubatorTitle = widget.title.startsWith('Wb/nia/') ? widget.title : 'Wb/nia/${widget.title}';
+      pageUrl = 'https://incubator.wikimedia.org/wiki/${incubatorTitle.replaceAll(' ', '_')}';
+    } else {
+      pageUrl = 'https://$langCode.${currentProject.name.toLowerCase()}.org/wiki/${widget.title.replaceAll(' ', '_')}';
+    }
 
     return PopScope(
       child: Scaffold(

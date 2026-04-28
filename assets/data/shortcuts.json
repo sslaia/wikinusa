@@ -269,7 +269,7 @@
       {
         "icon": "history",
         "title": "Safuria tebulö",
-        "url": "https://incubator.wikimedia.org/wiki/Special:PRecentChanges?hidebots=1&translations=filter&hidecategorization=1&hideWikibase=1&hideWikifunctions=1&limit=250&days=30&urlversion=2&rc-testwiki-project=b&rc-testwiki-code=nia"
+        "url": "https://incubator.wikimedia.org/wiki/Special:RecentChanges?hidebots=1&translations=filter&hidecategorization=1&hideWikibase=1&hideWikifunctions=1&limit=250&days=30&urlversion=2&rc-testwiki-project=b&rc-testwiki-code=nia"
       },
       {
         "icon": "pages_outlined",
