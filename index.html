@@ -3,64 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WikiNusa - Android App</title>
+    <title>WikiNusa - Explore Knowledge in Local Languages</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Inter:wght@400;600;800&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --wikipedia-indigo: #121298;
+            --wiktionary-orange: #FF5722;
+            --wikibooks-purple: #9B00A1;
+            --bg-light: #F8F9FA;
+            --text-main: #2C3E50;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-main);
             line-height: 1.6;
-            color: #333;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 40px 20px;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            align-items: center;
+        }
+
+        .hero {
+            width: 100%;
+            padding: 80px 0;
+            background: linear-gradient(135deg, rgba(18, 18, 152, 0.05) 0%, rgba(255, 87, 34, 0.05) 50%, rgba(155, 0, 161, 0.05) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             text-align: center;
         }
+
         .app-logo {
-            width: 120px;
-            height: 120px;
-            border-radius: 22%; /* Matches Android adaptive icon shape */
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+            width: 140px;
+            height: 140px;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            transition: transform 0.3s ease;
         }
+
+        .app-logo:hover {
+            transform: translateY(-5px);
+        }
+
         h1 {
-            margin-bottom: 10px;
-            font-size: 2.5rem;
-            color: #1a1a1a;
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 3.5rem;
+            margin: 0;
+            background: linear-gradient(to right, var(--wikipedia-indigo), var(--wiktionary-orange), var(--wikibooks-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
         }
+
+        .tagline {
+            font-family: 'Noto Serif', serif;
+            font-style: italic;
+            font-size: 1.2rem;
+            color: #666;
+            margin-top: 5px;
+            margin-bottom: 25px;
+        }
+
         .description {
-            font-size: 1.1rem;
-            color: #555;
+            max-width: 600px;
+            font-size: 1.15rem;
+            color: #444;
             margin-bottom: 40px;
+            padding: 0 20px;
         }
-        .footer-links {
-            margin-top: 50px;
+
+        .app-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .app-button {
+            padding: 14px 28px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-play {
+            background-color: var(--wikipedia-indigo);
+            color: white;
+        }
+
+        .btn-github {
+            background-color: white;
+            color: var(--text-main);
+            border: 2px solid #eee;
+        }
+
+        .app-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            width: 100%;
+            max-width: 1000px;
+            padding: 80px 20px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            text-align: center;
+            border-bottom: 5px solid transparent;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .feature-card.wiki { border-color: var(--wikipedia-indigo); }
+        .feature-card.dict { border-color: var(--wiktionary-orange); }
+        .feature-card.book { border-color: var(--wikibooks-purple); }
+
+        .feature-card h3 {
+            margin: 0 0 15px 0;
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 1.6rem;
+        }
+
+        .feature-card p {
+            font-size: 1rem;
+            color: #666;
+            margin: 0;
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 60px 20px;
+            width: 100%;
+            text-align: center;
             border-top: 1px solid #eee;
-            padding-top: 20px;
         }
+
         .footer-links a {
-            color: #007bff;
+            color: #888;
             text-decoration: none;
             margin: 0 15px;
+            font-size: 0.95rem;
             font-weight: 500;
+            transition: color 0.2s;
         }
+
         .footer-links a:hover {
-            text-decoration: underline;
+            color: var(--wikipedia-indigo);
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2.8rem; }
+            .app-logo { width: 110px; height: 110px; }
         }
     </style>
 </head>
 <body>
 
-<img src="android/app/src/main/play_store_512.png" alt="WikiNusa Logo" class="app-logo">
+<div class="hero">
+    <img src="android/app/src/main/play_store_512.png" alt="WikiNusa Logo" class="app-logo">
+    <h1>WikiNusa</h1>
+    <p class="tagline">Membebaskan Pengetahuan Di Layar Seluler</p>
+    <p class="description">
+        Bersama-sama kita membebaskan pengetahuan dalam berbagai bahasa daerah. Hari ini dan esok. Dari kita dan untuk generasi masa depan (Saat ini baru rampung Wikipedia bahasa Indonesia dan Nias, serta Wikikamus dan Wikibuku Nias. Wiki dalam bahasa daerah lain segera menyusul).
+    </p>
 
-<h1>WikiNusa</h1>
-
-<p class="description">
-    An all in one Android app for various wiki project in local languages in Indonesia.
-</p>
-
-<div class="footer-links">
-    <a href="privacy-policy.html">Privacy Policy</a>
-    <a href="disclaimer.html">Disclaimer</a>
+    <div class="app-links">
+        <a href="https://play.google.com/store/apps/details?id=io.github.sslaia.wikinusa" class="app-button btn-play" target="_blank" rel="noopener noreferrer">
+            Unduh dari Google Play
+        </a>
+        <a href="https://github.com/sslaia/wikinusa" class="app-button btn-github" target="_blank" rel="noopener noreferrer">
+            Lihat kode aplikasi di GitHub
+        </a>
+    </div>
 </div>
+
+<div class="features-grid">
+    <div class="feature-card wiki">
+        <h3>Wikipedia</h3>
+        <p>Bebaskan pengetahuan melalui Wikipedia dalam bahasa daerah dengan antarmuka yang elegan.</p>
+    </div>
+    <div class="feature-card dict">
+        <h3>Wikikamus</h3>
+        <p>Kamus bebas yang disusun ramai-ramai. Dari kita, untuk kita dan untuk generasi masa depan.</p>
+    </div>
+    <div class="feature-card book">
+        <h3>Wikibuku</h3>
+        <p>Koleksi buku teks dan bahan bacaan terbuka lainnya untuk semua orang.</p>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-links">
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="disclaimer.html">Disclaimer</a>
+    </div>
+    <p style="color: #bbb; font-size: 0.85rem; margin-top: 25px;">&copy; 2026 WikiNusa Project</p>
+</footer>
 
 </body>
 </html>

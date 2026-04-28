@@ -13,7 +13,7 @@ This is the first version. The features are:
 <li>Support for dark/light mode and font size selection.</li>
 </ul>
 
-<p>More on the app website at <a href="https://wikinusa.blogspot.com/">https://wikinusa.blogspot.com</a>.</p>
+<p>More on the app website at <a href="https://sslaia.github.io/wikinusa/">https://sslaia.github.io/wikinusa</a>.</p>
 
 <p>The GitHub repository for the app is: <a href="https://github.com/sslaia/wikinusa">https://github.com/sslaia/wikinusa</a>.</p>
 

@@ -1,25 +1,4 @@
 const aboutCommunity = '''
-<p>Ada banyak komunitas wiki di Indonesia. Kebanyakan dari mereka aktif 
-membebaskan pengetahuan di Wikipedia bahasa Indonesia.</p>
-
-<p>Selain itu ada juga di antara mereka yang telah bekerja keras
-untuk menelurkan Wikipedia dalam bahasa daerah
-dan dengan demikian mendukung pembebasan pengetahuan dalam bahasa ibu.</p>
-
-<p>Saat ini telah ada 11 Wikipedia dalam berbagai bahasa daerah di Indonesia.
-Hal ini patut dibanggakan.</p>
-
-<p>Terutama dalam lingkungan komersialisasi di mana uang lebih penting daripada berbagi,
-para relawan wiki telah membuktikan, bahwa berbagi pengetahuan
-lebih bernilai daripada sekedar menghitung keuntungan finansial.</p>
-
-<p>Karena itu: angkat topi setinggi-tingginya bagi para relawan wiki!</p>
-
-<p>Salah satu dari komunitas tsb. adalah komunitas WikiNias,
-di mana pembuat aplikasi Wikinusa ini aktif.</p>
-
-<h3>Komunitas dan aplikasi</h3>
-
 <p>Pada awalnya aplikasi ini dibuat untuk membantu anggota komunitas WikiNias.
 Mayoritas anggota komunitas gagap teknologi dan susah mencari-cari di mana Wikipedia, Wikikamus dan Wikibuku Nias.
 Hal itu mendorong saya untuk menulis aplikasi WikiNias (dan juga aplikasi khusus WikikamusNias).</p>
@@ -27,10 +6,15 @@ Hal itu mendorong saya untuk menulis aplikasi WikiNias (dan juga aplikasi khusus
 <p>Baru kemudian saya berpikir untuk membuka aplikasi tsb. ke bahasa daerah lain,
 sehingga anggota komunitas lain bisa juga menggunakannya <strong>kalau mau</strong>.</p>
 
-<p>Dari situ lahirlah aplikasi <strong>Wikikamus</strong> dan kini aplikasi <strong>Wikinusa</strong> ini.
+<p>Dari situ lahirlah aplikasi <strong>Wikikamus</strong>, <strong>Nusapedia</strong> dan kini aplikasi <strong>Wikinusa</strong> ini.
 Sementara Wikikamus fokus pada akses ke berbagai situs Wikikamus dalam bahasa daerah,
-aplikasi Wikinusa fokus pada akses ke berbagai situs Wikipedia di Indonesia.</p>
+aplikasi Nusapedia fokus pada akses ke berbagai situs Wikipedia dalam bahasa daerah.
+Sementara itu aplikasi Wikinusa ini akan menjadi aplikasi <em>all-in-one</em> dan menyediakan akses ke Wikipedia, 
+Wikikamus dan Wikibuku dalam berbagai bahasa daerah di Indonesia.</p>
 
+<p>Klik <a href="https://sslaia.github.io/" target="_blank">di sini</a> untuk melihat berbagai aplikasi 
+yang dibuat untuk mendukung relawan wiki: <a href="https://sslaia.github.io/" target="_blank">Nusa apps</a></p>
+ 
 <h3>Berbagai tulisan saya seputar kegiatan komunitas</h3>
 <ol>
 <li><a href="https://nia.wikipedia.org/wiki/Sangoguna:Slaia/Introduksi_ke_program_bahasa_Nias_dalam_tiga_diagram">Program Pengembangan Bahasa Nias 2020-2025</a> (So yaŵa ba nga'örö zangoguna Slaia ba Wikikamus)</li>
