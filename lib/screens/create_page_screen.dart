@@ -105,9 +105,9 @@ class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
             const SizedBox(height: 64),
             _buildHeader(Theme.of(context)),
             const SizedBox(height: 32),
-            _buildArchiveTitleField(Theme.of(context)),
+            _buildTitleField(Theme.of(context)),
             const SizedBox(height: 24),
-            _buildActionButtons(Theme.of(context)),
+            _buildActionButton(Theme.of(context)),
             const SizedBox(height: 48),
           ],
         ),
@@ -177,7 +177,7 @@ class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
     );
   }
 
-  Widget _buildArchiveTitleField(ThemeData theme) {
+  Widget _buildTitleField(ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -247,7 +247,7 @@ class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
     );
   }
 
-  Widget _buildActionButtons(ThemeData theme) {
+  Widget _buildActionButton(ThemeData theme) {
     return Column(
       children: [
         Container(

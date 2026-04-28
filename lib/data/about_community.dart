@@ -9,8 +9,11 @@ sehingga anggota komunitas lain bisa juga menggunakannya <strong>kalau mau</stro
 <p>Dari situ lahirlah aplikasi <strong>Wikikamus</strong>, <strong>Nusapedia</strong> dan kini aplikasi <strong>Wikinusa</strong> ini.
 Sementara Wikikamus fokus pada akses ke berbagai situs Wikikamus dalam bahasa daerah,
 aplikasi Nusapedia fokus pada akses ke berbagai situs Wikipedia dalam bahasa daerah.
-Sementara itu aplikasi Wikinusa ini akan menjadi aplikasi <em>all-in-one</em> dan menyediakan akses ke Wikipedia, 
+Aplikasi Wikinusa ini akan menjadi aplikasi <em>all-in-one</em> dan menyediakan akses ke Wikipedia, 
 Wikikamus dan Wikibuku dalam berbagai bahasa daerah di Indonesia.</p>
+
+<p>Catatan: Untuk saat ini baru Wikipedia, Wikikamus dan Wikibuku Nias yang didukung sepenuhnya. 
+Wikipedia bahasa Indonesia dan Inggris juga didukung. Namun wiki dalam bahasa daerah lainnya masih dalam tahap pengembangan.</p>
 
 <p>Klik <a href="https://sslaia.github.io/" target="_blank">di sini</a> untuk melihat berbagai aplikasi 
 yang dibuat untuk mendukung relawan wiki: <a href="https://sslaia.github.io/" target="_blank">Nusa apps</a></p>

@@ -8,6 +8,7 @@ import 'package:wikinusa/providers/wiki_api_provider.dart';
 import 'package:wikinusa/screens/article_screen.dart';
 import 'package:wikinusa/services/wiki_api_service.dart';
 
+import '../screens/create_book_screen.dart';
 import '../screens/create_entry_screen.dart';
 import '../screens/create_page_screen.dart';
 import 'shortcuts_bottom_sheet.dart';
@@ -103,11 +104,21 @@ class _CustomBottomAppBarState extends ConsumerState<CustomBottomAppBar> {
               IconButton(
                 icon: const Icon(Icons.edit_note_outlined),
                 onPressed: () {
-                  final isNiaWiktionary = langCode == 'nia' && widget.currentProject == ProjectType.wiktionary;
+                  Widget destination;
+                  if (widget.currentProject == ProjectType.wikipedia) {
+                    destination = const CreatePageScreen();
+                  } else if (langCode == 'nia' && widget.currentProject == ProjectType.wiktionary) {
+                    destination = const CreateEntryScreen();
+                  } else if (langCode == 'nia' && widget.currentProject == ProjectType.wikibooks) {
+                    destination = const CreateBookScreen();
+                  } else {
+                    destination = const CreatePageScreen();
+                  }
+                  
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => isNiaWiktionary ? const CreateEntryScreen() : const CreatePageScreen(),
+                      builder: (_) => destination,
                     ),
                   );
                 },

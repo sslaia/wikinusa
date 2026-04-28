@@ -5,18 +5,18 @@ import 'package:url_launcher/url_launcher.dart';
 import '../models/project_type.dart';
 import '../providers/app_state.dart';
 
-class CreateEntryScreen extends ConsumerStatefulWidget {
+class CreateBookScreen extends ConsumerStatefulWidget {
   final String? title;
-  const CreateEntryScreen({super.key, this.title});
+  const CreateBookScreen({super.key, this.title});
 
   @override
-  ConsumerState<CreateEntryScreen> createState() => _CreateEntryScreenState();
+  ConsumerState<CreateBookScreen> createState() => _CreateBookScreenState();
 }
 
-class _CreateEntryScreenState extends ConsumerState<CreateEntryScreen> {
+class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late final TextEditingController _titleController;
-  var _selectedValue = 'Verba';
+  var _selectedValue = 'Nidunö-dunö';
 
   @override
   void initState() {
@@ -30,38 +30,42 @@ class _CreateEntryScreenState extends ConsumerState<CreateEntryScreen> {
     super.dispose();
   }
 
+  String _capitalizeTitle(String text) {
+    if (text.isEmpty) return text;
+    return text
+        .trim()
+        .split(' ')
+        .map((word) {
+          if (word.isEmpty) return word;
+          return word[0].toUpperCase() + word.substring(1).toLowerCase();
+        })
+        .join(' ');
+  }
+
   Future<void> _submitEntry() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    // Fixed: Always use lowercase for Wiktionary entries
-    final String title = _titleController.text.trim().toLowerCase();
+    final String rawTitle = _titleController.text.trim();
+    // Fixed: Use Title Case for Wikibooks
+    final String title = _capitalizeTitle(rawTitle);
     final String part = _selectedValue;
     String formulir;
 
-    if (part == 'Nomina') {
-      formulir = 'preload=Templat:Famörögö wanura nomina';
-    } else if (part == 'Adjektiva') {
-      formulir = 'preload=Templat:Famörögö wanura adjetiva';
-    } else if (part == 'Adverbia') {
-      formulir = 'preload=Templat:Famörögö wanura adverbia';
-    } else if (part == 'Numeralia') {
-      formulir = 'preload=Templat:Famörögö wanura numeralia';
-    } else if (part == 'Partikel') {
-      formulir = 'preload=Templat:Famörögö wanura partikel';
-    } else if (part == 'Pronomina') {
-      formulir = 'preload=Templat:Famörögö wanura pronomina';
-    } else if (part == 'Preposisi') {
-      formulir = 'preload=Templat:Famörögö wanura preposisi';
-    } else if (part == 'Konjungsi') {
-      formulir = 'preload=Templat:Famörögö wanura konjungsi';
-    } else if (part == 'Intejeksi') {
-      formulir = 'preload=Templat:Famörögö wanura interjeksi';
+    if (part == "Nidunö-dunö") {
+      formulir = 'preload=Template:Wb/nia/Famörögö wanura nidunö-dunö';
+    } else if (part == "Lagu/Sinunö") {
+      formulir = 'preload=Template:Wb/nia/Famörögö wanura lagu';
+    } else if (part == "Maena") {
+      formulir = 'preload=Template:Wb/nia/Famörögö wanura maena';
+    } else if (part == "Cerpen/Novela") {
+      formulir = 'preload=Template:Wb/nia/Famörögö wanura cerpen';
     } else {
-      formulir = 'preload=Templat:Famörögö wanura verba';
+      formulir = 'preload=Template:Wb/nia/Famörögö wanura';
     }
 
+    final String encodedTitle = Uri.encodeComponent(title.replaceAll(' ', '_'));
     final String urlString =
-        'https://nia.m.wiktionary.org/wiki/$title?action=edit&section=all&$formulir';
+        'https://incubator.m.wikimedia.org/wiki/Wb/nia/$encodedTitle?action=edit&section=all&$formulir';
     final url = Uri.parse(urlString);
 
     if (await canLaunchUrl(url)) {
@@ -107,9 +111,9 @@ class _CreateEntryScreenState extends ConsumerState<CreateEntryScreen> {
               const SizedBox(height: 64),
               _buildHeader(theme, currentProject),
               const SizedBox(height: 32),
-              _buildWordField(theme),
+              _buildTitleField(theme),
               const SizedBox(height: 24),
-              _buildPartOfSpeechField(theme),
+              _buildPageTypeField(theme),
               const SizedBox(height: 32),
               _buildSubmitButton(theme),
               const SizedBox(height: 48),
@@ -152,7 +156,7 @@ class _CreateEntryScreenState extends ConsumerState<CreateEntryScreen> {
         ),
         const SizedBox(height: 16),
         Text(
-          'create_new_entry'.tr(),
+          'create_new_page'.tr(),
           textAlign: TextAlign.center,
           style: theme.textTheme.headlineMedium?.copyWith(
             fontWeight: FontWeight.w800,
@@ -163,7 +167,7 @@ class _CreateEntryScreenState extends ConsumerState<CreateEntryScreen> {
         ),
         const SizedBox(height: 12),
         Text(
-          'create_new_wiktionary_page'.tr(),
+          'create_new_wikibooks_page'.tr(),
           textAlign: TextAlign.center,
           style: theme.textTheme.bodyLarge?.copyWith(
             fontSize: 16,
@@ -175,12 +179,12 @@ class _CreateEntryScreenState extends ConsumerState<CreateEntryScreen> {
     );
   }
 
-  Widget _buildWordField(ThemeData theme) {
+  Widget _buildTitleField(ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Ngawua wehede'.toUpperCase(),
+          'title'.tr().toUpperCase(),
           style: theme.textTheme.labelSmall?.copyWith(
             fontWeight: FontWeight.bold,
             letterSpacing: 1.5,
@@ -210,7 +214,7 @@ class _CreateEntryScreenState extends ConsumerState<CreateEntryScreen> {
               fontSize: 18,
             ),
             decoration: InputDecoration(
-              hintText: 'enter_word_here'.tr(),
+              hintText: 'title_example'.tr(),
               hintStyle: theme.textTheme.titleMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
                 fontSize: 14,
@@ -219,7 +223,7 @@ class _CreateEntryScreenState extends ConsumerState<CreateEntryScreen> {
             ),
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
-                return "enter_word_please".tr();
+                return "enter_title_before_submit".tr();
               }
               return null;
             },
@@ -229,12 +233,12 @@ class _CreateEntryScreenState extends ConsumerState<CreateEntryScreen> {
     );
   }
 
-  Widget _buildPartOfSpeechField(ThemeData theme) {
+  Widget _buildPageTypeField(ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Halö gangolifa si faudu'.toUpperCase(),
+          'Halö ngawalö zura si faudu'.toUpperCase(),
           style: theme.textTheme.labelSmall?.copyWith(
             fontWeight: FontWeight.bold,
             letterSpacing: 1.5,
@@ -267,20 +271,15 @@ class _CreateEntryScreenState extends ConsumerState<CreateEntryScreen> {
               fontSize: 16,
             ),
             items: [
-              'Verba',
-              'Nomina',
-              'Adjektiva',
-              'Adverbia',
-              'Numeralia',
-              'Partikel',
-              'Pronomina',
-              'Preposisi',
-              'Konjungsi',
-              'Intejeksi',
+              "Nidunö-dunö",
+              "Lagu/Sinunö",
+              "Maena",
+              "Cerpen/Novela",
+              "Gofu sinura"
             ].map((option) => DropdownMenuItem(
-                  value: option,
-                  child: Text(option),
-                )).toList(),
+              value: option,
+              child: Text(option),
+            )).toList(),
             onChanged: (value) {
               setState(() {
                 _selectedValue = value!;

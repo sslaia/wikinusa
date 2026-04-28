@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wikinusa/screens/create_book_screen.dart';
 import 'package:wikinusa/screens/create_entry_screen.dart';
 import 'package:wikinusa/screens/create_page_screen.dart';
 import '../data/about_app.dart';
@@ -45,11 +46,21 @@ class DrawerMenu extends ConsumerWidget {
                   icon: Icons.edit_note_rounded,
                   title: 'create_new_page'.tr(),
                   onTap: () {
-                    final isNiaWiktionary = currentLanguage == 'nia' && currentProject == ProjectType.wiktionary;
+                    Widget destination;
+                    if (currentProject == ProjectType.wikipedia) {
+                      destination = const CreatePageScreen();
+                    } else if (currentLanguage == 'nia' && currentProject == ProjectType.wiktionary) {
+                      destination = const CreateEntryScreen();
+                    } else if (currentLanguage == 'nia' && currentProject == ProjectType.wikibooks) {
+                      destination = const CreateBookScreen();
+                    } else {
+                      destination = const CreatePageScreen();
+                    }
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => isNiaWiktionary ? const CreateEntryScreen() : const CreatePageScreen(),
+                        builder: (_) => destination,
                       ),
                     );
                   },

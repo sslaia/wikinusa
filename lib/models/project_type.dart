@@ -34,20 +34,20 @@ extension ProjectTypeExtension on ProjectType {
       case ProjectType.wikipedia:
         return 'assets/images/woman_reading_a_book_on_lap.webp';
       case ProjectType.wiktionary:
-        return 'assets/images/sappho-fresco.webp';
+        return 'assets/images/tolögu.webp';
       case ProjectType.wikibooks:
-        return 'assets/images/wajah-nias.webp';
+        return 'assets/images/adu-sarambia.webp';
     }
   }
 
   String get articleHeroImagePath {
     switch (this) {
       case ProjectType.wikipedia:
-        return "assets/images/ni'ogazi.webp";
+        return "assets/images/woman_reading_a_book_on_lap.webp";
       case ProjectType.wiktionary:
-        return 'assets/images/sappho-fresco.webp';
+        return 'assets/images/tolögu.webp';
       case ProjectType.wikibooks:
-        return 'assets/images/wajah-nias.webp';
+        return 'assets/images/adu-sarambia.webp';
     }
   }
 
