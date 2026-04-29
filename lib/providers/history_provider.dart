@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
 class HistoryState {
@@ -23,11 +22,8 @@ class HistoryNotifier extends StateNotifier<HistoryState> {
   HistoryNotifier() : super(HistoryState(stack: [], currentIndex: -1));
 
   void push(String title) {
-    // If we're pushing a new title while in the middle of the stack, 
-    // we clear the "forward" part of the history.
     final List<String> currentStack = state.stack.sublist(0, state.currentIndex + 1);
     
-    // Don't add if it's the same as the current one at the current position
     if (currentStack.isNotEmpty && currentStack.last == title) return;
 
     state = HistoryState(

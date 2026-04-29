@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../models/project_type.dart';
 import '../providers/app_state.dart';
 
+// This is used only for creating new page on Wiktionary
 class CreateEntryScreen extends ConsumerStatefulWidget {
   final String? title;
   const CreateEntryScreen({super.key, this.title});
@@ -72,9 +73,9 @@ class _CreateEntryScreenState extends ConsumerState<CreateEntryScreen> {
       );
     } else {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('editor_cant_open'.tr())),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('editor_cant_open'.tr())));
       }
     }
   }
@@ -90,10 +91,7 @@ class _CreateEntryScreenState extends ConsumerState<CreateEntryScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: theme.colorScheme.onSurface,
-          ),
+          icon: Icon(Icons.arrow_back, color: theme.colorScheme.onSurface),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -212,7 +210,9 @@ class _CreateEntryScreenState extends ConsumerState<CreateEntryScreen> {
             decoration: InputDecoration(
               hintText: 'enter_word_here'.tr(),
               hintStyle: theme.textTheme.titleMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                color: theme.colorScheme.onSurfaceVariant.withValues(
+                  alpha: 0.5,
+                ),
                 fontSize: 14,
               ),
               border: InputBorder.none,
@@ -258,29 +258,30 @@ class _CreateEntryScreenState extends ConsumerState<CreateEntryScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: DropdownButtonFormField<String>(
             initialValue: _selectedValue,
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-            ),
+            decoration: const InputDecoration(border: InputBorder.none),
             style: theme.textTheme.titleMedium?.copyWith(
               color: theme.colorScheme.onSurface,
               fontWeight: FontWeight.w600,
               fontSize: 16,
             ),
-            items: [
-              'Verba',
-              'Nomina',
-              'Adjektiva',
-              'Adverbia',
-              'Numeralia',
-              'Partikel',
-              'Pronomina',
-              'Preposisi',
-              'Konjungsi',
-              'Intejeksi',
-            ].map((option) => DropdownMenuItem(
-                  value: option,
-                  child: Text(option),
-                )).toList(),
+            items:
+                [
+                      'Verba',
+                      'Nomina',
+                      'Adjektiva',
+                      'Adverbia',
+                      'Numeralia',
+                      'Partikel',
+                      'Pronomina',
+                      'Preposisi',
+                      'Konjungsi',
+                      'Intejeksi',
+                    ]
+                    .map(
+                      (option) =>
+                          DropdownMenuItem(value: option, child: Text(option)),
+                    )
+                    .toList(),
             onChanged: (value) {
               setState(() {
                 _selectedValue = value!;

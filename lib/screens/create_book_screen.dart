@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../models/project_type.dart';
 import '../providers/app_state.dart';
 
+// This is used only for creating new page on Wikibooks
 class CreateBookScreen extends ConsumerStatefulWidget {
   final String? title;
   const CreateBookScreen({super.key, this.title});
@@ -76,9 +77,9 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
       );
     } else {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('editor_cant_open'.tr())),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('editor_cant_open'.tr())));
       }
     }
   }
@@ -94,10 +95,7 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: theme.colorScheme.onSurface,
-          ),
+          icon: Icon(Icons.arrow_back, color: theme.colorScheme.onSurface),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -216,7 +214,9 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
             decoration: InputDecoration(
               hintText: 'title_example'.tr(),
               hintStyle: theme.textTheme.titleMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                color: theme.colorScheme.onSurfaceVariant.withValues(
+                  alpha: 0.5,
+                ),
                 fontSize: 14,
               ),
               border: InputBorder.none,
@@ -262,24 +262,25 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: DropdownButtonFormField<String>(
             initialValue: _selectedValue,
-            decoration: const InputDecoration(
-              border: InputBorder.none,
-            ),
+            decoration: const InputDecoration(border: InputBorder.none),
             style: theme.textTheme.titleMedium?.copyWith(
               color: theme.colorScheme.onSurface,
               fontWeight: FontWeight.w600,
               fontSize: 16,
             ),
-            items: [
-              "Nidunö-dunö",
-              "Lagu/Sinunö",
-              "Maena",
-              "Cerpen/Novela",
-              "Gofu sinura"
-            ].map((option) => DropdownMenuItem(
-              value: option,
-              child: Text(option),
-            )).toList(),
+            items:
+                [
+                      "Nidunö-dunö",
+                      "Lagu/Sinunö",
+                      "Maena",
+                      "Cerpen/Novela",
+                      "Gofu sinura",
+                    ]
+                    .map(
+                      (option) =>
+                          DropdownMenuItem(value: option, child: Text(option)),
+                    )
+                    .toList(),
             onChanged: (value) {
               setState(() {
                 _selectedValue = value!;

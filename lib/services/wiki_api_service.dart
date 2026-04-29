@@ -7,17 +7,31 @@ import 'home_page_builder.dart';
 import 'html_processor.dart';
 
 class WikiApiService {
-  static String _getCacheKey(ProjectType project, String languageCode, String pageTitle, bool isArticle) {
+  static String _getCacheKey(
+    ProjectType project,
+    String languageCode,
+    String pageTitle,
+    bool isArticle,
+  ) {
     final projectStr = project.name.toLowerCase();
     return isArticle
         ? 'article_${projectStr}_${languageCode}_$pageTitle'
         : 'home_page_${projectStr}_$languageCode';
   }
 
-  static Future<void> clearCache(ProjectType project, String languageCode, String? pageTitle) async {
+  static Future<void> clearCache(
+    ProjectType project,
+    String languageCode,
+    String? pageTitle,
+  ) async {
     final prefs = await SharedPreferences.getInstance();
     final isArticle = pageTitle != null && pageTitle.isNotEmpty;
-    final cacheKey = _getCacheKey(project, languageCode, pageTitle ?? 'Main Page', isArticle);
+    final cacheKey = _getCacheKey(
+      project,
+      languageCode,
+      pageTitle ?? 'Main Page',
+      isArticle,
+    );
     await prefs.remove(cacheKey);
     await prefs.remove('${cacheKey}_timestamp');
   }
@@ -58,7 +72,7 @@ class WikiApiService {
     String finalTitle = pageTitle;
     bool useActionApiForHome = false;
 
-    // TEMP: Nias Wikibooks is currently in the Incubator
+    // Temporary solution while Nias Wikibooks is still in the Incubator
     if (languageCode == 'nia' && project == ProjectType.wikibooks) {
       domain = 'incubator.wikimedia.org';
       useActionApiForHome = true;
@@ -72,13 +86,17 @@ class WikiApiService {
 
     String url;
     if (isArticle || useActionApiForHome) {
-      url = 'https://$domain/w/api.php?action=parse&page=${Uri.encodeComponent(finalTitle)}&format=json&prop=text|images&mobileformat=1&redirects=1';
+      url =
+          'https://$domain/w/api.php?action=parse&page=${Uri.encodeComponent(finalTitle)}&format=json&prop=text|images&mobileformat=1&redirects=1';
     } else {
-      url = 'https://$domain/w/rest.php/v1/page/${Uri.encodeComponent(finalTitle)}/html';
+      url =
+          'https://$domain/w/rest.php/v1/page/${Uri.encodeComponent(finalTitle)}/html';
     }
 
     try {
-      final response = await http.get(Uri.parse(url)).timeout(const Duration(seconds: 15));
+      final response = await http
+          .get(Uri.parse(url))
+          .timeout(const Duration(seconds: 15));
 
       if (response.statusCode == 200) {
         if (isArticle) {
@@ -87,18 +105,40 @@ class WikiApiService {
           String htmlContent = '';
           if (decoded['parse'] != null && decoded['parse']['text'] != null) {
             htmlContent = decoded['parse']['text']['*'] ?? '';
-            
+
             final processedResult = await HtmlProcessor.processArticleHtml(
               htmlContent,
               languageCode,
               project,
             );
 
+            // Fetch and append category members if it's a category page
+            final bool isCategory =
+                finalTitle.contains('Category:') ||
+                finalTitle.contains('Kategori:');
+            if (isCategory) {
+              final categoryHtml = await _fetchCategoryContent(
+                domain,
+                finalTitle,
+                languageCode,
+              );
+              if (processedResult is Map<String, dynamic>) {
+                processedResult['html'] =
+                    (processedResult['html'] ?? '') + categoryHtml;
+              }
+            }
+
             await prefs.setString(cacheKey, jsonEncode(processedResult));
-            await prefs.setString(cacheTimestampKey, DateTime.now().toIso8601String());
+            await prefs.setString(
+              cacheTimestampKey,
+              DateTime.now().toIso8601String(),
+            );
             return processedResult;
           }
-          return {'html': '<i>Error: Could not parse article content.</i>', 'imageUrl': null};
+          return {
+            'html': '<i>Error: Could not parse article content.</i>',
+            'imageUrl': null,
+          };
         } else {
           List<int> htmlBytes;
           if (useActionApiForHome) {
@@ -116,9 +156,15 @@ class WikiApiService {
             languageCode,
             project,
           );
-          
-          await prefs.setString(cacheKey, jsonEncode(sections.map((e) => e.toJson()).toList()));
-          await prefs.setString(cacheTimestampKey, DateTime.now().toIso8601String());
+
+          await prefs.setString(
+            cacheKey,
+            jsonEncode(sections.map((e) => e.toJson()).toList()),
+          );
+          await prefs.setString(
+            cacheTimestampKey,
+            DateTime.now().toIso8601String(),
+          );
           return sections;
         }
       } else {
@@ -145,16 +191,17 @@ class WikiApiService {
     final url = Uri.parse(
       'https://$domain/w/api.php?action=query&list=search&srsearch=${Uri.encodeComponent(searchQuery)}&format=json&utf8=1',
     );
-    
+
     try {
       final response = await http.get(url).timeout(const Duration(seconds: 10));
       if (response.statusCode != 200) throw Exception('Failed to search Wiki');
-      
+
       // Fixed: Use utf8.decode for correct character encoding
       final data = json.decode(utf8.decode(response.bodyBytes));
-      
-      final List<Map<String, dynamic>> results = List<Map<String, dynamic>>.from(data['query']['search']);
-      
+
+      final List<Map<String, dynamic>> results =
+          List<Map<String, dynamic>>.from(data['query']['search']);
+
       if (langCode == 'nia' && projectStr == 'wikibooks') {
         for (var result in results) {
           String title = result['title'] as String;
@@ -163,11 +210,76 @@ class WikiApiService {
           }
         }
       }
-      
+
       return results;
     } catch (e) {
       throw Exception('Search error: $e');
     }
+  }
+
+  static Future<String> _fetchCategoryContent(
+    String domain,
+    String categoryTitle,
+    String languageCode,
+  ) async {
+    final url =
+        'https://$domain/w/api.php?action=query&list=categorymembers&cmtitle=${Uri.encodeComponent(categoryTitle)}&cmlimit=500&cmprop=title|type|ns&format=json';
+    try {
+      final response = await http
+          .get(Uri.parse(url))
+          .timeout(const Duration(seconds: 10));
+      if (response.statusCode == 200) {
+        final data = json.decode(utf8.decode(response.bodyBytes));
+        final members = data['query']?['categorymembers'] as List?;
+        if (members == null || members.isEmpty)
+          return '<p><i>This category currently contains no pages or media.</i></p>';
+
+        final subcats = members.where((m) => m['ns'] == 14).toList();
+        final pages = members.where((m) => m['ns'] != 14).toList();
+
+        StringBuffer html = StringBuffer(
+          '<div class="category-container" style="margin-top: 24px; border-top: 1px solid #eee; padding-top: 16px;">',
+        );
+
+        if (subcats.isNotEmpty) {
+          String subTitle = 'Subcategories';
+          if (languageCode == 'id') subTitle = 'Subkategori';
+          if (languageCode == 'nia') subTitle = 'Subkategori';
+
+          html.write(
+            '<h3 style="color: #666; font-size: 1.1em;">$subTitle</h3><ul style="list-style-type: none; padding-left: 0;">',
+          );
+          for (var sub in subcats) {
+            final title = sub['title'] as String;
+            html.write(
+              '<li style="margin-bottom: 8px; font-weight: 500;">📂 <a href="./$title">$title</a></li>',
+            );
+          }
+          html.write('</ul>');
+        }
+
+        if (pages.isNotEmpty) {
+          String pagesTitle = 'Pages';
+          if (languageCode == 'id') pagesTitle = 'Halaman';
+          if (languageCode == 'nia') pagesTitle = 'Nga\'örö';
+
+          html.write(
+            '<h3 style="color: #666; font-size: 1.1em; margin-top: 24px;">$pagesTitle</h3><ul style="list-style-type: none; padding-left: 0;">',
+          );
+          for (var page in pages) {
+            final title = page['title'] as String;
+            html.write(
+              '<li style="margin-bottom: 8px;">📄 <a href="./$title">$title</a></li>',
+            );
+          }
+          html.write('</ul>');
+        }
+
+        html.write('</div>');
+        return html.toString();
+      }
+    } catch (_) {}
+    return '';
   }
 
   static Future<String?> fetchRandomArticleTitle(
@@ -175,19 +287,22 @@ class WikiApiService {
     String projectStr,
   ) async {
     String domain = '$langCode.$projectStr.org';
-    
+
     if (langCode == 'nia' && projectStr == 'wikibooks') {
       domain = 'incubator.wikimedia.org';
       try {
         final url = Uri.parse(
           'https://$domain/w/api.php?action=query&list=search&srsearch=prefix:Wb/nia/&srlimit=50&format=json',
         );
-        final response = await http.get(url).timeout(const Duration(seconds: 10));
+        final response = await http
+            .get(url)
+            .timeout(const Duration(seconds: 10));
         if (response.statusCode == 200) {
           final data = json.decode(utf8.decode(response.bodyBytes));
           final searchResults = data['query']?['search'] as List?;
           if (searchResults != null && searchResults.isNotEmpty) {
-            final randomIndex = (DateTime.now().millisecondsSinceEpoch % searchResults.length);
+            final randomIndex =
+                (DateTime.now().millisecondsSinceEpoch % searchResults.length);
             String title = searchResults[randomIndex]['title'] as String;
             if (title.startsWith('Wb/nia/')) {
               title = title.replaceFirst('Wb/nia/', '');
@@ -202,7 +317,7 @@ class WikiApiService {
     final url = Uri.parse(
       'https://$domain/w/api.php?action=query&list=random&rnnamespace=0&rnlimit=1&format=json',
     );
-    
+
     try {
       final response = await http.get(url).timeout(const Duration(seconds: 10));
       if (response.statusCode == 200) {

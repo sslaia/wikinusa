@@ -48,91 +48,137 @@ final shortcutsProvider = FutureProvider<Map<String, dynamic>>((ref) async {
     debugPrint('ShortcutsProvider: Failed to load shortcuts from assets: $e');
     // Absolute minimum fallback to prevent app crash
     return {
-      "id": {
+      "nia": {
         "wikipedia": [
           {
             "icon": "history",
-            "title": "Perubahan terbaru",
-            "url": "https://id.wikipedia.org/wiki/Istimewa:Perubahan_terbaru",
+            "title": "Safuria tebulö",
+            "url": "https://nia.wikipedia.org/wiki/Spesial:Perubahan_terbaru",
           },
           {
             "icon": "pages_outlined",
-            "title": "Halaman istimewa",
-            "url": "https://id.wikipedia.org/wiki/Istimewa:Halaman_istimewa",
+            "title": "Nga'örö spesial",
+            "url": "https://nia.wikipedia.org/wiki/Spesial:Halaman_istimewa",
+          },
+          {
+            "icon": "campaign_outlined",
+            "title": "Angombakhata",
+            "url": "https://nia.wikipedia.org/wiki/Wikipedia:Angombakhata",
           },
           {
             "icon": "people_outlined",
-            "title": "Portal komunitas",
-            "url": "https://id.wikipedia.org/wiki/Portal:Komunitas",
+            "title": "Bawagöli zato",
+            "url": "https://nia.wikipedia.org/wiki/Wikipedia:Bawagöli_zato",
           },
           {
             "icon": "chat_bubble_outlined",
-            "title": "Warung kopi",
-            "url": "https://id.wikipedia.org/wiki/Wikipedia:Warung_Kopi",
+            "title": "Monganga afo",
+            "url": "https://nia.wikipedia.org/wiki/Wikipedia:Monganga_afo",
           },
           {
             "icon": "construction_outlined",
-            "title": "Bak pasir",
-            "url": "https://id.wikipedia.org/wiki/Wikipedia:Bak_pasir",
+            "title": "Nahia wamakori",
+            "url": "https://nia.wikipedia.org/wiki/Wikipedia:Nahia_wamakori",
           },
           {
             "icon": "help_outline",
-            "title": "Bantuan",
-            "url": "https://id.wikipedia.org/wiki/Bantuan:Isi",
+            "title": "Fanolo",
+            "url": "https://nia.wikipedia.org/wiki/Fanolo:Fanolo",
+          },
+          {
+            "icon": "support_agent_outlined",
+            "title": "Sangai halöŵö",
+            "url": "https://nia.wikipedia.org/wiki/Wikipedia:Sangai_halöŵö",
           },
         ],
         "wiktionary": [
           {
             "icon": "history",
-            "title": "Perubahan terbaru",
-            "url": "https://id.wiktionary.org/wiki/Istimewa:Perubahan_terbaru",
+            "title": "Safuria tebulö",
+            "url": "https://nia.wiktionary.org/wiki/Spesial:Perubahan_terbaru",
           },
           {
             "icon": "pages_outlined",
-            "title": "Halaman istimewa",
-            "url": "https://id.wiktionary.org/wiki/Istimewa:Halaman_istimewa",
+            "title": "Nga'örö spesial",
+            "url": "https://nia.wiktionary.org/wiki/Spesial:Halaman_istimewa",
+          },
+          {
+            "icon": "campaign_outlined",
+            "title": "Angombakhata",
+            "url": "https://nia.wiktionary.org/wiki/Wikikamus:Angombakhata",
+          },
+          {
+            "icon": "people_outlined",
+            "title": "Bawagöli zato",
+            "url": "https://nia.wiktionary.org/wiki/Wikikamus:Bawagöli_zato",
           },
           {
             "icon": "chat_bubble_outlined",
-            "title": "Warung kopi",
-            "url": "https://id.wiktionary.org/wiki/Wikikamus:Warung_Kopi",
+            "title": "Monganga afo",
+            "url": "https://nia.wiktionary.org/wiki/Wikikamus:Monganga_afo",
           },
           {
             "icon": "construction_outlined",
-            "title": "Bak pasir",
-            "url": "https://id.wiktionary.org/wiki/Wikikamus:Bak_pasir",
+            "title": "Nahia wamakori",
+            "url": "https://nia.wiktionary.org/wiki/Wikikamus:Nahia_wamakori",
           },
           {
             "icon": "help_outline",
-            "title": "Bantuan",
-            "url": "https://id.wiktionary.org/wiki/Bantuan:Isi",
+            "title": "Fanolo",
+            "url": "https://nia.wiktionary.org/wiki/Fanolo:Fanolo",
+          },
+          {
+            "icon": "support_agent_outlined",
+            "title": "Sangai halöŵö",
+            "url": "https://nia.wiktionary.org/wiki/Wikikamus:Sangai_halöŵö",
           },
         ],
-        "wikibuku": [
+        "wikibooks": [
           {
             "icon": "history",
-            "title": "Perubahan terbaru",
-            "url": "https://id.wikibooks.org/wiki/Istimewa:Perubahan_terbaru",
+            "title": "Safuria tebulö",
+            "url":
+                "https://incubator.wikimedia.org/wiki/Special:RecentChanges?hidebots=1&translations=filter&hidecategorization=1&hideWikibase=1&hideWikifunctions=1&limit=250&days=30&urlversion=2&rc-testwiki-project=b&rc-testwiki-code=nia",
           },
           {
             "icon": "pages_outlined",
-            "title": "Halaman istimewa",
-            "url": "https://id.wikibooks.org/wiki/Istimewa:Halaman_istimewa",
+            "title": "Nga'örö spesial",
+            "url": "https://incubator.wikimedia.org/wiki/Special:SpecialPages",
+          },
+          {
+            "icon": "campaign_outlined",
+            "title": "Angombakhata",
+            "url":
+                "https://incubator.wikimedia.org/wiki/Wb/nia/Wikibooks:Angombakhata",
+          },
+          {
+            "icon": "people_outlined",
+            "title": "Bawagöli zato",
+            "url":
+                "https://incubator.wikimedia.org/wiki/Wb/nia/Wikibooks:Bawagöli_zato",
           },
           {
             "icon": "chat_bubble_outlined",
-            "title": "Warung kopi",
-            "url": "https://id.wikibooks.org/wiki/Wikibuku:Warung_Kopi",
+            "title": "Monganga afo",
+            "url":
+                "https://incubator.wikimedia.org/wiki/Wb/nia/Wikibooks:Monganga_afo",
           },
           {
             "icon": "construction_outlined",
-            "title": "Bak pasir",
-            "url": "https://id.wikibooks.org/wiki/Wikibuku:Bak_pasir",
+            "title": "Nahia wamakori",
+            "url":
+                "https://incubator.wikimedia.org/wiki/Wb/nia/Wikibooks:Nahia_wamakori",
           },
           {
             "icon": "help_outline",
-            "title": "Bantuan",
-            "url": "https://id.wikibooks.org/wiki/Bantuan:Isi",
+            "title": "Fanolo",
+            "url": "https://incubator.wikimedia.org/wiki/Wb/nia/Help:Fanolo",
+          },
+          {
+            "icon": "support_agent_outlined",
+            "title": "Sangai halöŵö",
+            "url":
+                "https://incubator.wikimedia.org/wiki/Wb/nia/Wikibooks:Sangai_halöŵö",
           },
         ],
       },

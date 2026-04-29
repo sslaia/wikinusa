@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wikinusa/models/project_type.dart';
 
+import '../models/project_type.dart';
 import '../utils/wiki_utils.dart';
+import '../widgets/wiki_portals_widget.dart';
+import '../widgets/contribute_widget.dart';
 import '../widgets/wiki_footer.dart';
 import '../models/home_page_section.dart';
 import '../widgets/search_field_widget.dart';
@@ -64,14 +66,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.surface,
                       ),
-                      child: featuredImageUrl != null && featuredImageUrl.isNotEmpty
+                      child:
+                          featuredImageUrl != null &&
+                              featuredImageUrl.isNotEmpty
                           ? Image.network(
                               featuredImageUrl,
                               fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) => Image.asset(
-                                currentProject.homeHeroImagePath,
-                                fit: BoxFit.cover,
-                              ),
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Image.asset(
+                                    currentProject.homeHeroImagePath,
+                                    fit: BoxFit.cover,
+                                  ),
                             )
                           : Image.asset(
                               currentProject.homeHeroImagePath,
@@ -286,6 +291,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                                 .withValues(alpha: 0.8),
                                           ),
                                     ),
+                                    customStylesBuilder: (element) =>
+                                        WikiUtils.customStyles(
+                                          context,
+                                          element,
+                                        ),
                                   ),
                                 ),
                               ],
@@ -300,8 +310,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               return const SliverToBoxAdapter(child: SizedBox.shrink());
             },
             loading: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
-            error: (err, stack) => const SliverToBoxAdapter(child: SizedBox.shrink()),
+            error: (err, stack) =>
+                const SliverToBoxAdapter(child: SizedBox.shrink()),
           ),
+          SliverToBoxAdapter(
+            child: WikiPortalsWidget(
+              project: currentProject,
+              languageCode: context.locale.languageCode,
+            ),
+          ),
+          SliverToBoxAdapter(child: ContributeWidget(project: currentProject)),
           const SliverToBoxAdapter(child: WikiFooter()),
           const SliverToBoxAdapter(child: SizedBox(height: 80)),
         ],

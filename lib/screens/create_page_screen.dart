@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../models/project_type.dart';
 import '../providers/app_state.dart';
 
+// This is used only for creating new page on Wikipedia
 class CreatePageScreen extends ConsumerStatefulWidget {
   final String? initialTitle;
   const CreatePageScreen({super.key, this.initialTitle});

@@ -72,8 +72,11 @@ class SearchResultsScreen extends ConsumerWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.error_outline, 
-                              size: 48, color: theme.colorScheme.error),
+                          Icon(
+                            Icons.error_outline,
+                            size: 48,
+                            color: theme.colorScheme.error,
+                          ),
                           const SizedBox(height: 16),
                           Text(
                             'search_failed'.tr(),
@@ -87,7 +90,8 @@ class SearchResultsScreen extends ConsumerWidget {
                           ),
                           const SizedBox(height: 24),
                           ElevatedButton.icon(
-                            onPressed: () => (context as Element).markNeedsBuild(),
+                            onPressed: () =>
+                                (context as Element).markNeedsBuild(),
                             icon: const Icon(Icons.refresh),
                             label: Text('search_retry'.tr()),
                           ),
@@ -106,8 +110,11 @@ class SearchResultsScreen extends ConsumerWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.search_off_rounded, 
-                            size: 64, color: theme.colorScheme.outline),
+                        Icon(
+                          Icons.search_off_rounded,
+                          size: 64,
+                          color: theme.colorScheme.outline,
+                        ),
                         const SizedBox(height: 16),
                         Text(
                           'search_no_results'.tr(),
@@ -124,83 +131,86 @@ class SearchResultsScreen extends ConsumerWidget {
               return SliverPadding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
                 sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final result = results[index];
-                      final title = result['title'] as String;
-                      final snippet = result['snippet'] as String;
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final result = results[index];
+                    final title = result['title'] as String;
+                    final snippet = result['snippet'] as String;
 
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => ArticleScreen(title: title),
-                              ),
-                            );
-                          },
-                          borderRadius: BorderRadius.circular(16),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.surface,
-                              borderRadius: BorderRadius.circular(16),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.03),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                              border: Border.all(
-                                color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
-                              ),
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ArticleScreen(title: title),
                             ),
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        title,
-                                        style: GoogleFonts.notoSerif(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                          color: theme.colorScheme.onSurface,
-                                        ).copyWith(fontFamilyFallback: fontFallbacks),
-                                      ),
-                                    ),
-                                    Icon(
-                                      Icons.arrow_forward_ios_rounded,
-                                      size: 14,
-                                      color: theme.colorScheme.primary.withValues(alpha: 0.5),
-                                    ),
-                                  ],
-                                ),
-                                if (snippet.isNotEmpty) ...[
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    _cleanSnippet(snippet),
-                                    maxLines: 3,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.notoSerif(
-                                      fontSize: 14,
-                                      height: 1.5,
-                                      color: theme.colorScheme.onSurfaceVariant,
-                                    ).copyWith(fontFamilyFallback: fontFallbacks),
-                                  ),
-                                ],
-                              ],
+                          );
+                        },
+                        borderRadius: BorderRadius.circular(16),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.surface,
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.03),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                            border: Border.all(
+                              color: theme.colorScheme.outlineVariant
+                                  .withValues(alpha: 0.3),
                             ),
                           ),
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      title,
+                                      style:
+                                          GoogleFonts.notoSerif(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                            color: theme.colorScheme.onSurface,
+                                          ).copyWith(
+                                            fontFamilyFallback: fontFallbacks,
+                                          ),
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.arrow_forward_ios_rounded,
+                                    size: 14,
+                                    color: theme.colorScheme.primary.withValues(
+                                      alpha: 0.5,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              if (snippet.isNotEmpty) ...[
+                                const SizedBox(height: 8),
+                                Text(
+                                  _cleanSnippet(snippet),
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.notoSerif(
+                                    fontSize: 14,
+                                    height: 1.5,
+                                    color: theme.colorScheme.onSurfaceVariant,
+                                  ).copyWith(fontFamilyFallback: fontFallbacks),
+                                ),
+                              ],
+                            ],
+                          ),
                         ),
-                      );
-                    },
-                    childCount: results.length,
-                  ),
+                      ),
+                    );
+                  }, childCount: results.length),
                 ),
               );
             },

@@ -26,9 +26,14 @@ class AboutScreen extends ConsumerWidget {
             leading: Padding(
               padding: const EdgeInsets.all(8.0),
               child: CircleAvatar(
-                backgroundColor: theme.colorScheme.surface.withValues(alpha: 0.5),
+                backgroundColor: theme.colorScheme.surface.withValues(
+                  alpha: 0.5,
+                ),
                 child: IconButton(
-                  icon: Icon(Icons.arrow_back, color: theme.colorScheme.primary),
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: theme.colorScheme.primary,
+                  ),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ),
@@ -39,10 +44,7 @@ class AboutScreen extends ConsumerWidget {
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.asset(
-                    'assets/images/blessing-plate.webp',
-                    fit: BoxFit.cover,
-                  ),
+                  Image.asset('assets/images/rai.webp', fit: BoxFit.cover),
                   DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -50,7 +52,9 @@ class AboutScreen extends ConsumerWidget {
                         end: Alignment.bottomCenter,
                         colors: [
                           Colors.transparent,
-                          theme.colorScheme.surfaceContainerLow.withValues(alpha: 0.8),
+                          theme.colorScheme.surfaceContainerLow.withValues(
+                            alpha: 0.8,
+                          ),
                           theme.colorScheme.surfaceContainerLow,
                         ],
                         stops: const [0.4, 0.85, 1.0],
@@ -97,7 +101,9 @@ class AboutScreen extends ConsumerWidget {
                       textStyle: GoogleFonts.notoSerif(
                         fontSize: 16,
                         height: 1.8,
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.9),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.9,
+                        ),
                       ),
                       onTapUrl: (url) {
                         launchUrl(Uri.parse(url));

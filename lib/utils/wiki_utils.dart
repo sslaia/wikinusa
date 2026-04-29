@@ -6,12 +6,15 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:just_audio/just_audio.dart';
 import '../providers/history_provider.dart';
 import '../screens/article_screen.dart';
 import '../screens/create_page_screen.dart';
 import '../theme/app_theme.dart';
 
 class WikiUtils {
+  static final AudioPlayer _audioPlayer = AudioPlayer();
+
   static bool isIcon(String src) {
     final lowerSrc = src.toLowerCase();
     return lowerSrc.contains('/static/images/mobile/copyright/') ||
@@ -33,15 +36,19 @@ class WikiUtils {
         lowerSrc.contains('px-padlock-');
   }
 
-  static String optimizeImageUrl(String url,
-      {String? langCode, String? projectStr, int width = 600}) {
+  static String optimizeImageUrl(
+    String url, {
+    String? langCode,
+    String? projectStr,
+    int width = 600,
+  }) {
     String normalized = url;
 
     // Handle relative URLs
     if (url.startsWith('//')) {
       normalized = 'https:$url';
     } else if (url.startsWith('/') && langCode != null && projectStr != null) {
-      // TEMP: Nias Wikibooks is currently in the Incubator
+      // Temporary solution while Nias Wikibooks is still in the Incubator
       if (langCode == 'nia' && projectStr == 'wikibooks') {
         normalized = 'https://incubator.wikimedia.org$url';
       } else {
@@ -61,7 +68,11 @@ class WikiUtils {
     return normalized;
   }
 
-  static bool handleTapUrl(BuildContext context, String url, String? htmlContent) {
+  static bool handleTapUrl(
+    BuildContext context,
+    String url,
+    String? htmlContent,
+  ) {
     debugPrint('WikiUtils: handling URL: $url');
 
     if (url.startsWith('#') || url.contains('cite_note')) {
@@ -101,8 +112,8 @@ class WikiUtils {
       } catch (e) {
         decodedTitle = title.replaceAll('_', ' ');
       }
-      
-      // TEMP: Strip Nias Wikibooks prefix from taps for cleaner navigation
+
+      // Temporary solution: Nias Wikibooks prefix from taps for cleaner navigation
       if (decodedTitle.startsWith('Wb/nia/')) {
         decodedTitle = decodedTitle.replaceFirst('Wb/nia/', '');
       }
@@ -116,17 +127,31 @@ class WikiUtils {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (_) => CreatePageScreen(initialTitle: decodedTitle)),
+              builder: (_) => CreatePageScreen(initialTitle: decodedTitle),
+            ),
           );
         } else {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (_) => ArticleScreen(title: decodedTitle)),
+              builder: (_) => ArticleScreen(title: decodedTitle),
+            ),
           );
         }
         return true;
       }
+    }
+
+    // Handle Audio links directly
+    final lowerUrl = url.toLowerCase();
+    final audioExtensions = ['.mp3', '.ogg', '.wav', '.m4a'];
+    if (audioExtensions.any(
+          (ext) => lowerUrl.endsWith(ext) || lowerUrl.contains('$ext?'),
+        ) ||
+        (lowerUrl.contains('upload.wikimedia.org') &&
+            audioExtensions.any((ext) => lowerUrl.contains(ext)))) {
+      _playAudio(context, url);
+      return true;
     }
 
     if (url.startsWith('http')) {
@@ -144,35 +169,86 @@ class WikiUtils {
     }
   }
 
+  static Future<void> _playAudio(BuildContext context, String url) async {
+    String audioUrl = url;
+    if (url.startsWith('//')) {
+      audioUrl = 'https:$url';
+    }
+
+    try {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(width: 12),
+              Text('Playing audio...'),
+            ],
+          ),
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      await _audioPlayer.stop();
+      await _audioPlayer.setUrl(audioUrl);
+      await _audioPlayer.play();
+    } catch (e) {
+      debugPrint('WikiUtils: Error playing audio: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Could not play audio')));
+      }
+    }
+  }
+
   static Map<String, String>? customStyles(
-      BuildContext context, dom.Element element) {
+    BuildContext context,
+    dom.Element element,
+  ) {
+    final styles = <String, String>{};
+
     if (element.localName == 'sup' || element.classes.contains('reference')) {
       return {
         'display': 'inline-block',
         'padding': '0 2px',
         'font-size': '0.75em',
-        'vertical-align': 'super'
+        'vertical-align': 'super',
       };
     }
-    if (element.localName == 'p') {
-      return {'margin-bottom': '12px', 'text-align': 'justify'};
+
+    // Apply justification to common block elements
+    if (['p', 'div', 'li', 'section', 'td'].contains(element.localName)) {
+      styles['text-align'] = 'justify';
+      if (element.localName == 'p') {
+        styles['margin-bottom'] = '12px';
+      }
     }
+
     if (element.localName == 'a') {
       final href = element.attributes['href'] ?? '';
       final isRedLink =
           href.contains('action=edit') || href.contains('redlink=1');
       final color = AppTheme.getLinkColor(context, isRedLink: isRedLink);
-      return {
-        'color': '#${color.toARGB32().toRadixString(16).substring(2)}',
-        'text-decoration': 'none',
-        'font-weight': '600'
-      };
+      styles['color'] = '#${color.toARGB32().toRadixString(16).substring(2)}';
+      styles['text-decoration'] = 'none';
+      styles['font-weight'] = '600';
     }
-    return null;
+
+    return styles.isEmpty ? null : styles;
   }
 
   static Widget? customWidgetBuilder(
-      BuildContext context, dom.Element element) {
+    BuildContext context,
+    dom.Element element,
+  ) {
     if (element.localName == 'h2') {
       final theme = Theme.of(context);
       return Padding(
@@ -214,7 +290,8 @@ class WikiUtils {
 
     final decodedId = Uri.decodeComponent(referenceId);
     final refElement =
-        document.getElementById(decodedId) ?? document.getElementById(referenceId);
+        document.getElementById(decodedId) ??
+        document.getElementById(referenceId);
 
     if (refElement == null) return;
 
@@ -239,8 +316,11 @@ class WikiUtils {
           children: [
             Row(
               children: [
-                Icon(Icons.info_outline,
-                    size: 18, color: theme.colorScheme.secondary),
+                Icon(
+                  Icons.info_outline,
+                  size: 18,
+                  color: theme.colorScheme.secondary,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   'reference'.tr(),

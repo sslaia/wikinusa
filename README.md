@@ -1,6 +1,6 @@
 # WikiNusa
 
-An Android app for Wikipedia in local languages in Indonesia. Get it from Play Store:
+An Android app for Nias, Indonesian and English Wikipedia as well as for Nias Wiktionary and Wikibooks. Get it from Play Store:
 
 <a href="https://play.google.com/store/apps/details?id=io.github.sslaia.wikinusa"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/apps/en-play-badge.png" height="80pt"/></a>
 
@@ -9,9 +9,11 @@ An Android app for Wikipedia in local languages in Indonesia. Get it from Play S
 ### Version 1.0.0:
 
 - First release
-- Support 11 languages in Indonesia
+- Support for Nias, Indonesian and English Wikipedia
+- Support for Nias Wiktionary and Wikibooks
 - Dark/light theme
 - Font size settings
+- Article Bookarmarks
 
 ## Getting the app
 

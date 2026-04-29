@@ -15,7 +15,7 @@ class HtmlProcessor {
     final projectStr = project.name.toLowerCase();
     final document = html_parser.parse(rawHtml);
 
-    // 0. Resolve Wikipedia lazy loading
+    // Resolve Wikipedia lazy loading
     document.querySelectorAll('noscript').forEach((ns) {
       final nsHtml = ns.innerHtml;
       if (nsHtml.contains('<img')) {
@@ -24,70 +24,98 @@ class HtmlProcessor {
       }
       ns.remove();
     });
-    document.querySelectorAll('.lazy-image-placeholder').forEach((el) => el.remove());
+    document
+        .querySelectorAll('.lazy-image-placeholder')
+        .forEach((el) => el.remove());
 
-    // 0.1 Handle Tables: Wrap in scrollable div
+    // Handle Tables: Wrap in scrollable div
     document.querySelectorAll('table').forEach((table) {
       table.attributes.remove('width');
       table.attributes.remove('style');
-      
+
       final wrapper = dom.Element.tag('div');
-      wrapper.attributes['style'] = 'overflow-x: auto; width: 100%; margin: 16px 0; border: 1px solid #ddd; border-radius: 8px;';
+      wrapper.attributes['style'] =
+          'overflow-x: auto; width: 100%; margin: 16px 0; border: 1px solid #ddd; border-radius: 8px;';
       wrapper.classes.add('table-scroll-wrapper');
-      
+
       table.replaceWith(wrapper);
       wrapper.append(table);
-      
+
       table.attributes['style'] = 'border-collapse: collapse; min-width: 100%;';
       table.querySelectorAll('th, td').forEach((cell) {
-        cell.attributes['style'] = 'border: 1px solid #ddd; padding: 8px; text-align: left;';
+        cell.attributes['style'] =
+            'border: 1px solid #ddd; padding: 8px; text-align: left;';
       });
     });
 
     // Load rules
-    final jsonString = await rootBundle.loadString('assets/data/html_rules.json');
+    final jsonString = await rootBundle.loadString(
+      'assets/data/html_rules.json',
+    );
     final htmlRules = jsonDecode(jsonString);
-    final projectRules = htmlRules[languageCode]?[projectStr] as Map<String, dynamic>?;
-    final globalRules = htmlRules['global']?[projectStr] as Map<String, dynamic>?;
+    final projectRules =
+        htmlRules[languageCode]?[projectStr] as Map<String, dynamic>?;
+    final globalRules =
+        htmlRules['global']?[projectStr] as Map<String, dynamic>?;
 
     final removeSelectors = _getRulesList(globalRules, projectRules, 'remove');
     final hideSelectors = _getRulesList(globalRules, projectRules, 'hide');
-    final refKeywords = _getRulesList(globalRules, projectRules, 'referenceKeywords');
+    final refKeywords = _getRulesList(
+      globalRules,
+      projectRules,
+      'referenceKeywords',
+    );
 
     String? imageUrl;
-    
-    // 1. Find Hero image using centralized WikiUtils logic
+
+    // Find Hero image using centralized WikiUtils logic
     final images = document.querySelectorAll('img');
     dom.Element? heroImageElement;
     for (var img in images) {
-       final src = img.attributes['src'] ?? '';
-       if (!WikiUtils.isIcon(src)) {
-          imageUrl = WikiUtils.optimizeImageUrl(src, langCode: languageCode, projectStr: projectStr, width: 800);
-          heroImageElement = img;
-          break;
-       }
+      final src = img.attributes['src'] ?? '';
+      if (!WikiUtils.isIcon(src)) {
+        imageUrl = WikiUtils.optimizeImageUrl(
+          src,
+          langCode: languageCode,
+          projectStr: projectStr,
+          width: 800,
+        );
+        heroImageElement = img;
+        break;
+      }
     }
 
     if (heroImageElement != null) {
-       _markImageContainerForHiding(heroImageElement);
+      _markImageContainerForHiding(heroImageElement);
     }
 
-    // 2. Process all other images using centralized WikiUtils logic
+    // Process all other images using centralized WikiUtils logic
     document.querySelectorAll('img').forEach((img) {
-       var src = img.attributes['src'] ?? '';
-       if (src.isNotEmpty) {
-          // Detect if it's an inline icon by size
-          final widthAttr = int.tryParse(img.attributes['width'] ?? '');
-          final heightAttr = int.tryParse(img.attributes['height'] ?? '');
-          
-          if ((widthAttr != null && widthAttr <= 48) || (heightAttr != null && heightAttr <= 48)) {
-             img.classes.add('wiki-inline-icon');
-             // For inline icons, we don't scale up to 600px
-             img.attributes['src'] = WikiUtils.optimizeImageUrl(src, langCode: languageCode, projectStr: projectStr, width: 100);
-          } else {
-             img.attributes['src'] = WikiUtils.optimizeImageUrl(src, langCode: languageCode, projectStr: projectStr, width: 600);
-          }
-       }
+      var src = img.attributes['src'] ?? '';
+      if (src.isNotEmpty) {
+        // Detect if it's an inline icon by size
+        final widthAttr = int.tryParse(img.attributes['width'] ?? '');
+        final heightAttr = int.tryParse(img.attributes['height'] ?? '');
+
+        if ((widthAttr != null && widthAttr <= 48) ||
+            (heightAttr != null && heightAttr <= 48)) {
+          img.classes.add('wiki-inline-icon');
+          // For inline icons, we don't scale up to 600px
+          img.attributes['src'] = WikiUtils.optimizeImageUrl(
+            src,
+            langCode: languageCode,
+            projectStr: projectStr,
+            width: 100,
+          );
+        } else {
+          img.attributes['src'] = WikiUtils.optimizeImageUrl(
+            src,
+            langCode: languageCode,
+            projectStr: projectStr,
+            width: 600,
+          );
+        }
+      }
     });
 
     // Apply removals/hides
@@ -95,7 +123,9 @@ class HtmlProcessor {
       document.querySelectorAll(s).forEach((el) => el.remove());
     }
     for (var s in hideSelectors) {
-      document.querySelectorAll(s).forEach((el) => el.attributes['style'] = 'display: none;');
+      document
+          .querySelectorAll(s)
+          .forEach((el) => el.attributes['style'] = 'display: none;');
     }
 
     // Process reference sections
@@ -107,14 +137,14 @@ class HtmlProcessor {
           h.attributes['style'] = 'display: none;';
           var next = h.nextElementSibling;
           while (next != null && !['h2', 'h3', 'h4'].contains(next.localName)) {
-             next.attributes['style'] = 'display: none;';
-             next = next.nextElementSibling;
+            next.attributes['style'] = 'display: none;';
+            next = next.nextElementSibling;
           }
         }
       }
     }
 
-    // 3. Final cleanup and Nias Wiktionary specific processing
+    // Final cleanup and Nias Wiktionary specific processing
     String processedHtml = document.body?.innerHtml ?? '';
 
     if (languageCode == 'nia' && project == ProjectType.wiktionary) {
@@ -123,14 +153,15 @@ class HtmlProcessor {
       _removeEmptyImageSections(soup);
       processedHtml = soup.toString();
     }
-    
-    return {
-      'html': processedHtml,
-      'imageUrl': imageUrl,
-    };
+
+    return {'html': processedHtml, 'imageUrl': imageUrl};
   }
 
-  static List<String> _getRulesList(Map<String, dynamic>? global, Map<String, dynamic>? project, String key) {
+  static List<String> _getRulesList(
+    Map<String, dynamic>? global,
+    Map<String, dynamic>? project,
+    String key,
+  ) {
     final list = <String>[];
     if (global != null && global[key] != null) {
       list.addAll((global[key] as List).map((e) => e.toString()));
@@ -145,15 +176,19 @@ class HtmlProcessor {
     dom.Element? containerToHide = img;
     var parent = img.parent;
     while (parent != null && parent.localName != 'body') {
-      if (parent.localName == 'figure' || parent.classes.contains('thumb') || parent.classes.contains('infobox-image')) {
+      if (parent.localName == 'figure' ||
+          parent.classes.contains('thumb') ||
+          parent.classes.contains('infobox-image')) {
         containerToHide = parent;
         break;
       }
       parent = parent.parent;
     }
-    containerToHide?.attributes['class'] = '${containerToHide.attributes['class'] ?? ''} hidden-hero-container';
+    containerToHide?.attributes['class'] =
+        '${containerToHide.attributes['class'] ?? ''} hidden-hero-container';
   }
 
+  /// Nias Wiktionary special treatment
   /// Helper function to find and remove headings followed by "Lö hadöi"
   /// in either <dd> or <li> tags.
   static void _removeEmptySections(BeautifulSoup root) {

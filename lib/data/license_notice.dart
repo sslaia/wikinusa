@@ -7,11 +7,11 @@ made.<br>
 
 <strong>Specific Attributions:</strong> 
 1) The Nias ornament <em>Ni'oŵeŵemagai</em> 
-is by <strong>Lewi Zega</strong> via Wikimedia Commons; 
-2) The image <em>Woman Reading a Book on Lap</em> is by <strong>Prasanna Kumar</strong>, 
-<em>Sappho</em> is by <strong>Herkulaneischer Meister</strong>.
-via Wikimedia Commons. For more details, visit the Wikipedia Terms of Use 
-and the Creative Commons License.
-3) The Nias ornament <em>Ni'ogazi</em> as well as the Nias old man face are provided 
-by <strong>Sirus Laia</strong> via Wikimedia Commons.
+is by <strong>Lewi Zega</strong>, the image <em>Woman Reading a Book on Lap</em> 
+by <strong>Prasanna Kumar</strong>, 
+<em>Adu Sarambia</em> by <strong>Eriwanto Harefa</strong>.
+All via Wikimedia Commons. For more details, visit the Wikimedia Terms of Use 
+and the Creative Commons License. 
+3) The Nias ornament <em>Rai</em> is
+by <strong>Sirus Laia</strong> from the private collection.
 ''';

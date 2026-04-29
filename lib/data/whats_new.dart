@@ -3,7 +3,7 @@ const whatsNew = '''
 
 This is the first version. The features are:
 <ul>
-<li>Support for Nias, Indonesian and Englih Wikipedia. Support for other languages in Indonesia is in the work.</li>
+<li>Support for Nias, Indonesian and Englih Wikipedia.</li>
 <li>Full support for Wikipedia, Wikikamus and Wikibuku Nias</li>
 <li>Users can bookmark pages they like and find them later.</li>
 <li>Article can be shared, edited or simply viewed on the web.</li>

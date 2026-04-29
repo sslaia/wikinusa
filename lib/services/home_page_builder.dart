@@ -18,12 +18,15 @@ class HomePageBuilder {
     final bodyStr = utf8.decode(responseBodyBytes);
     final document = html_parser.parse(bodyStr);
 
-    final jsonString =
-        await rootBundle.loadString('assets/data/html_rules.json');
+    final jsonString = await rootBundle.loadString(
+      'assets/data/html_rules.json',
+    );
     final htmlRules = jsonDecode(jsonString);
 
-    final projectRules = htmlRules[languageCode]?[projectStr] as Map<String, dynamic>?;
-    final globalRules = htmlRules['global']?[projectStr] as Map<String, dynamic>?;
+    final projectRules =
+        htmlRules[languageCode]?[projectStr] as Map<String, dynamic>?;
+    final globalRules =
+        htmlRules['global']?[projectStr] as Map<String, dynamic>?;
 
     final removeSelectors = _getRulesList(globalRules, projectRules, 'remove');
     final hideSelectors = _getRulesList(globalRules, projectRules, 'hide');
@@ -41,7 +44,7 @@ class HomePageBuilder {
         String selector;
         dynamic keepSelector;
         bool firstOnly = false;
-        bool stripStyle = true; 
+        bool stripStyle = true;
 
         if (config is Map) {
           selector = config['selector'] ?? '';
@@ -53,37 +56,40 @@ class HomePageBuilder {
 
         if (selector.isEmpty) continue;
 
-        final finalSelector = selector.startsWith('.') || selector.startsWith('#')
+        final finalSelector =
+            selector.startsWith('.') || selector.startsWith('#')
             ? selector
             : '#$selector';
 
         final element = document.querySelector(finalSelector);
 
         if (element != null) {
-          sections.add(_extractSection(
-            element,
-            titleKey,
-            languageCode: languageCode,
-            projectStr: projectStr,
-            removeSelectors: removeSelectors,
-            hideSelectors: hideSelectors,
-            keepSelector: keepSelector,
-            firstOnly: firstOnly,
-            stripStyle: stripStyle,
-          ));
+          sections.add(
+            _extractSection(
+              element,
+              titleKey,
+              languageCode: languageCode,
+              projectStr: projectStr,
+              removeSelectors: removeSelectors,
+              hideSelectors: hideSelectors,
+              keepSelector: keepSelector,
+              firstOnly: firstOnly,
+              stripStyle: stripStyle,
+            ),
+          );
         }
       }
-    } 
+    }
 
     // Enhanced Fallback Logic for Wiktionary and pages with different structures
     if (sections.isEmpty) {
       final containers = [
-        '#mw-content-text', 
-        '.mw-parser-output', 
+        '#mw-content-text',
+        '.mw-parser-output',
         '#bodyContent',
-        '.mf-index'
+        '.mf-index',
       ];
-      
+
       dom.Element? mainContent;
       for (var selector in containers) {
         mainContent = document.querySelector(selector);
@@ -91,43 +97,56 @@ class HomePageBuilder {
       }
 
       if (mainContent != null) {
-        final fallbackSections = mainContent.querySelectorAll('section, .mf-section-0');
+        final fallbackSections = mainContent.querySelectorAll(
+          'section, .mf-section-0',
+        );
         if (fallbackSections.isNotEmpty) {
-           for (var section in fallbackSections) {
-             if (section.text.trim().length > 50) {
-               sections.add(_extractSection(
-                 section, 
-                 'mainContent',
-                 languageCode: languageCode,
-                 projectStr: projectStr,
-                 stripStyle: true,
-               ));
-             }
-           }
+          for (var section in fallbackSections) {
+            if (section.text.trim().length > 50) {
+              sections.add(
+                _extractSection(
+                  section,
+                  'mainContent',
+                  languageCode: languageCode,
+                  projectStr: projectStr,
+                  stripStyle: true,
+                ),
+              );
+            }
+          }
         } else {
-          sections.add(_extractSection(
-            mainContent, 
-            'mainContent',
-            languageCode: languageCode,
-            projectStr: projectStr,
-            stripStyle: true,
-          ));
+          sections.add(
+            _extractSection(
+              mainContent,
+              'mainContent',
+              languageCode: languageCode,
+              projectStr: projectStr,
+              stripStyle: true,
+            ),
+          );
         }
       }
     }
 
     if (sections.isEmpty) {
-      sections.add(HomePageSection(
-        titleKey: 'no_content',
-        textHtml: '<i>No specific content found for this language and project.</i>',
-        data: {},
-      ));
+      sections.add(
+        HomePageSection(
+          titleKey: 'no_content',
+          textHtml:
+              '<i>No specific content found for this language and project.</i>',
+          data: {},
+        ),
+      );
     }
 
     return sections;
   }
 
-  static List<String> _getRulesList(Map<String, dynamic>? global, Map<String, dynamic>? project, String key) {
+  static List<String> _getRulesList(
+    Map<String, dynamic>? global,
+    Map<String, dynamic>? project,
+    String key,
+  ) {
     final list = <String>[];
     if (global != null && global[key] != null) {
       list.addAll((global[key] as List).map((e) => e.toString()));
@@ -149,10 +168,10 @@ class HomePageBuilder {
     bool firstOnly = false,
     bool stripStyle = false,
   }) {
-    // 1. Find the first valid image that is NOT an icon
+    // Find the first valid image that is NOT an icon
     final allImages = element.querySelectorAll('img');
     dom.Element? validImg;
-    
+
     for (var img in allImages) {
       final src = img.attributes['src'] ?? '';
       if (!WikiUtils.isIcon(src)) {
@@ -168,20 +187,26 @@ class HomePageBuilder {
       final imgClone = validImg.clone(true);
       String? src = imgClone.attributes['src'];
       if (src != null) {
-        imageUrl = WikiUtils.optimizeImageUrl(src, langCode: languageCode, projectStr: projectStr, width: 600);
+        imageUrl = WikiUtils.optimizeImageUrl(
+          src,
+          langCode: languageCode,
+          projectStr: projectStr,
+          width: 600,
+        );
         imgClone.attributes['src'] = imageUrl;
       }
-      
+
       imgClone.attributes.remove('srcset');
       imgClone.attributes.remove('width');
       imgClone.attributes.remove('height');
-      imgClone.attributes['style'] = 'width: 100%; height: auto; display: block; border-radius: 12px;';
-      
+      imgClone.attributes['style'] =
+          'width: 100%; height: auto; display: block; border-radius: 12px;';
+
       imageHtml = imgClone.outerHtml;
       validImg.remove();
     }
 
-    // 2. Apply removals
+    // Apply removals
     for (var s in removeSelectors) {
       if (s == 'img' || s == 'figure') continue;
       element.querySelectorAll(s).forEach((el) => el.remove());
@@ -191,7 +216,7 @@ class HomePageBuilder {
       element.querySelectorAll(s).forEach((el) => el.remove());
     }
 
-    // 3. Filter content
+    // Filter content
     String textHtml;
     if (keepSelector != null) {
       final List<String> selectors = keepSelector is List
@@ -212,7 +237,9 @@ class HomePageBuilder {
           if (kept != null) {
             if (stripStyle) {
               kept.attributes.remove('style');
-              kept.querySelectorAll('*').forEach((child) => child.attributes.remove('style'));
+              kept
+                  .querySelectorAll('*')
+                  .forEach((child) => child.attributes.remove('style'));
             }
             htmlParts.add(kept.outerHtml);
           }
@@ -221,7 +248,9 @@ class HomePageBuilder {
           if (stripStyle) {
             for (var el in kept) {
               el.attributes.remove('style');
-              el.querySelectorAll('*').forEach((child) => child.attributes.remove('style'));
+              el
+                  .querySelectorAll('*')
+                  .forEach((child) => child.attributes.remove('style'));
             }
           }
           htmlParts.addAll(kept.map((e) => e.outerHtml));
@@ -231,7 +260,9 @@ class HomePageBuilder {
     } else {
       if (stripStyle) {
         element.attributes.remove('style');
-        element.querySelectorAll('*').forEach((child) => child.attributes.remove('style'));
+        element
+            .querySelectorAll('*')
+            .forEach((child) => child.attributes.remove('style'));
       }
       textHtml = element.innerHtml;
     }

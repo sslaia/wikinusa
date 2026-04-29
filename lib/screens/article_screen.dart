@@ -5,9 +5,9 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher.dart';
-import 'package:wikinusa/utils/wiki_utils.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../utils/wiki_utils.dart';
 import '../models/project_type.dart';
 import '../providers/history_provider.dart';
 import '../providers/bookmarks_provider.dart';
@@ -17,6 +17,7 @@ import '../providers/wiki_api_provider.dart';
 import '../widgets/article_hero_image.dart';
 import '../widgets/custom_bottom_app_bar.dart';
 import '../widgets/drawer_menu.dart';
+import 'image_screen.dart';
 
 class ArticleScreen extends ConsumerStatefulWidget {
   final String title;
@@ -45,20 +46,24 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     final wikiContent = ref.watch(wikiApiProvider(widget.title));
     final langCode = context.locale.languageCode;
     final theme = Theme.of(context);
-    
+
     // Fallback fonts for Javanese and other scripts
     final List<String> fontFallbacks = [
       GoogleFonts.notoSansJavanese().fontFamily!,
       'Roboto',
     ];
 
-    // TEMP: Nias Wikibooks is currently in the Incubator
+    // Temporary solution while Nias Wikibooks is still in the Incubator
     String pageUrl;
     if (langCode == 'nia' && currentProject == ProjectType.wikibooks) {
-      final incubatorTitle = widget.title.startsWith('Wb/nia/') ? widget.title : 'Wb/nia/${widget.title}';
-      pageUrl = 'https://incubator.wikimedia.org/wiki/${incubatorTitle.replaceAll(' ', '_')}';
+      final incubatorTitle = widget.title.startsWith('Wb/nia/')
+          ? widget.title
+          : 'Wb/nia/${widget.title}';
+      pageUrl =
+          'https://incubator.wikimedia.org/wiki/${incubatorTitle.replaceAll(' ', '_')}';
     } else {
-      pageUrl = 'https://$langCode.${currentProject.name.toLowerCase()}.org/wiki/${widget.title.replaceAll(' ', '_')}';
+      pageUrl =
+          'https://$langCode.${currentProject.name.toLowerCase()}.org/wiki/${widget.title.replaceAll(' ', '_')}';
     }
 
     return PopScope(
@@ -96,53 +101,72 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                         child: HtmlWidget(
                           htmlContent,
                           textStyle: GoogleFonts.notoSerif(
-                            fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
+                            fontSize: Theme.of(
+                              context,
+                            ).textTheme.bodyMedium?.fontSize,
                             height: 1.8,
-                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.9),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.9),
                           ).copyWith(fontFamilyFallback: fontFallbacks),
-                          onTapUrl: (url) => WikiUtils.handleTapUrl(context, url, htmlContent),
-                          customStylesBuilder: (element) => WikiUtils.customStyles(context, element),
+                          onTapUrl: (url) =>
+                              WikiUtils.handleTapUrl(context, url, htmlContent),
+                          customStylesBuilder: (element) =>
+                              WikiUtils.customStyles(context, element),
                           customWidgetBuilder: (element) {
-                            final sharedWidget = WikiUtils.customWidgetBuilder(context, element);
+                            final sharedWidget = WikiUtils.customWidgetBuilder(
+                              context,
+                              element,
+                            );
                             if (sharedWidget != null) return sharedWidget;
 
                             if (element.classes.contains('gallery')) {
                               return _buildNativeGallery(element);
                             }
 
-                            if (element.localName == 'img' || element.classes.contains('thumb') || element.localName == 'figure') {
-                               if (element.classes.contains('hidden-hero-container')) {
-                                 return const SizedBox.shrink();
-                               }
-                               
-                               final img = element.localName == 'img' ? element : element.querySelector('img');
-                               
-                               // If it's marked as an inline icon, don't build a full-width block
-                               if (img != null && img.classes.contains('wiki-inline-icon')) {
-                                 return null;
-                               }
+                            if (element.localName == 'img' ||
+                                element.classes.contains('thumb') ||
+                                element.localName == 'figure') {
+                              if (element.classes.contains(
+                                'hidden-hero-container',
+                              )) {
+                                return const SizedBox.shrink();
+                              }
 
-                               if (img != null) {
-                                 final caption = element.querySelector('.caption')?.text ?? 
-                                                 element.querySelector('.thumbcaption')?.text ??
-                                                 element.querySelector('figcaption')?.text;
-                                                 
-                                 return _buildFullWidthImage(img, caption);
-                               }
+                              final img = element.localName == 'img'
+                                  ? element
+                                  : element.querySelector('img');
+
+                              // If it's marked as an inline icon, don't build a full-width block
+                              if (img != null &&
+                                  img.classes.contains('wiki-inline-icon')) {
+                                return null;
+                              }
+
+                              if (img != null) {
+                                final caption =
+                                    element.querySelector('.caption')?.text ??
+                                    element
+                                        .querySelector('.thumbcaption')
+                                        ?.text ??
+                                    element.querySelector('figcaption')?.text;
+
+                                return _buildFullWidthImage(img, caption);
+                              }
                             }
                             return null;
                           },
                         ),
                       ),
                       const WikiFooter(),
-                      const SizedBox(height: 100), // Space for floating action bar
+                      const SizedBox(
+                        height: 100,
+                      ), // Space for floating action bar
                     ],
                   ),
                 );
               },
-              loading: () => const Center(
-                child: CircularProgressIndicator(),
-              ),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (error, stack) => Center(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -150,7 +174,13 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                 ),
               ),
             ),
-            _buildFloatingActionBar(theme, pageUrl, widget.title, langCode, currentProject.name),
+            _buildFloatingActionBar(
+              theme,
+              pageUrl,
+              widget.title,
+              langCode,
+              currentProject.name,
+            ),
           ],
         ),
         bottomNavigationBar: CustomBottomAppBar(
@@ -177,49 +207,63 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
           final box = items[index];
           final img = box.querySelector('img');
           final caption = box.querySelector('.gallerytext')?.text ?? '';
-          
+
           if (img == null) return const SizedBox.shrink();
           final src = img.attributes['src'] ?? '';
+          final fullImageUrl = src.startsWith('http') ? src : 'https:$src';
 
-          return Container(
-            width: MediaQuery.of(context).size.width * 0.8,
-            margin: const EdgeInsets.only(right: 16),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Image.network(
-                    src.startsWith('http') ? src : 'https:$src',
-                    fit: BoxFit.cover,
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [Colors.transparent, Colors.black.withValues(alpha: 0.8)],
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ImageScreen(imagePath: fullImageUrl),
+                ),
+              );
+            },
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.8,
+              margin: const EdgeInsets.only(right: 16),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Hero(
+                      tag: fullImageUrl,
+                      child: Image.network(fullImageUrl, fit: BoxFit.cover),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withValues(alpha: 0.8),
+                            ],
+                          ),
                         ),
-                      ),
-                      child: Text(
-                        caption,
-                        style: const TextStyle(
-                          color: Colors.white, 
-                          fontSize: 12, 
-                          fontStyle: FontStyle.italic
+                        child: Text(
+                          caption,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontStyle: FontStyle.italic,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
                         ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           );
@@ -231,6 +275,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
   Widget _buildFullWidthImage(dom.Element img, String? caption) {
     final src = img.attributes['src'] ?? '';
     if (src.isEmpty) return const SizedBox.shrink();
+    final fullImageUrl = src.startsWith('http') ? src : 'https:$src';
 
     return Container(
       width: double.infinity,
@@ -238,12 +283,25 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.network(
-              src.startsWith('http') ? src : 'https:$src',
-              width: double.infinity,
-              fit: BoxFit.fitWidth,
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ImageScreen(imagePath: fullImageUrl),
+                ),
+              );
+            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Hero(
+                tag: fullImageUrl,
+                child: Image.network(
+                  fullImageUrl,
+                  width: double.infinity,
+                  fit: BoxFit.fitWidth,
+                ),
+              ),
             ),
           ),
           if (caption != null && caption.isNotEmpty)
@@ -263,17 +321,20 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
   }
 
   Widget _buildFloatingActionBar(
-      ThemeData theme,
-      String pageUrl,
-      String currentTitle,
-      String langCode,
-      String projectName,
-      ) {
+    ThemeData theme,
+    String pageUrl,
+    String currentTitle,
+    String langCode,
+    String projectName,
+  ) {
     final bookmarks = ref.watch(bookmarksProvider);
     final history = ref.watch(historyProvider);
-    
+
     final isBookmarked = bookmarks.any(
-      (b) => b.title == currentTitle && b.langCode == langCode && b.projectName == projectName
+      (b) =>
+          b.title == currentTitle &&
+          b.langCode == langCode &&
+          b.projectName == projectName,
     );
 
     return Positioned(
@@ -303,13 +364,15 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
               _buildActionButton(
                 theme,
                 Icons.arrow_back_ios_new,
-                history.canGoBack 
-                    ? theme.colorScheme.primary 
+                history.canGoBack
+                    ? theme.colorScheme.primary
                     : theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                onPressed: history.canGoBack ? () {
-                  ref.read(historyProvider.notifier).goBack();
-                  Navigator.of(context).pop();
-                } : null,
+                onPressed: history.canGoBack
+                    ? () {
+                        ref.read(historyProvider.notifier).goBack();
+                        Navigator.of(context).pop();
+                      }
+                    : null,
               ),
               _buildDivider(theme),
               _buildActionButton(
@@ -322,7 +385,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                   ref
                       .read(bookmarksProvider.notifier)
                       .toggleBookmark(currentTitle, langCode, projectName);
-                  
+
                   ScaffoldMessenger.of(context).clearSnackBars();
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -387,18 +450,24 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
               _buildActionButton(
                 theme,
                 Icons.arrow_forward_ios,
-                history.canGoForward 
-                    ? theme.colorScheme.primary 
+                history.canGoForward
+                    ? theme.colorScheme.primary
                     : theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                onPressed: history.canGoForward ? () {
-                  final nextTitle = ref.read(historyProvider.notifier).goForward();
-                  if (nextTitle != null) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => ArticleScreen(title: nextTitle)),
-                    );
-                  }
-                } : null,
+                onPressed: history.canGoForward
+                    ? () {
+                        final nextTitle = ref
+                            .read(historyProvider.notifier)
+                            .goForward();
+                        if (nextTitle != null) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ArticleScreen(title: nextTitle),
+                            ),
+                          );
+                        }
+                      }
+                    : null,
               ),
             ],
           ),
@@ -408,11 +477,11 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
   }
 
   Widget _buildActionButton(
-      ThemeData theme,
-      IconData icon,
-      Color color, {
-        VoidCallback? onPressed,
-      }) {
+    ThemeData theme,
+    IconData icon,
+    Color color, {
+    VoidCallback? onPressed,
+  }) {
     return Material(
       color: Colors.transparent,
       child: InkWell(

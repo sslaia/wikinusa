@@ -66,14 +66,6 @@ class BookmarksScreen extends ConsumerWidget {
             letterSpacing: -1,
           ),
         ),
-        // const SizedBox(height: 4),
-        // Text(
-        //   count == 1 ? '1_bookmark_saved'.tr() : 'n_bookmarks_saved'.tr(args: [count.toString()]),
-        //   style: theme.textTheme.bodyLarge?.copyWith(
-        //     color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-        //     fontSize: 16,
-        //   ),
-        // ),
       ],
     );
   }
