@@ -122,11 +122,9 @@ class WikiApiService {
                 finalTitle,
                 languageCode,
               );
-              if (processedResult is Map<String, dynamic>) {
-                processedResult['html'] =
-                    (processedResult['html'] ?? '') + categoryHtml;
-              }
-            }
+              processedResult['html'] =
+                  (processedResult['html'] ?? '') + categoryHtml;
+                        }
 
             await prefs.setString(cacheKey, jsonEncode(processedResult));
             await prefs.setString(

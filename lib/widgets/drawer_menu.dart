@@ -2,9 +2,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wikinusa/screens/create_book_screen.dart';
-import 'package:wikinusa/screens/create_entry_screen.dart';
-import 'package:wikinusa/screens/create_page_screen.dart';
+
+import '../screens/create_book_screen.dart';
+import '../screens/create_entry_screen.dart';
+import '../screens/create_page_screen.dart';
 import '../data/about_app.dart';
 import '../data/about_community.dart';
 import '../data/whats_new.dart';
@@ -21,6 +22,19 @@ class DrawerMenu extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    return Drawer(
+      backgroundColor: theme.colorScheme.surfaceContainerLow,
+      child: const DrawerContent(),
+    );
+  }
+}
+
+class DrawerContent extends ConsumerWidget {
+  const DrawerContent({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
     final themeMode = ref.watch(themeModeProvider);
     final currentProject = ref.watch(appStateProvider);
     final currentLanguage = ref.watch(languageProvider);
@@ -31,99 +45,119 @@ class DrawerMenu extends ConsumerWidget {
         (themeMode == ThemeMode.system &&
             MediaQuery.of(context).platformBrightness == Brightness.dark);
 
-    return Drawer(
-      backgroundColor: theme.colorScheme.surfaceContainerLow,
-      child: Column(
-        children: [
-          _buildHeader(context, theme, currentProject),
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              children: [
-                _buildSectionLabel(theme, 'drawer_quick_shortcuts'),
-                _buildDrawerItem(
-                  theme,
-                  icon: Icons.edit_note_rounded,
-                  title: 'create_new_page'.tr(),
-                  onTap: () {
-                    Widget destination;
-                    if (currentProject == ProjectType.wikipedia) {
-                      destination = const CreatePageScreen();
-                    } else if (currentLanguage == 'nia' && currentProject == ProjectType.wiktionary) {
-                      destination = const CreateEntryScreen();
-                    } else if (currentLanguage == 'nia' && currentProject == ProjectType.wikibooks) {
-                      destination = const CreateBookScreen();
-                    } else {
-                      destination = const CreatePageScreen();
-                    }
+    return ListView(
+      padding: EdgeInsets.zero,
+      children: [
+        _buildHeader(context, theme, currentProject),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildSectionLabel(theme, 'drawer_quick_shortcuts'),
+              _buildDrawerItem(
+                theme,
+                icon: Icons.edit_note_rounded,
+                title: 'create_new_page'.tr(),
+                onTap: () {
+                  Widget destination;
+                  if (currentProject == ProjectType.wikipedia) {
+                    destination = const CreatePageScreen();
+                  } else if (currentLanguage == 'nia' &&
+                      currentProject == ProjectType.wiktionary) {
+                    destination = const CreateEntryScreen();
+                  } else if (currentLanguage == 'nia' &&
+                      currentProject == ProjectType.wikibooks) {
+                    destination = const CreateBookScreen();
+                  } else {
+                    destination = const CreatePageScreen();
+                  }
 
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => destination,
-                      ),
-                    );
-                  },
-                ),
-                _buildDrawerItem(
-                  theme,
-                  icon: Icons.bookmark_rounded,
-                  title: 'bookmarks'.tr(),
-                  onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => destination),
+                  );
+                },
+              ),
+              _buildDrawerItem(
+                theme,
+                icon: Icons.bookmark_rounded,
+                title: 'bookmarks'.tr(),
+                onTap: () {
+                  if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
                     Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const BookmarksScreen(),
-                      ),
-                    );
-                  },
+                  }
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const BookmarksScreen()),
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
+              _buildSectionLabel(theme, 'drawer_project'),
+              _buildProjectSelector(
+                context,
+                ref,
+                theme,
+                currentProject,
+                currentLanguage,
+              ),
+              const SizedBox(height: 16),
+              _buildSectionLabel(theme, 'drawer_language'),
+              _buildLanguageSelector(context, ref, theme, currentLanguage),
+              const SizedBox(height: 16),
+              _buildSectionLabel(theme, 'drawer_appearance'),
+              _buildAppearanceToggle(ref, theme, isDark),
+              const SizedBox(height: 16),
+              _buildSectionLabel(theme, 'drawer_font_size'),
+              _buildFontSizeSelector(ref, theme, currentFontSize),
+              const SizedBox(height: 16),
+              _buildSectionLabel(theme, 'drawer_about'),
+              _buildDrawerItem(
+                theme,
+                icon: Icons.groups_2_rounded,
+                title: 'about_community'.tr(),
+                onTap: () => _navigateToAbout(
+                  context,
+                  'about_community',
+                  aboutCommunity,
                 ),
-                const SizedBox(height: 16),
-                _buildSectionLabel(theme, 'drawer_project'),
-                _buildProjectSelector(context, ref, theme, currentProject, currentLanguage),
-                const SizedBox(height: 16),
-                _buildSectionLabel(theme, 'drawer_language'),
-                _buildLanguageSelector(context, ref, theme, currentLanguage),
-                const SizedBox(height: 16),
-                _buildSectionLabel(theme, 'drawer_appearance'),
-                _buildAppearanceToggle(ref, theme, isDark),
-                const SizedBox(height: 16),
-                _buildSectionLabel(theme, 'drawer_font_size'),
-                _buildFontSizeSelector(ref, theme, currentFontSize),
-                const SizedBox(height: 16),
-                _buildSectionLabel(theme, 'drawer_about'),
-                _buildDrawerItem(
-                  theme,
-                  icon: Icons.groups_2_rounded,
-                  title: 'about_community'.tr(),
-                  onTap: () => _navigateToAbout(context, 'about_community', aboutCommunity),
-                ),
-                _buildDrawerItem(
-                  theme,
-                  icon: Icons.newspaper_rounded,
-                  title: 'about_whats_new'.tr(),
-                  onTap: () => _navigateToAbout(context, 'about_whats_new', whatsNew),
-                ),
-                _buildDrawerItem(
-                  theme,
-                  icon: Icons.info_rounded,
-                  title: 'about_app'.tr(),
-                  onTap: () => _navigateToAbout(context, 'about_app', aboutApp),
-                ),
-                const SizedBox(height: 32),
-              ],
-            ),
+              ),
+              _buildDrawerItem(
+                theme,
+                icon: Icons.newspaper_rounded,
+                title: 'about_whats_new'.tr(),
+                onTap: () =>
+                    _navigateToAbout(context, 'about_whats_new', whatsNew),
+              ),
+              _buildDrawerItem(
+                theme,
+                icon: Icons.info_rounded,
+                title: 'about_app'.tr(),
+                onTap: () => _navigateToAbout(context, 'about_app', aboutApp),
+              ),
+              const SizedBox(height: 32),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _buildHeader(BuildContext context, ThemeData theme, ProjectType currentProject) {
+  Widget _buildHeader(
+    BuildContext context,
+    ThemeData theme,
+    ProjectType currentProject,
+  ) {
+    final topPadding = MediaQuery.paddingOf(context).top;
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.only(top: 60, bottom: 24, left: 24, right: 24),
+      padding: EdgeInsets.only(
+        top: topPadding + 24,
+        bottom: 24,
+        left: 24,
+        right: 24,
+      ),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: const BorderRadius.only(bottomRight: Radius.circular(32)),
@@ -181,7 +215,7 @@ class DrawerMenu extends ConsumerWidget {
 
   Widget _buildSectionLabel(ThemeData theme, String labelKey) {
     return Padding(
-      padding: const EdgeInsets.only(left: 8, bottom: 8, top: 8),
+      padding: const EdgeInsets.only(left: 0, bottom: 8, top: 8),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         decoration: BoxDecoration(
@@ -201,7 +235,12 @@ class DrawerMenu extends ConsumerWidget {
     );
   }
 
-  Widget _buildDrawerItem(ThemeData theme, {required IconData icon, required String title, required VoidCallback onTap}) {
+  Widget _buildDrawerItem(
+    ThemeData theme, {
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Container(
@@ -217,7 +256,12 @@ class DrawerMenu extends ConsumerWidget {
           ],
         ),
         child: ListTile(
-          leading: Icon(icon, color: theme.colorScheme.onSurface.withValues(alpha: 0.7), size: 22),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+          leading: Icon(
+            icon,
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+            size: 22,
+          ),
           title: Text(
             title,
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -226,13 +270,21 @@ class DrawerMenu extends ConsumerWidget {
             ),
           ),
           onTap: onTap,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildProjectSelector(BuildContext context, WidgetRef ref, ThemeData theme, ProjectType currentProject, String currentLanguage) {
+  Widget _buildProjectSelector(
+    BuildContext context,
+    WidgetRef ref,
+    ThemeData theme,
+    ProjectType currentProject,
+    String currentLanguage,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
@@ -250,10 +302,16 @@ class DrawerMenu extends ConsumerWidget {
         value: currentProject,
         isExpanded: true,
         underline: const SizedBox(),
-        icon: Icon(Icons.keyboard_arrow_down_rounded, color: theme.colorScheme.primary),
+        padding: EdgeInsets.zero,
+        icon: Icon(
+          Icons.keyboard_arrow_down_rounded,
+          color: theme.colorScheme.primary,
+        ),
         onChanged: (ProjectType? newValue) {
           if (newValue != null && newValue.isSupported(currentLanguage)) {
-            ref.read(appStateProvider.notifier).setProject(newValue, currentLanguage);
+            ref
+                .read(appStateProvider.notifier)
+                .setProject(newValue, currentLanguage);
             Navigator.of(context).popUntil((route) => route.isFirst);
           }
         },
@@ -263,21 +321,30 @@ class DrawerMenu extends ConsumerWidget {
             value: project,
             enabled: isSupported,
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  Icons.circle, 
-                  size: 8, 
-                  color: isSupported ? project.primaryColor : Colors.grey.withValues(alpha: 0.3)
+                  Icons.circle,
+                  size: 8,
+                  color: isSupported
+                      ? project.primaryColor
+                      : Colors.grey.withValues(alpha: 0.3),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 8),
                 Text(
                   project.name.toLowerCase().tr(),
                   style: TextStyle(
-                    color: !isSupported 
+                    color: !isSupported
                         ? Colors.grey.withValues(alpha: 0.5)
-                        : (project == currentProject ? project.primaryColor : theme.colorScheme.onSurface),
-                    fontWeight: project == currentProject ? FontWeight.bold : FontWeight.normal,
-                    decoration: !isSupported ? TextDecoration.lineThrough : null,
+                        : (project == currentProject
+                              ? project.primaryColor
+                              : theme.colorScheme.onSurface),
+                    fontWeight: project == currentProject
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                    decoration: !isSupported
+                        ? TextDecoration.lineThrough
+                        : null,
                   ),
                 ),
               ],
@@ -288,7 +355,12 @@ class DrawerMenu extends ConsumerWidget {
     );
   }
 
-  Widget _buildLanguageSelector(BuildContext context, WidgetRef ref, ThemeData theme, String currentLanguage) {
+  Widget _buildLanguageSelector(
+    BuildContext context,
+    WidgetRef ref,
+    ThemeData theme,
+    String currentLanguage,
+  ) {
     final languages = [
       {'code': 'en', 'name': 'english'},
       {'code': 'id', 'name': 'indonesian'},
@@ -312,7 +384,11 @@ class DrawerMenu extends ConsumerWidget {
         value: currentLanguage,
         isExpanded: true,
         underline: const SizedBox(),
-        icon: Icon(Icons.keyboard_arrow_down_rounded, color: theme.colorScheme.primary, size: 20),
+        icon: Icon(
+          Icons.keyboard_arrow_down_rounded,
+          color: theme.colorScheme.primary,
+          size: 20,
+        ),
         onChanged: (String? newValue) {
           if (newValue != null) {
             ref.read(languageProvider.notifier).setLanguage(newValue);
@@ -327,7 +403,9 @@ class DrawerMenu extends ConsumerWidget {
               lang['name']!.tr(),
               style: TextStyle(
                 color: theme.colorScheme.onSurface,
-                fontWeight: currentLanguage == lang['code'] ? FontWeight.bold : FontWeight.normal,
+                fontWeight: currentLanguage == lang['code']
+                    ? FontWeight.bold
+                    : FontWeight.normal,
               ),
             ),
           );
@@ -357,18 +435,26 @@ class DrawerMenu extends ConsumerWidget {
         ),
         title: Text(
           isDark ? 'dark_mode'.tr() : 'light_mode'.tr(),
-          style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+          style: theme.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
         ),
         value: isDark,
         onChanged: (val) {
-          ref.read(themeModeProvider.notifier).setThemeMode(val ? ThemeMode.dark : ThemeMode.light);
+          ref
+              .read(themeModeProvider.notifier)
+              .setThemeMode(val ? ThemeMode.dark : ThemeMode.light);
         },
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
     );
   }
 
-  Widget _buildFontSizeSelector(WidgetRef ref, ThemeData theme, AppFontSize currentFontSize) {
+  Widget _buildFontSizeSelector(
+    WidgetRef ref,
+    ThemeData theme,
+    AppFontSize currentFontSize,
+  ) {
     return Container(
       padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
@@ -387,7 +473,8 @@ class DrawerMenu extends ConsumerWidget {
           final isSelected = size == currentFontSize;
           return Expanded(
             child: InkWell(
-              onTap: () => ref.read(fontSizeProvider.notifier).setFontSize(size),
+              onTap: () =>
+                  ref.read(fontSizeProvider.notifier).setFontSize(size),
               borderRadius: BorderRadius.circular(12),
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 10),
@@ -397,7 +484,9 @@ class DrawerMenu extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                            color: theme.colorScheme.primary.withValues(
+                              alpha: 0.3,
+                            ),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           ),
@@ -409,7 +498,9 @@ class DrawerMenu extends ConsumerWidget {
                   size.label[0].toUpperCase(),
                   style: theme.textTheme.labelLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: isSelected ? Colors.white : theme.colorScheme.onSurfaceVariant,
+                    color: isSelected
+                        ? Colors.white
+                        : theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
               ),
@@ -421,7 +512,9 @@ class DrawerMenu extends ConsumerWidget {
   }
 
   void _navigateToAbout(BuildContext context, String titleKey, String body) {
-    Navigator.pop(context);
+    if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
+      Navigator.pop(context);
+    }
     Navigator.push(
       context,
       MaterialPageRoute(

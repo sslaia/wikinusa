@@ -20,34 +20,45 @@ class BookmarksScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surfaceContainerLow,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: theme.colorScheme.onSurface,
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
-      extendBodyBehindAppBar: true,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 16),
-              _buildHeader(theme, bookmarks.length),
-              const SizedBox(height: 24),
-              Expanded(
-                child: bookmarks.isEmpty
-                    ? _buildEmptyState(theme)
-                    : _buildBookmarksList(context, ref, theme, bookmarks, currentProject),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32.0),
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: MediaQuery.of(context).padding.top + 20),
+                  IconButton(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    alignment: Alignment.centerLeft,
+                    icon: Icon(Icons.arrow_back, color: theme.colorScheme.onSurface),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildHeader(theme, bookmarks.length),
+                  const SizedBox(height: 24),
+                ],
               ),
-            ],
-          ),
+            ),
+            if (bookmarks.isEmpty)
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: _buildEmptyState(theme),
+              )
+            else
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                    final bookmark = bookmarks[index];
+                    return _buildBookmarkItem(context, ref, theme, bookmark, currentProject);
+                  },
+                  childCount: bookmarks.length,
+                ),
+              ),
+            const SliverToBoxAdapter(child: SizedBox(height: 32)),
+          ],
         ),
       ),
     );
@@ -55,6 +66,7 @@ class BookmarksScreen extends ConsumerWidget {
 
   Widget _buildHeader(ThemeData theme, int count) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -109,106 +121,217 @@ class BookmarksScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildBookmarksList(
-    BuildContext context,
-    WidgetRef ref,
-    ThemeData theme,
-    List<BookmarkedArticle> bookmarks,
-    ProjectType currentProject,
-  ) {
-    return ListView.builder(
-      padding: const EdgeInsets.only(bottom: 32),
-      itemCount: bookmarks.length,
-      itemBuilder: (context, index) {
-        final bookmark = bookmarks[index];
-        final isExternal = bookmark.projectName != currentProject.name;
-        
-        // Get project color (indigo for wikipedia, deep orange for wiktionary, purple for wikibooks)
-        final projectColor = _getProjectColor(bookmark.projectName);
+  Widget _buildBookmarkItem(
+      BuildContext context,
+      WidgetRef ref,
+      ThemeData theme,
+      BookmarkedArticle bookmark,
+      ProjectType currentProject,
+      ) {
+    final isExternal = bookmark.projectName != currentProject.name;
+    final projectColor = _getProjectColor(bookmark.projectName);
 
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 16.0),
-          child: Container(
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(20),
-                onTap: () => _handleBookmarkTap(context, bookmark, currentProject),
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(20),
+            onTap: () => _handleBookmarkTap(context, bookmark, currentProject),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     children: [
-                      Row(
-                        children: [
-                          _buildProjectBadge(bookmark.projectName, projectColor),
-                          const SizedBox(width: 8),
-                          _buildLanguageBadge(theme, bookmark.langCode),
-                          const Spacer(),
-                          IconButton(
-                            icon: const Icon(Icons.delete_outline_rounded, size: 20),
-                            color: theme.colorScheme.error.withValues(alpha: 0.7),
-                            onPressed: () {
-                              ref.read(bookmarksProvider.notifier).toggleBookmark(
-                                bookmark.title,
-                                bookmark.langCode,
-                                bookmark.projectName,
-                              );
-                            },
-                            visualDensity: VisualDensity.compact,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        bookmark.title,
-                        style: GoogleFonts.notoSerif(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.onSurface,
-                          height: 1.2,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Text(
-                            isExternal ? 'open_in_browser'.tr() : 'read_article'.tr(),
-                            style: theme.textTheme.labelLarge?.copyWith(
-                              color: projectColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 13,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          Icon(
-                            isExternal ? Icons.open_in_new_rounded : Icons.arrow_forward_rounded,
-                            size: 14,
-                            color: projectColor,
-                          ),
-                        ],
+                      _buildProjectBadge(bookmark.projectName, projectColor),
+                      const SizedBox(width: 8),
+                      _buildLanguageBadge(theme, bookmark.langCode),
+                      const Spacer(),
+                      IconButton(
+                        icon: const Icon(Icons.delete_outline_rounded, size: 20),
+                        color: theme.colorScheme.error.withValues(alpha: 0.7),
+                        onPressed: () {
+                          ref.read(bookmarksProvider.notifier).toggleBookmark(
+                            bookmark.title,
+                            bookmark.langCode,
+                            bookmark.projectName,
+                          );
+                        },
+                        visualDensity: VisualDensity.compact,
                       ),
                     ],
                   ),
-                ),
+                  const SizedBox(height: 12),
+                  Text(
+                    bookmark.title,
+                    style: GoogleFonts.notoSerif(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onSurface,
+                      height: 1.2,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Text(
+                        isExternal ? 'open_in_browser'.tr() : 'read_article'.tr(),
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          color: projectColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        isExternal ? Icons.open_in_new_rounded : Icons.arrow_forward_rounded,
+                        size: 14,
+                        color: projectColor,
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
+
+  // Widget _buildBookmarksList(
+  //   BuildContext context,
+  //   WidgetRef ref,
+  //   ThemeData theme,
+  //   List<BookmarkedArticle> bookmarks,
+  //   ProjectType currentProject,
+  // ) {
+  //   return ListView.builder(
+  //     padding: const EdgeInsets.only(bottom: 32),
+  //     itemCount: bookmarks.length + 1,
+  //     itemBuilder: (context, index) {
+  //       if (index == 0) {
+  //         return Column(
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             SizedBox(height: MediaQuery.of(context).padding.top + 20),
+  //             IconButton(
+  //               padding: EdgeInsets.zero,
+  //               constraints: const BoxConstraints(),
+  //               alignment: Alignment.centerLeft,
+  //               icon: const Icon(Icons.arrow_back),
+  //               onPressed: () => Navigator.of(context).pop(),
+  //             ),
+  //             const SizedBox(height: 16),
+  //             _buildHeader(theme, bookmarks.length),
+  //             const SizedBox(height: 24),
+  //           ],
+  //         );
+  //       }
+  //
+  //       final bookmark = bookmarks[index - 1];
+  //       final isExternal = bookmark.projectName != currentProject.name;
+  //
+  //       // Get project color (indigo for wikipedia, deep orange for wiktionary, purple for wikibooks)
+  //       final projectColor = _getProjectColor(bookmark.projectName);
+  //
+  //       return Padding(
+  //         padding: const EdgeInsets.only(bottom: 16.0),
+  //         child: Container(
+  //           decoration: BoxDecoration(
+  //             color: theme.colorScheme.surface,
+  //             borderRadius: BorderRadius.circular(20),
+  //             boxShadow: [
+  //               BoxShadow(
+  //                 color: Colors.black.withValues(alpha: 0.04),
+  //                 blurRadius: 12,
+  //                 offset: const Offset(0, 4),
+  //               ),
+  //             ],
+  //           ),
+  //           child: Material(
+  //             color: Colors.transparent,
+  //             child: InkWell(
+  //               borderRadius: BorderRadius.circular(20),
+  //               onTap: () => _handleBookmarkTap(context, bookmark, currentProject),
+  //               child: Padding(
+  //                 padding: const EdgeInsets.all(20.0),
+  //                 child: Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   children: [
+  //                     Row(
+  //                       children: [
+  //                         _buildProjectBadge(bookmark.projectName, projectColor),
+  //                         const SizedBox(width: 8),
+  //                         _buildLanguageBadge(theme, bookmark.langCode),
+  //                         const Spacer(),
+  //                         IconButton(
+  //                           icon: const Icon(Icons.delete_outline_rounded, size: 20),
+  //                           color: theme.colorScheme.error.withValues(alpha: 0.7),
+  //                           onPressed: () {
+  //                             ref.read(bookmarksProvider.notifier).toggleBookmark(
+  //                               bookmark.title,
+  //                               bookmark.langCode,
+  //                               bookmark.projectName,
+  //                             );
+  //                           },
+  //                           visualDensity: VisualDensity.compact,
+  //                         ),
+  //                       ],
+  //                     ),
+  //                     const SizedBox(height: 12),
+  //                     Text(
+  //                       bookmark.title,
+  //                       style: GoogleFonts.notoSerif(
+  //                         fontSize: 20,
+  //                         fontWeight: FontWeight.bold,
+  //                         color: theme.colorScheme.onSurface,
+  //                         height: 1.2,
+  //                       ),
+  //                     ),
+  //                     const SizedBox(height: 16),
+  //                     Row(
+  //                       children: [
+  //                         Text(
+  //                           isExternal ? 'open_in_browser'.tr() : 'read_article'.tr(),
+  //                           style: theme.textTheme.labelLarge?.copyWith(
+  //                             color: projectColor,
+  //                             fontWeight: FontWeight.bold,
+  //                             fontSize: 13,
+  //                           ),
+  //                         ),
+  //                         const SizedBox(width: 4),
+  //                         Icon(
+  //                           isExternal ? Icons.open_in_new_rounded : Icons.arrow_forward_rounded,
+  //                           size: 14,
+  //                           color: projectColor,
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   Widget _buildProjectBadge(String projectName, Color color) {
     return Container(
