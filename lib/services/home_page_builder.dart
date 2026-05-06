@@ -14,7 +14,7 @@ class HomePageBuilder {
   ) async {
     final projectStr = project.name.toLowerCase();
 
-    // Decode with UTF-8 to handle foreign characters properly
+    /// Decode with UTF-8 to handle foreign characters properly
     final bodyStr = utf8.decode(responseBodyBytes);
     final document = html_parser.parse(bodyStr);
 
@@ -81,7 +81,7 @@ class HomePageBuilder {
       }
     }
 
-    // Enhanced Fallback Logic for Wiktionary and pages with different structures
+    /// Enhanced Fallback Logic for Wiktionary and pages with different structures
     if (sections.isEmpty) {
       final containers = [
         '#mw-content-text',
@@ -168,7 +168,7 @@ class HomePageBuilder {
     bool firstOnly = false,
     bool stripStyle = false,
   }) {
-    // Find the first valid image that is NOT an icon
+    /// Find the first valid image that is NOT an icon
     final allImages = element.querySelectorAll('img');
     dom.Element? validImg;
 
@@ -206,7 +206,7 @@ class HomePageBuilder {
       validImg.remove();
     }
 
-    // Apply removals
+    /// Apply removals
     for (var s in removeSelectors) {
       if (s == 'img' || s == 'figure') continue;
       element.querySelectorAll(s).forEach((el) => el.remove());
@@ -216,7 +216,7 @@ class HomePageBuilder {
       element.querySelectorAll(s).forEach((el) => el.remove());
     }
 
-    // Filter content
+    /// Filter content
     String textHtml;
     if (keepSelector != null) {
       final List<String> selectors = keepSelector is List

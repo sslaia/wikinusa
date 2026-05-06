@@ -44,11 +44,10 @@ class WikiUtils {
   }) {
     String normalized = url;
 
-    // Handle relative URLs
     if (url.startsWith('//')) {
       normalized = 'https:$url';
     } else if (url.startsWith('/') && langCode != null && projectStr != null) {
-      // Temporary solution while Nias Wikibooks is still in the Incubator
+      /// Temporary solution while Nias Wikibooks is still in the Incubator
       if (langCode == 'nia' && projectStr == 'wikibooks') {
         normalized = 'https://incubator.wikimedia.org$url';
       } else {
@@ -58,7 +57,7 @@ class WikiUtils {
       normalized = 'https:$url';
     }
 
-    // Convert thumbnail to high resolution
+    /// Convert thumbnail to high resolution
     if (normalized.contains('/thumb/')) {
       final regExp = RegExp(r'\/(\d+)px-');
       if (regExp.hasMatch(normalized)) {
@@ -113,13 +112,13 @@ class WikiUtils {
         decodedTitle = title.replaceAll('_', ' ');
       }
 
-      // Temporary solution: Nias Wikibooks prefix from taps for cleaner navigation
+      /// Temporary solution: Nias Wikibooks prefix from taps for cleaner navigation
       if (decodedTitle.startsWith('Wb/nia/')) {
         decodedTitle = decodedTitle.replaceFirst('Wb/nia/', '');
       }
 
       if (decodedTitle.isNotEmpty) {
-        // Register this title in the history stack before navigating
+        /// Register this title in the history stack before navigating
         final container = ProviderScope.containerOf(context);
         container.read(historyProvider.notifier).push(decodedTitle);
 
@@ -142,7 +141,7 @@ class WikiUtils {
       }
     }
 
-    // Handle Audio links directly
+    /// Handle Audio links directly
     final lowerUrl = url.toLowerCase();
     final audioExtensions = ['.mp3', '.ogg', '.wav', '.m4a'];
     if (audioExtensions.any(
@@ -224,7 +223,7 @@ class WikiUtils {
       };
     }
 
-    // Apply justification to common block elements
+    /// Apply justification to common block elements
     if (['p', 'div', 'li', 'section', 'td'].contains(element.localName)) {
       styles['text-align'] = 'justify';
       if (element.localName == 'p') {

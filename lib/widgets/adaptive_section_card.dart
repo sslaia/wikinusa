@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/home_page_section.dart';
+import '../screens/image_screen.dart';
 import '../utils/wiki_utils.dart';
 import '../utils/responsive_utils.dart';
 
@@ -53,9 +54,24 @@ class AdaptiveSectionCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (section.imageHtml != null)
-          HtmlWidget(
-            section.imageHtml!,
-            onTapUrl: (url) => WikiUtils.handleTapUrl(context, url, null),
+          /// Make the image clickable on HomeScreen
+          GestureDetector(
+            onTap: () {
+              if (section.imageUrl != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ImageScreen(
+                      imagePath: section.imageUrl!,
+                    ),
+                  ),
+                );
+              }
+            },
+            child: HtmlWidget(
+              section.imageHtml!,
+              onTapUrl: (url) => WikiUtils.handleTapUrl(context, url, null),
+            ),
           ),
         Padding(
           padding: const EdgeInsets.all(16.0),
@@ -72,9 +88,23 @@ class AdaptiveSectionCard extends StatelessWidget {
         if (section.imageHtml != null)
           Expanded(
             flex: 2,
-            child: HtmlWidget(
-              section.imageHtml!,
-              onTapUrl: (url) => WikiUtils.handleTapUrl(context, url, null),
+            child: GestureDetector(
+              onTap: () {
+                if (section.imageUrl != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ImageScreen(
+                        imagePath: section.imageUrl!,
+                      ),
+                    ),
+                  );
+                }
+              },
+              child: HtmlWidget(
+                section.imageHtml!,
+                onTapUrl: (url) => WikiUtils.handleTapUrl(context, url, null),
+              ),
             ),
           ),
         Expanded(

@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../models/project_type.dart';
 import '../utils/responsive_utils.dart';
+import '../widgets/shortcuts_side_bar.dart';
 import '../widgets/wiki_portals_widget.dart';
 import '../widgets/contribute_widget.dart';
 import '../widgets/wiki_footer.dart';
@@ -44,19 +45,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         final isTabletLandscape = isTablet && isLandscape;
         final isTabletPortrait = isTablet && !isLandscape;
 
-        // Determine navigation components
-        // // Shows only on compact device in portrait mode
-        final bool showBottomBar = isCompactPortrait;
         final bool showDrawer = isCompact || isTabletPortrait;
-        // Shows only on tablet (landscape mode)/expanded device
         final bool showPermanentDrawer = isTabletLandscape || deviceType == DeviceType.expanded;
-        // Shows only on compact (landscape mode) and tablet/expanded devices
-        final bool showRail = isCompactLandscape || deviceType == DeviceType.medium || deviceType == DeviceType.expanded;
 
         return Scaffold(
           key: _scaffoldKey,
           drawer: showDrawer ? const DrawerMenu() : null,
-          bottomNavigationBar: showBottomBar
+          bottomNavigationBar: isCompactPortrait
               ? CustomBottomAppBar(
                   scaffoldKey: _scaffoldKey,
                   currentProject: currentProject,
@@ -66,7 +61,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           body: Row(
             children: [
               if (showPermanentDrawer)
-                const SizedBox(width: 300, child: DrawerContent()),
+                const ShortcutsSidebar(),
               Expanded(
                 child: CustomScrollView(
                   slivers: [
@@ -143,7 +138,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ],
                 ),
               ),
-              if (showRail)
+              if (isCompactLandscape || isTablet)
                 NavigationRail(
                   selectedIndex: 0,
                   minWidth: 56,

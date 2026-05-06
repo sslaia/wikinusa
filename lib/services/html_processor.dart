@@ -15,7 +15,7 @@ class HtmlProcessor {
     final projectStr = project.name.toLowerCase();
     final document = html_parser.parse(rawHtml);
 
-    // Resolve Wikipedia lazy loading
+    /// Resolve Wikipedia lazy loading
     document.querySelectorAll('noscript').forEach((ns) {
       final nsHtml = ns.innerHtml;
       if (nsHtml.contains('<img')) {
@@ -28,7 +28,7 @@ class HtmlProcessor {
         .querySelectorAll('.lazy-image-placeholder')
         .forEach((el) => el.remove());
 
-    // Handle Tables: Wrap in scrollable div
+    /// Handle Tables: Wrap in scrollable div (see: Wikimedia recommendation)
     document.querySelectorAll('table').forEach((table) {
       table.attributes.remove('width');
       table.attributes.remove('style');
@@ -48,7 +48,7 @@ class HtmlProcessor {
       });
     });
 
-    // Load rules
+    /// Load rules
     final jsonString = await rootBundle.loadString(
       'assets/data/html_rules.json',
     );
@@ -68,7 +68,7 @@ class HtmlProcessor {
 
     String? imageUrl;
 
-    // Find Hero image using centralized WikiUtils logic
+    /// Find Hero image using centralized WikiUtils logic
     final images = document.querySelectorAll('img');
     dom.Element? heroImageElement;
     for (var img in images) {
@@ -89,7 +89,7 @@ class HtmlProcessor {
       _markImageContainerForHiding(heroImageElement);
     }
 
-    // Process all other images using centralized WikiUtils logic
+    /// Process all other images using centralized WikiUtils logic
     document.querySelectorAll('img').forEach((img) {
       var src = img.attributes['src'] ?? '';
       if (src.isNotEmpty) {
@@ -118,7 +118,7 @@ class HtmlProcessor {
       }
     });
 
-    // Apply removals/hides
+    /// Apply removals/hides
     for (var s in removeSelectors) {
       document.querySelectorAll(s).forEach((el) => el.remove());
     }
@@ -128,7 +128,7 @@ class HtmlProcessor {
           .forEach((el) => el.attributes['style'] = 'display: none;');
     }
 
-    // Process reference sections
+    /// Process reference sections
     if (refKeywords.isNotEmpty) {
       final headings = document.querySelectorAll('h2, h3, h4');
       for (var h in headings) {
@@ -144,7 +144,7 @@ class HtmlProcessor {
       }
     }
 
-    // Final cleanup and Nias Wiktionary specific processing
+    /// Final cleanup and Nias Wiktionary specific processing
     String processedHtml = document.body?.innerHtml ?? '';
 
     if (languageCode == 'nia' && project == ProjectType.wiktionary) {
@@ -192,10 +192,10 @@ class HtmlProcessor {
   /// Helper function to find and remove headings followed by "Lö hadöi"
   /// in either <dd> or <li> tags.
   static void _removeEmptySections(BeautifulSoup root) {
-    // Find all 'dd' and 'li' elements.
+    /// Find all 'dd' and 'li' elements.
     final potentialMarkers = root.findAll('dd') + root.findAll('li');
 
-    // Use Dart's .where() to filter them based on their content
+    /// Use Dart's .where() to filter them based on their content
     final emptyMarkers = potentialMarkers.where((element) {
       return element.string.trim() == 'Lö hadöi';
     });
@@ -203,7 +203,7 @@ class HtmlProcessor {
     for (final marker in emptyMarkers) {
       Bs4Element? listContainer;
 
-      // Determine the parent list container
+      /// Determine the parent list container
       if (marker.name == 'dd') {
         listContainer = marker.findParent('dl');
       } else if (marker.name == 'li') {
@@ -213,12 +213,12 @@ class HtmlProcessor {
 
       if (listContainer == null) continue;
 
-      // Find the heading element that comes just before the list container
+      /// Find the heading element that comes just before the list container
       final headingDiv = listContainer.findPreviousSibling('div');
 
-      // To be safe, check if the found sibling is actually a heading container.
+      /// To be safe, check if the found sibling is actually a heading container.
       if (headingDiv != null && headingDiv.className.contains('mw-heading')) {
-        // Remove the heading and the list container.
+        /// Remove the heading and the list container.
         headingDiv.extract();
         listContainer.extract();
       }

@@ -72,12 +72,12 @@ class WikiApiService {
     String finalTitle = pageTitle;
     bool useActionApiForHome = false;
 
-    // Temporary solution while Nias Wikibooks is still in the Incubator
+    /// Temporary solution while Nias Wikibooks is still in the Incubator
     if (languageCode == 'nia' && project == ProjectType.wikibooks) {
       domain = 'incubator.wikimedia.org';
       useActionApiForHome = true;
       if (pageTitle == 'Main Page') {
-        // Changed from 'Wb/nia' to 'Wb/nia/Olayama'
+        /// Changed from 'Wb/nia' to 'Wb/nia/Olayama'
         finalTitle = 'Wb/nia/Olayama';
       } else if (!pageTitle.startsWith('Wb/nia/')) {
         finalTitle = 'Wb/nia/$pageTitle';
@@ -112,7 +112,7 @@ class WikiApiService {
               project,
             );
 
-            // Fetch and append category members if it's a category page
+            /// Fetch and append category members if it's a category page
             final bool isCategory =
                 finalTitle.contains('Category:') ||
                 finalTitle.contains('Kategori:');
@@ -143,7 +143,7 @@ class WikiApiService {
             final bodyStr = utf8.decode(response.bodyBytes);
             final decoded = jsonDecode(bodyStr);
             final htmlContent = decoded['parse']?['text']?['*'] ?? '';
-            // Convert the extracted HTML string back to bytes for HomePageBuilder
+            /// Convert the extracted HTML string back to bytes for HomePageBuilder
             htmlBytes = utf8.encode(htmlContent);
           } else {
             htmlBytes = response.bodyBytes;
@@ -194,7 +194,7 @@ class WikiApiService {
       final response = await http.get(url).timeout(const Duration(seconds: 10));
       if (response.statusCode != 200) throw Exception('Failed to search Wiki');
 
-      // Fixed: Use utf8.decode for correct character encoding
+      /// Fixed: Use utf8.decode for correct character encoding
       final data = json.decode(utf8.decode(response.bodyBytes));
 
       final List<Map<String, dynamic>> results =

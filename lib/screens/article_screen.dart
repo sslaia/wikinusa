@@ -12,13 +12,13 @@ import '../utils/responsive_utils.dart';
 import '../models/project_type.dart';
 import '../providers/history_provider.dart';
 import '../providers/bookmarks_provider.dart';
+import '../widgets/shortcuts_side_bar.dart';
 import '../widgets/wiki_footer.dart';
 import '../providers/app_state.dart';
 import '../providers/wiki_api_provider.dart';
 import '../widgets/article_hero_image.dart';
 import '../widgets/custom_bottom_app_bar.dart';
 import '../widgets/drawer_menu.dart';
-import '../widgets/article_sidebar.dart';
 import '../widgets/adaptive_nav_actions.dart';
 import 'image_screen.dart';
 
@@ -37,7 +37,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
   @override
   void initState() {
     super.initState();
-    // Register this article in history when opened
+    /// Register this article in history when opened
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(historyProvider.notifier).push(widget.title);
     });
@@ -50,13 +50,13 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     final langCode = context.locale.languageCode;
     final theme = Theme.of(context);
 
-    // Fallback fonts for Javanese and other scripts
+    /// Fallback fonts for Javanese and other scripts
     final List<String> fontFallbacks = [
       GoogleFonts.notoSansJavanese().fontFamily!,
       'Roboto',
     ];
 
-    // Temporary solution while Nias Wikibooks is still in the Incubator
+    /// Temporary solution while Nias Wikibooks is still in the Incubator
     String pageUrl;
     if (langCode == 'nia' && currentProject == ProjectType.wikibooks) {
       final incubatorTitle = widget.title.startsWith('Wb/nia/')
@@ -80,14 +80,8 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
         final isTabletLandscape = isTablet && isLandscape;
         final isTabletPortrait = isTablet && !isLandscape;
 
-        // Determine navigation components
-        // // Shows only on compact device in portrait mode
-        final bool showBottomBar = isCompactPortrait;
         final bool showDrawer = isCompact || isTabletPortrait;
-        // Shows only on tablet (landscape mode)/expanded device
         final bool showPermanentDrawer = isTabletLandscape || deviceType == DeviceType.expanded;
-        // Shows only on compact (landscape mode) and tablet/expanded devices
-        final bool showRail = isCompactLandscape || deviceType == DeviceType.medium || deviceType == DeviceType.expanded;
 
         return PopScope(
           child: Scaffold(
@@ -95,6 +89,8 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
             drawer: showDrawer ? const DrawerMenu() : null,
             body: Row(
               children: [
+                if (showPermanentDrawer)
+                  const ShortcutsSidebar(),
                 Expanded(
                   child: Stack(
                     children: [
