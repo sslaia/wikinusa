@@ -1,5 +1,5 @@
 name: wikinusa
-description: "An Android app for Wikipedia in local languages in Indonesia"
+description: "An Android app for Nias Wiktionary and Wikibooks as well as Nias, Indonesian and English Wikipedia"
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -16,10 +16,10 @@ dependencies:
   google_fonts: ^8.0.2
   html: ^0.15.6
   http: ^1.6.0
-  share_plus: ^13.1.0
-  shared_preferences: ^2.5.5
-  url_launcher: ^6.3.2
   just_audio: ^0.10.4
+  shared_preferences: ^2.5.5
+  share_plus: ^13.1.0
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   flutter_test:
