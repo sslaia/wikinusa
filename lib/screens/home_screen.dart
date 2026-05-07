@@ -43,14 +43,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         final isCompactLandscape = isCompact && isLandscape;
         final isCompactPortrait = isCompact && !isLandscape;
         final isTabletLandscape = isTablet && isLandscape;
-        final isTabletPortrait = isTablet && !isLandscape;
-
-        final bool showDrawer = isCompact || isTabletPortrait;
-        final bool showPermanentDrawer = isTabletLandscape || deviceType == DeviceType.expanded;
+        final bool showShortcutsSideBar = isTabletLandscape || deviceType == DeviceType.expanded;
 
         return Scaffold(
           key: _scaffoldKey,
-          drawer: showDrawer ? const DrawerMenu() : null,
+          drawer: const DrawerMenu(),
           bottomNavigationBar: isCompactPortrait
               ? CustomBottomAppBar(
                   scaffoldKey: _scaffoldKey,
@@ -60,7 +57,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               : null,
           body: Row(
             children: [
-              if (showPermanentDrawer)
+              if (showShortcutsSideBar)
                 const ShortcutsSidebar(),
               Expanded(
                 child: CustomScrollView(

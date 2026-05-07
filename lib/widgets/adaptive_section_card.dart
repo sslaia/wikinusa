@@ -83,7 +83,7 @@ class AdaptiveSectionCard extends StatelessWidget {
 
   Widget _buildHorizontalLayout(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         if (section.imageHtml != null)
           Expanded(
@@ -101,9 +101,11 @@ class AdaptiveSectionCard extends StatelessWidget {
                   );
                 }
               },
-              child: HtmlWidget(
-                section.imageHtml!,
-                onTapUrl: (url) => WikiUtils.handleTapUrl(context, url, null),
+              child: Center(
+                child: HtmlWidget(
+                  section.imageHtml!,
+                  onTapUrl: (url) => WikiUtils.handleTapUrl(context, url, null),
+                ),
               ),
             ),
           ),

@@ -78,18 +78,15 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
         final isCompactLandscape = isCompact && isLandscape;
         final isCompactPortrait = isCompact && !isLandscape;
         final isTabletLandscape = isTablet && isLandscape;
-        final isTabletPortrait = isTablet && !isLandscape;
-
-        final bool showDrawer = isCompact || isTabletPortrait;
-        final bool showPermanentDrawer = isTabletLandscape || deviceType == DeviceType.expanded;
+        final bool showShortcutsSideBar = isTabletLandscape || deviceType == DeviceType.expanded;
 
         return PopScope(
           child: Scaffold(
             key: _scaffoldKey,
-            drawer: showDrawer ? const DrawerMenu() : null,
+            drawer: DrawerMenu(),
             body: Row(
               children: [
-                if (showPermanentDrawer)
+                if (showShortcutsSideBar)
                   const ShortcutsSidebar(),
                 Expanded(
                   child: Stack(
@@ -115,24 +112,6 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    (isCompactLandscape) ? AppBar(
-                                      title: Text(widget.title),
-                                      backgroundColor: Colors.transparent,
-                                      elevation: 0,
-                                      centerTitle: false,
-                                      titleSpacing: 0,
-                                      iconTheme: IconThemeData(color: theme.colorScheme.onSurface),
-                                      titleTextStyle: theme.textTheme.titleLarge?.copyWith(
-                                        color: theme.colorScheme.onSurface,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      leading: IconButton(
-                                          onPressed: () {
-                                            Navigator.of(context).popUntil((route) => route.isFirst);
-                                          },
-                                          icon: const Icon(Icons.arrow_back_outlined)
-                                      ),
-                                    ) :
                                     ArticleHeroImage(
                                       theme: Theme.of(context),
                                       title: widget.title,

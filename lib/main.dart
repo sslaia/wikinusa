@@ -12,6 +12,7 @@ import 'package:wikinusa/providers/font_size_provider.dart';
 
 import 'providers/app_state.dart';
 import 'screens/home_screen.dart';
+import 'screens/onboarding_screen.dart';
 import 'theme/app_theme.dart';
 
 class WikiHttpOverrides extends HttpOverrides {
@@ -59,6 +60,8 @@ class WikiNusaApp extends ConsumerWidget {
     final currentProject = ref.watch(appStateProvider);
     final themeMode = ref.watch(themeModeProvider);
     final fontSize = ref.watch(fontSizeProvider);
+    final prefs = ref.watch(sharedPreferencesProvider);
+    final bool isFirstStart = prefs.getBool('onboarding_completed') ?? false;
 
     return MaterialApp(
       title: 'WikiNusa',
@@ -89,7 +92,7 @@ class WikiNusaApp extends ConsumerWidget {
           child: child!,
         );
       },
-      home: const HomeScreen(),
+      home: isFirstStart ? const HomeScreen() : const OnboardingScreen(),
     );
   }
 }

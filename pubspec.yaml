@@ -31,6 +31,11 @@ flutter:
   assets:
     - assets/data/
     - assets/images/
+    - assets/images/onboarding1.webp
+    - assets/images/onboarding2.webp
+    - assets/images/onboarding3.webp
+    - assets/images/onboarding4.webp
+    - assets/images/onboarding5.webp
     - assets/translations/
     - assets/translations/en.json
     - assets/translations/id.json
