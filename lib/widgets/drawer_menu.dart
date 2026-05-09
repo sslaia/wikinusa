@@ -13,9 +13,12 @@ import '../models/project_type.dart';
 import '../providers/app_state.dart';
 import '../providers/font_size_provider.dart';
 import '../providers/theme_provider.dart';
+import '../providers/shortcuts_provider.dart';
 import '../screens/about_screen.dart';
 import '../screens/bookmarks_screen.dart';
 import '../screens/gallery_carousel_screen.dart';
+import '../screens/article_screen.dart';
+import '../screens/nias_course_screen.dart';
 
 class DrawerMenu extends ConsumerWidget {
   const DrawerMenu({super.key});
@@ -41,8 +44,7 @@ class DrawerContent extends ConsumerWidget {
     final currentLanguage = ref.watch(languageProvider);
     final currentFontSize = ref.watch(fontSizeProvider);
 
-    final isDark =
-        themeMode == ThemeMode.dark ||
+    final isDark = themeMode == ThemeMode.dark ||
         (themeMode == ThemeMode.system &&
             MediaQuery.of(context).platformBrightness == Brightness.dark);
 
@@ -50,114 +52,255 @@ class DrawerContent extends ConsumerWidget {
       padding: EdgeInsets.zero,
       children: [
         _buildHeader(context, theme, currentProject),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildSectionLabel(theme, 'drawer_quick_shortcuts'),
-              _buildDrawerItem(
-                theme,
-                icon: Icons.edit_note_rounded,
-                title: 'create_new_page'.tr(),
-                onTap: () {
-                  Widget destination;
-                  if (currentProject == ProjectType.wikipedia) {
-                    destination = const CreatePageScreen();
-                  } else if (currentLanguage == 'nia' &&
-                      currentProject == ProjectType.wiktionary) {
-                    destination = const CreateEntryScreen();
-                  } else if (currentLanguage == 'nia' &&
-                      currentProject == ProjectType.wikibooks) {
-                    destination = const CreateBookScreen();
-                  } else {
-                    destination = const CreatePageScreen();
-                  }
+        _buildExpansionSection(
+          theme,
+          titleKey: 'drawer_quick_shortcuts',
+          children: [
+            _buildDrawerItem(
+              theme,
+              icon: Icons.edit_note_rounded,
+              title: 'create_new_page'.tr(),
+              onTap: () {
+                Widget destination;
+                if (currentProject == ProjectType.wikipedia) {
+                  destination = const CreatePageScreen();
+                } else if (currentLanguage == 'nia' &&
+                    currentProject == ProjectType.wiktionary) {
+                  destination = const CreateEntryScreen();
+                } else if (currentLanguage == 'nia' &&
+                    currentProject == ProjectType.wikibooks) {
+                  destination = const CreateBookScreen();
+                } else {
+                  destination = const CreatePageScreen();
+                }
 
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => destination),
-                  );
-                },
-              ),
-              _buildDrawerItem(
-                theme,
-                icon: Icons.bookmark_rounded,
-                title: 'bookmarks'.tr(),
-                onTap: () {
-                  if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
-                    Navigator.pop(context);
-                  }
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const BookmarksScreen()),
-                  );
-                },
-              ),
-              _buildDrawerItem(
-                theme,
-                icon: Icons.photo_library_rounded,
-                title: 'gallery'.tr(),
-                onTap: () {
-                  if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
-                    Navigator.pop(context);
-                  }
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const GalleryCarouselScreen()),
-                  );
-                },
-              ),
-              const SizedBox(height: 16),
-              _buildSectionLabel(theme, 'drawer_project'),
-              _buildProjectSelector(
-                context,
-                ref,
-                theme,
-                currentProject,
-                currentLanguage,
-              ),
-              const SizedBox(height: 16),
-              _buildSectionLabel(theme, 'drawer_language'),
-              _buildLanguageSelector(context, ref, theme, currentLanguage),
-              const SizedBox(height: 16),
-              _buildSectionLabel(theme, 'drawer_appearance'),
-              _buildAppearanceToggle(ref, theme, isDark),
-              const SizedBox(height: 16),
-              _buildSectionLabel(theme, 'drawer_font_size'),
-              _buildFontSizeSelector(ref, theme, currentFontSize),
-              const SizedBox(height: 16),
-              _buildSectionLabel(theme, 'drawer_about'),
-              _buildDrawerItem(
-                theme,
-                icon: Icons.groups_2_rounded,
-                title: 'about_community'.tr(),
-                onTap: () => _navigateToAbout(
+                Navigator.push(
                   context,
-                  'about_community',
-                  aboutCommunity,
-                ),
-              ),
-              _buildDrawerItem(
-                theme,
-                icon: Icons.newspaper_rounded,
-                title: 'about_whats_new'.tr(),
-                onTap: () =>
-                    _navigateToAbout(context, 'about_whats_new', whatsNew),
-              ),
-              _buildDrawerItem(
-                theme,
-                icon: Icons.info_rounded,
-                title: 'about_app'.tr(),
-                onTap: () => _navigateToAbout(context, 'about_app', aboutApp),
-              ),
-              const SizedBox(height: 32),
-            ],
-          ),
+                  MaterialPageRoute(builder: (_) => destination),
+                );
+              },
+            ),
+            _buildDrawerItem(
+              theme,
+              icon: Icons.bookmark_rounded,
+              title: 'bookmarks'.tr(),
+              onTap: () {
+                if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
+                  Navigator.pop(context);
+                }
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const BookmarksScreen()),
+                );
+              },
+            ),
+          ],
         ),
+        _buildExpansionSection(
+          theme,
+          titleKey: 'drawer_modules',
+          initiallyExpanded: false,
+          children: [
+            _buildDrawerItem(
+              theme,
+              icon: Icons.school_rounded,
+              title: 'nias_course'.tr(),
+              onTap: () {
+                if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
+                  Navigator.pop(context);
+                }
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const NiasCourseScreen()),
+                );
+              },
+            ),
+            _buildDrawerItem(
+              theme,
+              icon: Icons.photo_library_rounded,
+              title: 'gallery'.tr(),
+              onTap: () {
+                if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
+                  Navigator.pop(context);
+                }
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const GalleryCarouselScreen()),
+                );
+              },
+            ),
+          ],
+        ),
+        _buildProjectShortcutsSection(context, ref, theme, currentProject, currentLanguage),
+        _buildExpansionSection(
+          theme,
+          titleKey: 'drawer_project',
+          initiallyExpanded: false,
+          children: [
+            _buildProjectSelector(context, ref, theme, currentProject, currentLanguage),
+          ],
+        ),
+        _buildExpansionSection(
+          theme,
+          titleKey: 'drawer_language',
+          initiallyExpanded: false,
+          children: [
+            _buildLanguageSelector(context, ref, theme, currentLanguage),
+          ],
+        ),
+        _buildExpansionSection(
+          theme,
+          titleKey: 'drawer_appearance',
+          initiallyExpanded: false,
+          children: [
+            _buildAppearanceToggle(ref, theme, isDark),
+          ],
+        ),
+        _buildExpansionSection(
+          theme,
+          titleKey: 'drawer_font_size',
+          initiallyExpanded: false,
+          children: [
+            _buildFontSizeSelector(ref, theme, currentFontSize),
+          ],
+        ),
+        _buildExpansionSection(
+          theme,
+          titleKey: 'drawer_about',
+          initiallyExpanded: false,
+          children: [
+            _buildDrawerItem(
+              theme,
+              icon: Icons.groups_2_rounded,
+              title: 'about_community'.tr(),
+              onTap: () => _navigateToAbout(
+                context,
+                'about_community',
+                aboutCommunity,
+              ),
+            ),
+            _buildDrawerItem(
+              theme,
+              icon: Icons.newspaper_rounded,
+              title: 'about_whats_new'.tr(),
+              onTap: () => _navigateToAbout(context, 'about_whats_new', whatsNew),
+            ),
+            _buildDrawerItem(
+              theme,
+              icon: Icons.info_rounded,
+              title: 'about_app'.tr(),
+              onTap: () => _navigateToAbout(context, 'about_app', aboutApp),
+            ),
+          ],
+        ),
+        const SizedBox(height: 32),
       ],
     );
   }
+
+  Widget _buildExpansionSection(
+    ThemeData theme, {
+    required String titleKey,
+    required List<Widget> children,
+    bool initiallyExpanded = true,
+  }) {
+    return Theme(
+      data: theme.copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        title: _buildSectionLabel(theme, titleKey),
+        initiallyExpanded: initiallyExpanded,
+        tilePadding: const EdgeInsets.symmetric(horizontal: 16),
+        childrenPadding: const EdgeInsets.symmetric(horizontal: 16),
+        shape: const Border(),
+        collapsedShape: const Border(),
+        children: children,
+      ),
+    );
+  }
+
+  Widget _buildProjectShortcutsSection(
+    BuildContext context,
+    WidgetRef ref,
+    ThemeData theme,
+    ProjectType currentProject,
+    String currentLanguage,
+  ) {
+    final shortcutsAsync = ref.watch(shortcutsProvider);
+    final projectKey = currentProject.name.toLowerCase();
+
+    return shortcutsAsync.when(
+      data: (data) {
+        final shortcuts = data[currentLanguage]?[projectKey] as List<dynamic>? ?? [];
+        if (shortcuts.isEmpty) return const SizedBox.shrink();
+
+        return _buildExpansionSection(
+          theme,
+          titleKey: 'drawer_project_shortcuts',
+          initiallyExpanded: false,
+          children: shortcuts.map((s) {
+            final title = s['title'] as String;
+            final iconName = s['icon'] as String;
+            return _buildDrawerItem(
+              theme,
+              icon: _getIconData(iconName),
+              title: title,
+              onTap: () {
+                if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
+                  Navigator.pop(context);
+                }
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => ArticleScreen(title: title)),
+                );
+              },
+            );
+          }).toList(),
+        );
+      },
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
+    );
+  }
+
+  IconData _getIconData(String name) {
+    switch (iconNameMap[name]) {
+      case 'history':
+        return Icons.history;
+      case 'newspaper_outlined':
+        return Icons.newspaper_outlined;
+      case 'people_outlined':
+        return Icons.people_outlined;
+      case 'chat_bubble_outlined':
+        return Icons.chat_bubble_outlined;
+      case 'help_outline':
+        return Icons.help_outline;
+      case 'content_copy':
+        return Icons.content_copy;
+      case 'pages_outlined':
+        return Icons.pages_outlined;
+      case 'campaign_outlined':
+        return Icons.campaign_outlined;
+      case 'construction_outlined':
+        return Icons.construction_outlined;
+      case 'support_agent_outlined':
+        return Icons.support_agent_outlined;
+      default:
+        return Icons.link;
+    }
+  }
+
+  static const Map<String, String> iconNameMap = {
+    'history': 'history',
+    'newspaper_outlined': 'newspaper_outlined',
+    'people_outlined': 'people_outlined',
+    'chat_bubble_outlined': 'chat_bubble_outlined',
+    'help_outline': 'help_outline',
+    'content_copy': 'content_copy',
+    'pages_outlined': 'pages_outlined',
+    'campaign_outlined': 'campaign_outlined',
+    'construction_outlined': 'construction_outlined',
+    'support_agent_outlined': 'support_agent_outlined',
+  };
 
   Widget _buildHeader(
     BuildContext context,
@@ -229,22 +372,19 @@ class DrawerContent extends ConsumerWidget {
   }
 
   Widget _buildSectionLabel(ThemeData theme, String labelKey) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 0, bottom: 8, top: 8),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.primary.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Text(
-          labelKey.tr().toUpperCase(),
-          style: theme.textTheme.labelSmall?.copyWith(
-            color: theme.colorScheme.primary.withValues(alpha: 0.7),
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.2,
-            fontSize: 10,
-          ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primary.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        labelKey.tr().toUpperCase(),
+        style: theme.textTheme.labelSmall?.copyWith(
+          color: theme.colorScheme.primary.withValues(alpha: 0.7),
+          fontWeight: FontWeight.bold,
+          letterSpacing: 1.2,
+          fontSize: 10,
         ),
       ),
     );
@@ -300,73 +440,52 @@ class DrawerContent extends ConsumerWidget {
     ProjectType currentProject,
     String currentLanguage,
   ) {
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+    return Column(
+      children: ProjectType.values.map((project) {
+        final isSupported = project.isSupported(currentLanguage);
+        return RadioListTile<ProjectType>(
+          value: project,
+          groupValue: currentProject,
+          onChanged: isSupported
+              ? (ProjectType? newValue) {
+                  if (newValue != null) {
+                    ref.read(appStateProvider.notifier).setProject(newValue, currentLanguage);
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                  }
+                }
+              : null,
+          title: Row(
+            children: [
+              Icon(
+                Icons.circle,
+                size: 8,
+                color: isSupported
+                    ? project.primaryColor
+                    : Colors.grey.withValues(alpha: 0.3),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                project.name.toLowerCase().tr(),
+                style: TextStyle(
+                  color: !isSupported
+                      ? Colors.grey.withValues(alpha: 0.5)
+                      : (project == currentProject
+                            ? project.primaryColor
+                            : theme.colorScheme.onSurface),
+                  fontWeight: project == currentProject
+                      ? FontWeight.bold
+                      : FontWeight.normal,
+                  decoration: !isSupported
+                      ? TextDecoration.lineThrough
+                      : null,
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: DropdownButton<ProjectType>(
-        value: currentProject,
-        isExpanded: true,
-        underline: const SizedBox(),
-        padding: EdgeInsets.zero,
-        icon: Icon(
-          Icons.keyboard_arrow_down_rounded,
-          color: theme.colorScheme.primary,
-        ),
-        onChanged: (ProjectType? newValue) {
-          if (newValue != null && newValue.isSupported(currentLanguage)) {
-            ref
-                .read(appStateProvider.notifier)
-                .setProject(newValue, currentLanguage);
-            Navigator.of(context).popUntil((route) => route.isFirst);
-          }
-        },
-        items: ProjectType.values.map((project) {
-          final isSupported = project.isSupported(currentLanguage);
-          return DropdownMenuItem<ProjectType>(
-            value: project,
-            enabled: isSupported,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.circle,
-                  size: 8,
-                  color: isSupported
-                      ? project.primaryColor
-                      : Colors.grey.withValues(alpha: 0.3),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  project.name.toLowerCase().tr(),
-                  style: TextStyle(
-                    color: !isSupported
-                        ? Colors.grey.withValues(alpha: 0.5)
-                        : (project == currentProject
-                              ? project.primaryColor
-                              : theme.colorScheme.onSurface),
-                    fontWeight: project == currentProject
-                        ? FontWeight.bold
-                        : FontWeight.normal,
-                    decoration: !isSupported
-                        ? TextDecoration.lineThrough
-                        : null,
-                  ),
-                ),
-              ],
-            ),
-          );
-        }).toList(),
-      ),
+          activeColor: project.primaryColor,
+          contentPadding: EdgeInsets.zero,
+        );
+      }).toList(),
     );
   }
 
@@ -382,50 +501,32 @@ class DrawerContent extends ConsumerWidget {
       {'code': 'nia', 'name': 'nias'},
     ];
 
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: DropdownButton<String>(
-        value: currentLanguage,
-        isExpanded: true,
-        underline: const SizedBox(),
-        icon: Icon(
-          Icons.keyboard_arrow_down_rounded,
-          color: theme.colorScheme.primary,
-          size: 20,
-        ),
-        onChanged: (String? newValue) {
-          if (newValue != null) {
-            ref.read(languageProvider.notifier).setLanguage(newValue);
-            context.setLocale(Locale(newValue));
-            Navigator.of(context).popUntil((route) => route.isFirst);
-          }
-        },
-        items: languages.map((lang) {
-          return DropdownMenuItem(
-            value: lang['code'],
-            child: Text(
-              lang['name']!.tr(),
-              style: TextStyle(
-                color: theme.colorScheme.onSurface,
-                fontWeight: currentLanguage == lang['code']
-                    ? FontWeight.bold
-                    : FontWeight.normal,
-              ),
+    return Column(
+      children: languages.map((lang) {
+        final code = lang['code']!;
+        return RadioListTile<String>(
+          value: code,
+          groupValue: currentLanguage,
+          onChanged: (String? newValue) {
+            if (newValue != null) {
+              ref.read(languageProvider.notifier).setLanguage(newValue);
+              context.setLocale(Locale(newValue));
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            }
+          },
+          title: Text(
+            lang['name']!.tr(),
+            style: TextStyle(
+              color: theme.colorScheme.onSurface,
+              fontWeight: currentLanguage == code
+                  ? FontWeight.bold
+                  : FontWeight.normal,
             ),
-          );
-        }).toList(),
-      ),
+          ),
+          activeColor: theme.colorScheme.primary,
+          contentPadding: EdgeInsets.zero,
+        );
+      }).toList(),
     );
   }
 
