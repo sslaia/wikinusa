@@ -51,7 +51,20 @@ class HomePortals {
           {"label": "portal_technology", "title": "Kategori:Teknologi"},
           {"label": "portal_transport", "title": "Kategori:Transpor"},
         ],
-        'wikibooks': [],
+        'wikibooks': [
+          {"label": "portal_proverbs", "title": "Wb/nia/Amaedola"},
+          {"label": "portal_custom", "title": "Category:Wb/nia/Budaya"},
+          {"label": "portal_short_stories", "title": "Category:Wb/nia/Cerpen"},
+          {"label": "portal_recipes", "title": "Category:Wb/nia/Fondrino"},
+          {"label": "portal_folksongs", "title": "Category:Wb/nia/Hendri-hendri"},
+          {"label": "portal_speeches", "title": "Category:Wb/nia/Hoho"},
+          {"label": "portal_dictionary", "title": "Wb/nia/Kamus Nias-Jerman"},
+          {"label": "portal_dances", "title": "Category:Wb/nia/Maena"},
+          {"label": "portal_stories", "title": "Category:Wb/nia/Manö-manö"},
+          {"label": "portal_novel", "title": "Category:Wb/nia/Novela"},
+          {"label": "portal_nias_pop", "title": "Category:Wb/nia/Sinunö Pop Nias"},
+          {"label": "portal_bible", "title": "Wb/nia/Sura Ni'amoni'ö"},
+        ],
       },
     };
   }

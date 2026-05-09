@@ -148,8 +148,30 @@ class WikiPortalsWidget extends StatelessWidget {
         return Icons.flag_rounded;
       case "portal_plants":
         return Icons.grass_rounded;
-      case "portal_transport":
+      case 'portal_transport':
         return Icons.car_rental_rounded;
+      case 'portal_proverbs':
+        return Icons.format_quote_rounded;
+      case 'portal_short_stories':
+        return Icons.auto_stories_rounded;
+      case 'portal_recipes':
+        return Icons.restaurant_rounded;
+      case 'portal_folksongs':
+        return Icons.music_note_rounded;
+      case 'portal_speeches':
+        return Icons.record_voice_over_rounded;
+      case 'portal_dictionary':
+        return Icons.translate_rounded;
+      case 'portal_dances':
+        return Icons.accessibility_new_rounded;
+      case 'portal_stories':
+        return Icons.menu_book_rounded;
+      case 'portal_novel':
+        return Icons.book_rounded;
+      case 'portal_nias_pop':
+        return Icons.audiotrack_rounded;
+      case 'portal_bible':
+        return Icons.import_contacts_rounded;
       case 'portal_biography':
         return Icons.person_rounded;
       case 'portal_geography':

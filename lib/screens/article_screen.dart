@@ -59,9 +59,17 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     /// Temporary solution while Nias Wikibooks is still in the Incubator
     String pageUrl;
     if (langCode == 'nia' && currentProject == ProjectType.wikibooks) {
-      final incubatorTitle = widget.title.startsWith('Wb/nia/')
-          ? widget.title
-          : 'Wb/nia/${widget.title}';
+      String incubatorTitle = widget.title;
+      if (!incubatorTitle.contains('Wb/nia/')) {
+        if (incubatorTitle.contains(':')) {
+          final parts = incubatorTitle.split(':');
+          final namespace = parts[0];
+          final rest = parts.sublist(1).join(':');
+          incubatorTitle = '$namespace:Wb/nia/$rest';
+        } else {
+          incubatorTitle = 'Wb/nia/$incubatorTitle';
+        }
+      }
       pageUrl =
           'https://incubator.wikimedia.org/wiki/${incubatorTitle.replaceAll(' ', '_')}';
     } else {

@@ -113,7 +113,7 @@ class WikiUtils {
       }
 
       /// Temporary solution: Nias Wikibooks prefix from taps for cleaner navigation
-      if (decodedTitle.startsWith('Wb/nia/')) {
+      if (decodedTitle.contains('Wb/nia/')) {
         decodedTitle = decodedTitle.replaceFirst('Wb/nia/', '');
       }
 

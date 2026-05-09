@@ -79,8 +79,15 @@ class WikiApiService {
       if (pageTitle == 'Main Page') {
         /// Changed from 'Wb/nia' to 'Wb/nia/Olayama'
         finalTitle = 'Wb/nia/Olayama';
-      } else if (!pageTitle.startsWith('Wb/nia/')) {
-        finalTitle = 'Wb/nia/$pageTitle';
+      } else if (!pageTitle.contains('Wb/nia/')) {
+        if (pageTitle.contains(':')) {
+          final parts = pageTitle.split(':');
+          final namespace = parts[0];
+          final rest = parts.sublist(1).join(':');
+          finalTitle = '$namespace:Wb/nia/$rest';
+        } else {
+          finalTitle = 'Wb/nia/$pageTitle';
+        }
       }
     }
 
