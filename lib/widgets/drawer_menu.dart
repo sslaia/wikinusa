@@ -15,6 +15,7 @@ import '../providers/font_size_provider.dart';
 import '../providers/theme_provider.dart';
 import '../screens/about_screen.dart';
 import '../screens/bookmarks_screen.dart';
+import '../screens/gallery_carousel_screen.dart';
 
 class DrawerMenu extends ConsumerWidget {
   const DrawerMenu({super.key});
@@ -90,6 +91,20 @@ class DrawerContent extends ConsumerWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => const BookmarksScreen()),
+                  );
+                },
+              ),
+              _buildDrawerItem(
+                theme,
+                icon: Icons.photo_library_rounded,
+                title: 'gallery'.tr(),
+                onTap: () {
+                  if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
+                    Navigator.pop(context);
+                  }
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const GalleryCarouselScreen()),
                   );
                 },
               ),
