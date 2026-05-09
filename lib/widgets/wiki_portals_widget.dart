@@ -156,6 +156,8 @@ class WikiPortalsWidget extends StatelessWidget {
         return Icons.auto_stories_rounded;
       case 'portal_recipes':
         return Icons.restaurant_rounded;
+      case 'portal_fairy_tales':
+        return Icons.menu_book_rounded;
       case 'portal_folksongs':
         return Icons.music_note_rounded;
       case 'portal_speeches':
@@ -200,6 +202,8 @@ class WikiPortalsWidget extends StatelessWidget {
         return Icons.functions_rounded;
       case 'portal_media':
         return Icons.movie_rounded;
+      case 'portal_wikijunior':
+        return Icons.child_care_rounded;
       default:
         return Icons.grid_view_rounded;
     }

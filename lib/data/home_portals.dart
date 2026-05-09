@@ -61,9 +61,11 @@ class HomePortals {
           {"label": "portal_dictionary", "title": "Wb/nia/Kamus Nias-Jerman"},
           {"label": "portal_dances", "title": "Category:Wb/nia/Maena"},
           {"label": "portal_stories", "title": "Category:Wb/nia/Manö-manö"},
+          {"label": "portal_fairy_tales", "title": "Category:Wb/nia/Nidunö-dunö"},
           {"label": "portal_novel", "title": "Category:Wb/nia/Novela"},
           {"label": "portal_nias_pop", "title": "Category:Wb/nia/Sinunö Pop Nias"},
           {"label": "portal_bible", "title": "Wb/nia/Sura Ni'amoni'ö"},
+          {"label": "portal_wikijunior", "title": "Wb/nia/Wikiyunior"},
         ],
       },
     };
