@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../models/project_type.dart';
 import '../screens/article_screen.dart';
 
 class ShortcutUtils {
