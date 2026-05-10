@@ -20,7 +20,8 @@ class GalleryCarouselScreen extends ConsumerStatefulWidget {
   static const Color niasYellow = Color(0xFFFBC02D);
 
   @override
-  ConsumerState<GalleryCarouselScreen> createState() => _GalleryCarouselScreenState();
+  ConsumerState<GalleryCarouselScreen> createState() =>
+      _GalleryCarouselScreenState();
 }
 
 class _GalleryCarouselScreenState extends ConsumerState<GalleryCarouselScreen> {
@@ -80,8 +81,9 @@ class _GalleryCarouselScreenState extends ConsumerState<GalleryCarouselScreen> {
               Expanded(
                 child: galleryDataAsync.when(
                   data: (data) {
-                    final items =
-                        selectedCategory != null ? data[selectedCategory] : null;
+                    final items = selectedCategory != null
+                        ? data[selectedCategory]
+                        : null;
                     return Stack(
                       children: [
                         // Main Vertical Carousel
@@ -108,10 +110,11 @@ class _GalleryCarouselScreenState extends ConsumerState<GalleryCarouselScreen> {
                               );
                             },
                             children: items.map((item) {
-                              final thumbnailUrl = CommonsService.getThumbnailUrl(
-                                item.fileName,
-                                width: 900,
-                              );
+                              final thumbnailUrl =
+                                  CommonsService.getThumbnailUrl(
+                                    item.fileName,
+                                    width: 900,
+                                  );
 
                               return Stack(
                                 fit: StackFit.expand,
@@ -121,22 +124,24 @@ class _GalleryCarouselScreenState extends ConsumerState<GalleryCarouselScreen> {
                                     fit: BoxFit.cover,
                                     loadingBuilder:
                                         (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return const Center(
-                                        child: CircularProgressIndicator(
-                                          color:
-                                              GalleryCarouselScreen.niasRed,
-                                        ),
-                                      );
-                                    },
+                                          if (loadingProgress == null)
+                                            return child;
+                                          return const Center(
+                                            child: CircularProgressIndicator(
+                                              color:
+                                                  GalleryCarouselScreen.niasRed,
+                                            ),
+                                          );
+                                        },
                                     errorBuilder:
                                         (context, error, stackTrace) =>
                                             const Center(
-                                      child: Icon(
-                                        Icons.error,
-                                        color: GalleryCarouselScreen.niasRed,
-                                      ),
-                                    ),
+                                              child: Icon(
+                                                Icons.error,
+                                                color: GalleryCarouselScreen
+                                                    .niasRed,
+                                              ),
+                                            ),
                                   ),
                                   // Overlay Gradient
                                   Container(
@@ -164,8 +169,9 @@ class _GalleryCarouselScreenState extends ConsumerState<GalleryCarouselScreen> {
                                         Text(
                                           item.title,
                                           style: GoogleFonts.cinzelDecorative(
-                                            fontSize:
-                                                isCompactPortrait ? 20 : 28,
+                                            fontSize: isCompactPortrait
+                                                ? 20
+                                                : 28,
                                             fontWeight: FontWeight.bold,
                                             color: GalleryCarouselScreen
                                                 .niasYellow,
@@ -184,8 +190,9 @@ class _GalleryCarouselScreenState extends ConsumerState<GalleryCarouselScreen> {
                                             item.description!,
                                             style: TextStyle(
                                               color: Colors.white,
-                                              fontSize:
-                                                  isCompactPortrait ? 12 : 16,
+                                              fontSize: isCompactPortrait
+                                                  ? 12
+                                                  : 16,
                                             ),
                                           ),
                                         ],
@@ -233,7 +240,9 @@ class _GalleryCarouselScreenState extends ConsumerState<GalleryCarouselScreen> {
                                     selected: isSelected,
                                     selectedColor:
                                         GalleryCarouselScreen.niasYellow,
-                                    backgroundColor: Colors.black.withOpacity(0.6),
+                                    backgroundColor: Colors.black.withOpacity(
+                                      0.6,
+                                    ),
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 4,
                                       vertical: 0,
@@ -261,72 +270,67 @@ class _GalleryCarouselScreenState extends ConsumerState<GalleryCarouselScreen> {
                             ),
                           ),
                         ),
-                        
+
                         // Menu Button (Top Left if no AppBar)
                         if (isCompactPortrait)
                           Positioned(
                             top: MediaQuery.of(context).padding.top + 10,
                             left: 10,
-                            child: const SizedBox.shrink(), // CustomBottomAppBar handles it
+                            child:
+                                const SizedBox.shrink(), // CustomBottomAppBar handles it
                           ),
                       ],
                     );
                   },
-                  loading: () => const Center(child: CircularProgressIndicator(color: GalleryCarouselScreen.niasRed)),
-                  error: (err, stack) => Center(child: Text('Error: $err', style: const TextStyle(color: GalleryCarouselScreen.niasRed))),
+                  loading: () => const Center(
+                    child: CircularProgressIndicator(
+                      color: GalleryCarouselScreen.niasRed,
+                    ),
+                  ),
+                  error: (err, stack) => Center(
+                    child: Text(
+                      'Error: $err',
+                      style: const TextStyle(
+                        color: GalleryCarouselScreen.niasRed,
+                      ),
+                    ),
+                  ),
                 ),
               ),
               if (isCompactLandscape || isTablet)
-                NavigationRail(
-                  selectedIndex: 0,
-                  minWidth: 56,
-                  useIndicator: true,
-                  backgroundColor: currentProject.primaryColor,
-                  indicatorColor: currentProject.primaryColor.withValues(alpha: 0.2),
-                  unselectedIconTheme: const IconThemeData(color: Colors.white70),
-                  selectedIconTheme: const IconThemeData(color: Colors.white),
-                  labelType: NavigationRailLabelType.none,
-                  onDestinationSelected: (index) {
-                    // Handle navigation
-                  },
-                  leading: Column(
-                    mainAxisSize: MainAxisSize.min,
+                Container(
+                  width: 56,
+                  color: currentProject.primaryColor,
+                  child: Column(
                     children: [
                       const SizedBox(height: 8),
-                      SizedBox(
-                        width: 56,
-                        child: IconButton(
-                          icon: const Icon(Icons.menu, color: Colors.white),
-                          onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+                      IconButton(
+                        icon: const Icon(Icons.menu, color: Colors.white),
+                        onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+                      ),
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: AdaptiveNavActions.buildActions(
+                                context,
+                                ref,
+                                currentProject: currentProject,
+                                isHomeScreen: false,
+                                showHome: true,
+                                color: Colors.white,
+                              ).map((w) => Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 4),
+                                child: w,
+                              )).toList(),
+                            ),
+                          ),
                         ),
                       ),
                     ],
-                  ),
-                  destinations: [
-                    NavigationRailDestination(
-                      icon: const Icon(Icons.photo_library_outlined),
-                      selectedIcon: const Icon(Icons.photo_library),
-                      label: Text('gallery'.tr()),
-                    ),
-                  ],
-                  trailing: Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: AdaptiveNavActions.buildActions(
-                          context,
-                          ref,
-                          currentProject: currentProject,
-                          isHomeScreen: false,
-                          showHome: true,
-                          color: Colors.white,
-                        ).map((w) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          child: w,
-                        )).toList(),
-                      ),
-                    ),
                   ),
                 ),
             ],

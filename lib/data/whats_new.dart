@@ -1,4 +1,10 @@
 const whatsNew = '''
+<h3>New in version 1.1.0</h3>
+<ul>
+<li>New modules: Gallery and Nias language course.</li>
+<li>Various fixes</li>
+</ul>
+
 <h3>New in version 1.0.0</h3>
 
 This is the first version. The features are:

@@ -8,6 +8,9 @@ import '../providers/wiki_api_provider.dart';
 import '../services/wiki_api_service.dart';
 import '../utils/wiki_utils.dart';
 import '../widgets/wiki_footer.dart';
+import '../utils/responsive_utils.dart';
+import '../widgets/adaptive_nav_actions.dart';
+import '../widgets/shortcuts_side_bar.dart';
 import '../widgets/drawer_menu.dart';
 import '../widgets/custom_bottom_app_bar.dart';
 import 'image_screen.dart';
@@ -50,17 +53,41 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
       0.5,
     )!;
 
-    return Scaffold(
-      key: _scaffoldKey,
-      drawer: const DrawerMenu(),
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            automaticallyImplyLeading: false,
-            expandedHeight: 200.0,
-            floating: false,
-            pinned: true,
-            backgroundColor: mixedColor,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final deviceType = ResponsiveUtils.getDeviceType(context);
+        final isLandscape = ResponsiveUtils.isLandscape(context);
+        final isCompact = deviceType == DeviceType.compact;
+        final isTablet = deviceType != DeviceType.compact;
+        final isCompactLandscape = isCompact && isLandscape;
+        final isCompactPortrait = isCompact && !isLandscape;
+        final isTabletLandscape = isTablet && isLandscape;
+        final bool showShortcutsSideBar = isTabletLandscape || deviceType == DeviceType.expanded;
+
+        return Scaffold(
+          key: _scaffoldKey,
+          drawer: const DrawerMenu(),
+          bottomNavigationBar: isCompactPortrait
+              ? CustomBottomAppBar(
+                  scaffoldKey: _scaffoldKey,
+                  currentProject: ProjectType.wiktionary,
+                  pageTitle: _courseTitle,
+                )
+              : null,
+          body: Row(
+            children: [
+              if (showShortcutsSideBar)
+                const ShortcutsSidebar(),
+              Expanded(
+                child: CustomScrollView(
+                  slivers: [
+                    SliverAppBar(
+                      automaticallyImplyLeading: false,
+                      expandedHeight: 200.0,
+                      floating: true,
+                      pinned: false,
+                      snap: true,
+                      backgroundColor: mixedColor,
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
               title: Text(
@@ -251,13 +278,51 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
             error: (err, stack) =>
                 SliverFillRemaining(child: Center(child: Text('Error: $err'))),
           ),
-        ],
-      ),
-      bottomNavigationBar: CustomBottomAppBar(
-        scaffoldKey: _scaffoldKey,
-        currentProject: ProjectType.wiktionary,
-        pageTitle: _courseTitle,
-      ),
+                  ],
+                ),
+              ),
+              if (isCompactLandscape || isTablet)
+                Container(
+                  width: 56,
+                  color: theme.colorScheme.primary,
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 8),
+                      IconButton(
+                        icon: const Icon(Icons.menu),
+                        color: theme.colorScheme.onPrimary,
+                        onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+                      ),
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: AdaptiveNavActions.buildActions(
+                                context,
+                                ref,
+                                currentProject: ProjectType.wiktionary,
+                                isHomeScreen: false,
+                                showHome: true,
+                                pageTitle: _courseTitle,
+                                color: theme.colorScheme.onPrimary,
+                              ).map((w) => Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 4),
+                                child: w,
+                              )).toList(),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 

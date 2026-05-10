@@ -232,19 +232,10 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                   ),
                 ),
                 if (isCompactLandscape || isTablet)
-                  NavigationRail(
-                    selectedIndex: 0,
-                    minWidth: 56.0,
-                    groupAlignment: -1.0,
-                    backgroundColor: theme.colorScheme.primary,
-                    indicatorColor: theme.colorScheme.onPrimary.withValues(alpha: 0.2),
-                    labelType: NavigationRailLabelType.none,
-                    onDestinationSelected: (index) {
-                      if (index == 0) {
-                        Navigator.of(context).popUntil((route) => route.isFirst);
-                      }
-                    },
-                    leading: Column(
+                  Container(
+                    width: 56,
+                    color: theme.colorScheme.primary,
+                    child: Column(
                       children: [
                         const SizedBox(height: 8),
                         IconButton(
@@ -252,33 +243,30 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                           color: theme.colorScheme.onPrimary,
                           onPressed: () => _scaffoldKey.currentState?.openDrawer(),
                         ),
-                      ],
-                    ),
-                    destinations: [
-                      NavigationRailDestination(
-                        icon: Icon(Icons.home_outlined, color: theme.colorScheme.onPrimary),
-                        selectedIcon: Icon(Icons.home, color: theme.colorScheme.onPrimary),
-                        label: Text('home'.tr()),
-                      ),
-                    ],
-                    trailing: Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: AdaptiveNavActions.buildActions(
-                            context,
-                            ref,
-                            currentProject: currentProject,
-                            isHomeScreen: false,
-                            showHome: false, // Fix duplication: hide Home icon in actions
-                            pageTitle: widget.title,
-                            color: theme.colorScheme.onPrimary,
-                          ).map((w) => Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 4),
-                            child: w,
-                          )).toList(),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.bottomCenter,
+                            child: SingleChildScrollView(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: AdaptiveNavActions.buildActions(
+                                  context,
+                                  ref,
+                                  currentProject: currentProject,
+                                  isHomeScreen: false,
+                                  showHome: true,
+                                  pageTitle: widget.title,
+                                  color: theme.colorScheme.onPrimary,
+                                ).map((w) => Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 4),
+                                  child: w,
+                                )).toList(),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
               ],

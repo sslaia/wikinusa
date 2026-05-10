@@ -136,66 +136,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
               ),
               if (isCompactLandscape || isTablet)
-                NavigationRail(
-                  selectedIndex: 0,
-                  minWidth: 56,
-                  useIndicator: true,
-                  backgroundColor: theme.colorScheme.primary,
-                  indicatorColor: theme.colorScheme.primary.withValues(
-                    alpha: 0.2,
-                  ),
-                  unselectedIconTheme: const IconThemeData(color: Colors.white70),
-                  selectedIconTheme: const IconThemeData(color: Colors.white),
-                  labelType: NavigationRailLabelType.none,
-                  onDestinationSelected: (index) {
-                    // Handle navigation if we have multiple top level destinations
-                  },
-                  leading: Column(
-                    mainAxisSize: MainAxisSize.min,
+                Container(
+                  width: 56,
+                  color: theme.colorScheme.primary,
+                  child: Column(
                     children: [
                       const SizedBox(height: 8),
-                      SizedBox(
-                        width: 56,
-                        child: IconButton(
-                          icon: const Icon(Icons.menu, color: Colors.white),
-                          onPressed: () =>
-                              _scaffoldKey.currentState?.openDrawer(),
+                      IconButton(
+                        icon: const Icon(Icons.menu, color: Colors.white),
+                        onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+                      ),
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: AdaptiveNavActions.buildActions(
+                                context,
+                                ref,
+                                currentProject: currentProject,
+                                isHomeScreen: true,
+                                showHome: false,
+                                color: Colors.white,
+                              ).map((w) => Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 4),
+                                child: w,
+                              )).toList(),
+                            ),
+                          ),
                         ),
                       ),
                     ],
-                  ),
-                  destinations: [
-                    NavigationRailDestination(
-                      icon: const Icon(Icons.home_outlined),
-                      selectedIcon: const Icon(Icons.home),
-                      label: Text('home'.tr()),
-                    ),
-                  ],
-                  trailing: Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children:
-                            AdaptiveNavActions.buildActions(
-                                  context,
-                                  ref,
-                                  currentProject: currentProject,
-                                  isHomeScreen: true,
-                                  showHome: false, // Fix duplication
-                                  color: Colors.white,
-                                )
-                                .map(
-                                  (w) => Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 4,
-                                    ),
-                                    child: w,
-                                  ),
-                                )
-                                .toList(),
-                      ),
-                    ),
                   ),
                 ),
             ],
