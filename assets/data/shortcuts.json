@@ -37,11 +37,6 @@
         "pageTitle": "Wikipedia:Reference_desk"
       },
       {
-        "icon": "content_copy",
-        "title": "Content portals",
-        "pageTitle": "Wikipedia:Content/Portals"
-      },
-      {
         "icon": "pages_outlined",
         "title": "Special pages",
         "pageTitle": "Special:SpecialPages"
