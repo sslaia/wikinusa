@@ -1,7 +1,7 @@
 name: wikinusa
 description: "An Android app for Nias Wiktionary and Wikibooks as well as Nias, Indonesian and English Wikipedia"
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.1.0+2
 
 environment:
   sdk: ^3.11.4

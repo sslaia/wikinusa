@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wikinusa/providers/app_state.dart';
 import 'package:wikinusa/providers/onboarding_provider.dart';
 
 import 'home_screen.dart';
@@ -208,8 +209,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   Widget _buildLanguageSelector(BuildContext context, ThemeData theme) {
     return PopupMenuButton<Locale>(
-      onSelected: (Locale locale) {
-        context.setLocale(locale);
+      onSelected: (Locale locale) async {
+        await context.setLocale(locale);
+        ref.read(languageProvider.notifier).setLanguage(locale.languageCode);
       },
       icon: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
