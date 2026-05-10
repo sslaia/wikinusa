@@ -19,33 +19,28 @@ class WikiHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
-      ..userAgent = 'WikiNusa/1.0 (https://io.github.sslaia.wikinusa; sslaia@yahoo.com) Flutter/3.x';
+      ..userAgent =
+          'WikiNusa/1.0 (https://io.github.sslaia.wikinusa; slaia@yahoo.com) Flutter/3.x';
   }
 }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
-  
+
   // Set global User-Agent to comply with Wikimedia's API policy and avoid 429 errors.
   HttpOverrides.global = WikiHttpOverrides();
-  
+
   final prefs = await SharedPreferences.getInstance();
 
   runApp(
     EasyLocalization(
-      supportedLocales: const [
-        Locale('en'),
-        Locale('id'),
-        Locale('nia'),
-      ],
+      supportedLocales: const [Locale('en'), Locale('id'), Locale('nia')],
       startLocale: const Locale('nia'),
       fallbackLocale: const Locale('id'),
       path: 'assets/translations',
       child: ProviderScope(
-        overrides: [
-          sharedPreferencesProvider.overrideWithValue(prefs),
-        ],
+        overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
         child: const WikiNusaApp(),
       ),
     ),
@@ -66,14 +61,8 @@ class WikiNusaApp extends ConsumerWidget {
     return MaterialApp(
       title: 'WikiNusa',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.getTheme(
-        currentProject,
-        brightness: Brightness.light,
-      ),
-      darkTheme: AppTheme.getTheme(
-        currentProject,
-        brightness: Brightness.dark,
-      ),
+      theme: AppTheme.getTheme(currentProject, brightness: Brightness.light),
+      darkTheme: AppTheme.getTheme(currentProject, brightness: Brightness.dark),
       themeMode: themeMode,
       localizationsDelegates: [
         EasyLocalization.of(context)!.delegate,
@@ -86,9 +75,9 @@ class WikiNusaApp extends ConsumerWidget {
       locale: context.locale,
       builder: (context, child) {
         return MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            textScaler: TextScaler.linear(fontSize.scale),
-          ),
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: TextScaler.linear(fontSize.scale)),
           child: child!,
         );
       },

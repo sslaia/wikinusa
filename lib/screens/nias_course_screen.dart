@@ -42,7 +42,11 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
     // Mix of project colors
     final mixedColor = Color.lerp(
       ProjectType.wikipedia.primaryColor,
-      Color.lerp(ProjectType.wiktionary.primaryColor, ProjectType.wikibooks.primaryColor, 0.5),
+      Color.lerp(
+        ProjectType.wiktionary.primaryColor,
+        ProjectType.wikibooks.primaryColor,
+        0.5,
+      ),
       0.5,
     )!;
 
@@ -60,7 +64,7 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
               title: Text(
-                'nias_course'.tr(),
+                "Hadia Ö'ila?",
                 style: GoogleFonts.cinzelDecorative(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
@@ -86,17 +90,17 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
                       Icon(
                         Icons.auto_stories_rounded,
                         size: 60,
-                        color: Colors.white.withOpacity(0.3),
+                        color: Colors.white.withValues(alpha: 0.3),
                       ),
                       const SizedBox(height: 40), // Spacer for title
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          "Li Niha khö ndra awöda fao ba gu'ö digital",
+                          "Kese-keseda ba mbaŵa andre",
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.dancingScript(
+                          style: GoogleFonts.merriweather(
                             fontSize: 14,
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withValues(alpha: 0.9),
                             fontStyle: FontStyle.italic,
                           ),
                         ),
@@ -140,21 +144,27 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
               // Parse and extract specific Sulu lesson components
               final doc = html_parser.parse(cleanHtml);
               String? lessonTitle;
-              
-              final titleElement = doc.querySelector('.lesson-title') ?? doc.querySelector('h2');
+
+              final titleElement =
+                  doc.querySelector('.lesson-title') ?? doc.querySelector('h2');
               if (titleElement != null) {
                 lessonTitle = titleElement.text;
                 titleElement.remove();
               }
 
               // Remove reply links [tema li] and their brackets
-              doc.querySelectorAll('.ext-discussiontools-init-replylink-reply, .ext-discussiontools-init-replylink-bracket').forEach((el) {
-                el.remove();
-              });
+              doc
+                  .querySelectorAll(
+                    '.ext-discussiontools-init-replylink-reply, .ext-discussiontools-init-replylink-bracket',
+                  )
+                  .forEach((el) {
+                    el.remove();
+                  });
 
               // Also check for any remaining [tema li] text that might be outside those classes
               doc.querySelectorAll('a').forEach((link) {
-                if (link.text.trim() == '[tema li]' || link.text.trim() == 'tema li') {
+                if (link.text.trim() == '[tema li]' ||
+                    link.text.trim() == 'tema li') {
                   link.remove();
                 }
               });
@@ -189,9 +199,11 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
                       customStylesBuilder: (element) {
                         if (element.localName == 'blockquote') {
                           return {
-                            'border-left': '4px solid ${mixedColor.toHtmlRgba()}',
-                            'background-color':
-                                mixedColor.withOpacity(0.05).toHtmlRgba(),
+                            'border-left':
+                                '4px solid ${mixedColor.toHtmlRgba()}',
+                            'background-color': mixedColor
+                                .withValues(alpha: 0.05)
+                                .toHtmlRgba(),
                             'padding': '16px',
                             'margin': '16px 0',
                             'font-style': 'italic',
@@ -236,9 +248,8 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
             loading: () => const SliverFillRemaining(
               child: Center(child: CircularProgressIndicator()),
             ),
-            error: (err, stack) => SliverFillRemaining(
-              child: Center(child: Text('Error: $err')),
-            ),
+            error: (err, stack) =>
+                SliverFillRemaining(child: Center(child: Text('Error: $err'))),
           ),
         ],
       ),
@@ -258,10 +269,7 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
       builder: (context, value, child) {
         return Transform.scale(
           scale: value,
-          child: Opacity(
-            opacity: value.clamp(0.0, 1.0),
-            child: child,
-          ),
+          child: Opacity(opacity: value.clamp(0.0, 1.0), child: child),
         );
       },
       child: GestureDetector(
@@ -278,7 +286,7 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: themeColor.withOpacity(0.2),
+                color: themeColor.withValues(alpha: 0.2),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
@@ -305,7 +313,10 @@ extension ColorToHtml on Color {
 }
 
 // Special provider for course to force Nias Wiktionary
-final courseApiProvider = FutureProvider.autoDispose.family<dynamic, String>((ref, pageTitle) async {
+final courseApiProvider = FutureProvider.autoDispose.family<dynamic, String>((
+  ref,
+  pageTitle,
+) async {
   return WikiApiService.fetchPageHtml(
     ProjectType.wiktionary,
     'nia',

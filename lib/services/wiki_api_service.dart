@@ -80,7 +80,20 @@ class WikiApiService {
         /// Changed from 'Wb/nia' to 'Wb/nia/Olayama'
         finalTitle = 'Wb/nia/Olayama';
       } else if (!pageTitle.contains('Wb/nia/')) {
-        if (pageTitle.contains(':')) {
+        final lowerTitle = pageTitle.toLowerCase();
+        if (lowerTitle.startsWith('special:') ||
+            lowerTitle.startsWith('spesial:') ||
+            lowerTitle.startsWith('mirunggan:') ||
+            lowerTitle.startsWith('istimewa:') ||
+            lowerTitle.startsWith('istimiwa:') ||
+            lowerTitle.startsWith('istimèwa:') ||
+            lowerTitle.startsWith('khas:') ||
+            lowerTitle.startsWith('husus:')) {
+          finalTitle = pageTitle;
+        } else if (lowerTitle.startsWith('category:') ||
+                   lowerTitle.startsWith('kategori:') ||
+                   lowerTitle.startsWith('template:') ||
+                   lowerTitle.startsWith('templat:')) {
           final parts = pageTitle.split(':');
           final namespace = parts[0];
           final rest = parts.sublist(1).join(':');

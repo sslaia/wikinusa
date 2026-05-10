@@ -53,132 +53,127 @@ final shortcutsProvider = FutureProvider<Map<String, dynamic>>((ref) async {
           {
             "icon": "history",
             "title": "Safuria tebulö",
-            "url": "https://nia.wikipedia.org/wiki/Spesial:Perubahan_terbaru",
+            "pageTitle": "Spesial:Perubahan_terbaru",
           },
           {
             "icon": "pages_outlined",
             "title": "Nga'örö spesial",
-            "url": "https://nia.wikipedia.org/wiki/Spesial:Halaman_istimewa",
+            "pageTitle": "Spesial:Halaman_istimewa",
           },
           {
             "icon": "campaign_outlined",
             "title": "Angombakhata",
-            "url": "https://nia.wikipedia.org/wiki/Wikipedia:Angombakhata",
+            "pageTitle": "Wikipedia:Angombakhata",
           },
           {
             "icon": "people_outlined",
             "title": "Bawagöli zato",
-            "url": "https://nia.wikipedia.org/wiki/Wikipedia:Bawagöli_zato",
+            "pageTitle": "Wikipedia:Bawagöli_zato",
           },
           {
             "icon": "chat_bubble_outlined",
             "title": "Monganga afo",
-            "url": "https://nia.wikipedia.org/wiki/Wikipedia:Monganga_afo",
+            "pageTitle": "Wikipedia:Monganga_afo",
           },
           {
             "icon": "construction_outlined",
             "title": "Nahia wamakori",
-            "url": "https://nia.wikipedia.org/wiki/Wikipedia:Nahia_wamakori",
+            "pageTitle": "Wikipedia:Nahia_wamakori",
           },
           {
             "icon": "help_outline",
             "title": "Fanolo",
-            "url": "https://nia.wikipedia.org/wiki/Fanolo:Fanolo",
+            "pageTitle": "Fanolo:Fanolo",
           },
           {
             "icon": "support_agent_outlined",
             "title": "Sangai halöŵö",
-            "url": "https://nia.wikipedia.org/wiki/Wikipedia:Sangai_halöŵö",
+            "pageTitle": "Wikipedia:Sangai_halöŵö",
           },
         ],
         "wiktionary": [
           {
             "icon": "history",
             "title": "Safuria tebulö",
-            "url": "https://nia.wiktionary.org/wiki/Spesial:Perubahan_terbaru",
+            "pageTitle": "Spesial:Perubahan_terbaru",
           },
           {
             "icon": "pages_outlined",
             "title": "Nga'örö spesial",
-            "url": "https://nia.wiktionary.org/wiki/Spesial:Halaman_istimewa",
+            "pageTitle": "Spesial:Halaman_istimewa",
           },
           {
             "icon": "campaign_outlined",
             "title": "Angombakhata",
-            "url": "https://nia.wiktionary.org/wiki/Wikikamus:Angombakhata",
+            "pageTitle": "Wikikamus:Angombakhata",
           },
           {
             "icon": "people_outlined",
             "title": "Bawagöli zato",
-            "url": "https://nia.wiktionary.org/wiki/Wikikamus:Bawagöli_zato",
+            "pageTitle": "Wikikamus:Bawagöli_zato",
           },
           {
             "icon": "chat_bubble_outlined",
             "title": "Monganga afo",
-            "url": "https://nia.wiktionary.org/wiki/Wikikamus:Monganga_afo",
+            "pageTitle": "Wikikamus:Monganga_afo",
           },
           {
             "icon": "construction_outlined",
             "title": "Nahia wamakori",
-            "url": "https://nia.wiktionary.org/wiki/Wikikamus:Nahia_wamakori",
+            "pageTitle": "Wikikamus:Nahia_wamakori",
           },
           {
             "icon": "help_outline",
             "title": "Fanolo",
-            "url": "https://nia.wiktionary.org/wiki/Fanolo:Fanolo",
+            "pageTitle": "Fanolo:Fanolo",
           },
           {
             "icon": "support_agent_outlined",
             "title": "Sangai halöŵö",
-            "url": "https://nia.wiktionary.org/wiki/Wikikamus:Sangai_halöŵö",
+            "pageTitle": "Wikikamus:Sangai_halöŵö",
           },
         ],
         "wikibooks": [
           {
             "icon": "history",
             "title": "Safuria tebulö",
-            "url":
-                "https://incubator.wikimedia.org/wiki/Special:RecentChanges?hidebots=1&translations=filter&hidecategorization=1&hideWikibase=1&hideWikifunctions=1&limit=250&days=30&urlversion=2&rc-testwiki-project=b&rc-testwiki-code=nia",
+            "pageTitle":
+                "Special:RecentChanges?hidebots=1&translations=filter&hidecategorization=1&hideWikibase=1&hideWikifunctions=1&limit=250&days=30&urlversion=2&rc-testwiki-project=b&rc-testwiki-code=nia",
           },
           {
             "icon": "pages_outlined",
             "title": "Nga'örö spesial",
-            "url": "https://incubator.wikimedia.org/wiki/Special:SpecialPages",
+            "pageTitle": "Special:SpecialPages",
           },
           {
             "icon": "campaign_outlined",
             "title": "Angombakhata",
-            "url":
-                "https://incubator.wikimedia.org/wiki/Wb/nia/Wikibooks:Angombakhata",
+            "pageTitle": "Wikibooks:Angombakhata",
           },
           {
             "icon": "people_outlined",
             "title": "Bawagöli zato",
-            "url":
-                "https://incubator.wikimedia.org/wiki/Wb/nia/Wikibooks:Bawagöli_zato",
+            "pageTitle": "Wikibooks:Bawagöli_zato",
           },
           {
             "icon": "chat_bubble_outlined",
             "title": "Monganga afo",
-            "url":
-                "https://incubator.wikimedia.org/wiki/Wb/nia/Wikibooks:Monganga_afo",
+            "pageTitle": "Wikibooks:Monganga_afo",
           },
           {
             "icon": "construction_outlined",
             "title": "Nahia wamakori",
-            "url":
-                "https://incubator.wikimedia.org/wiki/Wb/nia/Wikibooks:Nahia_wamakori",
+            "pageTitle": "Wikibooks:Nahia_wamakori",
           },
           {
             "icon": "help_outline",
             "title": "Fanolo",
-            "url": "https://incubator.wikimedia.org/wiki/Wb/nia/Help:Fanolo",
+            "pageTitle": "Help:Fanolo",
           },
           {
             "icon": "support_agent_outlined",
             "title": "Sangai halöŵö",
-            "url":
-                "https://incubator.wikimedia.org/wiki/Wb/nia/Wikibooks:Sangai_halöŵö",
+            "pageTitle": "Wikibooks:Sangai_halöŵö",
           },
         ],
       },

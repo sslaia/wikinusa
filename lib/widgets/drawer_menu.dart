@@ -19,6 +19,7 @@ import '../screens/bookmarks_screen.dart';
 import '../screens/gallery_carousel_screen.dart';
 import '../screens/article_screen.dart';
 import '../screens/nias_course_screen.dart';
+import '../utils/shortcut_utils.dart';
 
 class DrawerMenu extends ConsumerWidget {
   const DrawerMenu({super.key});
@@ -44,7 +45,8 @@ class DrawerContent extends ConsumerWidget {
     final currentLanguage = ref.watch(languageProvider);
     final currentFontSize = ref.watch(fontSizeProvider);
 
-    final isDark = themeMode == ThemeMode.dark ||
+    final isDark =
+        themeMode == ThemeMode.dark ||
         (themeMode == ThemeMode.system &&
             MediaQuery.of(context).platformBrightness == Brightness.dark);
 
@@ -96,6 +98,27 @@ class DrawerContent extends ConsumerWidget {
             ),
           ],
         ),
+        _buildProjectShortcutsSection(
+          context,
+          ref,
+          theme,
+          currentProject,
+          currentLanguage,
+        ),
+        _buildExpansionSection(
+          theme,
+          titleKey: 'drawer_project',
+          initiallyExpanded: false,
+          children: [
+            _buildProjectSelector(
+              context,
+              ref,
+              theme,
+              currentProject,
+              currentLanguage,
+            ),
+          ],
+        ),
         _buildExpansionSection(
           theme,
           titleKey: 'drawer_modules',
@@ -125,19 +148,12 @@ class DrawerContent extends ConsumerWidget {
                 }
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const GalleryCarouselScreen()),
+                  MaterialPageRoute(
+                    builder: (_) => const GalleryCarouselScreen(),
+                  ),
                 );
               },
             ),
-          ],
-        ),
-        _buildProjectShortcutsSection(context, ref, theme, currentProject, currentLanguage),
-        _buildExpansionSection(
-          theme,
-          titleKey: 'drawer_project',
-          initiallyExpanded: false,
-          children: [
-            _buildProjectSelector(context, ref, theme, currentProject, currentLanguage),
           ],
         ),
         _buildExpansionSection(
@@ -152,17 +168,13 @@ class DrawerContent extends ConsumerWidget {
           theme,
           titleKey: 'drawer_appearance',
           initiallyExpanded: false,
-          children: [
-            _buildAppearanceToggle(ref, theme, isDark),
-          ],
+          children: [_buildAppearanceToggle(ref, theme, isDark)],
         ),
         _buildExpansionSection(
           theme,
           titleKey: 'drawer_font_size',
           initiallyExpanded: false,
-          children: [
-            _buildFontSizeSelector(ref, theme, currentFontSize),
-          ],
+          children: [_buildFontSizeSelector(ref, theme, currentFontSize)],
         ),
         _buildExpansionSection(
           theme,
@@ -173,17 +185,15 @@ class DrawerContent extends ConsumerWidget {
               theme,
               icon: Icons.groups_2_rounded,
               title: 'about_community'.tr(),
-              onTap: () => _navigateToAbout(
-                context,
-                'about_community',
-                aboutCommunity,
-              ),
+              onTap: () =>
+                  _navigateToAbout(context, 'about_community', aboutCommunity),
             ),
             _buildDrawerItem(
               theme,
               icon: Icons.newspaper_rounded,
               title: 'about_whats_new'.tr(),
-              onTap: () => _navigateToAbout(context, 'about_whats_new', whatsNew),
+              onTap: () =>
+                  _navigateToAbout(context, 'about_whats_new', whatsNew),
             ),
             _buildDrawerItem(
               theme,
@@ -230,7 +240,8 @@ class DrawerContent extends ConsumerWidget {
 
     return shortcutsAsync.when(
       data: (data) {
-        final shortcuts = data[currentLanguage]?[projectKey] as List<dynamic>? ?? [];
+        final shortcuts =
+            data[currentLanguage]?[projectKey] as List<dynamic>? ?? [];
         if (shortcuts.isEmpty) return const SizedBox.shrink();
 
         return _buildExpansionSection(
@@ -240,17 +251,20 @@ class DrawerContent extends ConsumerWidget {
           children: shortcuts.map((s) {
             final title = s['title'] as String;
             final iconName = s['icon'] as String;
+            final pageTitle = s['pageTitle'] as String;
             return _buildDrawerItem(
               theme,
-              icon: _getIconData(iconName),
+              icon: ShortcutUtils.getIconData(iconName),
               title: title,
               onTap: () {
                 if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
                   Navigator.pop(context);
                 }
-                Navigator.push(
+                ShortcutUtils.handleShortcutTap(
                   context,
-                  MaterialPageRoute(builder: (_) => ArticleScreen(title: title)),
+                  pageTitle,
+                  currentLanguage,
+                  currentProject,
                 );
               },
             );
@@ -261,46 +275,6 @@ class DrawerContent extends ConsumerWidget {
       error: (_, __) => const SizedBox.shrink(),
     );
   }
-
-  IconData _getIconData(String name) {
-    switch (iconNameMap[name]) {
-      case 'history':
-        return Icons.history;
-      case 'newspaper_outlined':
-        return Icons.newspaper_outlined;
-      case 'people_outlined':
-        return Icons.people_outlined;
-      case 'chat_bubble_outlined':
-        return Icons.chat_bubble_outlined;
-      case 'help_outline':
-        return Icons.help_outline;
-      case 'content_copy':
-        return Icons.content_copy;
-      case 'pages_outlined':
-        return Icons.pages_outlined;
-      case 'campaign_outlined':
-        return Icons.campaign_outlined;
-      case 'construction_outlined':
-        return Icons.construction_outlined;
-      case 'support_agent_outlined':
-        return Icons.support_agent_outlined;
-      default:
-        return Icons.link;
-    }
-  }
-
-  static const Map<String, String> iconNameMap = {
-    'history': 'history',
-    'newspaper_outlined': 'newspaper_outlined',
-    'people_outlined': 'people_outlined',
-    'chat_bubble_outlined': 'chat_bubble_outlined',
-    'help_outline': 'help_outline',
-    'content_copy': 'content_copy',
-    'pages_outlined': 'pages_outlined',
-    'campaign_outlined': 'campaign_outlined',
-    'construction_outlined': 'construction_outlined',
-    'support_agent_outlined': 'support_agent_outlined',
-  };
 
   Widget _buildHeader(
     BuildContext context,
@@ -449,7 +423,9 @@ class DrawerContent extends ConsumerWidget {
           onChanged: isSupported
               ? (ProjectType? newValue) {
                   if (newValue != null) {
-                    ref.read(appStateProvider.notifier).setProject(newValue, currentLanguage);
+                    ref
+                        .read(appStateProvider.notifier)
+                        .setProject(newValue, currentLanguage);
                     Navigator.of(context).popUntil((route) => route.isFirst);
                   }
                 }
@@ -475,9 +451,7 @@ class DrawerContent extends ConsumerWidget {
                   fontWeight: project == currentProject
                       ? FontWeight.bold
                       : FontWeight.normal,
-                  decoration: !isSupported
-                      ? TextDecoration.lineThrough
-                      : null,
+                  decoration: !isSupported ? TextDecoration.lineThrough : null,
                 ),
               ),
             ],

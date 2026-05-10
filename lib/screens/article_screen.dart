@@ -61,7 +61,20 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     if (langCode == 'nia' && currentProject == ProjectType.wikibooks) {
       String incubatorTitle = widget.title;
       if (!incubatorTitle.contains('Wb/nia/')) {
-        if (incubatorTitle.contains(':')) {
+        final lowerTitle = incubatorTitle.toLowerCase();
+        if (lowerTitle.startsWith('special:') ||
+            lowerTitle.startsWith('spesial:') ||
+            lowerTitle.startsWith('mirunggan:') ||
+            lowerTitle.startsWith('istimewa:') ||
+            lowerTitle.startsWith('istimiwa:') ||
+            lowerTitle.startsWith('istimèwa:') ||
+            lowerTitle.startsWith('khas:') ||
+            lowerTitle.startsWith('husus:')) {
+          // Special pages don't need prefix
+        } else if (lowerTitle.startsWith('category:') ||
+                   lowerTitle.startsWith('kategori:') ||
+                   lowerTitle.startsWith('template:') ||
+                   lowerTitle.startsWith('templat:')) {
           final parts = incubatorTitle.split(':');
           final namespace = parts[0];
           final rest = parts.sublist(1).join(':');

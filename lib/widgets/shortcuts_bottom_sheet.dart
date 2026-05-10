@@ -1,11 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../models/project_type.dart';
 import '../providers/app_state.dart';
 import '../providers/shortcuts_provider.dart';
-import '../screens/article_screen.dart';
+import '../utils/shortcut_utils.dart';
 
 void showShortcutsBottomSheet(BuildContext context, WidgetRef ref) {
   final theme = Theme.of(context);
@@ -50,9 +49,14 @@ void showShortcutsBottomSheet(BuildContext context, WidgetRef ref) {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
-                          color: currentProject.primaryColor.withValues(alpha: 0.1),
+                          color: currentProject.primaryColor.withValues(
+                            alpha: 0.1,
+                          ),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
@@ -83,9 +87,9 @@ void showShortcutsBottomSheet(BuildContext context, WidgetRef ref) {
                     data: (allShortcuts) {
                       final projectKey =
                           currentProject.name.toLowerCase() == 'wikibooks' &&
-                                  langCode == 'id'
-                              ? 'wikibuku'
-                              : currentProject.name.toLowerCase();
+                              langCode == 'id'
+                          ? 'wikibuku'
+                          : currentProject.name.toLowerCase();
 
                       final langShortcuts =
                           allShortcuts[langCode] as Map<String, dynamic>?;
@@ -105,6 +109,7 @@ void showShortcutsBottomSheet(BuildContext context, WidgetRef ref) {
                             context,
                             theme,
                             currentProject,
+                            langCode,
                             shortcut,
                           );
                         },
@@ -137,11 +142,12 @@ Widget _buildShortcutCard(
   BuildContext context,
   ThemeData theme,
   ProjectType project,
+  String langCode,
   Map<String, dynamic> shortcut,
 ) {
   final iconName = shortcut['icon'] as String;
   final title = shortcut['title'] as String;
-  final url = shortcut['url'] as String;
+  final pageTitle = shortcut['pageTitle'] as String;
 
   return Padding(
     padding: const EdgeInsets.only(bottom: 12.0),
@@ -169,7 +175,7 @@ Widget _buildShortcutCard(
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(
-            _getIconData(iconName),
+            ShortcutUtils.getIconData(iconName),
             size: 20,
             color: project.primaryColor,
           ),
@@ -188,56 +194,12 @@ Widget _buildShortcutCard(
         ),
         onTap: () async {
           Navigator.pop(context);
-          final uri = Uri.parse(url);
-          final pathSegments = uri.pathSegments;
-
-          String articleTitle = '';
-          if (pathSegments.contains('wiki')) {
-            final index = pathSegments.indexOf('wiki');
-            if (index + 1 < pathSegments.length) {
-              articleTitle = pathSegments.sublist(index + 1).join('/').replaceAll('_', ' ');
-              // Remove query parameters if any from the title string
-              if (articleTitle.contains('?')) {
-                articleTitle = articleTitle.split('?').first;
-              }
-            }
-          }
-
-          // If it's a special page or we couldn't parse a title, launch externally/in-app browser
-          bool isSpecialPage = false;
-          if (articleTitle.isNotEmpty) {
-            final lowerTitle = articleTitle.toLowerCase();
-            isSpecialPage = lowerTitle.startsWith('special:') ||
-                lowerTitle.startsWith('spesial:') ||
-                lowerTitle.startsWith('mirunggan:') ||
-                lowerTitle.startsWith('istimewa:') ||
-                lowerTitle.startsWith('istimiwa:') ||
-                lowerTitle.startsWith('istimèwa:') ||
-                lowerTitle.startsWith('khas:') ||
-                lowerTitle.startsWith('husus:');
-          }
-
-          if (isSpecialPage || articleTitle.isEmpty) {
-            try {
-              if (await canLaunchUrl(uri)) {
-                await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
-              }
-            } catch (e) {
-              debugPrint('Could not launch $url: $e');
-            }
-          } else {
-            // TEMP: Strip Nias Wikibooks prefix
-            if (articleTitle.startsWith('Wb/nia/')) {
-              articleTitle = articleTitle.replaceFirst('Wb/nia/', '');
-            }
-
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => ArticleScreen(title: articleTitle),
-              ),
-            );
-          }
+          await ShortcutUtils.handleShortcutTap(
+            context,
+            pageTitle,
+            langCode,
+            project,
+          );
         },
       ),
     ),
@@ -264,33 +226,4 @@ Widget _buildEmptyState(ThemeData theme) {
       ],
     ),
   );
-}
-
-IconData _getIconData(String name) {
-  switch (name) {
-    case 'campaign_outlined':
-      return Icons.campaign_rounded;
-    case 'chat_bubble_outlined':
-      return Icons.chat_bubble_rounded;
-    case 'construction_outlined':
-      return Icons.construction_rounded;
-    case 'help_outlined':
-    case 'help_outline':
-      return Icons.help_outline_rounded;
-    case 'history':
-      return Icons.history_rounded;
-    case 'newspaper_outlined':
-      return Icons.newspaper_rounded;
-    case 'pages_outlined':
-      return Icons.pages_rounded;
-    case 'people_outlined':
-    case 'people_outline':
-      return Icons.people_rounded;
-    case 'support_agent_outlined':
-      return Icons.support_agent_rounded;
-    case 'water_drop_outlined':
-      return Icons.water_drop_rounded;
-    default:
-      return Icons.shortcut_rounded;
-  }
 }
