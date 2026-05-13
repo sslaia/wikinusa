@@ -36,8 +36,8 @@ void main() async {
   runApp(
     EasyLocalization(
       supportedLocales: const [Locale('en'), Locale('id'), Locale('nia')],
-      startLocale: const Locale('nia'),
-      fallbackLocale: const Locale('id'),
+      startLocale: const Locale('id'),
+      fallbackLocale: const Locale('nia'),
       path: 'assets/translations',
       child: ProviderScope(
         overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],

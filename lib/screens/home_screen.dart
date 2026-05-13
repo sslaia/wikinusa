@@ -107,6 +107,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               ) {
                                 return AdaptiveSectionCard(
                                   section: content[index],
+                                  project: currentProject,
                                 );
                               }, childCount: content.length),
                             ),

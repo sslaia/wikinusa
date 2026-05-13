@@ -27,6 +27,7 @@ class AdaptiveNavActions {
     required ProjectType currentProject,
     required bool isHomeScreen,
     bool showHome = true,
+    bool showShortcuts = true,
     String? pageTitle,
   }) {
     final isFetchingRandom = ref.watch(randomArticleProvider);
@@ -64,13 +65,14 @@ class AdaptiveNavActions {
           }
         },
       ),
-      NavAction(
-        icon: Icons.switch_access_shortcut_outlined,
-        label: 'shortcuts'.tr(),
-        onPressed: () {
-          showShortcutsBottomSheet(context, ref);
-        },
-      ),
+      if (showShortcuts)
+        NavAction(
+          icon: Icons.switch_access_shortcut_outlined,
+          label: 'shortcuts'.tr(),
+          onPressed: () {
+            showShortcutsBottomSheet(context, ref);
+          },
+        ),
       NavAction(
         icon: Icons.shuffle,
         label: 'random'.tr(),
@@ -84,6 +86,7 @@ class AdaptiveNavActions {
     required ProjectType currentProject,
     required bool isHomeScreen,
     bool showHome = true,
+    bool showShortcuts = true,
     String? pageTitle,
     Color? color,
   }) {
@@ -93,6 +96,7 @@ class AdaptiveNavActions {
       currentProject: currentProject, 
       isHomeScreen: isHomeScreen,
       showHome: showHome,
+      showShortcuts: showShortcuts,
       pageTitle: pageTitle
     );
 

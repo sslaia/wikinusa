@@ -60,7 +60,7 @@ class _ImageScreenState extends State<ImageScreen> {
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
-          Center(
+          Positioned.fill(
             child: InteractiveViewer(
               panEnabled: true,
               minScale: 0.5,

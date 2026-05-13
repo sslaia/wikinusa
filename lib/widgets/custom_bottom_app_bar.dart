@@ -1,4 +1,3 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -38,7 +37,7 @@ class CustomBottomAppBar extends ConsumerWidget {
             ),
             const SizedBox(width: 8),
             Text(
-              currentProject.name.toLowerCase().tr(),
+              'WikiNusa',
               style: GoogleFonts.cinzelDecorative(
                 textStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
                   color: Theme.of(context).colorScheme.onPrimary,
@@ -54,6 +53,7 @@ class CustomBottomAppBar extends ConsumerWidget {
               currentProject: currentProject,
               isHomeScreen: isHomeScreen,
               pageTitle: pageTitle,
+              showShortcuts: false,
             ),
           ],
         ),

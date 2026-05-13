@@ -3,14 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/home_page_section.dart';
+import '../models/project_type.dart';
 import '../screens/image_screen.dart';
 import '../utils/wiki_utils.dart';
 import '../utils/responsive_utils.dart';
 
 class AdaptiveSectionCard extends StatelessWidget {
   final HomePageSection section;
+  final ProjectType project;
 
-  const AdaptiveSectionCard({super.key, required this.section});
+  const AdaptiveSectionCard({
+    super.key,
+    required this.section,
+    required this.project,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +76,7 @@ class AdaptiveSectionCard extends StatelessWidget {
             },
             child: HtmlWidget(
               section.imageHtml!,
-              onTapUrl: (url) => WikiUtils.handleTapUrl(context, url, null),
+              onTapUrl: (url) => WikiUtils.handleTapUrl(context, url, null, project),
             ),
           ),
         Padding(
@@ -104,7 +110,7 @@ class AdaptiveSectionCard extends StatelessWidget {
               child: Center(
                 child: HtmlWidget(
                   section.imageHtml!,
-                  onTapUrl: (url) => WikiUtils.handleTapUrl(context, url, null),
+                  onTapUrl: (url) => WikiUtils.handleTapUrl(context, url, null, project),
                 ),
               ),
             ),
@@ -123,7 +129,7 @@ class AdaptiveSectionCard extends StatelessWidget {
   Widget _buildBodyText(BuildContext context) {
     return HtmlWidget(
       section.textHtml,
-      onTapUrl: (url) => WikiUtils.handleTapUrl(context, url, null),
+      onTapUrl: (url) => WikiUtils.handleTapUrl(context, url, null, project),
       textStyle: GoogleFonts.notoSerif(
         textStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
           height: 1.6,

@@ -2,9 +2,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wikinusa/providers/app_state.dart';
-import 'package:wikinusa/providers/onboarding_provider.dart';
-
+import '../models/project_type.dart';
+import '../providers/app_state.dart';
+import '../providers/onboarding_provider.dart';
 import 'home_screen.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
@@ -62,12 +62,16 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         children: [
           PageView.builder(
             controller: _pageController,
-            itemCount: _pages.length,
+            itemCount: _pages.length + 1, // +1 for the final language selection page
             onPageChanged: (index) {
               setState(() => _currentPage = index);
             },
             itemBuilder: (context, index) {
-              return _buildPage(_pages[index], size, theme);
+              if (index < _pages.length) {
+                return _buildPage(_pages[index], size, theme);
+              } else {
+                return _buildFinalLanguageSelectionPage(size, theme);
+              }
             },
           ),
 
@@ -93,29 +97,33 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                             );
                           },
                           icon: Icon(Icons.arrow_back_ios_rounded,
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                              color: theme.colorScheme.onSurface.withOpacity(0.5)),
                         )
                       else
                         TextButton(
-                          onPressed: () => _complete(ref, context), // Using helper method
+                          onPressed: () => _pageController.animateToPage(
+                            _pages.length,
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.easeInOut,
+                          ),
                           child: Text('skip'.tr(),
-                              style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
+                              style: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.5))),
                         ),
 
-                      // Page Indicators - Using helper method
+                      // Page Indicators
                       Row(
                         children: List.generate(
-                          _pages.length,
+                          _pages.length + 1,
                               (index) => _buildIndicator(index, theme),
                         ),
                       ),
 
                       // Next or Get Started Button
-                      _currentPage == _pages.length - 1
+                      _currentPage == _pages.length
                           ? ElevatedButton(
-                        onPressed: () => _complete(ref, context), // Using helper method
+                        onPressed: () => _complete(ref, context),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: _pages[_currentPage].color,
+                          backgroundColor: theme.colorScheme.primary,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
@@ -128,7 +136,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                             curve: Curves.easeInOut,
                           );
                         },
-                        icon: Icon(Icons.arrow_forward_ios_rounded, color: _pages[_currentPage].color),
+                        icon: Icon(Icons.arrow_forward_ios_rounded, 
+                          color: _currentPage < _pages.length 
+                            ? _pages[_currentPage].color 
+                            : theme.colorScheme.primary),
                       ),
                     ],
                   ),
@@ -183,7 +194,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         style: GoogleFonts.notoSerif(
                           fontSize: isTablet ? 18 : 14,
                           height: 1.5,
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                          color: theme.colorScheme.onSurface.withOpacity(0.7),
                         ),
                       ),
                       SizedBox(height: isTablet ? 40 : 20),
@@ -236,7 +247,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   style: GoogleFonts.notoSerif(
                     fontSize: isTablet ? 18 : 16,
                     height: 1.4,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                    color: theme.colorScheme.onSurface.withOpacity(0.7),
                   ),
                 ),
                 const SizedBox(height: 32),
@@ -250,6 +261,44 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     );
   }
 
+  Widget _buildFinalLanguageSelectionPage(Size size, ThemeData theme) {
+    final isTablet = size.width > 600;
+    
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: isTablet ? 80.0 : 40.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.translate, size: 80, color: theme.colorScheme.primary),
+            const SizedBox(height: 40),
+            Text(
+              'select_project_language'.tr(),
+              textAlign: TextAlign.center,
+              style: GoogleFonts.montserratAlternates(
+                fontSize: isTablet ? 32 : 26,
+                fontWeight: FontWeight.w800,
+                color: theme.colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'select_language_description'.tr(),
+              textAlign: TextAlign.center,
+              style: GoogleFonts.notoSerif(
+                fontSize: isTablet ? 18 : 16,
+                height: 1.4,
+                color: theme.colorScheme.onSurface.withOpacity(0.7),
+              ),
+            ),
+            const SizedBox(height: 40),
+            _buildLanguageSelector(context, theme, isFinalPage: true),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildIndicator(int index, ThemeData theme) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
@@ -257,37 +306,54 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       height: 8,
       width: _currentPage == index ? 24 : 8,
       decoration: BoxDecoration(
-        color: _currentPage == index ? _pages[_currentPage].color : theme.colorScheme.outlineVariant,
+        color: _currentPage == index 
+            ? (_currentPage < _pages.length ? _pages[_currentPage].color : theme.colorScheme.primary) 
+            : theme.colorScheme.outlineVariant,
         borderRadius: BorderRadius.circular(4),
       ),
     );
   }
 
   Future<void> _complete(WidgetRef ref, BuildContext context) async {
+    // Ensure project is always set to Wikipedia on completion
+    final currentLang = ref.read(languageProvider);
+    ref.read(appStateProvider.notifier).setProject(ProjectType.wikipedia, currentLang);
+    
     await ref.read(onboardingProvider.notifier).completeOnboarding();
     if (context.mounted) {
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const HomeScreen()));
     }
   }
 
-  Widget _buildLanguageSelector(BuildContext context, ThemeData theme) {
+  Widget _buildLanguageSelector(BuildContext context, ThemeData theme, {bool isFinalPage = false}) {
     return PopupMenuButton<Locale>(
       onSelected: (Locale locale) async {
         await context.setLocale(locale);
         ref.read(languageProvider.notifier).setLanguage(locale.languageCode);
       },
       icon: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          border: Border.all(color: theme.colorScheme.outlineVariant),
-          borderRadius: BorderRadius.circular(20),
+          color: isFinalPage ? theme.colorScheme.primary.withOpacity(0.1) : null,
+          border: Border.all(color: isFinalPage ? theme.colorScheme.primary : theme.colorScheme.outlineVariant),
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.translate, size: 16),
+            Icon(Icons.translate, size: 20, color: isFinalPage ? theme.colorScheme.primary : null),
+            const SizedBox(width: 12),
+            Text(
+              isFinalPage 
+                ? _getLanguageName(context.locale.languageCode)
+                : 'select_language'.tr(), 
+              style: theme.textTheme.labelLarge?.copyWith(
+                color: isFinalPage ? theme.colorScheme.primary : null,
+                fontWeight: FontWeight.bold,
+              )
+            ),
             const SizedBox(width: 8),
-            Text(context.locale.languageCode.toUpperCase(), style: theme.textTheme.labelLarge),
+            Icon(Icons.keyboard_arrow_down, size: 20, color: isFinalPage ? theme.colorScheme.primary : null),
           ],
         ),
       ),
@@ -297,6 +363,15 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         const PopupMenuItem(value: Locale('nia'), child: Text('Li Niha')),
       ],
     );
+  }
+
+  String _getLanguageName(String code) {
+    switch (code) {
+      case 'id': return 'Bahasa Indonesia';
+      case 'en': return 'English';
+      case 'nia': return 'Li Niha';
+      default: return code.toUpperCase();
+    }
   }
 }
 

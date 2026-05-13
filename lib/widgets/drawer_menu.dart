@@ -17,7 +17,6 @@ import '../providers/shortcuts_provider.dart';
 import '../screens/about_screen.dart';
 import '../screens/bookmarks_screen.dart';
 import '../screens/gallery_carousel_screen.dart';
-import '../screens/article_screen.dart';
 import '../screens/nias_course_screen.dart';
 import '../utils/shortcut_utils.dart';
 
@@ -119,6 +118,9 @@ class DrawerContent extends ConsumerWidget {
             ),
           ],
         ),
+        // Show modules only for Nias language
+        // Until Indonesian and English modules are implemented
+        if (currentLanguage == 'nia')
         _buildExpansionSection(
           theme,
           titleKey: 'drawer_modules',

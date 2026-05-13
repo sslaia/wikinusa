@@ -83,7 +83,7 @@ class ArticleHeroImage extends StatelessWidget {
               child: IconButton(
                 icon: Icon(Icons.arrow_back, color: theme.colorScheme.primary),
                 onPressed: () {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
+                  Navigator.of(context).pop();
                 },
               ),
             ),

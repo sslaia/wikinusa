@@ -1,11 +1,13 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../data/home_portals.dart';
 import '../models/project_type.dart';
+import '../providers/app_state.dart';
 import '../utils/wiki_utils.dart';
 
-class WikiPortalsWidget extends StatelessWidget {
+class WikiPortalsWidget extends ConsumerWidget {
   final ProjectType project;
   final String languageCode;
 
@@ -16,7 +18,7 @@ class WikiPortalsWidget extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final portalsData = HomePortals.getPortals(context);
     final projectStr = project.name.toLowerCase();
@@ -53,7 +55,7 @@ class WikiPortalsWidget extends StatelessWidget {
             itemCount: projectPortals.length,
             itemBuilder: (context, index) {
               final portal = projectPortals[index];
-              return _buildPortalCard(context, theme, portal);
+              return _buildPortalCard(context, ref, theme, portal);
             },
           ),
         ),
@@ -63,14 +65,17 @@ class WikiPortalsWidget extends StatelessWidget {
 
   Widget _buildPortalCard(
     BuildContext context,
+    WidgetRef ref,
     ThemeData theme,
     Map<String, dynamic> portal,
   ) {
     final title = portal['title'] as String;
     final label = (portal['label'] as String).tr();
 
+    final currentProject = ref.watch(appStateProvider);
+
     return GestureDetector(
-      onTap: () => WikiUtils.handleTapUrl(context, './$title', null),
+      onTap: () => WikiUtils.handleTapUrl(context, './$title', null, currentProject),
       child: Container(
         width: 140,
         margin: const EdgeInsets.all(4),

@@ -1,22 +1,18 @@
 const aboutCommunity = '''
 <p>Pada awalnya aplikasi ini dibuat untuk membantu anggota komunitas WikiNias.
-Mayoritas anggota komunitas gagap teknologi dan susah mencari-cari di mana Wikipedia, Wikikamus dan Wikibuku Nias.
-Hal itu mendorong saya untuk menulis aplikasi WikiNias (dan juga aplikasi khusus WikikamusNias).</p>
-
-<p>Baru kemudian saya berpikir untuk membuka aplikasi tsb. ke bahasa daerah lain,
+Namun kemudian saya berpikir untuk membuka aplikasi tsb. ke bahasa daerah lain,
 sehingga anggota komunitas lain bisa juga menggunakannya <strong>kalau mau</strong>.</p>
 
-<p>Dari situ lahirlah aplikasi <strong>Wikikamus</strong>, <strong>Nusapedia</strong> dan kini aplikasi <strong>Wikinusa</strong> ini.
-Sementara Wikikamus fokus pada akses ke berbagai situs Wikikamus dalam bahasa daerah,
-aplikasi Nusapedia fokus pada akses ke berbagai situs Wikipedia dalam bahasa daerah.
-Aplikasi Wikinusa ini akan menjadi aplikasi <em>all-in-one</em> dan menyediakan akses ke Wikipedia, 
-Wikikamus dan Wikibuku dalam berbagai bahasa daerah di Indonesia.</p>
+<p>Dari situ lahirlah beberapa aplikasi kembaran dari bahasa Nias: <strong>Wikikamus</strong>
+(bagi mereka yang hanya mau berurusan dengan Wikikamus), <strong>Nusapedia</strong> (
+bagi mereka yang hanya mau berurusan dengan Wikipedia) dan kini <strong>Wikinusa</strong> 
+(bagi mereka yang suka gonta-ganti proyek Wikipedia, Wikikamus dan Wikibuku).</p>
 
 <p>Catatan: Untuk saat ini baru Wikipedia, Wikikamus dan Wikibuku Nias yang didukung sepenuhnya. 
 Wikipedia bahasa Indonesia dan Inggris juga didukung. Namun wiki dalam bahasa daerah lainnya masih dalam tahap pengembangan.</p>
 
 <p>Klik <a href="https://sslaia.github.io/" target="_blank">di sini</a> untuk melihat berbagai aplikasi 
-yang dibuat untuk mendukung relawan wiki: <a href="https://sslaia.github.io/" target="_blank">Nusa apps</a></p>
+yang dibuat untuk mendukung relawan wiki di Indonesia: <a href="https://sslaia.github.io/" target="_blank">Berbagai Aplikasi Nusa</a></p>
  
 <h3>Berbagai tulisan saya seputar kegiatan komunitas</h3>
 <ol>

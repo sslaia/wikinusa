@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:html/parser.dart' as html_parser;
+
 import '../models/project_type.dart';
-import '../providers/wiki_api_provider.dart';
 import '../services/wiki_api_service.dart';
 import '../utils/wiki_utils.dart';
 import '../widgets/wiki_footer.dart';
@@ -13,9 +16,8 @@ import '../widgets/adaptive_nav_actions.dart';
 import '../widgets/shortcuts_side_bar.dart';
 import '../widgets/drawer_menu.dart';
 import '../widgets/custom_bottom_app_bar.dart';
+import '../providers/bookmarks_provider.dart';
 import 'image_screen.dart';
-
-import 'package:html/parser.dart' as html_parser;
 
 class NiasCourseScreen extends ConsumerStatefulWidget {
   const NiasCourseScreen({super.key});
@@ -31,9 +33,7 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
   @override
   void initState() {
     super.initState();
-    final now = DateTime.now();
-    final monthStr = now.month.toString().padLeft(2, '0');
-    _courseTitle = 'Wikikamus:Sulu/$monthStr';
+    _courseTitle = 'Wikikamus:Sulu';
   }
 
   @override
@@ -52,6 +52,8 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
       ),
       0.5,
     )!;
+
+    final String pageUrl = 'https://nia.wiktionary.org/wiki/${_courseTitle.replaceAll(' ', '_')}';
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -79,205 +81,201 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
               if (showShortcutsSideBar)
                 const ShortcutsSidebar(),
               Expanded(
-                child: CustomScrollView(
-                  slivers: [
-                    SliverAppBar(
-                      automaticallyImplyLeading: false,
-                      expandedHeight: 200.0,
-                      floating: true,
-                      pinned: false,
-                      snap: true,
-                      backgroundColor: mixedColor,
-            flexibleSpace: FlexibleSpaceBar(
-              centerTitle: true,
-              title: Text(
-                "Hadia Ö'ila?",
-                style: GoogleFonts.cinzelDecorative(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: Colors.white,
-                ),
-              ),
-              background: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      ProjectType.wikipedia.primaryColor,
-                      ProjectType.wiktionary.primaryColor,
-                      ProjectType.wikibooks.primaryColor,
-                    ],
-                  ),
-                ),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.auto_stories_rounded,
-                        size: 60,
-                        color: Colors.white.withValues(alpha: 0.3),
-                      ),
-                      const SizedBox(height: 40), // Spacer for title
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Text(
-                          "Kese-keseda ba mbaŵa andre",
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.merriweather(
-                            fontSize: 14,
-                            color: Colors.white.withValues(alpha: 0.9),
-                            fontStyle: FontStyle.italic,
+                child: Stack(
+                  children: [
+                    CustomScrollView(
+                      slivers: [
+                        SliverAppBar(
+                          automaticallyImplyLeading: false,
+                          expandedHeight: 200.0,
+                          floating: true,
+                          pinned: false,
+                          snap: true,
+                          backgroundColor: mixedColor,
+                          flexibleSpace: FlexibleSpaceBar(
+                            centerTitle: true,
+                            title: Text(
+                              "Hadia Ö'ila?",
+                              style: GoogleFonts.cinzelDecorative(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: Colors.white,
+                              ),
+                            ),
+                            background: Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    ProjectType.wikipedia.primaryColor,
+                                    ProjectType.wiktionary.primaryColor,
+                                    ProjectType.wikibooks.primaryColor,
+                                  ],
+                                ),
+                              ),
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.auto_stories_rounded,
+                                      size: 60,
+                                      color: Colors.white.withValues(alpha: 0.3),
+                                    ),
+                                    const SizedBox(height: 40), // Spacer for title
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                                      child: Text(
+                                        "Kese-keseda ba mbaŵa andre",
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.merriweather(
+                                          fontSize: 14,
+                                          color: Colors.white.withValues(alpha: 0.9),
+                                          fontStyle: FontStyle.italic,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          courseContent.when(
-            data: (data) {
-              String htmlContent;
+                        courseContent.when(
+                          data: (data) {
+                            String htmlContent;
 
-              if (data is Map<String, dynamic>) {
-                htmlContent = data['html'] ?? '';
-              } else if (data is String) {
-                htmlContent = data;
-              } else {
-                htmlContent = '';
-              }
+                            if (data is Map<String, dynamic>) {
+                              htmlContent = data['html'] ?? '';
+                            } else if (data is String) {
+                              htmlContent = data;
+                            } else {
+                              htmlContent = '';
+                            }
 
-              if (htmlContent.isEmpty ||
-                  htmlContent.contains('Error: Could not parse')) {
-                // Try fallback to January if current month fails
-                if (!_courseTitle.endsWith('/01')) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    setState(() {
-                      _courseTitle = 'Wikikamus:Sulu/01';
-                    });
-                  });
-                }
-              }
-
-              // Strip all inline styles to use app fonts and styles
-              final cleanHtml = htmlContent.replaceAll(
-                RegExp(r'style="[^"]*"'),
-                '',
-              );
-
-              // Parse and extract specific Sulu lesson components
-              final doc = html_parser.parse(cleanHtml);
-              String? lessonTitle;
-
-              final titleElement =
-                  doc.querySelector('.lesson-title') ?? doc.querySelector('h2');
-              if (titleElement != null) {
-                lessonTitle = titleElement.text;
-                titleElement.remove();
-              }
-
-              // Remove reply links [tema li] and their brackets
-              doc
-                  .querySelectorAll(
-                    '.ext-discussiontools-init-replylink-reply, .ext-discussiontools-init-replylink-bracket',
-                  )
-                  .forEach((el) {
-                    el.remove();
-                  });
-
-              // Also check for any remaining [tema li] text that might be outside those classes
-              doc.querySelectorAll('a').forEach((link) {
-                if (link.text.trim() == '[tema li]' ||
-                    link.text.trim() == 'tema li') {
-                  link.remove();
-                }
-              });
-
-              final cleanBody = doc.body?.innerHtml ?? cleanHtml;
-
-              return SliverPadding(
-                padding: const EdgeInsets.all(16.0),
-                sliver: SliverList(
-                  delegate: SliverChildListDelegate([
-                    if (lessonTitle != null && lessonTitle.isNotEmpty) ...[
-                      Text(
-                        lessonTitle,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.montserratAlternates(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: mixedColor,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-                    HtmlWidget(
-                      cleanBody,
-                      textStyle: GoogleFonts.notoSerif(
-                        height: 1.8,
-                        fontSize: 16,
-                        color: theme.colorScheme.onSurface.withOpacity(0.9),
-                      ),
-                      onTapUrl: (url) =>
-                          WikiUtils.handleTapUrl(context, url, htmlContent),
-                      customStylesBuilder: (element) {
-                        if (element.localName == 'blockquote') {
-                          return {
-                            'border-left':
-                                '4px solid ${mixedColor.toHtmlRgba()}',
-                            'background-color': mixedColor
-                                .withValues(alpha: 0.05)
-                                .toHtmlRgba(),
-                            'padding': '16px',
-                            'margin': '16px 0',
-                            'font-style': 'italic',
-                            'border-radius': '0 12px 12px 0',
-                          };
-                        }
-                        return WikiUtils.customStyles(context, element);
-                      },
-                      customWidgetBuilder: (element) {
-                        // Handle images: animate them and make them clickable
-                        if (element.localName == 'img' ||
-                            element.localName == 'figure' ||
-                            element.classes.contains('thumb')) {
-                          final img = element.localName == 'img'
-                              ? element
-                              : element.querySelector('img');
-
-                          if (img != null) {
-                            final src = img.attributes['src'] ?? '';
-                            if (src.isNotEmpty && !WikiUtils.isIcon(src)) {
-                              final fullUrl = src.startsWith('http')
-                                  ? src
-                                  : 'https:$src';
-                              return _buildAnimatedHeroImage(
-                                fullUrl,
-                                mixedColor,
+                            if (htmlContent.isEmpty ||
+                                htmlContent.contains('Error: Could not parse')) {
+                              return const SliverFillRemaining(
+                                child: Center(child: Text('Error: Could not load content')),
                               );
                             }
-                          }
-                        }
 
-                        return WikiUtils.customWidgetBuilder(context, element);
-                      },
+                            // Strip all inline styles to use app fonts and styles
+                            final cleanHtml = htmlContent.replaceAll(
+                              RegExp(r'style="[^"]*"'),
+                              '',
+                            );
+
+                            // Parse and extract specific Sulu lesson components
+                            final doc = html_parser.parse(cleanHtml);
+                            
+                            final titleElement = doc.querySelector('.lesson-title');
+                            final contentElement = doc.querySelector('.lesson-content');
+
+                            final lessonTitle = titleElement?.text.trim() ?? '';
+                            
+                            // Remove title from the document to prevent duplicate rendering and spacing issues
+                            titleElement?.remove();
+
+                            // Surgical content extraction: prefer .lesson-content, then .mw-parser-output, then body.
+                            String cleanBody;
+                            if (contentElement != null) {
+                              cleanBody = contentElement.innerHtml.trim();
+                            } else {
+                              final mainContent = doc.querySelector('.mw-parser-output') ?? doc.body;
+                              cleanBody = mainContent?.innerHtml.trim() ?? cleanHtml.trim();
+                            }
+
+                            var currentProject = ProjectType.wiktionary;
+
+                            return SliverPadding(
+                              padding: const EdgeInsets.all(16.0),
+                              sliver: SliverList(
+                                delegate: SliverChildListDelegate([
+                                  if (lessonTitle.isNotEmpty) ...[
+                                    Text(
+                                      lessonTitle,
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.montserratAlternates(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold,
+                                        color: mixedColor,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 16),
+                                  ],
+                                  HtmlWidget(
+                                    cleanBody,
+                                    textStyle: GoogleFonts.notoSerif(
+                                      height: 1.8,
+                                      fontSize: 16,
+                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.9),
+                                    ),
+                                    onTapUrl: (url) =>
+                                        WikiUtils.handleTapUrl(context, url, htmlContent, currentProject),
+                                    customStylesBuilder: (element) {
+                                      if (element.localName == 'blockquote') {
+                                        return {
+                                          'border-left':
+                                              '4px solid ${mixedColor.toHtmlRgba()}',
+                                          'background-color': mixedColor
+                                              .withValues(alpha: 0.05)
+                                              .toHtmlRgba(),
+                                          'padding': '16px',
+                                          'margin': '16px 0',
+                                          'font-style': 'italic',
+                                          'border-radius': '0 12px 12px 0',
+                                        };
+                                      }
+                                      return WikiUtils.customStyles(context, element);
+                                    },
+                                    customWidgetBuilder: (element) {
+                                      // Handle images: animate them and make them clickable
+                                      if (element.localName == 'img' ||
+                                          element.localName == 'figure' ||
+                                          element.classes.contains('thumb')) {
+                                        final img = element.localName == 'img'
+                                            ? element
+                                            : element.querySelector('img');
+
+                                        if (img != null) {
+                                          final src = img.attributes['src'] ?? '';
+                                          if (src.isNotEmpty && !WikiUtils.isIcon(src)) {
+                                            final fullUrl = src.startsWith('http')
+                                                ? src
+                                                : 'https:$src';
+                                            return _buildAnimatedHeroImage(
+                                              fullUrl,
+                                              mixedColor,
+                                            );
+                                          }
+                                        }
+                                      }
+
+                                      return WikiUtils.customWidgetBuilder(context, element);
+                                    },
+                                  ),
+                                  const SizedBox(height: 32),
+                                  const WikiFooter(),
+                                  const SizedBox(height: 120),
+                                ]),
+                              ),
+                            );
+                          },
+                          loading: () => const SliverFillRemaining(
+                            child: Center(child: CircularProgressIndicator()),
+                          ),
+                          error: (err, stack) =>
+                              SliverFillRemaining(child: Center(child: Text('Error: $err'))),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 32),
-                    const WikiFooter(),
-                    const SizedBox(height: 80),
-                  ]),
-                ),
-              );
-            },
-            loading: () => const SliverFillRemaining(
-              child: Center(child: CircularProgressIndicator()),
-            ),
-            error: (err, stack) =>
-                SliverFillRemaining(child: Center(child: Text('Error: $err'))),
-          ),
+                    _buildFloatingActionBar(
+                      theme,
+                      pageUrl,
+                      _courseTitle,
+                    ),
                   ],
                 ),
               ),
@@ -323,6 +321,127 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildFloatingActionBar(
+    ThemeData theme,
+    String pageUrl,
+    String currentTitle,
+  ) {
+    final bookmarks = ref.watch(bookmarksProvider);
+    const langCode = 'nia';
+    final projectName = ProjectType.wiktionary.name;
+
+    final isBookmarked = bookmarks.any(
+      (b) =>
+          b.title == currentTitle &&
+          b.langCode == langCode &&
+          b.projectName == projectName,
+    );
+
+    return Positioned(
+      bottom: 24 + MediaQuery.paddingOf(context).bottom,
+      left: 0,
+      right: 0,
+      child: Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(32),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.08),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildActionButton(
+                theme,
+                isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                isBookmarked ? theme.colorScheme.primary : theme.colorScheme.onSurface,
+                onPressed: () {
+                  ref
+                      .read(bookmarksProvider.notifier)
+                      .toggleBookmark(currentTitle, langCode, projectName);
+
+                  ScaffoldMessenger.of(context).clearSnackBars();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        isBookmarked ? 'bookmarks_removed'.tr() : 'bookmarks_added'.tr(),
+                      ),
+                      duration: const Duration(seconds: 1),
+                    ),
+                  );
+                },
+              ),
+              _buildDivider(theme),
+              _buildActionButton(
+                theme,
+                Icons.share_outlined,
+                theme.colorScheme.onSurface,
+                onPressed: () {
+                  SharePlus.instance.share(
+                    ShareParams(uri: Uri.parse(pageUrl)),
+                  );
+                },
+              ),
+              _buildDivider(theme),
+              _buildActionButton(
+                theme,
+                Icons.visibility_outlined,
+                theme.colorScheme.onSurface,
+                onPressed: () async {
+                  final uri = Uri.parse(pageUrl);
+                  try {
+                    await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('page_cant_open').tr()),
+                      );
+                    }
+                  }
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButton(
+    ThemeData theme,
+    IconData icon,
+    Color color, {
+    VoidCallback? onPressed,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(24),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Icon(icon, color: color, size: 18),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDivider(ThemeData theme) {
+    return Container(
+      height: 20,
+      width: 1,
+      color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+      margin: const EdgeInsets.symmetric(horizontal: 8),
     );
   }
 
@@ -373,7 +492,7 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
 
 extension ColorToHtml on Color {
   String toHtmlRgba() {
-    return 'rgba($red, $green, $blue, $opacity)';
+    return 'rgba($r, $g, $b, $a)';
   }
 }
 

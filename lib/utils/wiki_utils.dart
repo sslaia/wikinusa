@@ -7,9 +7,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
+
+import '../models/project_type.dart';
 import '../providers/history_provider.dart';
 import '../screens/article_screen.dart';
 import '../screens/create_page_screen.dart';
+import '../screens/create_entry_screen.dart';
+import '../screens/create_book_screen.dart';
 import '../theme/app_theme.dart';
 
 class WikiUtils {
@@ -71,6 +75,7 @@ class WikiUtils {
     BuildContext context,
     String url,
     String? htmlContent,
+    ProjectType currentProject,
   ) {
     debugPrint('WikiUtils: handling URL: $url');
 
@@ -123,10 +128,22 @@ class WikiUtils {
         container.read(historyProvider.notifier).push(decodedTitle);
 
         if (isRedLink) {
+          Widget screen;
+          switch (currentProject) {
+            case ProjectType.wiktionary:
+              screen = CreateEntryScreen(title: decodedTitle);
+              break;
+            case ProjectType.wikibooks:
+              screen = CreateBookScreen(title: decodedTitle);
+              break;
+            case ProjectType.wikipedia:
+            screen = CreatePageScreen(initialTitle: decodedTitle);
+              break;
+          }
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => CreatePageScreen(initialTitle: decodedTitle),
+              builder: (_) => screen,
             ),
           );
         } else {
@@ -224,12 +241,13 @@ class WikiUtils {
     }
 
     /// Apply justification to common block elements
-    if (['p', 'div', 'li', 'section', 'td'].contains(element.localName)) {
-      styles['text-align'] = 'justify';
-      if (element.localName == 'p') {
-        styles['margin-bottom'] = '12px';
-      }
-    }
+    /// Temporarily disabled
+    // if (['p', 'div', 'li', 'section', 'td'].contains(element.localName)) {
+    //   styles['text-align'] = 'justify';
+    //   if (element.localName == 'p') {
+    //     styles['margin-bottom'] = '12px';
+    //   }
+    // }
 
     if (element.localName == 'a') {
       final href = element.attributes['href'] ?? '';

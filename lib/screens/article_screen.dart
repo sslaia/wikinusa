@@ -155,7 +155,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                                               .withValues(alpha: 0.9),
                                         ).copyWith(fontFamilyFallback: fontFallbacks),
                                         onTapUrl: (url) => WikiUtils.handleTapUrl(
-                                            context, url, htmlContent),
+                                            context, url, htmlContent, currentProject),
                                         customStylesBuilder: (element) =>
                                             WikiUtils.customStyles(context, element),
                                         customWidgetBuilder: (element) {
@@ -544,9 +544,6 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
           decoration: BoxDecoration(
             color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(32),
-            // border: Border.all(
-            //   color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
-            // ),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.08),
