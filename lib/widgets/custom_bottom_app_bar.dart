@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:wikinusa/models/project_type.dart';
+
+import '../models/project_type.dart';
 import 'adaptive_nav_actions.dart';
 
 class CustomBottomAppBar extends ConsumerWidget {

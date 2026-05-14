@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../models/home_page_section.dart';
 import '../models/project_type.dart';
+import '../utils/wiki_utils.dart';
 import 'home_page_builder.dart';
 import 'html_processor.dart';
 
@@ -77,7 +79,6 @@ class WikiApiService {
       domain = 'incubator.wikimedia.org';
       useActionApiForHome = true;
       if (pageTitle == 'Main Page') {
-        /// Changed from 'Wb/nia' to 'Wb/nia/Olayama'
         finalTitle = 'Wb/nia/Olayama';
       } else if (!pageTitle.contains('Wb/nia/')) {
         final lowerTitle = pageTitle.toLowerCase();
@@ -115,7 +116,7 @@ class WikiApiService {
 
     try {
       final response = await http
-          .get(Uri.parse(url))
+          .get(Uri.parse(url), headers: WikiUtils.uaHeaders)
           .timeout(const Duration(seconds: 15));
 
       if (response.statusCode == 200) {
