@@ -27,7 +27,7 @@ class LanguageNotifier extends Notifier<String> {
   @override
   String build() {
     final prefs = ref.watch(sharedPreferencesProvider);
-    return prefs.getString(_languageKey) ?? 'nia';
+    return prefs.getString(_languageKey) ?? 'id';
   }
 
   void setLanguage(String code) {

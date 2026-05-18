@@ -23,12 +23,14 @@
         "referensi",
         "umbu",
         "famotokhi ba gahe",
-        "catatan kaki"
+        "catatan kaki",
+        "rujukan",
+        "sumber",
+        "notes"
       ]
     },
     "wiktionary": {
       "remove": [
-        ".reflist",
         ".navbox",
         ".metadata",
         ".ambox",
@@ -37,15 +39,20 @@
         "style",
         "script"
       ],
-      "hide": [],
+      "hide": [
+        ".reflist",
+        ".references"
+      ],
       "referenceKeywords": [
         "reference",
-        "reflist"
+        "reflist",
+        "referensi",
+        "catatan kaki",
+        "notes"
       ]
     },
     "wikibooks": {
       "remove": [
-        ".reflist",
         ".navbox",
         ".metadata",
         ".ambox",
@@ -54,10 +61,18 @@
         "style",
         "script"
       ],
-      "hide": [],
+      "hide": [
+        ".reflist",
+        ".references"
+      ],
       "referenceKeywords": [
         "reference",
-        "reflist"
+        "reflist",
+        "referensi",
+        "catatan kaki",
+        "umbu",
+        "famotokhi ba gahe",
+        "notes"
       ]
     }
   },
@@ -125,10 +140,7 @@
       "referenceKeywords": [
         "reference",
         "reflist",
-        "notes",
-        ".side-box-flex",
-        ".toc",
-        "toc"
+        "notes"
       ],
       "homePageSections": {
         "wordOfTheDay": {
@@ -156,11 +168,6 @@
         "notes"
       ],
       "homePageSections": {
-        "featuredArticle": "mf-artikelpilihan",
-        "featuredImage": "mf-gambarpilihan",
-        "recentEvents": "mf-peristiwaterkini",
-        "doYouKnow": "mf-tahukahanda",
-        "onThisDay": "mf-hids"
       }
     }
   },
@@ -186,12 +193,7 @@
         "referensi",
         "catatan kaki",
         "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
+        "sumber"
       ],
       "homePageSections": {
         "featuredArticle": {
@@ -267,15 +269,10 @@
         "referensi",
         "catatan kaki",
         "rujukan",
-        "sumber",
-        "cathetan",
-        "cathetan suku",
-        "ruju'an",
-        "jujuhutan",
-        "daptar jujuhutan"
+        "sumber"
       ],
       "homePageSections": {
-        "featuredBook": "Buku_bagus"
+        "featuredBook": "buku_bagus"
       }
     }
   },
@@ -290,7 +287,7 @@
       ],
       "hide": [
         ".mw-editsection",
-        "#Umbu"
+        "umbu"
       ],
       "referenceKeywords": [
         "famotokhi ba gahe",
@@ -311,8 +308,11 @@
         "toc"
       ],
       "hide": [
+        ".mw-editsection",
+        ".nomobile"
       ],
       "referenceKeywords": [
+        "umbu"
       ],
       "homePageSections": {
         "featuredWord": "mp-featured-word-body",
@@ -324,9 +324,11 @@
         ".nomobile"
       ],
       "hide": [
+        ".mw-editsection",
         ".nomobile"
       ],
       "referenceKeywords": [
+        "famotokhi ba gahe",
         "umbu"
       ],
       "homePageSections": {

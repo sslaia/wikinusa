@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import '../utils/wiki_utils.dart';
@@ -23,7 +24,9 @@ class CommonsService {
         }
       }
     } catch (e) {
-      print('Error fetching image info: $e');
+      if (kDebugMode) {
+        debugPrint('Error fetching image info: $e');
+      }
     }
     return null;
   }

@@ -24,33 +24,45 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       titleKey: 'onboarding_title_1',
       descKey: 'onboarding_desc_1',
       imagePath: 'assets/images/onboarding1.webp',
-      color: const Color(0xFF121298),
+      color: const Color(0xFF121298), // Blue
     ),
     OnboardingData(
       titleKey: 'onboarding_title_2',
       descKey: 'onboarding_desc_2',
       imagePath: 'assets/images/onboarding2.webp',
-      color: const Color(0xFF9B00A1),
+      color: const Color(0xFF9B00A1), // Purple
     ),
     OnboardingData(
       titleKey: 'onboarding_title_3',
       descKey: 'onboarding_desc_3',
       imagePath: 'assets/images/onboarding3.webp',
-      color: const Color(0xFF121298),
+      color: const Color(0xFFFF5722), // Orange
     ),
     OnboardingData(
       titleKey: 'onboarding_title_4',
       descKey: 'onboarding_desc_4',
       imagePath: 'assets/images/onboarding4.webp',
-      color: const Color(0xFFFF5722),
+      color: const Color(0xFF121298), // Blue
     ),
     OnboardingData(
       titleKey: 'onboarding_title_5',
       descKey: 'onboarding_desc_5',
       imagePath: 'assets/images/onboarding5.webp',
-      color: const Color(0xFF9B00A1),
+      color: const Color(0xFF9B00A1), // Purple
+    ),
+    OnboardingData(
+      titleKey: 'onboarding_title_6',
+      descKey: 'onboarding_desc_6',
+      imagePath: 'assets/images/onboarding6.webp',
+      color: const Color(0xFFFF5722), // Orange
     ),
   ];
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +77,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             Expanded(
               child: PageView.builder(
                 controller: _pageController,
-                itemCount: _pages.length + 1, // +1 for the final language selection page
+                itemCount: _pages.length + 1,
                 onPageChanged: (index) {
                   setState(() => _currentPage = index);
                 },
@@ -100,7 +112,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             children: [
               // Left Button (Back or Skip)
               SizedBox(
-                width: isCompact ? 70 : 100,
+                width: 100,
                 child: _buildLeftButton(theme),
               ),
 
@@ -225,8 +237,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
-                    SizedBox(height: isTablet ? 40 : 20),
-                    _buildLanguageSelector(context, theme),
                   ],
                 ),
               ),
@@ -279,8 +289,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  _buildLanguageSelector(context, theme),
                 ],
               ),
             ),
@@ -350,8 +358,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   Future<void> _complete(WidgetRef ref, BuildContext context) async {
+    // Synchronize languageProvider with the current UI locale (context.locale)
+    // This ensures that the app's internal state matches what the user sees.
+    final currentLang = context.locale.languageCode;
+    ref.read(languageProvider.notifier).setLanguage(currentLang);
+
     // Ensure project is always set to Wikipedia on completion
-    final currentLang = ref.read(languageProvider);
     ref.read(appStateProvider.notifier).setProject(ProjectType.wikipedia, currentLang);
 
     await ref.read(onboardingProvider.notifier).completeOnboarding();
@@ -384,9 +396,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             SizedBox(width: isCompact ? 8 : 12),
             Flexible(
               child: Text(
-                isFinalPage
-                  ? _getLanguageName(context.locale.languageCode)
-                  : 'select_language'.tr(),
+                _getLanguageName(context.locale.languageCode),
                 style: theme.textTheme.labelLarge?.copyWith(
                   color: isFinalPage ? theme.colorScheme.primary : null,
                   fontSize: isCompact ? 12 : 14,

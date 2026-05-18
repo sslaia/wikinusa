@@ -1,8 +1,9 @@
 const whatsNew = '''
 <h3>New in version 1.1.0</h3>
 <ul>
+<li>Fixed: empty shortcuts, pop-up references, portals</li>
 <li>New modules: Gallery and Nias language course.</li>
-<li>Various fixes</li>
+<li>Various fixes improvements</li>
 </ul>
 
 <h3>New in version 1.0.0</h3>

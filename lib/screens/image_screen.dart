@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../services/commons_service.dart';
-import '../utils/wiki_utils.dart';
 
 class ImageScreen extends StatefulWidget {
   final String imagePath;

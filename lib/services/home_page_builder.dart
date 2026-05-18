@@ -190,7 +190,7 @@ class HomePageBuilder {
         imageUrl = await WikiUtils.optimizeImageUrl(
           src,
           htmlString: validImg.outerHtml,
-          width: 600,
+          width: 500, // Updated to 500
         );
         imgClone.attributes['src'] = imageUrl;
       }
@@ -267,8 +267,8 @@ class HomePageBuilder {
     }
 
     final Map<String, String?> sectionData = {
-      '${titleKey}ImageHtml': ?imageHtml,
-      '${titleKey}ImageUrl': ?imageUrl,
+      '${titleKey}ImageHtml': imageHtml,
+      '${titleKey}ImageUrl': imageUrl,
     };
 
     return HomePageSection(

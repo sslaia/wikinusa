@@ -1,15 +1,13 @@
 const aboutCommunity = '''
-<p>Pada awalnya aplikasi ini dibuat untuk membantu anggota komunitas WikiNias.
-Namun kemudian saya berpikir untuk membuka aplikasi tsb. ke bahasa daerah lain,
-sehingga anggota komunitas lain bisa juga menggunakannya <strong>kalau mau</strong>.</p>
+<p>Ada banyak Komunitas Wiki di Indonesia. Salah satunya adalah Komunitas Wiki Nias,
+yang anggotanya kebanyakan gagap teknologi dan karena itu membutuhkan aplikasi seperti ini.</p>
 
-<p>Dari situ lahirlah beberapa aplikasi kembaran dari bahasa Nias: <strong>Wikikamus</strong>
-(bagi mereka yang hanya mau berurusan dengan Wikikamus), <strong>Nusapedia</strong> (
-bagi mereka yang hanya mau berurusan dengan Wikipedia) dan kini <strong>Wikinusa</strong> 
-(bagi mereka yang suka gonta-ganti proyek Wikipedia, Wikikamus dan Wikibuku).</p>
+<p>Sebagian komunitas memiliki hanya satu wiki (biasanya Wikipedia),
+sebagian lain dua (Wikipedia dan Wikikamus), namun ada juga yang memiliki tiga atau lebih
+seperti Wiki Nias (Wikipedia, Wikikamus, Wikibuku).</p>
 
-<p>Catatan: Untuk saat ini baru Wikipedia, Wikikamus dan Wikibuku Nias yang didukung sepenuhnya. 
-Wikipedia bahasa Indonesia dan Inggris juga didukung. Namun wiki dalam bahasa daerah lainnya masih dalam tahap pengembangan.</p>
+<p>Senang melihat ada banyak relawan wiki di Tanah Air dan saya menyediakan aplikasi ini
+untuk mendukung mereka berkontribusi membebaskan pengetahuan.</p>
 
 <p>Klik <a href="https://sslaia.github.io/" target="_blank">di sini</a> untuk melihat berbagai aplikasi 
 yang dibuat untuk mendukung relawan wiki di Indonesia: <a href="https://sslaia.github.io/" target="_blank">Berbagai Aplikasi Nusa</a></p>

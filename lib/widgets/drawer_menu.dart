@@ -107,7 +107,7 @@ class DrawerContent extends ConsumerWidget {
         _buildExpansionSection(
           theme,
           titleKey: 'drawer_project',
-          initiallyExpanded: false,
+          initiallyExpanded: true,
           children: [
             _buildProjectSelector(
               context,
@@ -124,7 +124,7 @@ class DrawerContent extends ConsumerWidget {
         _buildExpansionSection(
           theme,
           titleKey: 'drawer_modules',
-          initiallyExpanded: false,
+          initiallyExpanded: true,
           children: [
             _buildDrawerItem(
               theme,
@@ -161,7 +161,7 @@ class DrawerContent extends ConsumerWidget {
         _buildExpansionSection(
           theme,
           titleKey: 'drawer_language',
-          initiallyExpanded: false,
+          initiallyExpanded: true,
           children: [
             _buildLanguageSelector(context, ref, theme, currentLanguage),
           ],
@@ -249,7 +249,7 @@ class DrawerContent extends ConsumerWidget {
         return _buildExpansionSection(
           theme,
           titleKey: 'drawer_project_shortcuts',
-          initiallyExpanded: false,
+          initiallyExpanded: true,
           children: shortcuts.map((s) {
             final title = s['title'] as String;
             final iconName = s['icon'] as String;
@@ -274,7 +274,7 @@ class DrawerContent extends ConsumerWidget {
         );
       },
       loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
+      error: (_, _) => const SizedBox.shrink(),
     );
   }
 

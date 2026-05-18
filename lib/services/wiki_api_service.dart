@@ -250,8 +250,9 @@ class WikiApiService {
       if (response.statusCode == 200) {
         final data = json.decode(utf8.decode(response.bodyBytes));
         final members = data['query']?['categorymembers'] as List?;
-        if (members == null || members.isEmpty)
+        if (members == null || members.isEmpty) {
           return '<p><i>This category currently contains no pages or media.</i></p>';
+        }
 
         final subcats = members.where((m) => m['ns'] == 14).toList();
         final pages = members.where((m) => m['ns'] != 14).toList();

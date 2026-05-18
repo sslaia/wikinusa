@@ -188,6 +188,7 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
                             }
 
                             var currentProject = ProjectType.wiktionary;
+                            final langCode = context.locale.languageCode;
 
                             return SliverPadding(
                               padding: const EdgeInsets.all(16.0),
@@ -213,7 +214,7 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
                                       color: theme.colorScheme.onSurface.withValues(alpha: 0.9),
                                     ),
                                     onTapUrl: (url) =>
-                                        WikiUtils.handleTapUrl(context, url, htmlContent, currentProject),
+                                        WikiUtils.handleTapUrl(context, url, htmlContent, currentProject, langCode),
                                     customStylesBuilder: (element) {
                                       if (element.localName == 'blockquote') {
                                         return {

@@ -7,9 +7,17 @@ menampilkan sembarang halaman, menyunting halaman yang telah ada
 maupun membuat halaman baru.</p>
 
 <p>Untuk sementara hanya Wikipedia, Wikikamus dan Wikibuku bahasa Nias yang sepenuhnya didukung, 
-ketiga situs wiki tsb. telah menerapkan rekomendasi Wikimedia untuk membuat halaman yang ramah seluler.
-Selain itu Wikipedia bahasa Indonesia dan Inggris juga didukung, namun Wikikamus dan Wikibuku tidak.
-Untuk bahasa daerah lain di Indonesia masih perlu penyempurnaan.</p>
+sebab ketiga situs wiki tsb. telah menerapkan rekomendasi Wikimedia untuk membuat halaman yang ramah seluler.</p>
+
+<p>Selain itu Wikipedia bahasa Indonesia dan Inggris juga didukung, namun Wikikamus dan Wikibuku tidak.
+Untuk bahasa daerah lain di Indonesia masih perlu penyempurnaan (menerapkan rekomendasi Wikimedia tsb. di atas).</p>
+
+<p>Mengingat berbagai kode wiki yang belum dibuat ramah mobile sesuai rekomendasi di atas,
+bisa terjadi bahwa halaman tertentu tampil "aneh" di layar atau malah ditampilkan kosong.
+Salah satu contohnya adalah halaman Portal Komunitas di Wikipedia Indonesia.</p>
+
+<p>Karena itu pula wiki dalam bahasa daerah belum diaktifkan di dalam aplikasi.
+Kita harap suatu hari para admin di berbagai wiki tsb. menerapkan rekomendasi Wikimedia di atas.</p>
 
 <p>Situs aplikasi ini ada di <a href="https://sslaia.github.io/wikinusa/">situs Wikinusa</a>.</p>
 

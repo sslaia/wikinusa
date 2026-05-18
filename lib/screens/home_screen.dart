@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../models/project_type.dart';
 import '../utils/responsive_utils.dart';
+import '../utils/wiki_utils.dart';
 import '../widgets/shortcuts_side_bar.dart';
 import '../widgets/wiki_portals_widget.dart';
 import '../widgets/contribute_widget.dart';
@@ -96,6 +97,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         error: (err, stack) => _buildErrorHero(currentProject),
                       ),
                     ),
+                    SliverToBoxAdapter(
+                      child: WikiPortalsWidget(
+                        project: currentProject,
+                        languageCode: context.locale.languageCode,
+                      ),
+                    ),
                     wikiContent.when(
                       data: (content) {
                         if (content is List<HomePageSection>) {
@@ -122,12 +129,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           const SliverToBoxAdapter(child: SizedBox.shrink()),
                       error: (err, stack) =>
                           const SliverToBoxAdapter(child: SizedBox.shrink()),
-                    ),
-                    SliverToBoxAdapter(
-                      child: WikiPortalsWidget(
-                        project: currentProject,
-                        languageCode: context.locale.languageCode,
-                      ),
                     ),
                     SliverToBoxAdapter(
                       child: ContributeWidget(project: currentProject),
@@ -197,6 +198,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ? Image.network(
                   featuredImageUrl,
                   fit: BoxFit.cover,
+                  headers: WikiUtils.uaHeaders, // Added headers
                   errorBuilder: (context, error, stackTrace) => Image.asset(
                     currentProject.homeHeroImagePath,
                     fit: BoxFit.cover,

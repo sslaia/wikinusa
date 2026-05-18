@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../models/gallery_item.dart';
+
 import '../models/project_type.dart';
 import '../providers/app_state.dart';
 import '../providers/gallery_provider.dart';
@@ -150,9 +150,9 @@ class _GalleryCarouselScreenState extends ConsumerState<GalleryCarouselScreen> {
                                         begin: Alignment.topCenter,
                                         end: Alignment.bottomCenter,
                                         colors: [
-                                          Colors.black.withOpacity(0.4),
+                                          Colors.black.withValues(alpha: 0.4),
                                           Colors.transparent,
-                                          Colors.black.withOpacity(0.7),
+                                          Colors.black.withValues(alpha: 0.7),
                                         ],
                                       ),
                                     ),
@@ -240,9 +240,7 @@ class _GalleryCarouselScreenState extends ConsumerState<GalleryCarouselScreen> {
                                     selected: isSelected,
                                     selectedColor:
                                         GalleryCarouselScreen.niasYellow,
-                                    backgroundColor: Colors.black.withOpacity(
-                                      0.6,
-                                    ),
+                                    backgroundColor: Colors.black.withValues(alpha: 0.6),
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 4,
                                       vertical: 0,

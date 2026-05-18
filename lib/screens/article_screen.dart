@@ -141,67 +141,75 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.all(16.0),
-                                      child: HtmlWidget(
-                                        htmlContent,
-                                        textStyle: GoogleFonts.notoSerif(
-                                          fontSize: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium
-                                              ?.fontSize,
-                                          height: 1.8,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSurface
-                                              .withValues(alpha: 0.9),
-                                        ).copyWith(fontFamilyFallback: fontFallbacks),
-                                        onTapUrl: (url) => WikiUtils.handleTapUrl(
-                                            context, url, htmlContent, currentProject),
-                                        customStylesBuilder: (element) =>
-                                            WikiUtils.customStyles(context, element),
-                                        customWidgetBuilder: (element) {
-                                          final sharedWidget =
-                                              WikiUtils.customWidgetBuilder(
+                                      child: SelectionArea(
+                                        child: HtmlWidget(
+                                          htmlContent,
+                                          key: ValueKey('html_${widget.title}_${currentProject.name}_$langCode'),
+                                          textStyle: GoogleFonts.notoSerif(
+                                            fontSize: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium
+                                                ?.fontSize,
+                                            height: 1.8,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface
+                                                .withValues(alpha: 0.9),
+                                          ).copyWith(fontFamilyFallback: fontFallbacks),
+                                          onTapUrl: (url) => WikiUtils.handleTapUrl(
                                             context,
-                                            element,
-                                          );
-                                          if (sharedWidget != null) return sharedWidget;
-
-                                          if (element.classes.contains('gallery')) {
-                                            return _buildNativeGallery(element);
-                                          }
-
-                                          if (element.localName == 'img' ||
-                                              element.classes.contains('thumb') ||
-                                              element.localName == 'figure') {
-                                            if (element.classes.contains(
-                                              'hidden-hero-container',
-                                            )) {
-                                              return const SizedBox.shrink();
+                                            url,
+                                            htmlContent,
+                                            currentProject,
+                                            langCode,
+                                          ),
+                                          customStylesBuilder: (element) =>
+                                              WikiUtils.customStyles(context, element),
+                                          customWidgetBuilder: (element) {
+                                            final sharedWidget =
+                                                WikiUtils.customWidgetBuilder(
+                                              context,
+                                              element,
+                                            );
+                                            if (sharedWidget != null) return sharedWidget;
+                                            
+                                            if (element.classes.contains('gallery')) {
+                                              return _buildNativeGallery(element);
                                             }
-
-                                            final img = element.localName == 'img'
-                                                ? element
-                                                : element.querySelector('img');
-
-                                            if (img != null &&
-                                                img.classes.contains('wiki-inline-icon')) {
-                                              return null;
+                                            
+                                            if (element.localName == 'img' ||
+                                                element.classes.contains('thumb') ||
+                                                element.localName == 'figure') {
+                                              if (element.classes.contains(
+                                                'hidden-hero-container',
+                                              )) {
+                                                return const SizedBox.shrink();
+                                              }
+                                              
+                                              final img = element.localName == 'img'
+                                                  ? element
+                                                  : element.querySelector('img');
+                                              
+                                              if (img != null &&
+                                                  img.classes.contains('wiki-inline-icon')) {
+                                                return null;
+                                              }
+                                              
+                                              if (img != null) {
+                                                final caption = element
+                                                        .querySelector('.caption')
+                                                        ?.text ??
+                                                    element
+                                                        .querySelector('.thumbcaption')
+                                                        ?.text ??
+                                                    element.querySelector('figcaption')?.text;
+                                              
+                                                return _buildFullWidthImage(img, caption);
+                                              }
                                             }
-
-                                            if (img != null) {
-                                              final caption = element
-                                                      .querySelector('.caption')
-                                                      ?.text ??
-                                                  element
-                                                      .querySelector('.thumbcaption')
-                                                      ?.text ??
-                                                  element.querySelector('figcaption')?.text;
-
-                                              return _buildFullWidthImage(img, caption);
-                                            }
-                                          }
-                                          return null;
-                                        },
+                                            return null;
+                                          },
+                                        ),
                                       ),
                                     ),
                                     const WikiFooter(),
@@ -372,6 +380,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     final src = img.attributes['src'] ?? '';
     if (src.isEmpty) return const SizedBox.shrink();
     final fullImageUrl = src.startsWith('http') ? src : 'https:$src';
+    final theme = Theme.of(context);
 
     return Container(
       width: double.infinity,
@@ -396,6 +405,21 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                   fullImageUrl,
                   width: double.infinity,
                   fit: BoxFit.fitWidth,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Container(
+                      height: 200,
+                      width: double.infinity,
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+                      child: const Center(child: CircularProgressIndicator()),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    height: 100,
+                    width: double.infinity,
+                    color: theme.colorScheme.errorContainer.withValues(alpha: 0.1),
+                    child: const Icon(Icons.broken_image),
+                  ),
                 ),
               ),
             ),

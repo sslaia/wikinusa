@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:beautiful_soup_dart/beautiful_soup.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/services.dart';
 import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart' as dom;
@@ -24,127 +25,116 @@ class HtmlProcessor {
       }
       ns.remove();
     });
-    document
-        .querySelectorAll('.lazy-image-placeholder')
-        .forEach((el) => el.remove());
+    document.querySelectorAll('.lazy-image-placeholder').forEach((el) => el.remove());
 
-    /// Handle Tables: Wrap in scrollable div (see: Wikimedia recommendation)
+    /// Handle tables
     document.querySelectorAll('table').forEach((table) {
+      // 1. Remove inline width and set to 100%
       table.attributes.remove('width');
       table.attributes.remove('style');
+      table.attributes['style'] = 'width: 100%; border-collapse: collapse; margin: 16px 0;';
 
+      // 2. Create a wrapper div for horizontal scrolling
       final wrapper = dom.Element.tag('div');
-      wrapper.attributes['style'] =
-          'overflow-x: auto; width: 100%; margin: 16px 0; border: 1px solid #ddd; border-radius: 8px;';
-      wrapper.classes.add('table-scroll-wrapper');
+      wrapper.attributes['style'] = 'overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;';
 
-      table.replaceWith(wrapper);
+      // 3. Insert wrapper into the DOM and move the table inside it
+      table.parentNode?.insertBefore(wrapper, table);
       wrapper.append(table);
 
-      table.attributes['style'] = 'border-collapse: collapse; min-width: 100%;';
+      // 4. Basic cell styling for readability
       table.querySelectorAll('th, td').forEach((cell) {
-        cell.attributes['style'] =
-            'border: 1px solid #ddd; padding: 8px; text-align: left;';
+        cell.attributes['style'] = 'border: 1px solid #ddd; padding: 8px; text-align: left;';
       });
     });
 
-    /// Load rules
-    final jsonString = await rootBundle.loadString(
-      'assets/data/html_rules.json',
-    );
+    final jsonString = await rootBundle.loadString('assets/data/html_rules.json');
     final htmlRules = jsonDecode(jsonString);
-    final projectRules =
-        htmlRules[languageCode]?[projectStr] as Map<String, dynamic>?;
-    final globalRules =
-        htmlRules['global']?[projectStr] as Map<String, dynamic>?;
+    final projectRules = htmlRules[languageCode]?[projectStr] as Map<String, dynamic>?;
+    final globalRules = htmlRules['global']?[projectStr] as Map<String, dynamic>?;
 
     final removeSelectors = _getRulesList(globalRules, projectRules, 'remove');
     final hideSelectors = _getRulesList(globalRules, projectRules, 'hide');
-    final refKeywords = _getRulesList(
-      globalRules,
-      projectRules,
-      'referenceKeywords',
-    );
+    final refKeywords = _getRulesList(globalRules, projectRules, 'referenceKeywords');
 
-    String? imageUrl;
+    /// Extract Hero Image Candidate
+    String? heroImageUrl;
+    final allImages = document.querySelectorAll('img');
+    dom.Element? heroElement;
 
-    /// Find Hero image using centralized WikiUtils logic
-    final images = document.querySelectorAll('img');
-    dom.Element? heroImageElement;
-    for (var img in images) {
+    for (var img in allImages) {
       final src = img.attributes['src'] ?? '';
       if (!WikiUtils.isIcon(src)) {
-        imageUrl = await WikiUtils.optimizeImageUrl(
-          src,
-          htmlString: img.outerHtml,
-          width: 600,
-        );
-        heroImageElement = img;
+        heroElement = img;
         break;
       }
     }
 
-    if (heroImageElement != null) {
-      _markImageContainerForHiding(heroImageElement);
-    }
-
-    /// Process all other images using centralized WikiUtils logic
-    final allImgs = document.querySelectorAll('img');
-    for (var img in allImgs) {
-      var src = img.attributes['src'] ?? '';
+    /// Parallel Image Optimization
+    final List<Future<void>> imageTasks = [];
+    for (var img in allImages) {
+      final src = img.attributes['src'] ?? '';
       if (src.isNotEmpty) {
-        // Detect if it's an inline icon by size
         final widthAttr = int.tryParse(img.attributes['width'] ?? '');
         final heightAttr = int.tryParse(img.attributes['height'] ?? '');
+        final isIcon = (widthAttr != null && widthAttr <= 48) || (heightAttr != null && heightAttr <= 48) || WikiUtils.isIcon(src);
 
-        if ((widthAttr != null && widthAttr <= 48) ||
-            (heightAttr != null && heightAttr <= 48)) {
-          img.classes.add('wiki-inline-icon');
-          // For inline icons, we don't scale up to 600px
-          img.attributes['src'] = await WikiUtils.optimizeImageUrl(
-            src,
-            htmlString: img.outerHtml,
-            width: 100,
-          );
-        } else {
-          img.attributes['src'] = await WikiUtils.optimizeImageUrl(
-            src,
-            htmlString: img.outerHtml,
-            width: 600,
-          );
-        }
+        imageTasks.add(WikiUtils.optimizeImageUrl(
+          src,
+          htmlString: img.outerHtml,
+          width: isIcon ? 100 : 500,
+        ).then((optimizedUrl) {
+          img.attributes['src'] = optimizedUrl;
+          if (isIcon) img.classes.add('wiki-inline-icon');
+          if (img == heroElement) heroImageUrl = optimizedUrl;
+        }));
       }
     }
 
-    /// Apply removals/hides
+    await Future.wait(imageTasks);
+
+    if (heroElement != null) {
+      _markImageContainerForHiding(heroElement);
+    }
+
+    /// Apply removals
     for (var s in removeSelectors) {
       document.querySelectorAll(s).forEach((el) => el.remove());
     }
+    
+    /// Apply hides
     for (var s in hideSelectors) {
-      document
-          .querySelectorAll(s)
-          .forEach((el) => el.attributes['style'] = 'display: none;');
+      document.querySelectorAll(s).forEach((el) => el.classes.add('wikinusa-hidden'));
     }
 
-    /// Process reference sections
+    /// Process reference sections (Headings like Umbu, Rujukan, etc.)
+    /// Note: We HIDE these instead of removing them so the reference popup can still find the content.
     if (refKeywords.isNotEmpty) {
       final headings = document.querySelectorAll('h2, h3, h4');
       for (var h in headings) {
-        final text = h.text.toLowerCase();
+        final text = h.text.toLowerCase().trim();
         if (refKeywords.any((kw) => text.contains(kw.toLowerCase()))) {
-          h.attributes['style'] = 'display: none;';
-          var next = h.nextElementSibling;
-          while (next != null && !['h2', 'h3', 'h4'].contains(next.localName)) {
-            next.attributes['style'] = 'display: none;';
+          // Hide the heading itself or its parent container (mw-heading)
+          var targetToHide = h;
+          if (h.parent?.classes.contains('mw-heading') == true) {
+            targetToHide = h.parent!;
+          }
+          targetToHide.classes.add('wikinusa-hidden');
+
+          // Hide everything until the next heading
+          var next = targetToHide.nextElementSibling;
+          while (next != null) {
+            if (['h2', 'h3', 'h4'].contains(next.localName) || next.classes.contains('mw-heading')) {
+              break;
+            }
+            next.classes.add('wikinusa-hidden');
             next = next.nextElementSibling;
           }
         }
       }
     }
 
-    /// Final cleanup and Nias Wiktionary specific processing
     String processedHtml = document.body?.innerHtml ?? '';
-
     if (languageCode == 'nia' && project == ProjectType.wiktionary) {
       final soup = BeautifulSoup(processedHtml);
       _removeEmptySections(soup);
@@ -152,19 +142,15 @@ class HtmlProcessor {
       processedHtml = soup.toString();
     }
 
-    return {'html': processedHtml, 'imageUrl': imageUrl};
+    return {'html': processedHtml, 'imageUrl': heroImageUrl};
   }
 
-  static List<String> _getRulesList(
-    Map<String, dynamic>? global,
-    Map<String, dynamic>? project,
-    String key,
-  ) {
+  static List<String> _getRulesList(Map<String, dynamic>? global, Map<String, dynamic>? project, String key) {
     final list = <String>[];
-    if (global != null && global[key] != null) {
+    if (global != null && global[key] != null && global[key] is List) {
       list.addAll((global[key] as List).map((e) => e.toString()));
     }
-    if (project != null && project[key] != null) {
+    if (project != null && project[key] != null && project[key] is List) {
       list.addAll((project[key] as List).map((e) => e.toString()));
     }
     return list;
@@ -174,68 +160,36 @@ class HtmlProcessor {
     dom.Element? containerToHide = img;
     var parent = img.parent;
     while (parent != null && parent.localName != 'body') {
-      if (parent.localName == 'figure' ||
-          parent.classes.contains('thumb') ||
-          parent.classes.contains('infobox-image')) {
+      if (parent.localName == 'figure' || parent.classes.contains('thumb') || parent.classes.contains('infobox-image')) {
         containerToHide = parent;
         break;
       }
       parent = parent.parent;
     }
-    containerToHide?.attributes['class'] =
-        '${containerToHide.attributes['class'] ?? ''} hidden-hero-container';
+    containerToHide?.attributes['class'] = '${containerToHide.attributes['class'] ?? ''} hidden-hero-container';
   }
 
-  /// Nias Wiktionary special treatment
-  /// Helper function to find and remove headings followed by "Lö hadöi"
-  /// in either <dd> or <li> tags.
   static void _removeEmptySections(BeautifulSoup root) {
-    /// Find all 'dd' and 'li' elements.
     final potentialMarkers = root.findAll('dd') + root.findAll('li');
-
-    /// Use Dart's .where() to filter them based on their content
-    final emptyMarkers = potentialMarkers.where((element) {
-      return element.string.trim() == 'Lö hadöi';
-    });
-
+    final emptyMarkers = potentialMarkers.where((element) => element.string.trim() == 'Lö hadöi');
     for (final marker in emptyMarkers) {
-      Bs4Element? listContainer;
-
-      /// Determine the parent list container
-      if (marker.name == 'dd') {
-        listContainer = marker.findParent('dl');
-      } else if (marker.name == 'li') {
-        // It could be in a <ul> or <ol>
-        listContainer = marker.findParent('ul') ?? marker.findParent('ol');
-      }
-
+      Bs4Element? listContainer = marker.name == 'dd' ? marker.findParent('dl') : (marker.findParent('ul') ?? marker.findParent('ol'));
       if (listContainer == null) continue;
-
-      /// Find the heading element that comes just before the list container
       final headingDiv = listContainer.findPreviousSibling('div');
-
-      /// To be safe, check if the found sibling is actually a heading container.
       if (headingDiv != null && headingDiv.className.contains('mw-heading')) {
-        /// Remove the heading and the list container.
         headingDiv.extract();
         listContainer.extract();
       }
     }
   }
 
-  /// Helper function to remove the "Gambara" heading if it has no pictures.
   static void _removeEmptyImageSections(BeautifulSoup root) {
     final imageHeadings = root.findAll('h3', id: 'Gambara');
-
     for (final h3 in imageHeadings) {
       final headingContainer = h3.findParent('div');
       if (headingContainer == null) continue;
-
       final Bs4Element? nextElement = headingContainer.nextSibling;
-
-      if (nextElement == null || nextElement.name != 'figure') {
-        headingContainer.extract();
-      }
+      if (nextElement == null || nextElement.name != 'figure') headingContainer.extract();
     }
   }
 }

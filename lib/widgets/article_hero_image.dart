@@ -23,14 +23,29 @@ class ArticleHeroImage extends StatelessWidget {
         Container(
           height: 350,
           width: double.infinity,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: imageUrl.isNotEmpty
-                  ? NetworkImage(imageUrl, headers: WikiUtils.uaHeaders)
-                  : AssetImage(project.articleHeroImagePath) as ImageProvider,
-              fit: BoxFit.cover,
-            ),
-          ),
+          color: theme.colorScheme.surface,
+          child: imageUrl.isNotEmpty
+              ? Image.network(
+                  imageUrl,
+                  fit: BoxFit.cover,
+                  headers: WikiUtils.uaHeaders,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Container(
+                      height: 350,
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+                      child: const Center(child: CircularProgressIndicator()),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) => Image.asset(
+                    project.articleHeroImagePath,
+                    fit: BoxFit.cover,
+                  ),
+                )
+              : Image.asset(
+                  project.articleHeroImagePath,
+                  fit: BoxFit.cover,
+                ),
         ),
         Positioned.fill(
           child: Container(
