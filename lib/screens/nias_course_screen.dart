@@ -7,8 +7,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:html/parser.dart' as html_parser;
 
-import '../models/project_type.dart';
-import '../services/wiki_api_service.dart';
+import 'package:wikimedia_core/wikimedia_core.dart';
 import '../utils/wiki_utils.dart';
 import '../widgets/wiki_footer.dart';
 import '../utils/responsive_utils.dart';
@@ -242,7 +241,7 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
 
                                         if (img != null) {
                                           final src = img.attributes['src'] ?? '';
-                                          if (src.isNotEmpty && !WikiUtils.isIcon(src)) {
+                                          if (src.isNotEmpty && !CoreWikiUtils.isIcon(src)) {
                                             final fullUrl = src.startsWith('http')
                                                 ? src
                                                 : 'https:$src';

@@ -9,7 +9,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../utils/wiki_utils.dart';
 import '../utils/responsive_utils.dart';
-import '../models/project_type.dart';
+import 'package:wikimedia_core/wikimedia_core.dart';
 import '../providers/history_provider.dart';
 import '../providers/bookmarks_provider.dart';
 import '../widgets/shortcuts_side_bar.dart';
@@ -334,7 +334,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                       child: Image.network(
                         fullImageUrl,
                         fit: BoxFit.cover,
-                        headers: WikiUtils.uaHeaders,
+                        headers: WikiConfig.uaHeaders,
                       ),
                     ),
                     Positioned(

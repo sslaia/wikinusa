@@ -1,11 +1,9 @@
-import 'dart:convert';
 import 'package:beautiful_soup_dart/beautiful_soup.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/services.dart';
 import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart' as dom;
 import '../models/project_type.dart';
-import '../utils/wiki_utils.dart';
+import '../core/wiki_config.dart';
+import '../utils/wiki_utils.dart'; // TODO: Update this when CoreWikiUtils is migrated
 
 class HtmlProcessor {
   static Future<Map<String, dynamic>> processArticleHtml(
@@ -48,14 +46,9 @@ class HtmlProcessor {
       });
     });
 
-    final jsonString = await rootBundle.loadString('assets/data/html_rules.json');
-    final htmlRules = jsonDecode(jsonString);
-    final projectRules = htmlRules[languageCode]?[projectStr] as Map<String, dynamic>?;
-    final globalRules = htmlRules['global']?[projectStr] as Map<String, dynamic>?;
-
-    final removeSelectors = _getRulesList(globalRules, projectRules, 'remove');
-    final hideSelectors = _getRulesList(globalRules, projectRules, 'hide');
-    final refKeywords = _getRulesList(globalRules, projectRules, 'referenceKeywords');
+    final removeSelectors = WikiConfig.getCombinedRulesList(languageCode, projectStr, 'remove');
+    final hideSelectors = WikiConfig.getCombinedRulesList(languageCode, projectStr, 'hide');
+    final refKeywords = WikiConfig.getCombinedRulesList(languageCode, projectStr, 'referenceKeywords');
 
     /// Extract Hero Image Candidate
     String? heroImageUrl;
@@ -64,7 +57,7 @@ class HtmlProcessor {
 
     for (var img in allImages) {
       final src = img.attributes['src'] ?? '';
-      if (!WikiUtils.isIcon(src)) {
+      if (!CoreWikiUtils.isIcon(src)) {
         heroElement = img;
         break;
       }
@@ -77,9 +70,9 @@ class HtmlProcessor {
       if (src.isNotEmpty) {
         final widthAttr = int.tryParse(img.attributes['width'] ?? '');
         final heightAttr = int.tryParse(img.attributes['height'] ?? '');
-        final isIcon = (widthAttr != null && widthAttr <= 48) || (heightAttr != null && heightAttr <= 48) || WikiUtils.isIcon(src);
+        final isIcon = (widthAttr != null && widthAttr <= 48) || (heightAttr != null && heightAttr <= 48) || CoreWikiUtils.isIcon(src);
 
-        imageTasks.add(WikiUtils.optimizeImageUrl(
+        imageTasks.add(CoreWikiUtils.optimizeImageUrl(
           src,
           htmlString: img.outerHtml,
           width: isIcon ? 100 : 500,
@@ -135,25 +128,24 @@ class HtmlProcessor {
     }
 
     String processedHtml = document.body?.innerHtml ?? '';
-    if (languageCode == 'nia' && project == ProjectType.wiktionary) {
-      final soup = BeautifulSoup(processedHtml);
+    final soup = BeautifulSoup(processedHtml);
+    bool soupChanged = false;
+    
+    if (WikiConfig.hasProcessingFlag(languageCode, projectStr, 'removeEmptySections')) {
       _removeEmptySections(soup);
+      soupChanged = true;
+    }
+    
+    if (WikiConfig.hasProcessingFlag(languageCode, projectStr, 'removeEmptyImageSections')) {
       _removeEmptyImageSections(soup);
+      soupChanged = true;
+    }
+    
+    if (soupChanged) {
       processedHtml = soup.toString();
     }
 
     return {'html': processedHtml, 'imageUrl': heroImageUrl};
-  }
-
-  static List<String> _getRulesList(Map<String, dynamic>? global, Map<String, dynamic>? project, String key) {
-    final list = <String>[];
-    if (global != null && global[key] != null && global[key] is List) {
-      list.addAll((global[key] as List).map((e) => e.toString()));
-    }
-    if (project != null && project[key] != null && project[key] is List) {
-      list.addAll((project[key] as List).map((e) => e.toString()));
-    }
-    return list;
   }
 
   static void _markImageContainerForHiding(dom.Element img) {

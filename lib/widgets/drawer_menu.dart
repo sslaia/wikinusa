@@ -9,7 +9,7 @@ import '../screens/create_page_screen.dart';
 import '../data/about_app.dart';
 import '../data/about_community.dart';
 import '../data/whats_new.dart';
-import '../models/project_type.dart';
+import 'package:wikimedia_core/wikimedia_core.dart';
 import '../providers/app_state.dart';
 import '../providers/font_size_provider.dart';
 import '../providers/theme_provider.dart';

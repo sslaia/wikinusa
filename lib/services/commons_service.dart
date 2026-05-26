@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
-import '../utils/wiki_utils.dart';
+import 'package:wikimedia_core/wikimedia_core.dart';
 
 class CommonsService {
   static const String _baseUrl = 'https://commons.wikimedia.org/w/api.php';
@@ -11,7 +11,7 @@ class CommonsService {
     final url = Uri.parse('$_baseUrl?action=query&titles=$fileName&prop=imageinfo&iiprop=url|extmetadata&format=json&origin=*');
 
     try {
-      final response = await http.get(url, headers: WikiUtils.uaHeaders).timeout(const Duration(seconds: 10));
+      final response = await http.get(url, headers: WikiConfig.uaHeaders).timeout(const Duration(seconds: 10));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final pages = data['query']?['pages'] as Map<String, dynamic>?;

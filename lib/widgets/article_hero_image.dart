@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/project_type.dart';
-import '../utils/wiki_utils.dart';
-
+import 'package:wikimedia_core/wikimedia_core.dart';
 class ArticleHeroImage extends StatelessWidget {
   const ArticleHeroImage({
     super.key,
@@ -28,7 +26,7 @@ class ArticleHeroImage extends StatelessWidget {
               ? Image.network(
                   imageUrl,
                   fit: BoxFit.cover,
-                  headers: WikiUtils.uaHeaders,
+                  headers: WikiConfig.uaHeaders,
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) return child;
                     return Container(
