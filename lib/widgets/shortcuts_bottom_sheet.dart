@@ -124,7 +124,7 @@ void showShortcutsBottomSheet(BuildContext context, WidgetRef ref) {
                     error: (err, stack) => Center(
                       child: Padding(
                         padding: const EdgeInsets.all(32.0),
-                        child: Text('Error: $err'),
+                        child: Text('${'error'.tr()}: $err'),
                       ),
                     ),
                   ),

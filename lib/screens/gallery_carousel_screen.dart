@@ -124,8 +124,9 @@ class _GalleryCarouselScreenState extends ConsumerState<GalleryCarouselScreen> {
                                     fit: BoxFit.cover,
                                     loadingBuilder:
                                         (context, child, loadingProgress) {
-                                          if (loadingProgress == null)
+                                          if (loadingProgress == null) {
                                             return child;
+                                          }
                                           return const Center(
                                             child: CircularProgressIndicator(
                                               color:

@@ -18,19 +18,34 @@ import '../theme/app_theme.dart';
 
 class WikiUtils {
   static final AudioPlayer _audioPlayer = AudioPlayer();
-  
+
   static Future<String> optimizeImageUrl(
     String url, {
     String? htmlString,
     int width = 500,
   }) async {
-    return CoreWikiUtils.optimizeImageUrl(url, htmlString: htmlString, width: width);
+    return CoreWikiUtils.optimizeImageUrl(
+      url,
+      htmlString: htmlString,
+      width: width,
+    );
   }
 
-  static Future<bool> handleTapUrl(BuildContext context, String url, String? htmlContent, ProjectType currentProject, String languageCode) async {
-    final intent = await CoreWikiUtils.handleTapUrl(url, languageCode, currentProject);
+  static Future<bool> handleTapUrl(
+    BuildContext context,
+    String url,
+    String? htmlContent,
+    ProjectType currentProject,
+    String languageCode,
+  ) async {
+    final intent = await CoreWikiUtils.handleTapUrl(
+      url,
+      languageCode,
+      currentProject,
+    );
 
     if (intent is IgnoreLinkIntent) return false;
+    if (!context.mounted) return false;
 
     if (intent is ShowReferenceIntent) {
       if (htmlContent != null) {
@@ -56,13 +71,22 @@ class WikiUtils {
       if (intent.isRedLink) {
         Widget screen;
         switch (currentProject) {
-          case ProjectType.wiktionary: screen = CreateEntryScreen(title: intent.title); break;
-          case ProjectType.wikibooks: screen = CreateBookScreen(title: intent.title); break;
-          case ProjectType.wikipedia: screen = CreatePageScreen(initialTitle: intent.title); break;
+          case ProjectType.wiktionary:
+            screen = CreateEntryScreen(title: intent.title);
+            break;
+          case ProjectType.wikibooks:
+            screen = CreateBookScreen(title: intent.title);
+            break;
+          case ProjectType.wikipedia:
+            screen = CreatePageScreen(initialTitle: intent.title);
+            break;
         }
         Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
       } else {
-        Navigator.push(context, MaterialPageRoute(builder: (_) => ArticleScreen(title: intent.title)));
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => ArticleScreen(title: intent.title)),
+        );
       }
       return true;
     }
@@ -71,14 +95,35 @@ class WikiUtils {
   }
 
   static Future<void> _launchExternalUrl(String urlString) async {
-    final url = Uri.parse(urlString.startsWith('//') ? 'https:$urlString' : urlString);
-    if (await canLaunchUrl(url)) await launchUrl(url, mode: LaunchMode.inAppBrowserView);
+    final url = Uri.parse(
+      urlString.startsWith('//') ? 'https:$urlString' : urlString,
+    );
+    if (await canLaunchUrl(url))
+      await launchUrl(url, mode: LaunchMode.inAppBrowserView);
   }
 
   static Future<void> _playAudio(BuildContext context, String audioUrl) async {
     try {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Row(children: [const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)), const SizedBox(width: 12), const Text('Playing audio...')]), duration: const Duration(seconds: 2)));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text('playing_audio'.tr()),
+              ],
+            ),
+            duration: const Duration(seconds: 2),
+          ),
+        );
       }
       await _audioPlayer.stop();
       try {
@@ -88,7 +133,10 @@ class WikiUtils {
       }
       await _audioPlayer.play();
     } catch (e) {
-      if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Could not play audio')));
+      if (context.mounted)
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('play_audio_error'.tr())));
     }
   }
 
@@ -101,13 +149,25 @@ class WikiUtils {
     return false;
   }
 
-  static Map<String, String>? customStyles(BuildContext context, dom.Element element) {
+  static Map<String, String>? customStyles(
+    BuildContext context,
+    dom.Element element,
+  ) {
     if (_isHidden(element)) return {'display': 'none'};
     final styles = <String, String>{};
-    if (element.localName == 'sup' || element.classes.contains('reference')) return {'display': 'inline-block', 'padding': '0 2px', 'font-size': '0.75em', 'vertical-align': 'super'};
+    if (element.localName == 'sup' || element.classes.contains('reference'))
+      return {
+        'display': 'inline-block',
+        'padding': '0 2px',
+        'font-size': '0.75em',
+        'vertical-align': 'super',
+      };
     if (element.localName == 'a') {
       final href = element.attributes['href'] ?? '';
-      final color = AppTheme.getLinkColor(context, isRedLink: href.contains('action=edit') || href.contains('redlink=1'));
+      final color = AppTheme.getLinkColor(
+        context,
+        isRedLink: href.contains('action=edit') || href.contains('redlink=1'),
+      );
       styles['color'] = '#${color.toARGB32().toRadixString(16).substring(2)}';
       styles['text-decoration'] = 'none';
       styles['font-weight'] = '600';
@@ -115,7 +175,10 @@ class WikiUtils {
     return styles.isEmpty ? null : styles;
   }
 
-  static Widget? customWidgetBuilder(BuildContext context, dom.Element element) {
+  static Widget? customWidgetBuilder(
+    BuildContext context,
+    dom.Element element,
+  ) {
     // Check if current element or any parent is marked as hidden
     if (_isHidden(element)) return const SizedBox.shrink();
 
@@ -126,9 +189,23 @@ class WikiUtils {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(element.text, style: GoogleFonts.notoSerif(fontSize: 18, fontWeight: FontWeight.bold, color: theme.colorScheme.primary)),
+            Text(
+              element.text,
+              style: GoogleFonts.notoSerif(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.primary,
+              ),
+            ),
             const SizedBox(height: 4),
-            Container(width: 40, height: 3, decoration: BoxDecoration(color: theme.colorScheme.primary, borderRadius: BorderRadius.circular(2))),
+            Container(
+              width: 40,
+              height: 3,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
           ],
         ),
       );
@@ -136,14 +213,20 @@ class WikiUtils {
     return null;
   }
 
-  static void _showReferencePopup(BuildContext context, String referenceId, String htmlContent) {
+  static void _showReferencePopup(
+    BuildContext context,
+    String referenceId,
+    String htmlContent,
+  ) {
     final theme = Theme.of(context);
     final document = html_parser.parse(htmlContent);
     final decodedId = Uri.decodeComponent(referenceId);
-    
+
     // Robust search: getElementById or suffix match (for Wikibooks/Incubator IDs)
-    dom.Element? refElement = document.getElementById(decodedId) ?? document.getElementById(referenceId);
-    
+    dom.Element? refElement =
+        document.getElementById(decodedId) ??
+        document.getElementById(referenceId);
+
     if (refElement == null) {
       final allWithId = document.querySelectorAll('[id]');
       for (var el in allWithId) {
@@ -156,7 +239,7 @@ class WikiUtils {
     }
 
     if (refElement == null) return;
-    
+
     final refClone = refElement.clone(true);
     refClone.querySelectorAll('.mw-cite-backlink').forEach((e) => e.remove());
 
@@ -165,22 +248,49 @@ class WikiUtils {
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (context) => Container(
-        decoration: BoxDecoration(color: theme.colorScheme.surface, borderRadius: const BorderRadius.vertical(top: Radius.circular(24))),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
         padding: const EdgeInsets.all(24),
-        constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.4),
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.4,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(children: [
-              Icon(Icons.info_outline, size: 18, color: theme.colorScheme.secondary),
-              const SizedBox(width: 8),
-              Text('reference'.tr(), style: TextStyle(fontWeight: FontWeight.bold)),
-              const Spacer(),
-              IconButton(icon: const Icon(Icons.close, size: 20), onPressed: () => Navigator.pop(context)),
-            ]),
+            Row(
+              children: [
+                Icon(
+                  Icons.info_outline,
+                  size: 18,
+                  color: theme.colorScheme.secondary,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'reference'.tr(),
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const Spacer(),
+                IconButton(
+                  icon: const Icon(Icons.close, size: 20),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
+            ),
             const Divider(),
-            Flexible(child: SingleChildScrollView(child: HtmlWidget(refClone.innerHtml, textStyle: theme.textTheme.bodyMedium?.copyWith(fontSize: 14, height: 1.6)))),
+            Flexible(
+              child: SingleChildScrollView(
+                child: HtmlWidget(
+                  refClone.innerHtml,
+                  textStyle: theme.textTheme.bodyMedium?.copyWith(
+                    fontSize: 14,
+                    height: 1.6,
+                  ),
+                ),
+              ),
+            ),
             const SizedBox(height: 16),
           ],
         ),

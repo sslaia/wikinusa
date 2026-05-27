@@ -73,7 +73,7 @@ class ShortcutsSidebar extends ConsumerWidget {
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (err, _) => Center(child: Text('Error: $err')),
+              error: (err, _) => Center(child: Text('${'error'.tr()}: $err')),
             ),
           ),
         ],

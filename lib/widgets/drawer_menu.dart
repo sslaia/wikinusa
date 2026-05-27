@@ -416,23 +416,23 @@ class DrawerContent extends ConsumerWidget {
     ProjectType currentProject,
     String currentLanguage,
   ) {
-    return Column(
-      children: ProjectType.values.map((project) {
-        final isSupported = project.isSupported(currentLanguage);
-        return RadioListTile<ProjectType>(
-          value: project,
-          groupValue: currentProject,
-          onChanged: isSupported
-              ? (ProjectType? newValue) {
-                  if (newValue != null) {
-                    ref
-                        .read(appStateProvider.notifier)
-                        .setProject(newValue, currentLanguage);
-                    Navigator.of(context).popUntil((route) => route.isFirst);
-                  }
-                }
-              : null,
-          title: Row(
+    return RadioGroup<ProjectType>(
+      groupValue: currentProject,
+      onChanged: (ProjectType? newValue) {
+        if (newValue != null) {
+          ref
+              .read(appStateProvider.notifier)
+              .setProject(newValue, currentLanguage);
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        }
+      },
+      child: Column(
+        children: ProjectType.values.map((project) {
+          final isSupported = project.isSupported(currentLanguage);
+          return RadioListTile<ProjectType>(
+            value: project,
+            enabled: isSupported,
+            title: Row(
             children: [
               Icon(
                 Icons.circle,
@@ -462,6 +462,7 @@ class DrawerContent extends ConsumerWidget {
           contentPadding: EdgeInsets.zero,
         );
       }).toList(),
+      ),
     );
   }
 
@@ -477,20 +478,21 @@ class DrawerContent extends ConsumerWidget {
       {'code': 'nia', 'name': 'nias'},
     ];
 
-    return Column(
-      children: languages.map((lang) {
-        final code = lang['code']!;
-        return RadioListTile<String>(
-          value: code,
-          groupValue: currentLanguage,
-          onChanged: (String? newValue) {
-            if (newValue != null) {
-              ref.read(languageProvider.notifier).setLanguage(newValue);
-              context.setLocale(Locale(newValue));
-              Navigator.of(context).popUntil((route) => route.isFirst);
-            }
-          },
-          title: Text(
+    return RadioGroup<String>(
+      groupValue: currentLanguage,
+      onChanged: (String? newValue) {
+        if (newValue != null) {
+          ref.read(languageProvider.notifier).setLanguage(newValue);
+          context.setLocale(Locale(newValue));
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        }
+      },
+      child: Column(
+        children: languages.map((lang) {
+          final code = lang['code']!;
+          return RadioListTile<String>(
+            value: code,
+            title: Text(
             lang['name']!.tr(),
             style: TextStyle(
               color: theme.colorScheme.onSurface,
@@ -503,6 +505,7 @@ class DrawerContent extends ConsumerWidget {
           contentPadding: EdgeInsets.zero,
         );
       }).toList(),
+      ),
     );
   }
 
