@@ -10,33 +10,35 @@ final shortcutsProvider = FutureProvider<Map<String, dynamic>>((ref) async {
       'https://raw.githubusercontent.com/sslaia/wikinusa/refs/heads/main/assets/data/shortcuts.json';
   final prefs = ref.watch(sharedPreferencesProvider);
 
-  // Fetch remote shortcuts
-  try {
-    final response = await http
-        .get(Uri.parse(remoteUrl))
-        .timeout(const Duration(seconds: 5));
-
-    if (response.statusCode == 200) {
-      final remoteJson = response.body;
-      final localJson = prefs.getString('cached_shortcuts');
-
-      // If different from what we have cached, update cache
-      if (remoteJson != localJson) {
-        await prefs.setString('cached_shortcuts', remoteJson);
-      }
-      return json.decode(remoteJson) as Map<String, dynamic>;
-    }
-  } catch (e) {
-    debugPrint('ShortcutsProvider: Failed to fetch remote shortcuts: $e');
-  }
-
-  // Fallback to cached shortcuts if available
-  final cachedJson = prefs.getString('cached_shortcuts');
-  if (cachedJson != null) {
+  if (!kDebugMode) {
+    // Fetch remote shortcuts
     try {
-      return json.decode(cachedJson) as Map<String, dynamic>;
+      final response = await http
+          .get(Uri.parse(remoteUrl))
+          .timeout(const Duration(seconds: 5));
+
+      if (response.statusCode == 200) {
+        final remoteJson = response.body;
+        final localJson = prefs.getString('cached_shortcuts');
+
+        // If different from what we have cached, update cache
+        if (remoteJson != localJson) {
+          await prefs.setString('cached_shortcuts', remoteJson);
+        }
+        return json.decode(remoteJson) as Map<String, dynamic>;
+      }
     } catch (e) {
-      debugPrint('ShortcutsProvider: Failed to decode cached shortcuts: $e');
+      debugPrint('ShortcutsProvider: Failed to fetch remote shortcuts: $e');
+    }
+
+    // Fallback to cached shortcuts if available
+    final cachedJson = prefs.getString('cached_shortcuts');
+    if (cachedJson != null) {
+      try {
+        return json.decode(cachedJson) as Map<String, dynamic>;
+      } catch (e) {
+        debugPrint('ShortcutsProvider: Failed to decode cached shortcuts: $e');
+      }
     }
   }
 

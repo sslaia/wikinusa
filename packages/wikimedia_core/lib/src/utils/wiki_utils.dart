@@ -155,6 +155,10 @@ class CoreWikiUtils {
     String? title;
     bool isRedLink = url.contains('action=edit') || url.contains('redlink=1');
 
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('//')) {
+      return OpenExternalUrlIntent(url);
+    }
+
     if (url.contains('/wiki/')) {
       title = url.split('/wiki/').last.split('?').first.split('#').first;
     } else if (url.startsWith('./')) {
@@ -189,10 +193,6 @@ class CoreWikiUtils {
       }
     }
 
-    if (url.startsWith('http')) {
-      return OpenExternalUrlIntent(url);
-    }
-    
     return IgnoreLinkIntent();
   }
 }

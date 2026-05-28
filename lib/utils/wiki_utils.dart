@@ -155,6 +155,15 @@ class WikiUtils {
   ) {
     if (_isHidden(element)) return {'display': 'none'};
     final styles = <String, String>{};
+
+    // Override fixed heights on divs to prevent RenderFlex overflow
+    if (element.localName == 'div') {
+      final styleStr = element.attributes['style'] ?? '';
+      if (styleStr.contains('height:')) {
+        styles['height'] = 'auto';
+      }
+    }
+
     if (element.localName == 'sup' || element.classes.contains('reference'))
       return {
         'display': 'inline-block',

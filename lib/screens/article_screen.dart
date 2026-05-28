@@ -193,11 +193,11 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                                               );
                                             }
 
-                                            if (element.localName == 'img' ||
-                                                element.classes.contains(
-                                                  'thumb',
-                                                ) ||
-                                                element.localName == 'figure') {
+                                            final isThumb = element.classes.contains('thumb') ||
+                                                (element.localName == 'figure' &&
+                                                    element.attributes['typeof']?.contains('mw:File/Thumb') == true);
+
+                                            if (isThumb) {
                                               if (element.classes.contains(
                                                 'hidden-hero-container',
                                               )) {
