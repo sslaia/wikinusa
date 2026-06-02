@@ -7,7 +7,8 @@ An Android app for Nias, Indonesian and English Wikipedia as well as for Nias Wi
 ## Version's history
 
 ### Version 1.5.0:
-- Moved the core app out into an own package
+- Fixed the external link handling
+- Made the core app modular (out into an own package)
 - Improve image loading and search results page
 
 ### Version 1.0.0:

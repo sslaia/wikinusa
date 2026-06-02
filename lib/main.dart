@@ -85,7 +85,7 @@ class WikiNusaApp extends ConsumerWidget {
           child: child!,
         );
       },
-      home: isFirstStart ? const HomeScreen() : const OnboardingScreen(),
+      home: isFirstStart ? HomeScreen(key: ValueKey(currentProject)) : const OnboardingScreen(),
     );
   }
 }

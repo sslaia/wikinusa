@@ -1,7 +1,7 @@
 name: wikinusa
 description: "An Android app for Nias Wiktionary and Wikibooks as well as Nias, Indonesian and English Wikipedia"
 publish_to: 'none'
-version: 1.5.0+3
+version: 1.5.1+4
 
 environment:
   sdk: ^3.11.4
@@ -19,10 +19,10 @@ dependencies:
   just_audio: ^0.10.4
   shared_preferences: ^2.5.5
   share_plus: ^13.1.0
+  shimmer: ^3.0.0
   url_launcher: ^6.3.2
   wikimedia_core:
     path: packages/wikimedia_core
-  shimmer: ^3.0.0
   flutter_localizations:
     sdk: flutter
 
