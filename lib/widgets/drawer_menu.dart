@@ -17,8 +17,8 @@ import '../providers/theme_provider.dart';
 import '../providers/shortcuts_provider.dart';
 import '../screens/about_screen.dart';
 import '../screens/bookmarks_screen.dart';
-import '../screens/gallery_carousel_screen.dart';
-import '../screens/nias_course_screen.dart';
+import '../modules/gallery/screens/gallery_carousel_screen.dart';
+import '../modules/course/screens/nias_course_screen.dart';
 import '../utils/shortcut_utils.dart';
 
 class DrawerMenu extends ConsumerWidget {

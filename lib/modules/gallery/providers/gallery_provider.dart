@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import '../models/gallery_item.dart';
-import 'app_state.dart';
+import '../../../providers/app_state.dart';
 
 final galleryDataProvider =
     FutureProvider<Map<String, List<GalleryItem>>>((ref) async {

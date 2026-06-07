@@ -4,14 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:wikimedia_core/wikimedia_core.dart';
-import '../providers/app_state.dart';
+import '../../../providers/app_state.dart';
 import '../providers/gallery_provider.dart';
-import '../services/commons_service.dart';
-import '../utils/responsive_utils.dart';
-import '../widgets/adaptive_nav_actions.dart';
-import '../widgets/custom_bottom_app_bar.dart';
-import '../widgets/drawer_menu.dart';
-import 'image_screen.dart';
+import '../../../services/commons_service.dart';
+import '../../../utils/responsive_utils.dart';
+import '../../../widgets/adaptive_nav_actions.dart';
+import '../../../widgets/custom_bottom_app_bar.dart';
+import '../../../widgets/drawer_menu.dart';
+import '../../../screens/image_screen.dart';
 
 class GalleryCarouselScreen extends ConsumerStatefulWidget {
   const GalleryCarouselScreen({super.key});

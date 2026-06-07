@@ -357,7 +357,7 @@ class _CrosswordsScreenState extends ConsumerState<CrosswordsScreen> {
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
-                                    'Bonus!',
+                                    'crossword_bonus'.tr(),
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleMedium

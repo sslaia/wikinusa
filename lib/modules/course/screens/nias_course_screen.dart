@@ -8,15 +8,15 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:html/parser.dart' as html_parser;
 
 import 'package:wikimedia_core/wikimedia_core.dart';
-import '../utils/wiki_utils.dart';
-import '../widgets/wiki_footer.dart';
-import '../utils/responsive_utils.dart';
-import '../widgets/adaptive_nav_actions.dart';
-import '../widgets/shortcuts_side_bar.dart';
-import '../widgets/drawer_menu.dart';
-import '../widgets/custom_bottom_app_bar.dart';
-import '../providers/bookmarks_provider.dart';
-import 'image_screen.dart';
+import '../../../utils/wiki_utils.dart';
+import '../../../widgets/wiki_footer.dart';
+import '../../../utils/responsive_utils.dart';
+import '../../../widgets/adaptive_nav_actions.dart';
+import '../../../widgets/shortcuts_side_bar.dart';
+import '../../../widgets/drawer_menu.dart';
+import '../../../widgets/custom_bottom_app_bar.dart';
+import '../../../providers/bookmarks_provider.dart';
+import '../../../screens/image_screen.dart';
 
 class NiasCourseScreen extends ConsumerStatefulWidget {
   const NiasCourseScreen({super.key});
