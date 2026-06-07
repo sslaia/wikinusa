@@ -182,8 +182,9 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                                                   context,
                                                   element,
                                                 );
-                                            if (sharedWidget != null)
+                                            if (sharedWidget != null) {
                                               return sharedWidget;
+                                            }
 
                                             if (element.classes.contains(
                                               'gallery',
@@ -193,9 +194,17 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                                               );
                                             }
 
-                                            final isThumb = element.classes.contains('thumb') ||
-                                                (element.localName == 'figure' &&
-                                                    element.attributes['typeof']?.contains('mw:File/Thumb') == true);
+                                            final isThumb =
+                                                element.classes.contains(
+                                                  'thumb',
+                                                ) ||
+                                                (element.localName ==
+                                                        'figure' &&
+                                                    element.attributes['typeof']
+                                                            ?.contains(
+                                                              'mw:File/Thumb',
+                                                            ) ==
+                                                        true);
 
                                             if (isThumb) {
                                               if (element.classes.contains(
