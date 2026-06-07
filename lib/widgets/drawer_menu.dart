@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wikinusa/modules/crosswords/screens/crosswords_screen.dart';
 
 import '../screens/create_book_screen.dart';
 import '../screens/create_entry_screen.dart';
@@ -121,47 +122,67 @@ class DrawerContent extends ConsumerWidget {
         // Show modules only for Nias language
         // Until Indonesian and English modules are implemented
         if (currentLanguage == 'nia')
-        _buildExpansionSection(
-          theme,
-          titleKey: 'drawer_modules',
-          initiallyExpanded: true,
-          children: [
-            _buildDrawerItem(
-              theme,
-              icon: Icons.school_rounded,
-              title: 'nias_course'.tr(),
-              onTap: () {
-                if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
-                  Navigator.pop(context);
-                }
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const NiasCourseScreen()),
-                );
-              },
-            ),
-            _buildDrawerItem(
-              theme,
-              icon: Icons.photo_library_rounded,
-              title: 'gallery'.tr(),
-              onTap: () {
-                if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
-                  Navigator.pop(context);
-                }
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const GalleryCarouselScreen(),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
+          _buildExpansionSection(
+            theme,
+            titleKey: 'drawer_modules',
+            initiallyExpanded: true,
+            children: [
+              _buildDrawerItem(
+                theme,
+                icon: Icons.grid_on_rounded,
+                title: 'crosswords'.tr(),
+                onTap: () {
+                  if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
+                    Navigator.pop(context);
+                  }
+                  ref
+                      .read(appStateProvider.notifier)
+                      .setProject(ProjectType.wiktionary, currentLanguage);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const CrosswordsScreen()),
+                  );
+                },
+              ),
+              _buildDrawerItem(
+                theme,
+                icon: Icons.school_rounded,
+                title: 'nias_course'.tr(),
+                onTap: () {
+                  if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
+                    Navigator.pop(context);
+                  }
+                  ref
+                      .read(appStateProvider.notifier)
+                      .setProject(ProjectType.wiktionary, currentLanguage);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const NiasCourseScreen()),
+                  );
+                },
+              ),
+              _buildDrawerItem(
+                theme,
+                icon: Icons.photo_library_rounded,
+                title: 'gallery'.tr(),
+                onTap: () {
+                  if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
+                    Navigator.pop(context);
+                  }
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const GalleryCarouselScreen(),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
         _buildExpansionSection(
           theme,
           titleKey: 'drawer_language',
-          initiallyExpanded: true,
+          initiallyExpanded: false,
           children: [
             _buildLanguageSelector(context, ref, theme, currentLanguage),
           ],
@@ -249,7 +270,7 @@ class DrawerContent extends ConsumerWidget {
         return _buildExpansionSection(
           theme,
           titleKey: 'drawer_project_shortcuts',
-          initiallyExpanded: true,
+          initiallyExpanded: false,
           children: shortcuts.map((s) {
             final title = s['title'] as String;
             final iconName = s['icon'] as String;
@@ -433,35 +454,37 @@ class DrawerContent extends ConsumerWidget {
             value: project,
             enabled: isSupported,
             title: Row(
-            children: [
-              Icon(
-                Icons.circle,
-                size: 8,
-                color: isSupported
-                    ? project.primaryColor
-                    : Colors.grey.withValues(alpha: 0.3),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                project.name.toLowerCase().tr(),
-                style: TextStyle(
-                  color: !isSupported
-                      ? Colors.grey.withValues(alpha: 0.5)
-                      : (project == currentProject
-                            ? project.primaryColor
-                            : theme.colorScheme.onSurface),
-                  fontWeight: project == currentProject
-                      ? FontWeight.bold
-                      : FontWeight.normal,
-                  decoration: !isSupported ? TextDecoration.lineThrough : null,
+              children: [
+                Icon(
+                  Icons.circle,
+                  size: 8,
+                  color: isSupported
+                      ? project.primaryColor
+                      : Colors.grey.withValues(alpha: 0.3),
                 ),
-              ),
-            ],
-          ),
-          activeColor: project.primaryColor,
-          contentPadding: EdgeInsets.zero,
-        );
-      }).toList(),
+                const SizedBox(width: 8),
+                Text(
+                  project.name.toLowerCase().tr(),
+                  style: TextStyle(
+                    color: !isSupported
+                        ? Colors.grey.withValues(alpha: 0.5)
+                        : (project == currentProject
+                              ? project.primaryColor
+                              : theme.colorScheme.onSurface),
+                    fontWeight: project == currentProject
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                    decoration: !isSupported
+                        ? TextDecoration.lineThrough
+                        : null,
+                  ),
+                ),
+              ],
+            ),
+            activeColor: project.primaryColor,
+            contentPadding: EdgeInsets.zero,
+          );
+        }).toList(),
       ),
     );
   }
@@ -493,18 +516,18 @@ class DrawerContent extends ConsumerWidget {
           return RadioListTile<String>(
             value: code,
             title: Text(
-            lang['name']!.tr(),
-            style: TextStyle(
-              color: theme.colorScheme.onSurface,
-              fontWeight: currentLanguage == code
-                  ? FontWeight.bold
-                  : FontWeight.normal,
+              lang['name']!.tr(),
+              style: TextStyle(
+                color: theme.colorScheme.onSurface,
+                fontWeight: currentLanguage == code
+                    ? FontWeight.bold
+                    : FontWeight.normal,
+              ),
             ),
-          ),
-          activeColor: theme.colorScheme.primary,
-          contentPadding: EdgeInsets.zero,
-        );
-      }).toList(),
+            activeColor: theme.colorScheme.primary,
+            contentPadding: EdgeInsets.zero,
+          );
+        }).toList(),
       ),
     );
   }

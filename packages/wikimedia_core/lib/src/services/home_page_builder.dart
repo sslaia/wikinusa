@@ -3,7 +3,7 @@ import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart' as dom;
 import '../models/home_page_section.dart';
 import '../models/project_type.dart';
-import '../utils/wiki_utils.dart'; // TODO: migrate CoreWikiUtils
+import '../utils/wiki_utils.dart';
 import '../core/wiki_config.dart';
 
 class HomePageBuilder {
@@ -18,11 +18,20 @@ class HomePageBuilder {
     final bodyStr = utf8.decode(responseBodyBytes);
     final document = html_parser.parse(bodyStr);
 
-    final removeSelectors = WikiConfig.getCombinedRulesList(languageCode, projectStr, 'remove');
-    final hideSelectors = WikiConfig.getCombinedRulesList(languageCode, projectStr, 'hide');
+    final removeSelectors = WikiConfig.getCombinedRulesList(
+      languageCode,
+      projectStr,
+      'remove',
+    );
+    final hideSelectors = WikiConfig.getCombinedRulesList(
+      languageCode,
+      projectStr,
+      'hide',
+    );
 
     final projectRules = WikiConfig.getRules(languageCode, projectStr);
-    final sectionsConfig = projectRules?['homePageSections'] as Map<String, dynamic>?;
+    final sectionsConfig =
+        projectRules?['homePageSections'] as Map<String, dynamic>?;
 
     List<HomePageSection> sections = [];
 
