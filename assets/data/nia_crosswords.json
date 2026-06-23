@@ -10298,7 +10298,7 @@
       {
         "word": "MESOKHO",
         "page_title": "mesokho",
-        "clue": "Na aboto guli ba alua ndro börö na no tefahö, tetutu, ba tanöbö'önia",
+        "clue": "Na aboto guli ba alua ndro börö me no ikhai ia ndroi ma hadia bö'ö satarö",
         "x": 5,
         "y": 2,
         "direction": "down"
@@ -10306,7 +10306,7 @@
       {
         "word": "SOLO",
         "page_title": "solo",
-        "clue": "Sulu nihaogö moroi ba sandroto lewuö, nifo'ösi fanikha tanö ba lazozo mbalö faoma nukha sedöna mutunu ena'ö muhola ia; so göi nihaogö moroi ba zole, nifo'ösi fanikha tanö, nifasa dudunga khönia, sedöna mutunu ena'ö muhola",
+        "clue": "Sulu nihaogö moroi ba ndroto lewuö",
         "x": 4,
         "y": 8,
         "direction": "across"
@@ -10322,7 +10322,7 @@
       {
         "word": "SIKA",
         "page_title": "sika",
-        "clue": "Mame'e ena'ö aefa ma arawi hadia ia tobali rozi-rozi ise-sigise-ise",
+        "clue": "Mango'ou ba wame'e ena'ö aefa ma arawi hadia ia",
         "x": 7,
         "y": 2,
         "direction": "down"
@@ -10338,7 +10338,7 @@
       {
         "word": "ENAU",
         "page_title": "enau",
-        "clue": "Mo'otalua mbalö si föfö ba mbalö tanöbö'ö",
+        "clue": "Abölö mo'otalua i'otarai mbalö si föfö irugi mbalö tanöbö'ö",
         "x": 1,
         "y": 1,
         "direction": "down"
@@ -10360,7 +10360,7 @@
       {
         "word": "LEWUÖ",
         "page_title": "lewuö",
-        "clue": "Töi sinumbua sauri ba danö, sitola möi ngawalö soguna ba wa'auri niha, simane na labali'ö ia asoa, kurusi, bu'u duo ba tanöbö'önia",
+        "clue": "Töi zinumbua sauri ba danö, si tola labali'ö asoa ia",
         "x": 5,
         "y": 3,
         "direction": "down"
@@ -10376,7 +10376,7 @@
       {
         "word": "FALITO",
         "page_title": "falito",
-        "clue": "Niha nifatenge ba wamazaewe Taromali Lowalangi ba mbanua bö'ö",
+        "clue": "(fehede satua) Niha nifatenge ba wamazaewe Taromali Lowalangi ba mbanua bö'ö",
         "x": 3,
         "y": 0,
         "direction": "across"
@@ -10384,7 +10384,7 @@
       {
         "word": "FULI",
         "page_title": "fuli",
-        "clue": "Mamarou ba wame'e ba naha si'oföna ma zui khö zokhö si'oföna",
+        "clue": "Mamarou ba wame'e hadia ia khö zokhö ya'ia",
         "x": 0,
         "y": 3,
         "direction": "across"
@@ -10400,7 +10400,7 @@
       {
         "word": "TUYU",
         "page_title": "tuyu",
-        "clue": "Mamarou ba wanga'i ma wangozaragö hadia ia",
+        "clue": "Mamarou ba wangozaragö hadia ia faoma tuturu",
         "x": 7,
         "y": 0,
         "direction": "down"

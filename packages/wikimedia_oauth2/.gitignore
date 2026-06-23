@@ -1,6 +1,3 @@
-# ENV
-*.env
-
 # Miscellaneous
 *.class
 *.log
@@ -8,11 +5,9 @@
 *.swp
 .DS_Store
 .atom/
-.build/
 .buildlog/
 .history
 .svn/
-.swiftpm/
 migrate_working_dir/
 
 # IntelliJ related
@@ -27,34 +22,10 @@ migrate_working_dir/
 #.vscode/
 
 # Flutter/Dart/Pub related
+# Libraries should not include pubspec.lock, per https://dart.dev/guides/libraries/private-files#pubspeclock.
+/pubspec.lock
 **/doc/api/
-**/ios/Flutter/.last_build_id
 .dart_tool/
 .flutter-plugins-dependencies
-.pub-cache/
-.pub/
 /build/
 /coverage/
-
-# Symbolication related
-app.*.symbols
-
-# Obfuscation related
-app.*.map.json
-
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
-
-# TODOs
-TODO.*
-/temp/
-/test/
-out.json
-test_fetch.dart
-wb_nia_olayama.html
-wb_nia_olayama.json
-
-# OAuth Configuration
-lib/oauth_config.dart

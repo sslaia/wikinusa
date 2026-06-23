@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,6 +22,8 @@ import '../widgets/article_hero_image.dart';
 import '../widgets/custom_bottom_app_bar.dart';
 import '../widgets/drawer_menu.dart';
 import '../widgets/adaptive_nav_actions.dart';
+import '../providers/auth_provider.dart';
+import 'edit_page_screen.dart';
 import 'image_screen.dart';
 
 class ArticleScreen extends ConsumerStatefulWidget {
@@ -568,14 +572,65 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
         Icons.edit_outlined,
         theme.colorScheme.onSurface,
         onPressed: () async {
-          final uri = Uri.parse('$pageUrl?action=edit&section=all');
-          try {
-            await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
-          } catch (e) {
-            if (mounted) {
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text('editor_cant_open').tr()));
+          var authState = ref.read(authProvider);
+          if (authState.isLoading) {
+            final completer = Completer<AuthState>();
+            final listener = ref.listenManual<AuthState>(
+              authProvider,
+              (previous, next) {
+                if (!next.isLoading && !completer.isCompleted) {
+                  completer.complete(next);
+                }
+              },
+              fireImmediately: true,
+            );
+            authState = await completer.future;
+            listener.close();
+          }
+
+          if (!mounted) return;
+
+          if (authState.isLoggedIn) {
+            await _handleEdit(currentTitle, langCode);
+          } else {
+            final bool? shouldLogin = await showDialog<bool>(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text('login_required'.tr()),
+                content: Text('login_to_edit_message'.tr()),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: Text('continue_in_browser'.tr()),
+                  ),
+                  FilledButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    child: Text('login'.tr()),
+                  ),
+                ],
+              ),
+            );
+
+            if (!mounted) return;
+
+            if (shouldLogin == true) {
+              await ref.read(authProvider.notifier).login(context);
+              if (!mounted) return;
+              final newAuthState = ref.read(authProvider);
+              if (newAuthState.isLoggedIn) {
+                await _handleEdit(currentTitle, langCode);
+              }
+            } else if (shouldLogin == false) {
+              final uri = Uri.parse('$pageUrl?action=edit&section=all');
+              try {
+                await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text('editor_cant_open').tr()));
+                }
+              }
             }
           }
         },
@@ -645,6 +700,39 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _handleEdit(
+    String currentTitle,
+    String langCode,
+  ) async {
+    final currentProject = ref.read(appStateProvider);
+    final didEdit = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditPageScreen(title: currentTitle),
+      ),
+    );
+
+    if (didEdit == true && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('refreshing_content').tr(),
+          duration: const Duration(seconds: 3),
+        ),
+      );
+
+      await Future.delayed(const Duration(seconds: 3));
+
+      if (mounted) {
+        await WikiApiService.clearCache(
+          currentProject,
+          langCode,
+          currentTitle,
+        );
+        ref.invalidate(wikiApiProvider(currentTitle));
+      }
+    }
   }
 
   Widget _buildActionButton(

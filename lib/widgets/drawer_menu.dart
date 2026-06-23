@@ -20,6 +20,7 @@ import '../screens/bookmarks_screen.dart';
 import '../modules/gallery/screens/gallery_carousel_screen.dart';
 import '../modules/course/screens/nias_course_screen.dart';
 import '../utils/shortcut_utils.dart';
+import 'drawer_auth_section.dart';
 
 class DrawerMenu extends ConsumerWidget {
   const DrawerMenu({super.key});
@@ -226,6 +227,7 @@ class DrawerContent extends ConsumerWidget {
             ),
           ],
         ),
+        const DrawerAuthSection(),
         const SizedBox(height: 32),
       ],
     );

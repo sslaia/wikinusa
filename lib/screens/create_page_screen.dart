@@ -222,6 +222,7 @@ class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
               ),
               border: InputBorder.none,
             ),
+            onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
           ),
         ),
         const SizedBox(height: 8),

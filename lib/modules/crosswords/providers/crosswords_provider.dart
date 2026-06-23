@@ -14,6 +14,7 @@ class CrosswordsState {
   final Set<int> favoritePuzzles;
   final bool isLoading;
   final String? error;
+  final bool isTemporarilyRevealed;
 
   CrosswordsState({
     this.puzzles = const [],
@@ -22,6 +23,7 @@ class CrosswordsState {
     this.favoritePuzzles = const {},
     this.isLoading = false,
     this.error,
+    this.isTemporarilyRevealed = false,
   });
 
   CrosswordsState copyWith({
@@ -31,6 +33,7 @@ class CrosswordsState {
     Set<int>? favoritePuzzles,
     bool? isLoading,
     String? error,
+    bool? isTemporarilyRevealed,
   }) {
     return CrosswordsState(
       puzzles: puzzles ?? this.puzzles,
@@ -39,6 +42,8 @@ class CrosswordsState {
       favoritePuzzles: favoritePuzzles ?? this.favoritePuzzles,
       isLoading: isLoading ?? this.isLoading,
       error: error,
+      isTemporarilyRevealed:
+          isTemporarilyRevealed ?? this.isTemporarilyRevealed,
     );
   }
 }
@@ -55,7 +60,8 @@ class CrosswordsNotifier extends StateNotifier<CrosswordsState> {
     await _loadFavorites();
     await _fetchData();
     _selectDailyPuzzle();
-    _loadUserAnswers();
+    await _checkAndResetDailyPuzzleIfNeeded();
+    await _loadUserAnswers();
     state = state.copyWith(isLoading: false);
   }
 
@@ -102,6 +108,7 @@ class CrosswordsNotifier extends StateNotifier<CrosswordsState> {
 
     if (state.puzzles.isNotEmpty) {
       _selectDailyPuzzle();
+      await _checkAndResetDailyPuzzleIfNeeded();
       await _loadUserAnswers();
     }
   }
@@ -150,8 +157,30 @@ class CrosswordsNotifier extends StateNotifier<CrosswordsState> {
     state = state.copyWith(currentPuzzle: puzzle);
   }
 
+  Future<void> _checkAndResetDailyPuzzleIfNeeded() async {
+    final puzzleId = dailyPuzzleId;
+    if (puzzleId == -1) return;
+
+    final prefs = ref.read(sharedPreferencesProvider);
+    final now = DateTime.now();
+    final todayStr =
+        '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+
+    final resetKey = 'crossword_reset_date_$puzzleId';
+    final lastReset = prefs.getString(resetKey);
+
+    if (lastReset != todayStr) {
+      // It's a new day for this puzzle, reset it!
+      await prefs.remove('crossword_answers_$puzzleId');
+      await prefs.setString(resetKey, todayStr);
+      // Also reset daily score if any
+      await prefs.remove('crossword_score_$todayStr');
+    }
+  }
+
   Future<void> playDailyPuzzle() async {
     _selectDailyPuzzle();
+    await _checkAndResetDailyPuzzleIfNeeded();
     await _loadUserAnswers();
   }
 
@@ -264,23 +293,10 @@ class CrosswordsNotifier extends StateNotifier<CrosswordsState> {
   }
 
   Future<void> revealWords() async {
-    if (!canRevealWords() || state.currentPuzzle == null) return;
-
-    final newAnswers = Map<String, String>.from(state.userAnswers);
-    for (var word in state.currentPuzzle!.words) {
-      for (int i = 0; i < word.word.length; i++) {
-        int cx = word.direction == 'across' ? word.x + i : word.x;
-        int cy = word.direction == 'down' ? word.y + i : word.y;
-        newAnswers['$cx,$cy'] = word.word[i].toUpperCase();
-      }
+    if (!canRevealWords() || state.currentPuzzle == null) {
+      return;
     }
-
-    state = state.copyWith(userAnswers: newAnswers);
-    final prefs = ref.read(sharedPreferencesProvider);
-    await prefs.setString(
-      'crossword_answers_${state.currentPuzzle!.puzzleId}',
-      jsonEncode(newAnswers),
-    );
+    state = state.copyWith(isTemporarilyRevealed: !state.isTemporarilyRevealed);
   }
 
   Map<String, double> getScores() {

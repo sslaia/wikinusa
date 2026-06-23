@@ -24,6 +24,8 @@ dependencies:
   url_launcher: ^6.3.2
   wikimedia_core:
     path: packages/wikimedia_core
+  wikimedia_oauth2:
+    path: packages/wikimedia_oauth2
   flutter_localizations:
     sdk: flutter
 

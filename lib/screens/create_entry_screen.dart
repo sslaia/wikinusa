@@ -217,6 +217,7 @@ class _CreateEntryScreenState extends ConsumerState<CreateEntryScreen> {
               ),
               border: InputBorder.none,
             ),
+            onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
                 return "enter_word_please".tr();

@@ -221,6 +221,7 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
               ),
               border: InputBorder.none,
             ),
+            onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
                 return "enter_title_before_submit".tr();
