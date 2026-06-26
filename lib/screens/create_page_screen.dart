@@ -5,6 +5,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:wikimedia_core/wikimedia_core.dart';
 import '../providers/app_state.dart';
+import '../providers/auth_provider.dart';
+import '../services/edit_service.dart';
+import 'edit_page_screen.dart';
 
 // This is used only for creating new page on Wikipedia
 class CreatePageScreen extends ConsumerStatefulWidget {
@@ -17,6 +20,7 @@ class CreatePageScreen extends ConsumerStatefulWidget {
 
 class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
   late final TextEditingController _titleController;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -53,32 +57,121 @@ class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
 
     final capitalizedTitle = _capitalizeTitle(rawTitle);
     final langCode = context.locale.languageCode;
-    final currentProject = ref.watch(appStateProvider);
+    final currentProject = ref.read(appStateProvider);
     final projectStr = currentProject.name.toLowerCase();
 
-    // Format: https://$langCode.wikipedia.org/wiki/$title?action=edit&section=all
-    final encodedTitle = Uri.encodeComponent(
-      capitalizedTitle.replaceAll(' ', '_'),
-    );
-    final url = Uri.parse(
-      'https://$langCode.$projectStr.org/wiki/$encodedTitle?action=edit&section=all',
-    );
-
-    if (await canLaunchUrl(url)) {
-      await launchUrl(
-        url,
-        mode: LaunchMode.inAppBrowserView,
-        browserConfiguration: const BrowserConfiguration(showTitle: true),
+    Future<void> launchWebEditor() async {
+      final encodedTitle = Uri.encodeComponent(
+        capitalizedTitle.replaceAll(' ', '_'),
       );
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              '${'could_not_launch_editor_for'.tr()} $capitalizedTitle',
+      final url = Uri.parse(
+        'https://$langCode.$projectStr.org/wiki/$encodedTitle?action=edit&section=all',
+      );
+
+      if (await canLaunchUrl(url)) {
+        await launchUrl(
+          url,
+          mode: LaunchMode.inAppBrowserView,
+          browserConfiguration: const BrowserConfiguration(showTitle: true),
+        );
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                '${'could_not_launch_editor_for'.tr()} $capitalizedTitle',
+              ),
+            ),
+          );
+        }
+      }
+    }
+
+    var authState = ref.read(authProvider);
+    bool loggedIn = authState.isLoggedIn;
+
+    if (!loggedIn) {
+      final bool? shouldLogin = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('login_required').tr(),
+          content: Text('login_to_edit_message').tr(),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text('continue_in_browser').tr(),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text('login').tr(),
+            ),
+          ],
+        ),
+      );
+
+      if (!mounted) return;
+
+      if (shouldLogin == true) {
+        await ref.read(authProvider.notifier).login(context);
+        if (!mounted) return;
+        loggedIn = ref.read(authProvider).isLoggedIn;
+        if (!loggedIn) return;
+      } else if (shouldLogin == false) {
+        await launchWebEditor();
+        return;
+      } else {
+        return;
+      }
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final wikitext = await EditService.fetchWikitext(
+        project: currentProject,
+        languageCode: langCode,
+        title: capitalizedTitle,
+      );
+
+      if (!mounted) return;
+
+      if (wikitext != null) {
+        final didEdit = await Navigator.push<bool>(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EditPageScreen(
+              title: capitalizedTitle,
             ),
           ),
         );
+
+        if (didEdit == true && mounted) {
+          Navigator.of(context).pop(true);
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('error_loading_content').tr(),
+            action: SnackBarAction(
+              label: 'continue_in_browser'.tr(),
+              onPressed: () => launchWebEditor(),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('error_loading_content').tr()),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -268,16 +361,25 @@ class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: _openEditor,
+            onTap: _isLoading ? null : _openEditor,
             borderRadius: BorderRadius.circular(25),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.arrow_upward, color: Colors.white, size: 18),
+                _isLoading
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Icon(Icons.arrow_upward, color: Colors.white, size: 18),
                 const SizedBox(width: 8),
                 Text(
-                  'open_the_editor'.tr(),
+                  _isLoading ? 'submitting'.tr() : 'open_the_editor'.tr(),
                   style: theme.textTheme.labelLarge?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,

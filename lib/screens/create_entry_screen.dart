@@ -4,6 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wikimedia_core/wikimedia_core.dart';
 import '../providers/app_state.dart';
+import '../providers/auth_provider.dart';
+import '../services/edit_service.dart';
+import 'edit_page_screen.dart';
 
 // This is used only for creating new page on Wiktionary
 class CreateEntryScreen extends ConsumerStatefulWidget {
@@ -18,6 +21,8 @@ class _CreateEntryScreenState extends ConsumerState<CreateEntryScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late final TextEditingController _titleController;
   var _selectedValue = 'Verba';
+  var _selectedLanguageCode = 'nia';
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -34,48 +39,146 @@ class _CreateEntryScreenState extends ConsumerState<CreateEntryScreen> {
   Future<void> _submitEntry() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    // Fixed: Always use lowercase for Wiktionary entries
     final String title = _titleController.text.trim().toLowerCase();
     final String part = _selectedValue;
-    String formulir;
+    String templateName;
 
     if (part == 'Nomina') {
-      formulir = 'preload=Templat:Famörögö wanura nomina';
+      templateName = 'Templat:Famörögö wanura nomina';
     } else if (part == 'Adjektiva') {
-      formulir = 'preload=Templat:Famörögö wanura adjetiva';
+      templateName = 'Templat:Famörögö wanura adjetiva';
     } else if (part == 'Adverbia') {
-      formulir = 'preload=Templat:Famörögö wanura adverbia';
+      templateName = 'Templat:Famörögö wanura adverbia';
     } else if (part == 'Numeralia') {
-      formulir = 'preload=Templat:Famörögö wanura numeralia';
+      templateName = 'Templat:Famörögö wanura numeralia';
     } else if (part == 'Partikel') {
-      formulir = 'preload=Templat:Famörögö wanura partikel';
+      templateName = 'Templat:Famörögö wanura partikel';
     } else if (part == 'Pronomina') {
-      formulir = 'preload=Templat:Famörögö wanura pronomina';
+      templateName = 'Templat:Famörögö wanura pronomina';
     } else if (part == 'Preposisi') {
-      formulir = 'preload=Templat:Famörögö wanura preposisi';
+      templateName = 'Templat:Famörögö wanura preposisi';
     } else if (part == 'Konjungsi') {
-      formulir = 'preload=Templat:Famörögö wanura konjungsi';
+      templateName = 'Templat:Famörögö wanura konjungsi';
     } else if (part == 'Intejeksi') {
-      formulir = 'preload=Templat:Famörögö wanura interjeksi';
+      templateName = 'Templat:Famörögö wanura interjeksi';
     } else {
-      formulir = 'preload=Templat:Famörögö wanura verba';
+      templateName = 'Templat:Famörögö wanura verba';
     }
 
-    final String urlString =
-        'https://nia.m.wiktionary.org/wiki/$title?action=edit&section=all&$formulir';
-    final url = Uri.parse(urlString);
+    if (_selectedLanguageCode == 'id') {
+      templateName += ' (id)';
+    }
 
-    if (await canLaunchUrl(url)) {
-      await launchUrl(
-        url,
-        mode: LaunchMode.inAppBrowserView,
-        browserConfiguration: const BrowserConfiguration(showTitle: true),
+    final langCode = context.locale.languageCode;
+    final currentProject = ref.read(appStateProvider);
+
+    Future<void> launchWebEditor() async {
+      final String encodedTemplate = Uri.encodeComponent(templateName);
+      final String urlString =
+          'https://nia.m.wiktionary.org/wiki/$title?action=edit&section=all&preload=$encodedTemplate';
+      final url = Uri.parse(urlString);
+
+      if (await canLaunchUrl(url)) {
+        await launchUrl(
+          url,
+          mode: LaunchMode.inAppBrowserView,
+          browserConfiguration: const BrowserConfiguration(showTitle: true),
+        );
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('editor_cant_open'.tr())));
+        }
+      }
+    }
+
+    var authState = ref.read(authProvider);
+    bool loggedIn = authState.isLoggedIn;
+
+    if (!loggedIn) {
+      final bool? shouldLogin = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('login_required').tr(),
+          content: Text('login_to_edit_message').tr(),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text('continue_in_browser').tr(),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text('login').tr(),
+            ),
+          ],
+        ),
       );
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(
+
+      if (!mounted) return;
+
+      if (shouldLogin == true) {
+        await ref.read(authProvider.notifier).login(context);
+        if (!mounted) return;
+        loggedIn = ref.read(authProvider).isLoggedIn;
+        if (!loggedIn) return;
+      } else if (shouldLogin == false) {
+        await launchWebEditor();
+        return;
+      } else {
+        return;
+      }
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final wikitext = await EditService.fetchWikitext(
+        project: currentProject,
+        languageCode: langCode,
+        title: title,
+      );
+
+      if (!mounted) return;
+
+      if (wikitext != null) {
+        final didEdit = await Navigator.push<bool>(
           context,
-        ).showSnackBar(SnackBar(content: Text('editor_cant_open'.tr())));
+          MaterialPageRoute(
+            builder: (context) => EditPageScreen(
+              title: title,
+              preloadTemplate: templateName,
+            ),
+          ),
+        );
+
+        if (didEdit == true && mounted) {
+          Navigator.of(context).pop(true);
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('error_loading_content').tr(),
+            action: SnackBarAction(
+              label: 'continue_in_browser'.tr(),
+              onPressed: () => launchWebEditor(),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('error_loading_content').tr()),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -106,6 +209,8 @@ class _CreateEntryScreenState extends ConsumerState<CreateEntryScreen> {
               _buildHeader(theme, currentProject),
               const SizedBox(height: 32),
               _buildWordField(theme),
+              const SizedBox(height: 24),
+              _buildLanguageField(theme),
               const SizedBox(height: 24),
               _buildPartOfSpeechField(theme),
               const SizedBox(height: 32),
@@ -230,6 +335,56 @@ class _CreateEntryScreenState extends ConsumerState<CreateEntryScreen> {
     );
   }
 
+  Widget _buildLanguageField(ThemeData theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'language'.tr().toUpperCase(),
+          style: theme.textTheme.labelSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.5,
+            fontSize: 14,
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.02),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: DropdownButtonFormField<String>(
+            initialValue: _selectedLanguageCode,
+            decoration: const InputDecoration(border: InputBorder.none),
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: theme.colorScheme.onSurface,
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+            ),
+            items: [
+              DropdownMenuItem(value: 'nia', child: Text('nias'.tr())),
+              DropdownMenuItem(value: 'id', child: Text('indonesian'.tr())),
+            ],
+            onChanged: (value) {
+              setState(() {
+                _selectedLanguageCode = value!;
+              });
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildPartOfSpeechField(ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -313,16 +468,25 @@ class _CreateEntryScreenState extends ConsumerState<CreateEntryScreen> {
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: _submitEntry,
+            onTap: _isLoading ? null : _submitEntry,
             borderRadius: BorderRadius.circular(25),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.arrow_upward, color: Colors.white, size: 18),
+                _isLoading
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Icon(Icons.arrow_upward, color: Colors.white, size: 18),
                 const SizedBox(width: 8),
                 Text(
-                  'open_the_editor'.tr(),
+                  _isLoading ? 'submitting'.tr() : 'open_the_editor'.tr(),
                   style: theme.textTheme.labelLarge?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,

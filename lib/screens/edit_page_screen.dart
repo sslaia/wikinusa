@@ -8,8 +8,9 @@ import '../services/edit_service.dart';
 
 class EditPageScreen extends ConsumerStatefulWidget {
   final String title;
+  final String? preloadTemplate;
 
-  const EditPageScreen({super.key, required this.title});
+  const EditPageScreen({super.key, required this.title, this.preloadTemplate});
 
   @override
   ConsumerState<EditPageScreen> createState() => _EditPageScreenState();
@@ -52,7 +53,16 @@ class _EditPageScreenState extends ConsumerState<EditPageScreen> {
     );
 
     if (wikitext != null) {
-      _textController.text = wikitext;
+      if (wikitext.isEmpty && widget.preloadTemplate != null) {
+        final templateText = await EditService.fetchWikitext(
+          project: currentProject,
+          languageCode: languageCode,
+          title: widget.preloadTemplate!,
+        );
+        _textController.text = templateText ?? "";
+      } else {
+        _textController.text = wikitext;
+      }
     } else {
       _errorMessage = 'error_loading_content'.tr();
     }

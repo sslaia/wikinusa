@@ -11,7 +11,7 @@ class WikiConfig {
   /// Wikimedia requires a descriptive User-Agent
   static Map<String, String> get uaHeaders => {
     'User-Agent':
-        'WikiNusa/1.5.1 (https://sslaia.github.io/$_appName; slaia@yahoo.com) Generic/1.0',
+        'WikiNusa/1.5 (https://sslaia.github.io/$_appName; slaia@yahoo.com) Generic/1.0',
   };
 
   /// Initialize the WikiConfig. This fetches rules from the remote GitHub repository,

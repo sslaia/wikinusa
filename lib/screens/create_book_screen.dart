@@ -4,6 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wikimedia_core/wikimedia_core.dart';
 import '../providers/app_state.dart';
+import '../providers/auth_provider.dart';
+import '../services/edit_service.dart';
+import 'edit_page_screen.dart';
 
 // This is used only for creating new page on Wikibooks
 class CreateBookScreen extends ConsumerStatefulWidget {
@@ -18,6 +21,7 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late final TextEditingController _titleController;
   var _selectedValue = 'Nidunö-dunö';
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -47,39 +51,144 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     final String rawTitle = _titleController.text.trim();
-    // Fixed: Use Title Case for Wikibooks
     final String title = _capitalizeTitle(rawTitle);
     final String part = _selectedValue;
-    String formulir;
+    String templateName;
 
     if (part == "Nidunö-dunö") {
-      formulir = 'preload=Template:Wb/nia/Famörögö wanura nidunö-dunö';
+      templateName = 'Template:Famörögö wanura nidunö-dunö';
     } else if (part == "Lagu/Sinunö") {
-      formulir = 'preload=Template:Wb/nia/Famörögö wanura lagu';
+      templateName = 'Template:Famörögö wanura lagu';
     } else if (part == "Maena") {
-      formulir = 'preload=Template:Wb/nia/Famörögö wanura maena';
+      templateName = 'Template:Famörögö wanura maena';
     } else if (part == "Cerpen/Novela") {
-      formulir = 'preload=Template:Wb/nia/Famörögö wanura cerpen';
+      templateName = 'Template:Famörögö wanura cerpen';
     } else {
-      formulir = 'preload=Template:Wb/nia/Famörögö wanura';
+      templateName = 'Template:Famörögö wanura';
     }
 
-    final String encodedTitle = Uri.encodeComponent(title.replaceAll(' ', '_'));
-    final String urlString =
-        'https://incubator.m.wikimedia.org/wiki/Wb/nia/$encodedTitle?action=edit&section=all&$formulir';
-    final url = Uri.parse(urlString);
+    final langCode = context.locale.languageCode;
+    final currentProject = ref.read(appStateProvider);
 
-    if (await canLaunchUrl(url)) {
-      await launchUrl(
-        url,
-        mode: LaunchMode.inAppBrowserView,
-        browserConfiguration: const BrowserConfiguration(showTitle: true),
+    Future<void> launchWebEditor() async {
+      final String encodedTitle = Uri.encodeComponent(title.replaceAll(' ', '_'));
+      String formulir;
+      if (part == "Nidunö-dunö") {
+        formulir = 'preload=Template:Wb/nia/Famörögö wanura nidunö-dunö';
+      } else if (part == "Lagu/Sinunö") {
+        formulir = 'preload=Template:Wb/nia/Famörögö wanura lagu';
+      } else if (part == "Maena") {
+        formulir = 'preload=Template:Wb/nia/Famörögö wanura maena';
+      } else if (part == "Cerpen/Novela") {
+        formulir = 'preload=Template:Wb/nia/Famörögö wanura cerpen';
+      } else {
+        formulir = 'preload=Template:Wb/nia/Famörögö wanura';
+      }
+      final String urlString =
+          'https://incubator.m.wikimedia.org/wiki/Wb/nia/$encodedTitle?action=edit&section=all&$formulir';
+      final url = Uri.parse(urlString);
+
+      if (await canLaunchUrl(url)) {
+        await launchUrl(
+          url,
+          mode: LaunchMode.inAppBrowserView,
+          browserConfiguration: const BrowserConfiguration(showTitle: true),
+        );
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('editor_cant_open'.tr())));
+        }
+      }
+    }
+
+    var authState = ref.read(authProvider);
+    bool loggedIn = authState.isLoggedIn;
+
+    if (!loggedIn) {
+      final bool? shouldLogin = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('login_required').tr(),
+          content: Text('login_to_edit_message').tr(),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text('continue_in_browser').tr(),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text('login').tr(),
+            ),
+          ],
+        ),
       );
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(
+
+      if (!mounted) return;
+
+      if (shouldLogin == true) {
+        await ref.read(authProvider.notifier).login(context);
+        if (!mounted) return;
+        loggedIn = ref.read(authProvider).isLoggedIn;
+        if (!loggedIn) return;
+      } else if (shouldLogin == false) {
+        await launchWebEditor();
+        return;
+      } else {
+        return;
+      }
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final wikitext = await EditService.fetchWikitext(
+        project: currentProject,
+        languageCode: langCode,
+        title: title,
+      );
+
+      if (!mounted) return;
+
+      if (wikitext != null) {
+        final didEdit = await Navigator.push<bool>(
           context,
-        ).showSnackBar(SnackBar(content: Text('editor_cant_open'.tr())));
+          MaterialPageRoute(
+            builder: (context) => EditPageScreen(
+              title: title,
+              preloadTemplate: templateName,
+            ),
+          ),
+        );
+
+        if (didEdit == true && mounted) {
+          Navigator.of(context).pop(true);
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('error_loading_content').tr(),
+            action: SnackBarAction(
+              label: 'continue_in_browser'.tr(),
+              onPressed: () => launchWebEditor(),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('error_loading_content').tr()),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -312,16 +421,25 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: _submitEntry,
+            onTap: _isLoading ? null : _submitEntry,
             borderRadius: BorderRadius.circular(25),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.arrow_upward, color: Colors.white, size: 18),
+                _isLoading
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Icon(Icons.arrow_upward, color: Colors.white, size: 18),
                 const SizedBox(width: 8),
                 Text(
-                  'open_the_editor'.tr(),
+                  _isLoading ? 'submitting'.tr() : 'open_the_editor'.tr(),
                   style: theme.textTheme.labelLarge?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
