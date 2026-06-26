@@ -309,4 +309,89 @@ class WikiUtils {
       ),
     );
   }
+
+  static String highlightHtml(
+    String htmlContent,
+    String query,
+    int activeIndex,
+    void Function(int count) countCallback,
+  ) {
+    if (query.trim().isEmpty) {
+      countCallback(0);
+      return htmlContent;
+    }
+
+    final document = html_parser.parse(htmlContent);
+    int matchCount = 0;
+
+    void traverse(dom.Node node) {
+      final List<dom.Node> children = List.from(node.nodes);
+      for (var child in children) {
+        if (child.nodeType == dom.Node.TEXT_NODE) {
+          final text = child.text ?? '';
+          final queryLower = query.toLowerCase();
+          final textLower = text.toLowerCase();
+
+          if (textLower.contains(queryLower)) {
+            final newNodes = <dom.Node>[];
+            int start = 0;
+
+            while (true) {
+              final index = textLower.indexOf(queryLower, start);
+              if (index == -1) {
+                if (start < text.length) {
+                  newNodes.add(dom.Text(text.substring(start)));
+                }
+                break;
+              }
+
+              if (index > start) {
+                newNodes.add(dom.Text(text.substring(start, index)));
+              }
+
+              final matchText = text.substring(index, index + query.length);
+              final currentIdx = matchCount++;
+
+              final span = dom.Element.tag('span')
+                ..attributes['id'] = 'search-match-$currentIdx'
+                ..attributes['class'] = 'search-highlight'
+                ..attributes['data-index'] = '$currentIdx'
+                ..attributes['style'] = currentIdx == activeIndex
+                    ? 'background-color: #ffa500; color: #000000; font-weight: bold; padding: 2px 0;'
+                    : 'background-color: #ffff00; color: #000000; padding: 2px 0;'
+                ..text = matchText;
+
+              newNodes.add(span);
+              start = index + query.length;
+            }
+
+            final indexInParent = node.nodes.indexOf(child);
+            if (indexInParent != -1) {
+              node.nodes.removeAt(indexInParent);
+              node.nodes.insertAll(indexInParent, newNodes);
+            }
+          }
+        } else {
+          if (child is dom.Element &&
+              (child.localName == 'script' ||
+                  child.localName == 'style' ||
+                  child.localName == 'a' && child.attributes['id'] == 'search-match')) {
+            continue;
+          }
+          traverse(child);
+        }
+      }
+    }
+
+    if (document.body != null) {
+      traverse(document.body!);
+      countCallback(matchCount);
+      return document.body!.innerHtml;
+    } else {
+      traverse(document);
+      countCallback(matchCount);
+      return document.outerHtml;
+    }
+  }
 }
+
