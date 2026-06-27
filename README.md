@@ -7,9 +7,19 @@ An Android app for Nias, Indonesian and English Wikipedia as well as for Nias Wi
 ## Version's history
 
 ### Version 1.5.0:
+- New module: crosswords
+- New feature: edit pages using native app editor
+- New feature: Find in page in article's page (with highlighting and auto-scrolling)
+- Improved the Create article form
+- Fixed link handling in language courses
 - Fixed the external link handling
 - Made the core app modular (out into an own package)
 - Improve image loading and search results page
+
+### Version 1.1.0:
+- Fixed: empty shortcuts, pop-up references, portals
+- New modules: Gallery and Nias language course
+- Various fixes improvements
 
 ### Version 1.0.0:
 

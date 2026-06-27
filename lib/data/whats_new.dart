@@ -1,4 +1,17 @@
 const whatsNew = '''
+<h3>New in version 1.5.0</h3>
+<ul>
+<li>New module: crosswords</li>
+<li>New feature: edit pages using native app editor</li>
+<li>New feature: Find in page in article's page (with highlighting and auto-scrolling)</li>
+<li>Improved the create article form</li>
+<li>Fixed link handling in language courses</li>
+<li>Fixed the external link handling</li>
+<li>Made the core app modular (out into an own package)</li>
+<li>Improve image loading and search results page</li>
+<li>Various fixes</li>
+</ul>
+
 <h3>New in version 1.1.0</h3>
 <ul>
 <li>Fixed: empty shortcuts, pop-up references, portals</li>
