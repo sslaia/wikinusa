@@ -10910,7 +10910,7 @@
       {
         "word": "FALÖLÖŴA",
         "page_title": "falölöŵa",
-        "clue": "Fakake sise-ise nifazökhi moroi ba zi'öli ni'oguna'ö ba wanagu, satarö balö, si so tögi ba doyonia sitobali lala mbana",
+        "clue": "Fakake sise-ise nifazökhi moroi ba zi'öli ni'oguna'ö ba wanagu",
         "x": 1,
         "y": 5,
         "direction": "across"
@@ -10918,7 +10918,7 @@
       {
         "word": "FATABE",
         "page_title": "fatabe",
-        "clue": "Na faoma fahalö tanga ba faforö tanga ba wogogohe tanga zamösana",
+        "clue": "Na faoma fahalö tanga ba wangowai",
         "x": 2,
         "y": 4,
         "direction": "down"
@@ -10934,7 +10934,7 @@
       {
         "word": "FAOHEÖ",
         "page_title": "fa'ohe'ö",
-        "clue": "Mamarou ba wama'ema ma ba wamasao sanörö niha bö'ö",
+        "clue": "Mamarou ba wama'ema ma ba wamasao hadia ia sadölö khö niha bö'ö",
         "x": 4,
         "y": 0,
         "direction": "down"
@@ -10942,7 +10942,7 @@
       {
         "word": "AZUNI",
         "page_title": "azuni",
-        "clue": "Nahia wangadulo irugi mamoto nono wofo",
+        "clue": "Nahia wangadulo wofo irugi mamoto nono wofo",
         "x": 2,
         "y": 7,
         "direction": "across"
@@ -10950,7 +10950,7 @@
       {
         "word": "FADOU",
         "page_title": "fadou",
-        "clue": "Fa'usu (manu, fofo, ulö)",
+        "clue": "Fa'usu (simane manu, asu, ulö, btn.)",
         "x": 4,
         "y": 0,
         "direction": "across"
@@ -10958,7 +10958,7 @@
       {
         "word": "ATAHA",
         "page_title": "ataha",
-        "clue": "Lö nasa asoso ba börö da'ö tebai nasa mu'a (bua zinanö simane gae, lase, bowo, btn. ma zui ö nirino simane fakhe, gowi, bulugeu, btn.)",
+        "clue": "Lö nasa asoso ba börö da'ö tebai nasa mu'a)",
         "x": 0,
         "y": 1,
         "direction": "across"
@@ -11012,7 +11012,7 @@
       {
         "word": "SAGELA",
         "page_title": "sagela",
-        "clue": "Sagörö mbotoŵa si no mutagu simane bulu zaku si no mususu tobali sagö nomo",
+        "clue": "Bulu zaku si no mususu tobali sagö nomo",
         "x": 4,
         "y": 2,
         "direction": "across"
@@ -11042,7 +11042,7 @@
       {
         "word": "MOLEASI",
         "page_title": "moleasi",
-        "clue": "Mamözi niha faoma bözi-mbözi-bözi (simane gela, likhe, ba tanöbö'önia)",
+        "clue": "Mamözi niha faoma bözi-bözi (simane gela, likhe, btn.)",
         "x": 3,
         "y": 1,
         "direction": "down"
@@ -11050,7 +11050,7 @@
       {
         "word": "FINO",
         "page_title": "fino",
-        "clue": "Sinumbua ma sinanö salöza-löza töla, buania la'oguna'ö ba nafo",
+        "clue": "Sinumbua salöza-löza töla, buania la'oguna'ö ba wamizi afo",
         "x": 0,
         "y": 2,
         "direction": "across"
@@ -11058,7 +11058,7 @@
       {
         "word": "SINUNÖ",
         "page_title": "sinunö",
-        "clue": "Li si so note, so alaŵa ba adogo-dogo wamoligö ya'ia",
+        "clue": "Lailö",
         "x": 2,
         "y": 7,
         "direction": "across"
@@ -11082,7 +11082,7 @@
       {
         "word": "FAKU",
         "page_title": "faku",
-        "clue": "Fakake nifotanga eu ni'oguna'ö ba wobali'ö tanö, ena'ö tola latanö danömö zinanö",
+        "clue": "Fakake nifotanga eu ni'oguna'ö ba wobali'ö tanö",
         "x": 5,
         "y": 4,
         "direction": "down"
@@ -11112,7 +11112,7 @@
       {
         "word": "SONDRO",
         "page_title": "sondro",
-        "clue": "Sosou wakhe moroi ba zole si no lafodanga, si tobali famalökha wakhe",
+        "clue": "Sosou wakhe moroi ba zole si no lafotanga",
         "x": 2,
         "y": 9,
         "direction": "across"
@@ -11120,7 +11120,7 @@
       {
         "word": "MAOSO",
         "page_title": "maoso",
-        "clue": "Mondröi naha wemörö me awai mörö",
+        "clue": "Mondröi naha wemörö na no awai mörö",
         "x": 6,
         "y": 2,
         "direction": "down"
@@ -11158,7 +11158,7 @@
       {
         "word": "LEAGÖ",
         "page_title": "leagö",
-        "clue": "Mamarou niha ena'ö lafeförö hadia ia",
+        "clue": "Mamarou niha ena'ö lafeförö ira ma zui hadia ia",
         "x": 2,
         "y": 5,
         "direction": "across"
@@ -11166,7 +11166,7 @@
       {
         "word": "BOGO",
         "page_title": "bogo",
-        "clue": "Utu ndru'u satarö bu hulö falölöŵa",
+        "clue": "Aurifö satarö bu hulö falölöŵa",
         "x": 5,
         "y": 3,
         "direction": "down"
@@ -11174,7 +11174,7 @@
       {
         "word": "MOLÖMÖ",
         "page_title": "molömö",
-        "clue": "Mangöhöndrögö numalö bakha barö nidanö",
+        "clue": "Mangöhöndrögö tou numalö barö nidanö",
         "x": 2,
         "y": 3,
         "direction": "down"
@@ -11392,7 +11392,7 @@
       {
         "word": "SASIKA",
         "page_title": "sasika",
-        "clue": "Hadia ia si no arawi ma are'a",
+        "clue": "Sarawi ma sare'a",
         "x": 0,
         "y": 3,
         "direction": "across"
@@ -11468,7 +11468,7 @@
       {
         "word": "ALIFA",
         "page_title": "alifa",
-        "clue": "Aurifö sanana talu soya ahe ba mobiso",
+        "clue": "Aurifö sanana soya ahe ba mobiso na fadou",
         "x": 2,
         "y": 5,
         "direction": "across"
@@ -11500,7 +11500,7 @@
       {
         "word": "SANGOAYA",
         "page_title": "sango'aya",
-        "clue": "Niha sangide-ide'ö ma sangailasi niha bö'ö",
+        "clue": "Sangide-ide'ö ma sangailasi niha bö'ö",
         "x": 2,
         "y": 9,
         "direction": "across"
@@ -11516,7 +11516,7 @@
       {
         "word": "FORAMBA",
         "page_title": "foramba",
-        "clue": "Fakake ni'oguna'ö ba wolowi du'u",
+        "clue": "Fakake ni'oguna'ö ba wolowi ndru'u",
         "x": 9,
         "y": 3,
         "direction": "down"
@@ -11616,7 +11616,7 @@
       {
         "word": "AHONO",
         "page_title": "ahono",
-        "clue": "Na lö maliŵa-liŵa hadia ia, no so manö ia ba nahania",
+        "clue": "Lö maliŵa-liŵa, no so manö ia ba nahania",
         "x": 6,
         "y": 5,
         "direction": "down"
@@ -11624,7 +11624,7 @@
       {
         "word": "OLOHI",
         "page_title": "olohi",
-        "clue": "Lö faröi, dali isöndra",
+        "clue": "Lö faröi, iforege dali isöndra",
         "x": 4,
         "y": 9,
         "direction": "across"
@@ -11640,7 +11640,7 @@
       {
         "word": "GADAO",
         "page_title": "gadao",
-        "clue": "Manu simatua si no motuga sa'ae",
+        "clue": "Silatao",
         "x": 5,
         "y": 3,
         "direction": "across"
@@ -11654,7 +11654,7 @@
       {
         "word": "FATABE",
         "page_title": "fatabe",
-        "clue": "fahalö tanga ba wangowai",
+        "clue": "Fahalö tanga ba wangowai",
         "x": 2,
         "y": 5,
         "direction": "across"
@@ -11686,7 +11686,7 @@
       {
         "word": "VIDEO",
         "page_title": "video",
-        "clue": "Gambara saliŵa-liŵa nihalö faoma kamera, he kamera ba he HP",
+        "clue": "Gambara saliŵa-liŵa nihalö faoma kamera, he koda ba he HP",
         "x": 2,
         "y": 9,
         "direction": "across"
@@ -11724,7 +11724,7 @@
       {
         "word": "DASO",
         "page_title": "daso",
-        "clue": "Nahia sadawa-dawa ba gotalua hili si fasui, heza sito'ölönia itörö ungo nidanö",
+        "clue": "Nahia sadawa-dawa ba gotalua hili si fasui, heza sito'ölönia itörö göi zi ungo nidanö",
         "x": 2,
         "y": 4,
         "direction": "down"
@@ -11740,7 +11740,7 @@
       {
         "word": "TODEGE",
         "page_title": "todege",
-        "clue": "No to'ese ma'ifu moroi ba nahiania si to'ölö lumalö ba zingania",
+        "clue": "To'ese ma'ifu moroi ba nahiania si to'ölö",
         "x": 4,
         "y": 2,
         "direction": "down"
@@ -11748,7 +11748,7 @@
       {
         "word": "TANEÖ",
         "page_title": "tane'ö",
-        "clue": "Mamarou ba wangedogö naha ba wangowuloi hadia ia zo wöi moroi yaŵa",
+        "clue": "Mamarou ba wangedogö naha ba wangowuloi hadia ia zowöi moroi yaŵa",
         "x": 5,
         "y": 1,
         "direction": "across"
@@ -11756,7 +11756,7 @@
       {
         "word": "YESU",
         "page_title": "Yesu",
-        "clue": "Töi samösa niha Yahudi sauri 2000 fakhe silalö moroi khö Yosefo ba Maria; khönia la'o'ö ira niha Keriso me lahalö ia tobali razo ba sangorifi khöra",
+        "clue": "Töi samösa niha Yahudi, khönia la'o'ö ira niha Keriso",
         "x": 8,
         "y": 0,
         "direction": "down"
@@ -11786,7 +11786,7 @@
       {
         "word": "ALISI",
         "page_title": "alisi",
-        "clue": "Ndroto-ndroto mboto si so ba gotalua mbagi faoma mbörö da'io",
+        "clue": "Ndroto-ndroto mboto heza lahare'ö noro",
         "x": 2,
         "y": 5,
         "direction": "down"
@@ -11802,7 +11802,7 @@
       {
         "word": "AISÖ",
         "page_title": "aisö",
-        "clue": "Raso sihulö mbua ndrima, ba tanöbö'önia",
+        "clue": "Raso sihulö mbua ndrima",
         "x": 8,
         "y": 4,
         "direction": "down"
@@ -11810,7 +11810,7 @@
       {
         "word": "FERAÖ",
         "page_title": "fera'ö",
-        "clue": "Mamarou ba wangöhöndrögö hadia ia faoma tanga",
+        "clue": "Mamarou ba wangöhöndrögö hadia ia faoma tanga, ena'ö tobura nösinia",
         "x": 4,
         "y": 7,
         "direction": "across"
@@ -11840,7 +11840,7 @@
       {
         "word": "TARU",
         "page_title": "taru",
-        "clue": "Fakake ni'oguna'ö ba wanögi tanö si tobali nahia ngawua danömö wakhe ba nowi; lafazökhi ia moroi ba geu ni'atarö'ö balö soroma hulö si'o",
+        "clue": "Fakake ni'oguna'ö ba wanögi tanö si tobali nahia ngawua danömö wakhe ba nowi",
         "x": 3,
         "y": 5,
         "direction": "across"
@@ -11856,7 +11856,7 @@
       {
         "word": "FALI",
         "page_title": "fali",
-        "clue": "Töi gaurifö so'afi, samoto moroi ba henu si so ba dögi danö, asese tohare ira la'ondrasi haga",
+        "clue": "Töi gaurifö so'afi, si so ba dögi danö, samoto moroi ba henu",
         "x": 3,
         "y": 7,
         "direction": "across"
@@ -11864,7 +11864,7 @@
       {
         "word": "FESU",
         "page_title": "fesu",
-        "clue": "Sinali ni'oguna'ö ba wamöbö gahe ma bagi gurifö ena'ö böi moloi",
+        "clue": "Sinali ni'oguna'ö ba wamöbö ahe ma bagi gurifö ena'ö böi moloi",
         "x": 6,
         "y": 2,
         "direction": "down"
@@ -11872,7 +11872,7 @@
       {
         "word": "SÖWU",
         "page_title": "söwu",
-        "clue": "Fombalugö gö si so ba dete meza ena'ö böi göna gawu-gawu",
+        "clue": "Fobalugö gö si so ba dete meza ena'ö böi ihawui gawu-gawu",
         "x": 1,
         "y": 3,
         "direction": "across"
@@ -11880,7 +11880,7 @@
       {
         "word": "SIKURI",
         "page_title": "sikuri",
-        "clue": "La'a-la'a moroi ba ohawu-sohawu-hawu, sa'usö, soyo ba saitö",
+        "clue": "La'a-la'a moroi ba ohawu-hawu, a'usö, oyo ba aitö",
         "x": 1,
         "y": 3,
         "direction": "down"
@@ -11888,7 +11888,7 @@
       {
         "word": "BATÖ",
         "page_title": "batö",
-        "clue": "Nahia toröi niha sagötö fa'aurira",
+        "clue": "Nahia toröi niha ma zui salo",
         "x": 2,
         "y": 0,
         "direction": "down"
@@ -11910,7 +11910,7 @@
       {
         "word": "SOKABU",
         "page_title": "sokabu",
-        "clue": "Niha sokhö kabu",
+        "clue": "Sokhö benua",
         "x": 3,
         "y": 4,
         "direction": "down"
@@ -11918,7 +11918,7 @@
       {
         "word": "SILATAO",
         "page_title": "silatao",
-        "clue": "Manu simatua si no motuga sa'ae, sasese göi latötöi gadao",
+        "clue": "Gadao",
         "x": 0,
         "y": 7,
         "direction": "across"
@@ -11926,7 +11926,7 @@
       {
         "word": "MAMÖKÖ",
         "page_title": "mamökö",
-        "clue": "Mamözi bawandruhö faoma bu'u duturu ena'ö labokai niha si so bakha ba nomo",
+        "clue": "Mamözi faoma bu'u duturu",
         "x": 7,
         "y": 0,
         "direction": "down"
@@ -11934,7 +11934,7 @@
       {
         "word": "MANUKHU",
         "page_title": "manukhu",
-        "clue": "Mangehaogö bu faoma sukhu ena'ö lö fawuka",
+        "clue": "Mangehaogö bu ena'ö lö fawuka",
         "x": 0,
         "y": 9,
         "direction": "across"
@@ -11942,7 +11942,7 @@
       {
         "word": "SOWAWALÖ",
         "page_title": "sowawalö",
-        "clue": "Niha samalali gama-gama ni'okhögö niha bö'ö silötolalö'ö ifangawuli ba ginötö si no lahonogöi",
+        "clue": "Samalali gama-gama silötolalö'ö mufangawuli dania",
         "x": 2,
         "y": 1,
         "direction": "across"
@@ -11950,7 +11950,7 @@
       {
         "word": "SALO",
         "page_title": "salo",
-        "clue": "Föfö tanö tou si so ba nomo ma ba domosa tanöbö'ö, nihaogö moroi ba simi, wafa, ba tanöbö'önia",
+        "clue": "Nahia nihundragö niha bakha ba nomo, nihaogö moroi ba wafa, simi, btn.",
         "x": 5,
         "y": 0,
         "direction": "down"
@@ -11964,7 +11964,7 @@
       {
         "word": "BULUGEU",
         "page_title": "bulugeu",
-        "clue": "Fefu mbulu zinanö si tola mu'a ba tobali awö gö simane bulu gowirio, salidi, höwa, ba tanöbö'önia",
+        "clue": "Fefu mbulu zinanö si tola mu'a ba tobali awö gö",
         "x": 1,
         "y": 5,
         "direction": "across"
@@ -11972,7 +11972,7 @@
       {
         "word": "ABUSA",
         "page_title": "abusa",
-        "clue": "No arakha guli börö me no farekha ba geu, ndroi, ba tanöbö'önia",
+        "clue": "Arakha guli börö me no farekha ba geu, ndroi, btn.",
         "x": 1,
         "y": 4,
         "direction": "down"
@@ -11988,7 +11988,7 @@
       {
         "word": "SANEBU",
         "page_title": "sanebu",
-        "clue": "Niha samazaumba aröu hadia ia faoma tanga",
+        "clue": "Samazaumba aröu hadia ia faoma tanga",
         "x": 6,
         "y": 2,
         "direction": "down"
@@ -11996,7 +11996,7 @@
       {
         "word": "FATO",
         "page_title": "fato",
-        "clue": "Fakake ni'oguna'ö ba wolobö ma foleŵa eu sesolo, ba tola göi la'oguna'ö ia ba wanila eu",
+        "clue": "Fakake ni'oguna'ö ba wolobö ma moleŵa eu sesolo",
         "x": 5,
         "y": 3,
         "direction": "across"
@@ -12004,7 +12004,7 @@
       {
         "word": "WAWALÖ",
         "page_title": "wawalö",
-        "clue": "Mowawalö mangai ba mangoguna'ö ba zi lö arara hadia ia simane fakake ba halöŵö ma gama-gama okhöta niha bö'ö, sedöna mufangawuli ba ginötö nihonogöi",
+        "clue": "Fiza",
         "x": 0,
         "y": 8,
         "direction": "across"
@@ -12012,7 +12012,7 @@
       {
         "word": "FAROA",
         "page_title": "faro'a",
-        "clue": "Mamalau zigelo mbawi khö la'imba ena'ö abeto ba mo'ono dania, ma asese lamane ladöni ba la'imba; laŵaö göi faro'a andre ba manu, bebe, ba urifö tanöbö'ö",
+        "clue": "Mamalau zigelo mbawi khö la'imba ena'ö abeto ba mo'ono dania",
         "x": 8,
         "y": 0,
         "direction": "down"
@@ -12034,7 +12034,7 @@
       {
         "word": "SUADÖDÖ",
         "page_title": "sua-dödö",
-        "clue": "Li sihede-hede bakha ba dödö sanegu ba wamalua si lö sökhi ba samarou ba wolau si sökhi",
+        "clue": "Li sihede-hede bakha ba dödö sanegu-negu na edöna mufalua zi lö sökhi",
         "x": 5,
         "y": 3,
         "direction": "down"
@@ -12050,7 +12050,7 @@
       {
         "word": "AMAEDOLA",
         "page_title": "amaedola",
-        "clue": "Lala wehede sangoguna'ö maedo-maedo ma duma-duma; fehede si sökhi fama'oli wangumaö, ningandrotoi famaehagö molo'ö ösi dunöŵa nifomaedo-maedo ma nifoduma-duma; si sökhi fongandrotoi fangumaö ena'ö abölö abakha ba mangarakha, alio fatema, ba adöni dödö zamondrongo",
+        "clue": "Lala wehede sangoguna'ö maedo-maedo ma duma-duma",
         "x": 7,
         "y": 0,
         "direction": "down"
@@ -12058,7 +12058,7 @@
       {
         "word": "FERAÖ",
         "page_title": "fera'ö",
-        "clue": "Mamarou ba wangöhöndrögö hadia ia faoma tanga",
+        "clue": "Mamarou ba wangöhöndrögö hadia ia faoma tanga, irege tobura nösinia",
         "x": 1,
         "y": 5,
         "direction": "down"
@@ -12074,7 +12074,7 @@
       {
         "word": "FUASÖ",
         "page_title": "fuasö",
-        "clue": "Inötö me la'alösi wemanga awö wamadu idanö, nifalua ndra Niha Keriso götö zi 40 ngaluo föna Paska ma zui nifalua ndra niha Islam föna wa'atohare Idul Fitri",
+        "clue": "Nifalua niha na la'alösi wemanga awö wamadu idanö",
         "x": 5,
         "y": 0,
         "direction": "across"
