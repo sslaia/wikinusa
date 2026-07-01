@@ -931,7 +931,10 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
               ),
             ],
           ),
-          child: Row(mainAxisSize: MainAxisSize.min, children: children),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(mainAxisSize: MainAxisSize.min, children: children),
+          ),
         ),
       ),
     );
@@ -982,7 +985,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
         onTap: onPressed,
         borderRadius: BorderRadius.circular(24),
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(8.0),
           child: Icon(icon, color: color, size: 18),
         ),
       ),
@@ -994,7 +997,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
       height: 20,
       width: 1,
       color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
-      margin: const EdgeInsets.symmetric(horizontal: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 6),
     );
   }
 

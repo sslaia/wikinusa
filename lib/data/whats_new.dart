@@ -1,4 +1,12 @@
 const whatsNew = '''
+<h3>New in version 1.5.1</h3>
+<ul>
+<li>Updated crosswords module (correct spellings)</li>
+<li>Resolved keyboard/touch focus issues in editing interface</li>
+<li>Resolved FAB issues</li>
+<li>Minor bug fixes</li>
+</ul>
+
 <h3>New in version 1.5.0</h3>
 <ul>
 <li>New module: crosswords</li>

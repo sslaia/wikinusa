@@ -74,28 +74,93 @@ class _EditPageScreenState extends ConsumerState<EditPageScreen> {
     }
   }
 
-  Future<bool> _showConfirmationDialog() async {
-    final result = await showDialog<bool>(
+  Future<void> _showPublishDialog() async {
+    final authState = ref.read(authProvider);
+
+    if (!authState.isLoggedIn) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('login_required'.tr())));
+      return;
+    }
+
+    FocusManager.instance.primaryFocus?.unfocus();
+
+    await showDialog<void>(
       context: context,
       barrierDismissible: false,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
+        final dialogTheme = Theme.of(dialogContext);
         return AlertDialog(
           title: Text('confirm_edit_title'.tr()),
-          content: Text('confirm_edit_message'.tr()),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('confirm_edit_message'.tr()),
+                const SizedBox(height: 16),
+                Container(
+                  decoration: BoxDecoration(
+                    color: dialogTheme.colorScheme.surfaceContainerHighest
+                        .withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: TextField(
+                    controller: _summaryController,
+                    decoration: InputDecoration(
+                      labelText: 'edit_summary'.tr(),
+                      labelStyle: TextStyle(
+                        color: dialogTheme.colorScheme.onSurfaceVariant,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: dialogTheme.colorScheme.outline.withValues(
+                            alpha: 0.5,
+                          ),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: dialogTheme.colorScheme.primary,
+                          width: 2,
+                        ),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 16,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           actions: <Widget>[
             TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
+              onPressed: () => Navigator.of(dialogContext).pop(),
               child: Text('go_back'.tr()),
             ),
             FilledButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text('submit'.tr()),
+              style: FilledButton.styleFrom(
+                backgroundColor: const Color(0xFF3366CC),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                _submitEdit();
+              },
+              child: Text('submit'.tr().toUpperCase()),
             ),
           ],
         );
       },
     );
-    return result ?? false;
   }
 
   Future<void> _submitEdit() async {
@@ -107,9 +172,6 @@ class _EditPageScreenState extends ConsumerState<EditPageScreen> {
       ).showSnackBar(SnackBar(content: Text('login_required'.tr())));
       return;
     }
-
-    final confirmed = await _showConfirmationDialog();
-    if (!confirmed) return;
 
     setState(() {
       _isSubmitting = true;
@@ -179,56 +241,75 @@ class _EditPageScreenState extends ConsumerState<EditPageScreen> {
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            floating: true,
-            snap: true,
-            title: Text(
-              widget.title,
-              style: TextStyle(color: theme.colorScheme.onSurface),
-              overflow: TextOverflow.fade,
-            ),
-            backgroundColor: theme.colorScheme.surface,
-            elevation: 0,
-            iconTheme: IconThemeData(color: theme.colorScheme.onSurface),
-          ),
-          if (_isLoadingText)
-            const SliverFillRemaining(
-              child: Center(child: CircularProgressIndicator()),
-            )
-          else if (_errorMessage != null)
-            SliverFillRemaining(
+      appBar: AppBar(
+        title: Text(
+          widget.title,
+          style: TextStyle(color: theme.colorScheme.onSurface),
+          overflow: TextOverflow.fade,
+        ),
+        backgroundColor: theme.colorScheme.surface,
+        elevation: 0,
+        iconTheme: IconThemeData(color: theme.colorScheme.onSurface),
+        actions: [
+          if (_isSubmitting)
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        _errorMessage!,
-                        style: TextStyle(color: theme.colorScheme.error),
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton.icon(
-                        onPressed: _loadWikitext,
-                        icon: const Icon(Icons.refresh),
-                        label: Text('retry'.tr()),
-                      ),
-                    ],
-                  ),
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
                 ),
               ),
             )
-          else
-            SliverSafeArea(
-              top: false, // SliverAppBar handles top safe area
-              sliver: SliverPadding(
-                padding: const EdgeInsets.all(16.0),
-                sliver: SliverList(
-                  delegate: SliverChildListDelegate([
-                    // Wikitext Content Field
-                    Container(
+          else if (!_isLoadingText && _errorMessage == null)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+              child: FilledButton(
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xFF3366CC),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                ),
+                onPressed: _showPublishDialog,
+                child: Text(
+                  'submit'.tr().toUpperCase(),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+        ],
+      ),
+      body: _isLoadingText
+          ? const Center(child: CircularProgressIndicator())
+          : _errorMessage != null
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          _errorMessage!,
+                          style: TextStyle(color: theme.colorScheme.error),
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton.icon(
+                          onPressed: _loadWikitext,
+                          icon: const Icon(Icons.refresh),
+                          label: Text('retry'.tr()),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Container(
                       decoration: BoxDecoration(
                         color: theme.colorScheme.surfaceContainerHighest
                             .withValues(alpha: 0.3),
@@ -239,104 +320,29 @@ class _EditPageScreenState extends ConsumerState<EditPageScreen> {
                           ),
                         ),
                       ),
-                      child: TextField(
-                        controller: _textController,
-                        maxLines: null,
-                        minLines: 15,
-                        scrollPhysics: const NeverScrollableScrollPhysics(),
-                        textAlignVertical: TextAlignVertical.top,
-                        keyboardType: TextInputType.multiline,
-                        style: const TextStyle(
-                          fontFamily: 'monospace',
-                          fontSize: 14,
-                          height: 1.5,
-                        ),
-                        decoration: InputDecoration(
-                          hintText: 'edit_content_hint'.tr(),
-                          contentPadding: const EdgeInsets.all(16),
-                          border: InputBorder.none,
-                        ),
-                        onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    // Summary Field
-                    Container(
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.surfaceContainerHighest
-                            .withValues(alpha: 0.3),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: TextField(
-                        controller: _summaryController,
-                        decoration: InputDecoration(
-                          labelText: 'edit_summary'.tr(),
-                          labelStyle: TextStyle(
-                            color: theme.colorScheme.onSurfaceVariant,
+                      child: Scrollbar(
+                        child: TextField(
+                          controller: _textController,
+                          maxLines: null,
+                          expands: true,
+                          textAlignVertical: TextAlignVertical.top,
+                          keyboardType: TextInputType.multiline,
+                          style: const TextStyle(
+                            fontFamily: 'monospace',
+                            fontSize: 14,
+                            height: 1.5,
                           ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: theme.colorScheme.outline.withValues(
-                                alpha: 0.5,
-                              ),
-                            ),
+                          decoration: InputDecoration(
+                            hintText: 'edit_content_hint'.tr(),
+                            contentPadding: const EdgeInsets.all(16),
+                            border: InputBorder.none,
                           ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: theme.colorScheme.primary,
-                              width: 2,
-                            ),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 16,
-                          ),
-                        ),
-                        onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    // Submit Button
-                    Center(
-                      child: SizedBox(
-                        width: double.infinity,
-                        height: 54,
-                        child: FilledButton.icon(
-                          onPressed: _isSubmitting ? null : _submitEdit,
-                          icon: _isSubmitting
-                              ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : const Icon(Icons.send_rounded),
-                          label: Text(
-                            _isSubmitting ? 'submitting'.tr() : 'submit'.tr(),
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          style: FilledButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
+                          onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 8),
-                  ]),
+                  ),
                 ),
-              ),
-            ),
-        ],
-      ),
     );
   }
 }

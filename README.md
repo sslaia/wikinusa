@@ -6,6 +6,11 @@ An Android app for Nias, Indonesian and English Wikipedia as well as for Nias Wi
 
 ## Version's history
 
+### Version 1.5.1:
+- Updated crosswords module (correct spellings)
+- Resolved keyboard/touch focus issues in editing interface
+- Resolved FAB issues
+
 ### Version 1.5.0:
 - New module: crosswords
 - New feature: edit pages using native app editor
