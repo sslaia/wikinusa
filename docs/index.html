@@ -175,9 +175,102 @@
             color: var(--wikipedia-indigo);
         }
 
+        .section-title {
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 2.2rem;
+            margin-top: 60px;
+            margin-bottom: 30px;
+            text-align: center;
+            background: linear-gradient(to right, var(--wikipedia-indigo), var(--wiktionary-orange), var(--wikibooks-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .guides-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            width: 100%;
+            max-width: 1000px;
+            padding: 0 20px 40px 20px;
+            box-sizing: border-box;
+        }
+
+        .guide-card {
+            background: white;
+            padding: 35px 30px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            text-align: left;
+            border-top: 4px solid transparent;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .guide-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.06);
+        }
+
+        .guide-card.wikinusa { border-color: var(--wikipedia-indigo); }
+        .guide-card.keyboard { border-color: var(--wiktionary-orange); }
+
+        .guide-card h3 {
+            margin: 0 0 15px 0;
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 1.4rem;
+            color: var(--text-main);
+        }
+
+        .guide-card p {
+            font-size: 1rem;
+            color: #666;
+            margin-top: 0;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+
+        .btn-read-guide {
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            width: fit-content;
+        }
+
+        .wikinusa .btn-read-guide {
+            background-color: rgba(18, 18, 152, 0.08);
+            color: var(--wikipedia-indigo);
+        }
+
+        .wikinusa .btn-read-guide:hover {
+            background-color: var(--wikipedia-indigo);
+            color: white;
+        }
+
+        .keyboard .btn-read-guide {
+            background-color: rgba(255, 87, 34, 0.08);
+            color: var(--wiktionary-orange);
+        }
+
+        .keyboard .btn-read-guide:hover {
+            background-color: var(--wiktionary-orange);
+            color: white;
+        }
+
         @media (max-width: 600px) {
             h1 { font-size: 2.8rem; }
             .app-logo { width: 110px; height: 110px; }
+            .section-title { font-size: 1.8rem; margin-top: 40px; }
+            .guides-grid { padding-bottom: 20px; }
         }
     </style>
 </head>
@@ -216,6 +309,20 @@
     </div>
 </div>
 
+<h2 class="section-title">Panduan Penggunaan</h2>
+<div class="guides-grid">
+    <div class="guide-card wikinusa">
+        <h3>Panduan WikiNusa</h3>
+        <p>Pelajari cara menginstal, menjalankan, masuk log ke Wikimedia, serta cara mencari dan menyunting tulisan di Wikipedia, Wikikamus, dan Wikibuku Nias melalui aplikasi WikiNusa.</p>
+        <a href="guide-wikinusa-id.html" class="btn-read-guide">Baca Panduan &rarr;</a>
+    </div>
+    <div class="guide-card keyboard">
+        <h3>Panduan Nusa Keyboard</h3>
+        <p>Pelajari cara memasang, mengatur, dan menggunakan Nusa Keyboard di smartphone Anda untuk mengetik karakter khusus bahasa Nias seperti <strong>ö</strong> dan <strong>ŵ</strong> serta menggunakan tombol pintas kode wiki.</p>
+        <a href="guide-keyboard-id.html" class="btn-read-guide">Baca Panduan &rarr;</a>
+    </div>
+</div>
+
 <div class="app-links">
     <a href="https://sslaia.github.io/" class="app-button btn-play" target="_blank" rel="noopener noreferrer">
         APLIKASI WIKI LAINNYA
@@ -225,6 +332,8 @@
 
 <footer>
     <div class="footer-links">
+        <a href="guide-wikinusa-id.html">Panduan WikiNusa</a>
+        <a href="guide-keyboard-id.html">Panduan Nusa Keyboard</a>
         <a href="privacy-policy.html">Privacy Policy</a>
         <a href="disclaimer.html">Disclaimer</a>
     </div>
