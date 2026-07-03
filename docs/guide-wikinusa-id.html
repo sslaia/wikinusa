@@ -179,6 +179,7 @@
             box-shadow: var(--card-shadow);
             padding: 40px;
             border: 1px solid rgba(0,0,0,0.02);
+            min-width: 0;
         }
 
         @media (max-width: 600px) {
@@ -421,7 +422,7 @@
         /* Onboarding grid for horizontal flow */
         .onboarding-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
             gap: 20px;
             margin: 20px 0;
         }
@@ -451,7 +452,7 @@
         /* Flex wrap layout for interface elements */
         .ui-gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
             gap: 20px;
             margin: 20px 0;
         }
