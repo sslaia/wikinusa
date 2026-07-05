@@ -18,6 +18,10 @@ class HomePageBuilder {
     final bodyStr = utf8.decode(responseBodyBytes);
     final document = html_parser.parse(bodyStr);
 
+    if (languageCode == 'jv' && projectStr == 'wikipedia') {
+      return _buildJavaneseWikipedia(document);
+    }
+
     final removeSelectors = WikiConfig.getCombinedRulesList(
       languageCode,
       projectStr,
@@ -260,5 +264,132 @@ class HomePageBuilder {
       textHtml: textHtml,
       data: sectionData,
     );
+  }
+
+  static Future<List<HomePageSection>> _buildJavaneseWikipedia(dom.Document document) async {
+    final focusContainer = document.querySelector('div.mp-main-content__focus');
+    final otherContainer = document.querySelector('div.mp-main-content__other');
+
+    final cards = <dom.Element>[];
+    if (focusContainer != null) {
+      cards.addAll(focusContainer.querySelectorAll('div.card'));
+    }
+    if (otherContainer != null) {
+      cards.addAll(otherContainer.querySelectorAll('div.card'));
+    }
+
+    final List<HomePageSection> sections = [];
+
+    for (var card in cards) {
+      final headerSelectors = [
+        'h2',
+        'h3',
+        '.mw-headline',
+        '.card-header',
+        '.card_title_color',
+        '.header_brown',
+        '.header_green'
+      ];
+      dom.Element? headerEl;
+      for (var sel in headerSelectors) {
+        headerEl = card.querySelector(sel);
+        if (headerEl != null) break;
+      }
+
+      final title = headerEl?.text.trim() ?? '';
+      if (title.isEmpty) continue;
+
+      final allImages = card.querySelectorAll('img');
+      dom.Element? validImg;
+      for (var img in allImages) {
+        final widthStr = img.attributes['width'] ?? '';
+        final width = int.tryParse(widthStr) ?? 100;
+        if (width >= 100) {
+          final src = img.attributes['src'] ?? '';
+          if (!CoreWikiUtils.isIcon(src)) {
+            validImg = img;
+            break;
+          }
+        }
+      }
+
+      String? imageHtml;
+      String? imageUrl;
+      if (validImg != null) {
+        final imgClone = validImg.clone(true);
+        String? src = imgClone.attributes['src'];
+        if (src != null) {
+          imageUrl = await CoreWikiUtils.optimizeImageUrl(
+            src,
+            htmlString: validImg.outerHtml,
+            width: 500,
+          );
+          imgClone.attributes['src'] = imageUrl;
+        }
+        imgClone.attributes.remove('srcset');
+        imgClone.attributes.remove('width');
+        imgClone.attributes.remove('height');
+        imgClone.attributes['style'] =
+            'width: 100%; height: auto; display: block; border-radius: 12px;';
+        imageHtml = imgClone.outerHtml;
+      }
+
+      final cardClone = card.clone(true);
+      for (var sel in headerSelectors) {
+        cardClone.querySelectorAll(sel).forEach((el) => el.remove());
+      }
+      cardClone.querySelectorAll('.header_brown_background').forEach((el) => el.remove());
+      cardClone.querySelectorAll('.header_green_background').forEach((el) => el.remove());
+
+      if (validImg != null) {
+        final src = validImg.attributes['src'];
+        if (src != null) {
+          cardClone.querySelectorAll('img').forEach((img) {
+            if (img.attributes['src'] == src) {
+              dom.Element parent = img;
+              while (parent.parent != null && parent.parent != cardClone) {
+                final parentTag = parent.parent!.localName;
+                if (parentTag == 'span' || parentTag == 'figure' || parentTag == 'a') {
+                  parent = parent.parent!;
+                } else {
+                  break;
+                }
+              }
+              parent.remove();
+            }
+          });
+        }
+      }
+
+      cardClone.attributes.remove('style');
+      cardClone.querySelectorAll('*').forEach((child) => child.attributes.remove('style'));
+
+      final textHtml = cardClone.innerHtml;
+
+      String? titleKey;
+      final lowerTitle = title.toLowerCase();
+      if (lowerTitle.contains('artikel pethingan') || lowerTitle.contains('artikel pilihan')) {
+        titleKey = 'featuredArticle';
+      } else if (lowerTitle.contains('gambar pethingan') || lowerTitle.contains('gambar pilihan')) {
+        titleKey = 'featuredImage';
+      } else if (lowerTitle.contains('dina iki')) {
+        titleKey = 'onThisDay';
+      }
+
+      if (titleKey != null) {
+        sections.add(
+          HomePageSection(
+            titleKey: titleKey,
+            textHtml: textHtml,
+            data: {
+              '${titleKey}ImageHtml': imageHtml,
+              '${titleKey}ImageUrl': imageUrl,
+            },
+          ),
+        );
+      }
+    }
+
+    return sections;
   }
 }

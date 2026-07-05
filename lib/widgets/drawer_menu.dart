@@ -498,6 +498,7 @@ class DrawerContent extends ConsumerWidget {
       {'code': 'en', 'name': 'english'},
       {'code': 'id', 'name': 'indonesian'},
       {'code': 'nia', 'name': 'nias'},
+      {'code': 'jv', 'name': 'javanese'},
     ];
 
     return RadioGroup<String>(

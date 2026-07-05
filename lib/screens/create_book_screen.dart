@@ -29,6 +29,23 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
     _titleController = TextEditingController(text: widget.title);
   }
 
+  String _getOptionLabel(String option) {
+    switch (option) {
+      case "Nidunö-dunö":
+        return "book_type_story".tr();
+      case "Lagu/Sinunö":
+        return "book_type_song".tr();
+      case "Maena":
+        return "book_type_dance".tr();
+      case "Cerpen/Novela":
+        return "book_type_short_story".tr();
+      case "Gofu sinura":
+        return "book_type_any".tr();
+      default:
+        return option;
+    }
+  }
+
   @override
   void dispose() {
     _titleController.dispose();
@@ -67,7 +84,7 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
       templateName = 'Template:Famörögö wanura';
     }
 
-    final langCode = context.locale.languageCode;
+    final langCode = ref.read(languageProvider);
     final currentProject = ref.read(appStateProvider);
 
     Future<void> launchWebEditor() async {
@@ -348,7 +365,7 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Halö ngawalö zura si faudu'.toUpperCase(),
+          'select_page_type'.tr().toUpperCase(),
           style: theme.textTheme.labelSmall?.copyWith(
             fontWeight: FontWeight.bold,
             letterSpacing: 1.5,
@@ -388,7 +405,7 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
                     ]
                     .map(
                       (option) =>
-                          DropdownMenuItem(value: option, child: Text(option)),
+                          DropdownMenuItem(value: option, child: Text(_getOptionLabel(option))),
                     )
                     .toList(),
             onChanged: (value) {

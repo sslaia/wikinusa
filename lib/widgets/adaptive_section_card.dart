@@ -1,13 +1,15 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wikimedia_core/wikimedia_core.dart';
 import '../screens/image_screen.dart';
 import '../utils/wiki_utils.dart';
 import '../utils/responsive_utils.dart';
+import '../providers/app_state.dart';
 
-class AdaptiveSectionCard extends StatelessWidget {
+class AdaptiveSectionCard extends ConsumerWidget {
   final HomePageSection section;
   final ProjectType project;
 
@@ -18,9 +20,10 @@ class AdaptiveSectionCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final isCompactPortrait = ResponsiveUtils.isCompact(context) && ResponsiveUtils.isPortrait(context);
+    final langCode = ref.watch(languageProvider);
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,15 +50,14 @@ class AdaptiveSectionCard extends StatelessWidget {
           ),
           margin: const EdgeInsets.only(bottom: 24),
           child: isCompactPortrait 
-              ? _buildVerticalLayout(context) 
-              : _buildHorizontalLayout(context),
+              ? _buildVerticalLayout(context, langCode) 
+              : _buildHorizontalLayout(context, langCode),
         ),
       ],
     );
   }
 
-  Widget _buildVerticalLayout(BuildContext context) {
-    final langCode = context.locale.languageCode;
+  Widget _buildVerticalLayout(BuildContext context, String langCode) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -81,14 +83,13 @@ class AdaptiveSectionCard extends StatelessWidget {
           ),
         Padding(
           padding: const EdgeInsets.all(16.0),
-          child: _buildBodyText(context),
+          child: _buildBodyText(context, langCode),
         ),
       ],
     );
   }
 
-  Widget _buildHorizontalLayout(BuildContext context) {
-    final langCode = context.locale.languageCode;
+  Widget _buildHorizontalLayout(BuildContext context, String langCode) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -120,15 +121,14 @@ class AdaptiveSectionCard extends StatelessWidget {
           flex: 3,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: _buildBodyText(context),
+            child: _buildBodyText(context, langCode),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildBodyText(BuildContext context) {
-    final langCode = context.locale.languageCode;
+  Widget _buildBodyText(BuildContext context, String langCode) {
     return HtmlWidget(
       section.textHtml,
       onTapUrl: (url) => WikiUtils.handleTapUrl(context, url, null, project, langCode),

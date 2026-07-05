@@ -56,7 +56,7 @@ class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
     }
 
     final capitalizedTitle = _capitalizeTitle(rawTitle);
-    final langCode = context.locale.languageCode;
+    final langCode = ref.read(languageProvider);
     final currentProject = ref.read(appStateProvider);
     final projectStr = currentProject.name.toLowerCase();
 

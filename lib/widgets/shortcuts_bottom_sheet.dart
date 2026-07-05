@@ -20,7 +20,7 @@ void showShortcutsBottomSheet(BuildContext context, WidgetRef ref) {
     builder: (builderContext) {
       return Consumer(
         builder: (consumerContext, ref, child) {
-          final langCode = context.locale.languageCode;
+          final langCode = ref.watch(languageProvider);
           final shortcutsAsync = ref.watch(shortcutsProvider);
 
           return Container(

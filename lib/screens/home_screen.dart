@@ -32,6 +32,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final currentProject = ref.watch(appStateProvider);
     final wikiContent = ref.watch(wikiApiProvider(null));
+    final currentLanguage = ref.watch(languageProvider);
     final theme = Theme.of(context);
 
     return LayoutBuilder(
@@ -98,7 +99,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     SliverToBoxAdapter(
                       child: WikiPortalsWidget(
                         project: currentProject,
-                        languageCode: context.locale.languageCode,
+                        languageCode: currentLanguage,
                       ),
                     ),
                     wikiContent.when(
@@ -191,6 +192,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     ProjectType currentProject,
     String? featuredImageUrl,
   ) {
+    final currentLanguage = ref.watch(languageProvider);
     return Stack(
       children: [
         Container(
@@ -278,7 +280,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                   ),
                   Text(
-                    context.locale.languageCode.toLowerCase().tr(),
+                    currentLanguage.toLowerCase().tr(),
                     style: GoogleFonts.cinzelDecorative(
                       textStyle: Theme.of(context).textTheme.titleLarge
                           ?.copyWith(

@@ -30,6 +30,33 @@ class _CreateEntryScreenState extends ConsumerState<CreateEntryScreen> {
     _titleController = TextEditingController(text: widget.title);
   }
 
+  String _getOptionLabel(String option) {
+    switch (option.toLowerCase()) {
+      case 'verba':
+        return 'pos_verba'.tr();
+      case 'nomina':
+        return 'pos_nomina'.tr();
+      case 'adjektiva':
+        return 'pos_adjektiva'.tr();
+      case 'adverbia':
+        return 'pos_adverbia'.tr();
+      case 'numeralia':
+        return 'pos_numeralia'.tr();
+      case 'partikel':
+        return 'pos_partikel'.tr();
+      case 'pronomina':
+        return 'pos_pronomina'.tr();
+      case 'preposisi':
+        return 'pos_preposisi'.tr();
+      case 'konjungsi':
+        return 'pos_konjungsi'.tr();
+      case 'intejeksi':
+        return 'pos_interjeksi'.tr();
+      default:
+        return option;
+    }
+  }
+
   @override
   void dispose() {
     _titleController.dispose();
@@ -69,7 +96,7 @@ class _CreateEntryScreenState extends ConsumerState<CreateEntryScreen> {
       templateName += ' (id)';
     }
 
-    final langCode = context.locale.languageCode;
+    final langCode = ref.read(languageProvider);
     final currentProject = ref.read(appStateProvider);
 
     Future<void> launchWebEditor() async {
@@ -283,7 +310,7 @@ class _CreateEntryScreenState extends ConsumerState<CreateEntryScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Ngawua wehede'.toUpperCase(),
+          'word'.tr().toUpperCase(),
           style: theme.textTheme.labelSmall?.copyWith(
             fontWeight: FontWeight.bold,
             letterSpacing: 1.5,
@@ -390,7 +417,7 @@ class _CreateEntryScreenState extends ConsumerState<CreateEntryScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Halö gangolifa si faudu'.toUpperCase(),
+          'select_part_of_speech'.tr().toUpperCase(),
           style: theme.textTheme.labelSmall?.copyWith(
             fontWeight: FontWeight.bold,
             letterSpacing: 1.5,
@@ -435,7 +462,7 @@ class _CreateEntryScreenState extends ConsumerState<CreateEntryScreen> {
                     ]
                     .map(
                       (option) =>
-                          DropdownMenuItem(value: option, child: Text(option)),
+                          DropdownMenuItem(value: option, child: Text(_getOptionLabel(option))),
                     )
                     .toList(),
             onChanged: (value) {

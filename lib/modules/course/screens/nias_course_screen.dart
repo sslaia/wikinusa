@@ -95,7 +95,7 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
                           flexibleSpace: FlexibleSpaceBar(
                             centerTitle: true,
                             title: Text(
-                              "Hadia Ö'ila?",
+                              'nias_course_title'.tr(),
                               style: GoogleFonts.cinzelDecorative(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
@@ -133,7 +133,7 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
                                         horizontal: 20,
                                       ),
                                       child: Text(
-                                        "Kese-keseda ba mbaŵa andre",
+                                        'nias_course_subtitle'.tr(),
                                         textAlign: TextAlign.center,
                                         style: GoogleFonts.merriweather(
                                           fontSize: 14,

@@ -72,6 +72,13 @@ class WikiApiService {
 
     String domain = WikiConfig.getDomain(languageCode, project.name.toLowerCase());
     String finalTitle = pageTitle;
+    
+    final rules = WikiConfig.getRules(languageCode, project.name.toLowerCase());
+    final mainPageTitle = rules?['mainPageTitle'] as String? ?? 'Main Page';
+    if (pageTitle == 'Main Page') {
+      finalTitle = mainPageTitle;
+    }
+
     bool useActionApiForHome = false;
     String apiPrefix = WikiConfig.getApiPrefix(languageCode, project.name.toLowerCase());
 

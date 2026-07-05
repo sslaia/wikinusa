@@ -205,10 +205,10 @@ class _GalleryCarouselScreenState extends ConsumerState<GalleryCarouselScreen> {
                             }).toList(),
                           )
                         else
-                          const Center(
+                          Center(
                             child: Text(
-                              'No images in this category.',
-                              style: TextStyle(color: Colors.white),
+                              'gallery_no_images'.tr(),
+                              style: const TextStyle(color: Colors.white),
                             ),
                           ),
 
@@ -288,7 +288,7 @@ class _GalleryCarouselScreenState extends ConsumerState<GalleryCarouselScreen> {
                   ),
                   error: (err, stack) => Center(
                     child: Text(
-                      'Error: $err',
+                      '${'error'.tr()}: $err',
                       style: const TextStyle(
                         color: GalleryCarouselScreen.niasRed,
                       ),

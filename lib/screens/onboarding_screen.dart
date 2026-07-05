@@ -358,10 +358,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   Future<void> _complete(WidgetRef ref, BuildContext context) async {
-    // Synchronize languageProvider with the current UI locale (context.locale)
-    // This ensures that the app's internal state matches what the user sees.
-    final currentLang = context.locale.languageCode;
-    ref.read(languageProvider.notifier).setLanguage(currentLang);
+    final currentLang = ref.read(languageProvider);
 
     // Ensure project is always set to Wikipedia on completion
     ref.read(appStateProvider.notifier).setProject(ProjectType.wikipedia, currentLang);
@@ -374,10 +371,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   Widget _buildLanguageSelector(BuildContext context, ThemeData theme, {bool isFinalPage = false}) {
     final isCompact = ResponsiveUtils.isCompact(context);
-    return PopupMenuButton<Locale>(
-      onSelected: (Locale locale) async {
-        await context.setLocale(locale);
-        ref.read(languageProvider.notifier).setLanguage(locale.languageCode);
+    final currentLang = ref.watch(languageProvider);
+    return PopupMenuButton<String>(
+      onSelected: (String languageCode) async {
+        await context.setLocale(Locale(languageCode));
+        ref.read(languageProvider.notifier).setLanguage(languageCode);
       },
       icon: Container(
         padding: EdgeInsets.symmetric(
@@ -396,7 +394,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             SizedBox(width: isCompact ? 8 : 12),
             Flexible(
               child: Text(
-                _getLanguageName(context.locale.languageCode),
+                _getLanguageName(currentLang),
                 style: theme.textTheme.labelLarge?.copyWith(
                   color: isFinalPage ? theme.colorScheme.primary : null,
                   fontSize: isCompact ? 12 : 14,
@@ -411,9 +409,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         ),
       ),
       itemBuilder: (context) => [
-        PopupMenuItem(value: const Locale('id'), child: Text('indonesian'.tr())),
-        PopupMenuItem(value: const Locale('en'), child: Text('english'.tr())),
-        PopupMenuItem(value: const Locale('nia'), child: Text('nias'.tr())),
+        PopupMenuItem(value: 'id', child: Text('indonesian'.tr())),
+        PopupMenuItem(value: 'en', child: Text('english'.tr())),
+        PopupMenuItem(value: 'nia', child: Text('nias'.tr())),
+        PopupMenuItem(value: 'jv', child: Text('javanese'.tr())),
       ],
     );
   }
@@ -423,6 +422,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       case 'id': return 'indonesian'.tr();
       case 'en': return 'english'.tr();
       case 'nia': return 'nias'.tr();
+      case 'jv': return 'javanese'.tr();
       default: return code.toUpperCase();
     }
   }

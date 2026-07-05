@@ -13,7 +13,7 @@ class RandomArticleNotifier extends StateNotifier<bool> {
     state = true;
     try {
       final currentProject = ref.read(appStateProvider);
-      final langCode = context.locale.languageCode;
+      final langCode = ref.read(languageProvider);
       final projectStr = currentProject.name.toLowerCase();
       
       final randomTitle = await WikiApiService.fetchRandomArticleTitle(langCode, projectStr);

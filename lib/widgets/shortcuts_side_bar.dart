@@ -14,7 +14,7 @@ class ShortcutsSidebar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final currentProject = ref.watch(appStateProvider);
-    final langCode = context.locale.languageCode;
+    final langCode = ref.watch(languageProvider);
     final shortcutsAsync = ref.watch(shortcutsProvider);
 
     return Container(

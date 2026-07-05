@@ -149,7 +149,7 @@ class BookmarksScreen extends ConsumerWidget {
           color: Colors.transparent,
           child: InkWell(
             borderRadius: BorderRadius.circular(20),
-            onTap: () => _handleBookmarkTap(context, bookmark, currentProject),
+            onTap: () => _handleBookmarkTap(context, ref, bookmark, currentProject),
             child: Padding(
               padding: const EdgeInsets.all(20.0),
               child: Column(
@@ -383,8 +383,8 @@ class BookmarksScreen extends ConsumerWidget {
     }
   }
 
-  void _handleBookmarkTap(BuildContext context, BookmarkedArticle bookmark, ProjectType currentProject) async {
-    final currentLangCode = context.locale.languageCode;
+  void _handleBookmarkTap(BuildContext context, WidgetRef ref, BookmarkedArticle bookmark, ProjectType currentProject) async {
+    final currentLangCode = ref.read(languageProvider);
     
     if (currentLangCode == bookmark.langCode && bookmark.projectName == currentProject.name) {
       Navigator.push(

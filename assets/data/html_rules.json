@@ -293,6 +293,24 @@
         "featuredStory": "mp-featured-article-body",
         "featuredImage": "mp-featured-photo-body",
         "doYouKnow": "mp-dyk-body"
+    }
+  },
+  "jv": {
+    "wikipedia": {
+      "mainPageTitle": "Wikipédia:Pendhapa",
+      "remove": [
+        ".infobox",
+        ".side-box-flex",
+        ".toc",
+        "toc"
+      ],
+      "hide": [
+        ".nomobile"
+      ],
+      "homePageSections": {
+        "featuredArticle": {},
+        "featuredImage": {},
+        "onThisDay": {}
       }
     }
   }
