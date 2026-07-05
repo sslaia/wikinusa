@@ -411,18 +411,18 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         ),
       ),
       itemBuilder: (context) => [
-        const PopupMenuItem(value: Locale('id'), child: Text('Bahasa Indonesia')),
-        const PopupMenuItem(value: Locale('en'), child: Text('English')),
-        const PopupMenuItem(value: Locale('nia'), child: Text('Li Niha')),
+        PopupMenuItem(value: const Locale('id'), child: Text('indonesian'.tr())),
+        PopupMenuItem(value: const Locale('en'), child: Text('english'.tr())),
+        PopupMenuItem(value: const Locale('nia'), child: Text('nias'.tr())),
       ],
     );
   }
 
   String _getLanguageName(String code) {
     switch (code) {
-      case 'id': return 'Bahasa Indonesia';
-      case 'en': return 'English';
-      case 'nia': return 'Li Niha';
+      case 'id': return 'indonesian'.tr();
+      case 'en': return 'english'.tr();
+      case 'nia': return 'nias'.tr();
       default: return code.toUpperCase();
     }
   }

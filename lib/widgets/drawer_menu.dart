@@ -7,9 +7,6 @@ import 'package:wikinusa/modules/crosswords/screens/crosswords_screen.dart';
 import '../screens/create_book_screen.dart';
 import '../screens/create_entry_screen.dart';
 import '../screens/create_page_screen.dart';
-import '../data/about_app.dart';
-import '../data/about_community.dart';
-import '../data/whats_new.dart';
 import 'package:wikimedia_core/wikimedia_core.dart';
 import '../providers/app_state.dart';
 import '../providers/font_size_provider.dart';
@@ -210,20 +207,20 @@ class DrawerContent extends ConsumerWidget {
               icon: Icons.groups_2_rounded,
               title: 'about_community'.tr(),
               onTap: () =>
-                  _navigateToAbout(context, 'about_community', aboutCommunity),
+                  _navigateToAbout(context, 'about_community', 'about_community_content'.tr()),
             ),
             _buildDrawerItem(
               theme,
               icon: Icons.newspaper_rounded,
               title: 'about_whats_new'.tr(),
               onTap: () =>
-                  _navigateToAbout(context, 'about_whats_new', whatsNew),
+                  _navigateToAbout(context, 'about_whats_new', 'whats_new_content'.tr()),
             ),
             _buildDrawerItem(
               theme,
               icon: Icons.info_rounded,
               title: 'about_app'.tr(),
-              onTap: () => _navigateToAbout(context, 'about_app', aboutApp),
+              onTap: () => _navigateToAbout(context, 'about_app', 'about_app_content'.tr()),
             ),
           ],
         ),

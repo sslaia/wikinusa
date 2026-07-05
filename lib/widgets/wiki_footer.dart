@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -57,12 +58,12 @@ class WikiFooter extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _FooterLink(
-                label: 'Disclaimer',
+                label: 'disclaimer_label'.tr(),
                 url: disclaimerUrl,
               ),
               const SizedBox(width: 16),
               _FooterLink(
-                label: 'Privacy Policy',
+                label: 'privacy_policy'.tr(),
                 url: privacyPolicyUrl,
               ),
             ],
