@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../services/commons_service.dart';
 
@@ -123,9 +124,9 @@ class _ImageScreenState extends State<ImageScreen> {
                       style: const TextStyle(color: Colors.white, fontSize: 10),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      'Sourced from Wikimedia Commons. Use under respective Creative Commons or Public Domain licenses.',
-                      style: TextStyle(color: Colors.white70, fontSize: 10),
+                    Text(
+                      'image_source_commons'.tr(),
+                      style: const TextStyle(color: Colors.white70, fontSize: 10),
                     ),
                   ],
                 ],

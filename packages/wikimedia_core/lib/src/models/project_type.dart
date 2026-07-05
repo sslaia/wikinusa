@@ -52,6 +52,9 @@ extension ProjectTypeExtension on ProjectType {
   }
 
   bool isSupported(String langCode) {
+    if (langCode == 'jv') {
+      return this == ProjectType.wikipedia;
+    }
     if (this == ProjectType.wikibooks && (langCode == 'en' || langCode == 'id')) {
       return false;
     }

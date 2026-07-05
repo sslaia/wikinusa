@@ -166,7 +166,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
   Widget build(BuildContext context) {
     final currentProject = ref.watch(appStateProvider);
     final wikiContent = ref.watch(wikiApiProvider(widget.title));
-    final langCode = context.locale.languageCode;
+    final langCode = ref.watch(languageProvider);
     final theme = Theme.of(context);
 
     /// Fallback fonts for Javanese and other scripts

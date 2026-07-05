@@ -73,7 +73,7 @@ class WikiPortalsWidget extends ConsumerWidget {
     final label = (portal['label'] as String).tr();
 
     final currentProject = ref.watch(appStateProvider);
-    final langCode = context.locale.languageCode;
+    final langCode = languageCode;
 
     return GestureDetector(
       onTap: () => WikiUtils.handleTapUrl(context, './$title', null, currentProject, langCode),

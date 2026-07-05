@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'localizations/jv_material_localizations.dart';
 import 'localizations/nia_material_localizations.dart';
 import 'providers/shared_prefs_provider.dart';
 import 'providers/theme_provider.dart';
@@ -34,12 +35,18 @@ void main() async {
 
   // Initialize wikimedia_core configuration
   await WikiConfig.init(appName: 'wikinusa');
+  await WikiApiService.clearCache(ProjectType.wikipedia, 'jv', null);
 
   final prefs = await SharedPreferences.getInstance();
 
   runApp(
     EasyLocalization(
-      supportedLocales: const [Locale('en'), Locale('id'), Locale('nia')],
+      supportedLocales: const [
+        Locale('en'),
+        Locale('id'),
+        Locale('nia'),
+        Locale('jv'),
+      ],
       startLocale: const Locale('id'),
       fallbackLocale: const Locale('nia'),
       path: 'assets/translations',
@@ -71,6 +78,7 @@ class WikiNusaApp extends ConsumerWidget {
       localizationsDelegates: [
         EasyLocalization.of(context)!.delegate,
         const NiaMaterialLocalizationsDelegate(),
+        const JvMaterialLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,

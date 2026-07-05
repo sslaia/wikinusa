@@ -42,7 +42,7 @@ class ScoreboardWidget extends ConsumerWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Bua nisöndra',
+                    'crossword_score_earned'.tr(),
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),

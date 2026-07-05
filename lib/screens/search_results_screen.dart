@@ -47,7 +47,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
     });
 
     try {
-      final langCode = context.locale.languageCode;
+      final langCode = ref.read(languageProvider);
       final currentProject = ref.read(appStateProvider);
 
       final response = await WikiApiService.searchArticles(

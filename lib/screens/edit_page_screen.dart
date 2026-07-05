@@ -204,7 +204,7 @@ class _EditPageScreenState extends ConsumerState<EditPageScreen> {
         title: widget.title,
         text: _textController.text,
         summary: _summaryController.text.isEmpty
-            ? 'Edited via WikiNusa App'
+            ? 'edit_summary_default'.tr()
             : _summaryController.text,
         accessToken: accessToken,
         csrfToken: csrfToken,
