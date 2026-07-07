@@ -17,6 +17,9 @@ class WikiFooter extends StatelessWidget {
     final String disclaimerUrl = 'https://sslaia.github.io/wikinusa/disclaimer.html';
     final String privacyPolicyUrl = 'https://sslaia.github.io/wikinusa/privacy-policy.html';
 
+    final String langCode = context.locale.languageCode;
+    final String activeDisclaimer = langCode == 'en' ? disclaimerEn : disclaimerId;
+    final String activeLicenseNotice = langCode == 'en' ? licenseNoticeEn : licenseNoticeId;
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
@@ -37,7 +40,7 @@ class WikiFooter extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           HtmlWidget(
-            '<div style="text-align: center;">$disclaimer</div>',
+            '<div style="text-align: center;">$activeDisclaimer</div>',
             textStyle: theme.textTheme.bodyMedium?.copyWith(
               fontSize: 10,
               height: 1.6,
@@ -46,7 +49,7 @@ class WikiFooter extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           HtmlWidget(
-            '<div style="text-align: center;">$licenseNotice</div>',
+            '<div style="text-align: center;">$activeLicenseNotice</div>',
             textStyle: theme.textTheme.bodyMedium?.copyWith(
               fontSize: 10,
               height: 1.6,

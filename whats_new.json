@@ -1,0 +1,103 @@
+[
+  {
+    "version": "1.5.2",
+    "changes": {
+      "en": [
+        "Activated Javanese Wikipedia"
+      ],
+      "id": [
+        "Mengaktifkan Wikipedia bahasa Jawa"
+      ]
+    }
+  },
+  {
+    "version": "1.5.1",
+    "changes": {
+      "en": [
+        "Updated crosswords module (correct spellings)",
+        "Resolved keyboard/touch focus issues in editing interface",
+        "Resolved FAB issues",
+        "Minor bug fixes"
+      ],
+      "id": [
+        "Pembaruan modul teka-teki silang (ejaan yang benar)",
+        "Menyelesaikan masalah fokus sentuh/keyboard di antarmuka pengeditan",
+        "Menyelesaikan masalah tombol aksi melayang (FAB)",
+        "Perbaikan bug minor"
+      ]
+    }
+  },
+  {
+    "version": "1.5.0",
+    "changes": {
+      "en": [
+        "New module: crosswords",
+        "New feature: edit pages using native app editor",
+        "New feature: Find in page in article's page (with highlighting and auto-scrolling)",
+        "Improved the Create article form",
+        "Fixed link handling in language courses",
+        "Fixed the external link handling",
+        "Made the core app modular (out into an own package)",
+        "Improve image loading and search results page",
+        "Various fixes"
+      ],
+      "id": [
+        "Modul baru: teka-teki silang",
+        "Fitur baru: edit halaman menggunakan editor bawaan aplikasi",
+        "Fitur baru: Cari di halaman pada halaman artikel (dengan penyorotan dan gulir otomatis)",
+        "Peningkatan formulir pembuatan artikel",
+        "Perbaikan penanganan tautan di kursus bahasa",
+        "Perbaikan penanganan tautan eksternal",
+        "Membuat aplikasi inti menjadi modular (ke dalam paket sendiri)",
+        "Peningkatan pemuatan gambar dan halaman hasil pencarian",
+        "Berbagai perbaikan"
+      ]
+    }
+  },
+  {
+    "version": "1.1.0",
+    "changes": {
+      "en": [
+        "Fixed: empty shortcuts, pop-up references, portals",
+        "New modules: Gallery and Nias language course",
+        "Various fixes improvements"
+      ],
+      "id": [
+        "Diperbaiki: pintasan kosong, referensi pop-up, portal",
+        "Modul baru: Galeri dan kursus bahasa Nias.",
+        "Berbagai perbaikan dan peningkatan"
+      ]
+    }
+  },
+  {
+    "version": "1.0.0",
+    "description": {
+      "en": "This is the first version. The features are:",
+      "id": "Ini adalah versi pertama. Fitur-fiturnya adalah:"
+    },
+    "changes": {
+      "en": [
+        "Support for Nias, Indonesian and English Wikipedia",
+        "Full support for Wikipedia, Wikikamus and Wikibuku Nias",
+        "Users can bookmark pages they like and find them later.",
+        "Article can be shared, edited or simply viewed on the web.",
+        "Search directly from the home screen.",
+        "Users can see footnotes by clicking on its number. The corresponding footnote will be shown in a popup window.",
+        "There is a special button for shortcuts to the most important places on Wikipedia, Wikikamus and Wikibuku.",
+        "Intelligent link handling. Local link will be opened normally, but the link to external web pages will be open in a in-app browser.",
+        "Support for dark/light mode and font size selection."
+      ],
+      "id": [
+        "Dukungan untuk Wikipedia bahasa Nias, Indonesia, dan Inggris.",
+        "Dukungan penuh untuk Wikipedia, Wikikamus, dan Wikibuku Nias.",
+        "Pengguna dapat menandai halaman yang mereka sukai dan menemukannya nanti.",
+        "Artikel dapat dibagikan, diedit, atau sekadar dilihat di web.",
+        "Mencari langsung dari layar utama.",
+        "Pengguna dapat melihat catatan kaki dengan mengklik nomornya. Catatan kaki yang sesuai akan ditampilkan di jendela pop-up.",
+        "Ada tombol khusus untuk pintasan ke tempat terpenting di Wikipedia, Wikikamus, dan Wikibuku.",
+        "Penanganan tautan cerdas. Tautan lokal akan dibuka secara normal, tetapi tautan ke halaman web eksternal akan terbuka di browser dalam aplikasi.",
+        "Dukungan untuk mode gelap/terang dan pemilihan ukuran huruf."
+      ]
+    }
+  }
+]
