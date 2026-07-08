@@ -1,5 +1,5 @@
 name: wikinusa
-description: "An Android app for Nias Wiktionary and Wikibooks as well as Nias, Indonesian and English Wikipedia"
+description: "An Android app for Wikipedia, Wiktionary and Wikibooks in local languages in Indonesia"
 publish_to: 'none'
 version: 1.5.2+5
 
@@ -17,6 +17,7 @@ dependencies:
   html: ^0.15.6
   http: ^1.6.0
   just_audio: ^0.10.4
+  just_audio_windows: ^0.2.3
   path_provider: ^2.1.5
   shared_preferences: ^2.5.5
   share_plus: ^13.1.0
@@ -33,6 +34,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  msix: ^3.18.0
 
 flutter:
   uses-material-design: true
@@ -48,3 +50,11 @@ flutter:
     - assets/translations/en.json
     - assets/translations/id.json
     - assets/translations/nia.json
+
+msix_config:
+  display_name: WikiNusa
+  publisher_display_name: "Sirus Laia"
+  identity_name: sslaia.wikinusa
+  msix_version: 1.5.2.0
+  logo_path: assets/images/onboarding1.webp
+  capabilities: internetClient
