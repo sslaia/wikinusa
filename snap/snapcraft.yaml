@@ -1,0 +1,28 @@
+name: wikinusa
+base: core22
+version: '1.5.2'
+summary: Wikipedia, Wiktionary and Wikibooks reader for local languages in Indonesia
+description: |
+  A desktop application to access Wikipedia, Wiktionary, and Wikibooks in local languages in Indonesia.
+grade: stable
+confinement: strict
+
+apps:
+  wikinusa:
+    command: wikinusa
+    extensions: [gnome]
+    plugs:
+      - network
+      - audio-playback
+
+parts:
+  wikinusa:
+    source: .
+    plugin: flutter
+    flutter-target: lib/main.dart
+    build-packages:
+      - libsecret-1-dev
+      - libjsoncpp-dev
+    stage-packages:
+      - libsecret-1-0
+      - libjsoncpp1
