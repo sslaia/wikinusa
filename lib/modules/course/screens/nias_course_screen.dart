@@ -12,7 +12,6 @@ import '../../../utils/wiki_utils.dart';
 import '../../../widgets/wiki_footer.dart';
 import '../../../utils/responsive_utils.dart';
 import '../../../widgets/adaptive_nav_actions.dart';
-import '../../../widgets/shortcuts_side_bar.dart';
 import '../../../widgets/drawer_menu.dart';
 import '../../../widgets/custom_bottom_app_bar.dart';
 import '../../../providers/bookmarks_provider.dart';
@@ -58,19 +57,18 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final deviceType = ResponsiveUtils.getDeviceType(context);
-        final isLandscape = ResponsiveUtils.isLandscape(context);
-        final isCompact = deviceType == DeviceType.compact;
         final isTablet = deviceType != DeviceType.compact;
-        final isCompactLandscape = isCompact && isLandscape;
-        final isCompactPortrait = isCompact && !isLandscape;
-        final isTabletLandscape = isTablet && isLandscape;
-        final bool showShortcutsSideBar =
-            isTabletLandscape || deviceType == DeviceType.expanded;
+        final isLandscape = ResponsiveUtils.isLandscape(context);
+
+        final bool showBottomNavBar = !isLandscape;
+        final bool showNavigationRail = isLandscape;
+        final bool showPermanentDrawer = isTablet && isLandscape;
+        final bool showMenuButtonInRail = showNavigationRail && !showPermanentDrawer;
 
         return Scaffold(
           key: _scaffoldKey,
-          drawer: const DrawerMenu(),
-          bottomNavigationBar: isCompactPortrait
+          drawer: showPermanentDrawer ? null : const DrawerMenu(),
+          bottomNavigationBar: showBottomNavBar
               ? CustomBottomAppBar(
                   scaffoldKey: _scaffoldKey,
                   currentProject: ProjectType.wiktionary,
@@ -79,7 +77,11 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
               : null,
           body: Row(
             children: [
-              if (showShortcutsSideBar) const ShortcutsSidebar(),
+              if (showPermanentDrawer)
+                const SizedBox(
+                  width: 304,
+                  child: DrawerMenu(),
+                ),
               Expanded(
                 child: Stack(
                   children: [
@@ -312,19 +314,20 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
                   ],
                 ),
               ),
-              if (isCompactLandscape || isTablet)
+              if (showNavigationRail)
                 Container(
                   width: 56,
                   color: theme.colorScheme.primary,
                   child: Column(
                     children: [
                       const SizedBox(height: 8),
-                      IconButton(
-                        icon: const Icon(Icons.menu),
-                        color: theme.colorScheme.onPrimary,
-                        onPressed: () =>
-                            _scaffoldKey.currentState?.openDrawer(),
-                      ),
+                      if (showMenuButtonInRail)
+                        IconButton(
+                          icon: const Icon(Icons.menu),
+                          color: theme.colorScheme.onPrimary,
+                          onPressed: () =>
+                              _scaffoldKey.currentState?.openDrawer(),
+                        ),
                       Expanded(
                         child: Align(
                           alignment: Alignment.bottomCenter,

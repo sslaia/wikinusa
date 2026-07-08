@@ -15,7 +15,6 @@ import '../utils/responsive_utils.dart';
 import 'package:wikimedia_core/wikimedia_core.dart';
 import '../providers/history_provider.dart';
 import '../providers/bookmarks_provider.dart';
-import '../widgets/shortcuts_side_bar.dart';
 import '../widgets/wiki_footer.dart';
 import '../providers/app_state.dart';
 import '../providers/wiki_api_provider.dart';
@@ -230,14 +229,13 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
       child: LayoutBuilder(
         builder: (context, constraints) {
           final deviceType = ResponsiveUtils.getDeviceType(context);
-          final isLandscape = ResponsiveUtils.isLandscape(context);
-          final isCompact = deviceType == DeviceType.compact;
           final isTablet = deviceType != DeviceType.compact;
-          final isCompactLandscape = isCompact && isLandscape;
-          final isCompactPortrait = isCompact && !isLandscape;
-          final isTabletLandscape = isTablet && isLandscape;
-          final bool showShortcutsSideBar =
-              isTabletLandscape || deviceType == DeviceType.expanded;
+          final isLandscape = ResponsiveUtils.isLandscape(context);
+
+          final bool showBottomNavBar = !isLandscape;
+          final bool showNavigationRail = isLandscape;
+          final bool showPermanentDrawer = isTablet && isLandscape;
+          final bool showMenuButtonInRail = showNavigationRail && !showPermanentDrawer;
 
           return PopScope(
             canPop: !_isSearchActive,
@@ -249,10 +247,14 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
             },
             child: Scaffold(
             key: _scaffoldKey,
-            drawer: DrawerMenu(),
+            drawer: showPermanentDrawer ? null : DrawerMenu(),
             body: Row(
               children: [
-                if (showShortcutsSideBar) const ShortcutsSidebar(),
+                if (showPermanentDrawer)
+                  const SizedBox(
+                    width: 304,
+                    child: DrawerMenu(),
+                  ),
                 Expanded(
                   child: Stack(
                     children: [
@@ -517,19 +519,20 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                     ],
                   ),
                 ),
-                if (isCompactLandscape || isTablet)
+                if (showNavigationRail)
                   Container(
                     width: 56,
                     color: theme.colorScheme.primary,
                     child: Column(
                       children: [
                         const SizedBox(height: 8),
-                        IconButton(
-                          icon: const Icon(Icons.menu),
-                          color: theme.colorScheme.onPrimary,
-                          onPressed: () =>
-                              _scaffoldKey.currentState?.openDrawer(),
-                        ),
+                        if (showMenuButtonInRail)
+                          IconButton(
+                            icon: const Icon(Icons.menu),
+                            color: theme.colorScheme.onPrimary,
+                            onPressed: () =>
+                                _scaffoldKey.currentState?.openDrawer(),
+                          ),
                         Expanded(
                           child: Align(
                             alignment: Alignment.bottomCenter,
@@ -565,7 +568,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                   ),
               ],
             ),
-            bottomNavigationBar: isCompactPortrait
+            bottomNavigationBar: showBottomNavBar
                 ? CustomBottomAppBar(
                     scaffoldKey: _scaffoldKey,
                     currentProject: currentProject,

@@ -15,7 +15,6 @@ import '../../../providers/app_state.dart';
 import '../../../utils/responsive_utils.dart';
 import '../../../widgets/custom_bottom_app_bar.dart';
 import '../../../widgets/drawer_menu.dart';
-import '../../../widgets/shortcuts_side_bar.dart';
 import '../../../widgets/adaptive_nav_actions.dart';
 
 class CrosswordsScreen extends ConsumerStatefulWidget {
@@ -81,20 +80,19 @@ class _CrosswordsScreenState extends ConsumerState<CrosswordsScreen> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final deviceType = ResponsiveUtils.getDeviceType(context);
-        final isCompact = deviceType == DeviceType.compact;
         final isTablet = deviceType != DeviceType.compact;
         final isLandscape = ResponsiveUtils.isLandscape(context);
-        final isCompactLandscape = isCompact && isLandscape;
-        final isCompactPortrait = isCompact && !isLandscape;
-        final isTabletLandscape = isTablet && isLandscape;
-        final bool showShortcutsSideBar =
-            isTabletLandscape || deviceType == DeviceType.expanded;
-        final double bottomAppBarHeight = isCompactPortrait ? 80.0 : 0.0;
+
+        final bool showBottomNavBar = !isLandscape;
+        final bool showNavigationRail = isLandscape;
+        final bool showPermanentDrawer = isTablet && isLandscape;
+        final bool showMenuButtonInRail = showNavigationRail && !showPermanentDrawer;
+        final double bottomAppBarHeight = showBottomNavBar ? 80.0 : 0.0;
 
         return Scaffold(
           key: _scaffoldKey,
-          drawer: const DrawerMenu(),
-          bottomNavigationBar: isCompactPortrait
+          drawer: showPermanentDrawer ? null : const DrawerMenu(),
+          bottomNavigationBar: showBottomNavBar
               ? CustomBottomAppBar(
                   scaffoldKey: _scaffoldKey,
                   currentProject: currentProject,
@@ -103,7 +101,11 @@ class _CrosswordsScreenState extends ConsumerState<CrosswordsScreen> {
               : null,
           body: Row(
             children: [
-              if (showShortcutsSideBar) const ShortcutsSidebar(),
+              if (showPermanentDrawer)
+                const SizedBox(
+                  width: 304,
+                  child: DrawerMenu(),
+                ),
               Expanded(
                 child: CustomScrollView(
                   slivers: [
@@ -267,19 +269,20 @@ class _CrosswordsScreenState extends ConsumerState<CrosswordsScreen> {
                   ],
                 ),
               ),
-              if (isCompactLandscape || isTablet)
+              if (showNavigationRail)
                 Container(
                   width: 56,
                   color: theme.colorScheme.primary,
                   child: Column(
                     children: [
                       const SizedBox(height: 8),
-                      IconButton(
-                        icon: const Icon(Icons.menu),
-                        color: theme.colorScheme.onPrimary,
-                        onPressed: () =>
-                            _scaffoldKey.currentState?.openDrawer(),
-                      ),
+                      if (showMenuButtonInRail)
+                        IconButton(
+                          icon: const Icon(Icons.menu),
+                          color: theme.colorScheme.onPrimary,
+                          onPressed: () =>
+                              _scaffoldKey.currentState?.openDrawer(),
+                        ),
                       Expanded(
                         child: Align(
                           alignment: Alignment.bottomCenter,

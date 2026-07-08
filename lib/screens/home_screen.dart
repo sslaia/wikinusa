@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:wikimedia_core/wikimedia_core.dart';
 import '../utils/responsive_utils.dart';
-import '../widgets/shortcuts_side_bar.dart';
 import '../widgets/wiki_portals_widget.dart';
 import '../widgets/contribute_widget.dart';
 import '../widgets/wiki_footer.dart';
@@ -38,19 +37,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final deviceType = ResponsiveUtils.getDeviceType(context);
-        final isCompact = deviceType == DeviceType.compact;
         final isTablet = deviceType != DeviceType.compact;
         final isLandscape = ResponsiveUtils.isLandscape(context);
-        final isCompactLandscape = isCompact && isLandscape;
-        final isCompactPortrait = isCompact && !isLandscape;
-        final isTabletLandscape = isTablet && isLandscape;
-        final bool showShortcutsSideBar = isTabletLandscape || deviceType == DeviceType.expanded;
-        final double bottomAppBarHeight = isCompactPortrait ? 80.0 : 0.0;
+
+        final bool showBottomNavBar = !isLandscape;
+        final bool showNavigationRail = isLandscape;
+        final bool showPermanentDrawer = isTablet && isLandscape;
+        final bool showMenuButtonInRail = showNavigationRail && !showPermanentDrawer;
+        final double bottomAppBarHeight = showBottomNavBar ? 80.0 : 0.0;
 
         return Scaffold(
           key: _scaffoldKey,
-          drawer: const DrawerMenu(),
-          bottomNavigationBar: isCompactPortrait
+          drawer: showPermanentDrawer ? null : const DrawerMenu(),
+          bottomNavigationBar: showBottomNavBar
               ? CustomBottomAppBar(
                   scaffoldKey: _scaffoldKey,
                   currentProject: currentProject,
@@ -59,8 +58,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               : null,
           body: Row(
             children: [
-              if (showShortcutsSideBar)
-                const ShortcutsSidebar(),
+              if (showPermanentDrawer)
+                const SizedBox(
+                  width: 304,
+                  child: DrawerMenu(),
+                ),
               Expanded(
                 child: CustomScrollView(
                   slivers: [
@@ -144,17 +146,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ],
                 ),
               ),
-              if (isCompactLandscape || isTablet)
+              if (showNavigationRail)
                 Container(
                   width: 56,
                   color: theme.colorScheme.primary,
                   child: Column(
                     children: [
                       const SizedBox(height: 8),
-                      IconButton(
-                        icon: const Icon(Icons.menu, color: Colors.white),
-                        onPressed: () => _scaffoldKey.currentState?.openDrawer(),
-                      ),
+                      if (showMenuButtonInRail)
+                        IconButton(
+                          icon: const Icon(Icons.menu, color: Colors.white),
+                          onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+                        ),
                       Expanded(
                         child: Align(
                           alignment: Alignment.bottomCenter,

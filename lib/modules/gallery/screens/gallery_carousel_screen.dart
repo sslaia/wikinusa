@@ -58,18 +58,20 @@ class _GalleryCarouselScreenState extends ConsumerState<GalleryCarouselScreen> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final deviceType = ResponsiveUtils.getDeviceType(context);
-        final isLandscape = ResponsiveUtils.isLandscape(context);
-        final isCompactPortrait =
-            deviceType == DeviceType.compact && !isLandscape;
-        final isCompactLandscape =
-            deviceType == DeviceType.compact && isLandscape;
         final isTablet = deviceType != DeviceType.compact;
+        final isLandscape = ResponsiveUtils.isLandscape(context);
+        final bool isCompactPortrait = deviceType == DeviceType.compact && !isLandscape;
+
+        final bool showBottomNavBar = !isLandscape;
+        final bool showNavigationRail = isLandscape;
+        final bool showPermanentDrawer = isTablet && isLandscape;
+        final bool showMenuButtonInRail = showNavigationRail && !showPermanentDrawer;
 
         return Scaffold(
           key: _scaffoldKey,
           backgroundColor: Colors.black,
-          drawer: const DrawerMenu(),
-          bottomNavigationBar: isCompactPortrait
+          drawer: showPermanentDrawer ? null : const DrawerMenu(),
+          bottomNavigationBar: showBottomNavBar
               ? CustomBottomAppBar(
                   scaffoldKey: _scaffoldKey,
                   currentProject: currentProject,
@@ -78,6 +80,11 @@ class _GalleryCarouselScreenState extends ConsumerState<GalleryCarouselScreen> {
               : null,
           body: Row(
             children: [
+              if (showPermanentDrawer)
+                const SizedBox(
+                  width: 304,
+                  child: DrawerMenu(),
+                ),
               Expanded(
                 child: galleryDataAsync.when(
                   data: (data) {
@@ -296,17 +303,18 @@ class _GalleryCarouselScreenState extends ConsumerState<GalleryCarouselScreen> {
                   ),
                 ),
               ),
-              if (isCompactLandscape || isTablet)
+              if (showNavigationRail)
                 Container(
                   width: 56,
                   color: currentProject.primaryColor,
                   child: Column(
                     children: [
                       const SizedBox(height: 8),
-                      IconButton(
-                        icon: const Icon(Icons.menu, color: Colors.white),
-                        onPressed: () => _scaffoldKey.currentState?.openDrawer(),
-                      ),
+                      if (showMenuButtonInRail)
+                        IconButton(
+                          icon: const Icon(Icons.menu, color: Colors.white),
+                          onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+                        ),
                       Expanded(
                         child: Align(
                           alignment: Alignment.bottomCenter,
