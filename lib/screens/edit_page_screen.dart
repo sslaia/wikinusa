@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/app_state.dart';
 import '../providers/auth_provider.dart';
 import '../services/edit_service.dart';
+import '../widgets/media_search_dialog.dart';
 
 class EditPageScreen extends ConsumerStatefulWidget {
   final String title;
@@ -274,6 +275,7 @@ class _EditPageScreenState extends ConsumerState<EditPageScreen> {
         'link': 'Link ([[]])',
         'pipe': 'Pipe (|)',
         'template': 'Template ({{}})',
+        'media': 'Insert Image from Commons',
         'numbered_list': 'Numbered List (#)',
         'unordered_list': 'Bullet List (*)',
         'signature': 'Signature (~~~~)',
@@ -285,6 +287,7 @@ class _EditPageScreenState extends ConsumerState<EditPageScreen> {
         'link': 'Tautan ([[]])',
         'pipe': 'Pipa (|)',
         'template': 'Templat ({{}})',
+        'media': 'Sisipkan Gambar dari Commons',
         'numbered_list': 'Daftar Bernomor (#)',
         'unordered_list': 'Daftar Bulatan (*)',
         'signature': 'Tanda Tangan (~~~~)',
@@ -296,6 +299,7 @@ class _EditPageScreenState extends ConsumerState<EditPageScreen> {
         'link': 'Khai-khai ([[]])',
         'pipe': 'Pipa (|)',
         'template': 'Templat ({{}})',
+        'media': 'Fakhamö Gambara moroi ba Commons',
         'numbered_list': 'Angolita nifonumero (#)',
         'unordered_list': 'Angolita nifondröfi (*)',
         'signature': 'Teka (~~~~)',
@@ -307,6 +311,7 @@ class _EditPageScreenState extends ConsumerState<EditPageScreen> {
         'link': 'Tautan ([[]])',
         'pipe': 'Pipa (|)',
         'template': 'Templat ({{}})',
+        'media': 'Sisipake Gambar saka Commons',
         'numbered_list': 'Daftar Bernomor (#)',
         'unordered_list': 'Daftar Bulatan (*)',
         'signature': 'Tanda Tangan (~~~~)',
@@ -447,6 +452,24 @@ class _EditPageScreenState extends ConsumerState<EditPageScreen> {
                 ),
               ),
               onTap: () => _insertFormatting('{{', '}}'),
+            ),
+            _buildToolbarButton(
+              theme: theme,
+              tooltip: _getToolbarTooltip('media', locale),
+              child: Icon(
+                Icons.image_search,
+                color: theme.colorScheme.onSurface,
+                size: 20,
+              ),
+              onTap: () async {
+                final wikitext = await showDialog<String>(
+                  context: context,
+                  builder: (context) => const MediaSearchDialog(),
+                );
+                if (wikitext != null && mounted) {
+                  _insertFormatting(wikitext, '');
+                }
+              },
             ),
             _buildToolbarButton(
               theme: theme,
