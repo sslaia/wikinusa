@@ -834,6 +834,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
             final bool? shouldLogin = await showDialog<bool>(
               context: context,
               builder: (context) => AlertDialog(
+                constraints: const BoxConstraints(maxWidth: 400),
                 title: Text('login_required'.tr()),
                 content: Text('login_to_edit_message'.tr()),
                 actions: [
