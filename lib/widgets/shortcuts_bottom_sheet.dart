@@ -166,41 +166,47 @@ Widget _buildShortcutCard(
           color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
         ),
       ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        leading: Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: project.primaryColor.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
+      child: Material(
+        color: Colors.transparent,
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          leading: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: project.primaryColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              ShortcutUtils.getIconData(iconName),
+              size: 20,
+              color: project.primaryColor,
+            ),
           ),
-          child: Icon(
-            ShortcutUtils.getIconData(iconName),
-            size: 20,
-            color: project.primaryColor,
+          title: Text(
+            title,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: theme.colorScheme.onSurface,
+            ),
+          ),
+          trailing: Icon(
+            Icons.arrow_forward_ios_rounded,
+            size: 14,
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+          ),
+          onTap: () async {
+            Navigator.pop(context);
+            await ShortcutUtils.handleShortcutTap(
+              context,
+              pageTitle,
+              langCode,
+              project,
+            );
+          },
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
           ),
         ),
-        title: Text(
-          title,
-          style: theme.textTheme.bodyLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: theme.colorScheme.onSurface,
-          ),
-        ),
-        trailing: Icon(
-          Icons.arrow_forward_ios_rounded,
-          size: 14,
-          color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
-        ),
-        onTap: () async {
-          Navigator.pop(context);
-          await ShortcutUtils.handleShortcutTap(
-            context,
-            pageTitle,
-            langCode,
-            project,
-          );
-        },
       ),
     ),
   );

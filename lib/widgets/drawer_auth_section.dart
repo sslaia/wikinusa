@@ -91,23 +91,26 @@ class DrawerAuthSection extends ConsumerWidget {
             ),
           ],
         ),
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-          leading: Icon(
-            icon,
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-            size: 22,
-          ),
-          title: Text(
-            title,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: theme.colorScheme.onSurface,
+        child: Material(
+          color: Colors.transparent,
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+            leading: Icon(
+              icon,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+              size: 22,
             ),
-          ),
-          onTap: onTap,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            title: Text(
+              title,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+            onTap: onTap,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
           ),
         ),
       ),

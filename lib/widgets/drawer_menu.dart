@@ -206,21 +206,31 @@ class DrawerContent extends ConsumerWidget {
               theme,
               icon: Icons.groups_2_rounded,
               title: 'about_community'.tr(),
-              onTap: () =>
-                  _navigateToAbout(context, 'about_community', 'about_community_content'.tr()),
+              onTap: () => _navigateToAbout(
+                context,
+                'about_community',
+                'about_community_content'.tr(),
+              ),
             ),
             _buildDrawerItem(
               theme,
               icon: Icons.newspaper_rounded,
               title: 'about_whats_new'.tr(),
-              onTap: () =>
-                  _navigateToAbout(context, 'about_whats_new', 'whats_new_content'.tr()),
+              onTap: () => _navigateToAbout(
+                context,
+                'about_whats_new',
+                'whats_new_content'.tr(),
+              ),
             ),
             _buildDrawerItem(
               theme,
               icon: Icons.info_rounded,
               title: 'about_app'.tr(),
-              onTap: () => _navigateToAbout(context, 'about_app', 'about_app_content'.tr()),
+              onTap: () => _navigateToAbout(
+                context,
+                'about_app',
+                'about_app_content'.tr(),
+              ),
             ),
           ],
         ),
@@ -406,23 +416,26 @@ class DrawerContent extends ConsumerWidget {
             ),
           ],
         ),
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-          leading: Icon(
-            icon,
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-            size: 22,
-          ),
-          title: Text(
-            title,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: theme.colorScheme.onSurface,
+        child: Material(
+          color: Colors.transparent,
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+            leading: Icon(
+              icon,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+              size: 22,
             ),
-          ),
-          onTap: onTap,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            title: Text(
+              title,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+            onTap: onTap,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
           ),
         ),
       ),
@@ -463,7 +476,9 @@ class DrawerContent extends ConsumerWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  project.name.toLowerCase().tr(),
+                  project == ProjectType.wikipedia
+                      ? 'Nusapedia'
+                      : project.name.toLowerCase().tr(),
                   style: TextStyle(
                     color: !isSupported
                         ? Colors.grey.withValues(alpha: 0.5)

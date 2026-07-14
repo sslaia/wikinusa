@@ -43,7 +43,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         final bool showBottomNavBar = !isLandscape;
         final bool showNavigationRail = isLandscape;
         final bool showPermanentDrawer = isTablet && isLandscape;
-        final bool showMenuButtonInRail = showNavigationRail && !showPermanentDrawer;
+        final bool showMenuButtonInRail =
+            showNavigationRail && !showPermanentDrawer;
         final double bottomAppBarHeight = showBottomNavBar ? 80.0 : 0.0;
 
         return Scaffold(
@@ -59,10 +60,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           body: Row(
             children: [
               if (showPermanentDrawer)
-                const SizedBox(
-                  width: 304,
-                  child: DrawerMenu(),
-                ),
+                const SizedBox(width: 304, child: DrawerMenu()),
               Expanded(
                 child: CustomScrollView(
                   slivers: [
@@ -70,7 +68,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       child: Builder(
                         builder: (context) {
                           String? featuredImageUrl;
-                          final content = wikiContent.whenOrNull(data: (d) => d);
+                          final content = wikiContent.whenOrNull(
+                            data: (d) => d,
+                          );
                           if (content is List<HomePageSection>) {
                             for (var section in content) {
                               if (section.titleKey == 'featuredImage') {
@@ -142,7 +142,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       child: ContributeWidget(project: currentProject),
                     ),
                     const SliverToBoxAdapter(child: WikiFooter()),
-                    SliverToBoxAdapter(child: SizedBox(height: bottomAppBarHeight)),
+                    SliverToBoxAdapter(
+                      child: SizedBox(height: bottomAppBarHeight),
+                    ),
                   ],
                 ),
               ),
@@ -156,7 +158,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       if (showMenuButtonInRail)
                         IconButton(
                           icon: const Icon(Icons.menu, color: Colors.white),
-                          onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+                          onPressed: () =>
+                              _scaffoldKey.currentState?.openDrawer(),
                         ),
                       Expanded(
                         child: Align(
@@ -165,17 +168,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: MainAxisAlignment.end,
-                              children: AdaptiveNavActions.buildActions(
-                                context,
-                                ref,
-                                currentProject: currentProject,
-                                isHomeScreen: true,
-                                showHome: false,
-                                color: Colors.white,
-                              ).map((w) => Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 4),
-                                child: w,
-                              )).toList(),
+                              children:
+                                  AdaptiveNavActions.buildActions(
+                                        context,
+                                        ref,
+                                        currentProject: currentProject,
+                                        isHomeScreen: true,
+                                        showHome: false,
+                                        color: Colors.white,
+                                      )
+                                      .map(
+                                        (w) => Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 4,
+                                          ),
+                                          child: w,
+                                        ),
+                                      )
+                                      .toList(),
                             ),
                           ),
                         ),
@@ -269,7 +279,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                   ),
                   Text(
-                    currentProject.name.toLowerCase().tr(),
+                    currentProject == ProjectType.wikipedia
+                        ? 'Nusapedia'
+                        : currentProject.name.toLowerCase().tr(),
                     style: GoogleFonts.cinzelDecorative(
                       textStyle: Theme.of(context).textTheme.titleLarge
                           ?.copyWith(
@@ -320,6 +332,4 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ],
     );
   }
-
-
 }
