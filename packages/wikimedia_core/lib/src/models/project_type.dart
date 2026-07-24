@@ -18,6 +18,20 @@ extension ProjectTypeExtension on ProjectType {
     }
   }
 
+  String getDisplayName(String langCode) {
+    if (this == ProjectType.wikipedia) {
+      switch (langCode.toLowerCase()) {
+        case 'nia':
+          return 'Niaspedia';
+        case 'jv':
+          return 'Jawapedia';
+        default:
+          return 'Nusapedia';
+      }
+    }
+    return name;
+  }
+
   Color get primaryColor {
     switch (this) {
       case ProjectType.wikipedia:

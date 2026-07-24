@@ -23,6 +23,25 @@ class _CrosswordGridState extends ConsumerState<CrosswordGrid> {
   int? selectedX;
   int? selectedY;
   CrosswordWord? selectedWord;
+  late final ScrollController _clueScrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _clueScrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(CrosswordGrid oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.puzzle.puzzleId != widget.puzzle.puzzleId) {
+      setState(() {
+        selectedX = null;
+        selectedY = null;
+        selectedWord = null;
+      });
+    }
+  }
 
   bool _isWordWrong(CrosswordWord word, Map<String, String> userAnswers) {
     for (int i = 0; i < word.word.length; i++) {
@@ -326,33 +345,7 @@ class _CrosswordGridState extends ConsumerState<CrosswordGrid> {
       },
       child: Column(
         children: [
-          if (selectedWord != null)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              margin: const EdgeInsets.only(bottom: 16),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.shadow.withValues(alpha: 0.5),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Text(
-                '${wordNumbers['${selectedWord!.x},${selectedWord!.y}']}. ${selectedWord!.clue}',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
+          _buildPermanentClueCard(context),
           AspectRatio(
             aspectRatio: 1,
             child: Container(
@@ -576,6 +569,10 @@ class _CrosswordGridState extends ConsumerState<CrosswordGrid> {
         selectedWord = null;
       }
     });
+
+    if (selectedWord != null) {
+      _scrollToActiveClue();
+    }
   }
 
   void _moveToNextCell() {
@@ -592,5 +589,171 @@ class _CrosswordGridState extends ConsumerState<CrosswordGrid> {
         }
       }
     });
+  }
+
+  Widget _buildPermanentClueCard(BuildContext context) {
+    final theme = Theme.of(context);
+    final words = widget.puzzle.words;
+
+    return Container(
+      height: 105,
+      margin: const EdgeInsets.only(bottom: 16),
+      child: ListView.builder(
+                controller: _clueScrollController,
+                scrollDirection: Axis.horizontal,
+                itemCount: words.length,
+                itemBuilder: (context, index) {
+                  final word = words[index];
+                  final wordNum = index + 1;
+                  final isSelected = selectedWord == word;
+                  final directionLabel =
+                      word.direction == 'across' ? 'Misa' : 'Mitou';
+
+                  return GestureDetector(
+                    onTap: () => _selectWordFromClueCard(word),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      width: 220,
+                      margin: const EdgeInsets.only(right: 8),
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? theme.colorScheme.primaryContainer
+                            : theme.colorScheme.surface,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: isSelected
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.outlineVariant
+                                  .withValues(alpha: 0.5),
+                          width: isSelected ? 2 : 1,
+                        ),
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: theme.colorScheme.primary
+                                      .withValues(alpha: 0.2),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 3),
+                                )
+                              ]
+                            : null,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 11,
+                                backgroundColor: isSelected
+                                    ? theme.colorScheme.primary
+                                    : theme.colorScheme.secondaryContainer,
+                                child: Text(
+                                  '$wordNum',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    color: isSelected
+                                        ? theme.colorScheme.onPrimary
+                                        : theme.colorScheme
+                                            .onSecondaryContainer,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? theme.colorScheme.primary
+                                          .withValues(alpha: 0.15)
+                                      : theme.colorScheme
+                                          .surfaceContainerHighest,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  directionLabel,
+                                  style: theme.textTheme.labelSmall?.copyWith(
+                                    color: isSelected
+                                        ? theme.colorScheme.primary
+                                        : theme.colorScheme.secondary,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 10,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Expanded(
+                            child: Text(
+                              word.clue,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: isSelected
+                                    ? theme.colorScheme.onPrimaryContainer
+                                    : theme.colorScheme.onSurface,
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                                height: 1.25,
+                              ),
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+    );
+  }
+
+  void _selectWordFromClueCard(CrosswordWord word) {
+    setState(() {
+      selectedWord = word;
+
+      int targetX = word.x;
+      int targetY = word.y;
+
+      final state = ref.read(crosswordsProvider);
+      for (int i = 0; i < word.word.length; i++) {
+        int cx = word.direction == 'across' ? word.x + i : word.x;
+        int cy = word.direction == 'down' ? word.y + i : word.y;
+        final currentAnswer = state.userAnswers['$cx,$cy'];
+        if (currentAnswer == null || currentAnswer.isEmpty) {
+          targetX = cx;
+          targetY = cy;
+          break;
+        }
+      }
+
+      selectedX = targetX;
+      selectedY = targetY;
+    });
+
+    _scrollToActiveClue();
+  }
+
+  void _scrollToActiveClue() {
+    if (selectedWord == null) return;
+    final idx = widget.puzzle.words.indexOf(selectedWord!);
+    if (idx != -1) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_clueScrollController.hasClients) {
+          const cardWidth = 228.0;
+          _clueScrollController.animateTo(
+            idx * cardWidth,
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOut,
+          );
+        }
+      });
+    }
   }
 }

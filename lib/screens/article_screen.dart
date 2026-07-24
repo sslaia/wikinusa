@@ -265,10 +265,12 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                             data: (data) {
                               String htmlContent;
                               String? imageUrl;
+                              bool isOfflineCache = false;
 
                               if (data is Map<String, dynamic>) {
                                 htmlContent = data['html'] ?? '';
                                 imageUrl = data['imageUrl'];
+                                isOfflineCache = data['isOfflineCache'] == true;
                               } else if (data is String) {
                                 htmlContent = data;
                               } else {
@@ -292,6 +294,30 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    if (isOfflineCache)
+                                      Container(
+                                        width: double.infinity,
+                                        color: Theme.of(context).colorScheme.surfaceContainerHigh,
+                                        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.offline_pin_outlined,
+                                              size: 16,
+                                              color: Theme.of(context).colorScheme.primary,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Expanded(
+                                              child: Text(
+                                                'Offline saved version',
+                                                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                                    ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ArticleHeroImage(
                                       theme: Theme.of(context),
                                       title: widget.title,

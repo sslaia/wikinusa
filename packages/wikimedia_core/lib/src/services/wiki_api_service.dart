@@ -44,6 +44,20 @@ class WikiApiService {
     String pageTitle,
     bool isArticle, {
     bool forceRefresh = false,
+    Future<dynamic> Function(
+      String project,
+      String languageCode,
+      String pageTitle,
+      bool isArticle,
+    )? getCachedPage,
+    Future<void> Function(
+      String project,
+      String languageCode,
+      String pageTitle,
+      String content,
+      String? heroImageUrl,
+      bool isArticle,
+    )? saveCachedPage,
   }) async {
     final cacheKey = _getCacheKey(project, languageCode, pageTitle, isArticle);
     final cacheTimestampKey = '${cacheKey}_timestamp';
@@ -157,13 +171,25 @@ class WikiApiService {
               );
               processedResult['html'] =
                   (processedResult['html'] ?? '') + categoryHtml;
-                        }
+            }
 
             await prefs.setString(cacheKey, jsonEncode(processedResult));
             await prefs.setString(
               cacheTimestampKey,
               DateTime.now().toIso8601String(),
             );
+
+            if (saveCachedPage != null) {
+              await saveCachedPage(
+                project.name.toLowerCase(),
+                languageCode,
+                pageTitle,
+                jsonEncode(processedResult),
+                processedResult['imageUrl'] as String?,
+                isArticle,
+              );
+            }
+
             return processedResult;
           }
           return {
@@ -196,12 +222,35 @@ class WikiApiService {
             cacheTimestampKey,
             DateTime.now().toIso8601String(),
           );
+
+          if (saveCachedPage != null) {
+            await saveCachedPage(
+              project.name.toLowerCase(),
+              languageCode,
+              pageTitle,
+              jsonEncode(sections.map((e) => e.toJson()).toList()),
+              null,
+              isArticle,
+            );
+          }
+
           return sections;
         }
       } else {
         throw Exception('Failed to load page: ${response.statusCode}');
       }
     } catch (e) {
+      if (getCachedPage != null) {
+        final cachedData = await getCachedPage(
+          project.name.toLowerCase(),
+          languageCode,
+          pageTitle,
+          isArticle,
+        );
+        if (cachedData != null) {
+          return cachedData;
+        }
+      }
       throw Exception('Network error: $e');
     }
   }

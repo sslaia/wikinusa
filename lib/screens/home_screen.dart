@@ -16,6 +16,7 @@ import '../widgets/skeleton_section_card.dart';
 import '../providers/app_state.dart';
 import '../providers/wiki_api_provider.dart';
 import '../widgets/drawer_menu.dart';
+import '../utils/wiki_utils.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -279,9 +280,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                   ),
                   Text(
-                    currentProject == ProjectType.wikipedia
-                        ? 'Nusapedia'
-                        : currentProject.name.toLowerCase().tr(),
+                    currentProject.getLocalizedDisplayName(currentLanguage),
                     style: GoogleFonts.cinzelDecorative(
                       textStyle: Theme.of(context).textTheme.titleLarge
                           ?.copyWith(

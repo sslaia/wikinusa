@@ -17,6 +17,7 @@ import '../screens/bookmarks_screen.dart';
 import '../modules/gallery/screens/gallery_carousel_screen.dart';
 import '../modules/course/screens/nias_course_screen.dart';
 import '../utils/shortcut_utils.dart';
+import '../utils/wiki_utils.dart';
 import 'drawer_auth_section.dart';
 
 class DrawerMenu extends ConsumerWidget {
@@ -476,9 +477,7 @@ class DrawerContent extends ConsumerWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  project == ProjectType.wikipedia
-                      ? 'Nusapedia'
-                      : project.name.toLowerCase().tr(),
+                  project.getLocalizedDisplayName(currentLanguage),
                   style: TextStyle(
                     color: !isSupported
                         ? Colors.grey.withValues(alpha: 0.5)

@@ -395,3 +395,18 @@ class WikiUtils {
   }
 }
 
+extension ProjectTypeDisplayNameExtension on ProjectType {
+  String getLocalizedDisplayName(String langCode) {
+    if (this == ProjectType.wikipedia) {
+      switch (langCode.toLowerCase()) {
+        case 'nia':
+          return 'Niaspedia';
+        case 'jv':
+          return 'Jawapedia';
+        default:
+          return 'Nusapedia';
+      }
+    }
+    return name.toLowerCase().tr();
+  }
+}
