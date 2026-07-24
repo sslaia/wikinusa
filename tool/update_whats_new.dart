@@ -20,7 +20,7 @@ void main() {
   // 2. Update README.md
   updateReadme(releases);
 
-  // 3. Update TODO.md
+  // 3. Update release notes file
   updateTodo(releases);
 
   print('\nAll files updated successfully!');
@@ -196,7 +196,7 @@ void updateTodo(List<dynamic> releases) {
   final changes = changesMap['en'] as List<dynamic>?;
 
   if (changes != null && changes.isNotEmpty) {
-    // Capitalization matches the existing style in TODO.md: "### New 1.5.2"
+    // Capitalization matches the existing style in release notes: "### New 1.5.2"
     markdownBuffer.write('### New $version\n');
     for (final change in changes) {
       markdownBuffer.write('- $change\n');

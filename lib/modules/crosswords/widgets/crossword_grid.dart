@@ -346,9 +346,12 @@ class _CrosswordGridState extends ConsumerState<CrosswordGrid> {
       child: Column(
         children: [
           _buildPermanentClueCard(context),
-          AspectRatio(
-            aspectRatio: 1,
-            child: Container(
+          Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 520, maxHeight: 520),
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: Container(
               decoration: BoxDecoration(
                 border: Border.all(
                   color: Theme.of(context).colorScheme.outline,
@@ -530,9 +533,11 @@ class _CrosswordGridState extends ConsumerState<CrosswordGrid> {
               ),
             ),
           ),
-        ],
+        ),
       ),
-    );
+    ],
+  ),
+);
   }
 
   void _handleCellTap(int x, int y) {

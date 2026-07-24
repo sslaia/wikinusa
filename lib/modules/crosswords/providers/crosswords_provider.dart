@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/crossword_model.dart';
 import '../../../providers/shared_prefs_provider.dart';
+import '../../../services/widget_data_service.dart';
 
 class CrosswordsState {
   final List<CrosswordPuzzle> puzzles;
@@ -155,6 +156,7 @@ class CrosswordsNotifier extends StateNotifier<CrosswordsState> {
       orElse: () => state.puzzles.first,
     );
     state = state.copyWith(currentPuzzle: puzzle);
+    WidgetDataService.updateCrosswordWidget(puzzle, 'Wikipedia');
   }
 
   Future<void> _checkAndResetDailyPuzzleIfNeeded() async {

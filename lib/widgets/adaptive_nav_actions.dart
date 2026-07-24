@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wikimedia_core/wikimedia_core.dart';
 import '../providers/app_state.dart';
+import '../providers/database_provider.dart';
 import '../providers/random_article_provider.dart';
 import '../providers/wiki_api_provider.dart';
 import 'shortcuts_bottom_sheet.dart';
@@ -45,13 +46,20 @@ class AdaptiveNavActions {
         label: 'refresh'.tr(),
         onPressed: () async {
           final langCode = ref.read(languageProvider);
+          final db = ref.read(appDatabaseProvider);
+          final targetTitle = isHomeScreen ? null : pageTitle;
+
+          await db.clearCache(
+            project: currentProject.name.toLowerCase(),
+            languageCode: langCode,
+            pageTitle: targetTitle,
+          );
           await WikiApiService.clearCache(
             currentProject, 
             langCode, 
-            isHomeScreen ? null : pageTitle
+            targetTitle,
           );
           
-          final targetTitle = isHomeScreen ? null : pageTitle;
           ref.invalidate(wikiApiProvider(targetTitle));
           
           if (context.mounted) {

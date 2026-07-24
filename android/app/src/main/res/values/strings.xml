@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WikiNusa</string>
+    <string name="widget_featured_article_label">Featured Article</string>
+    <string name="widget_featured_article_description">Displays daily featured articles, words, and stories from WikiNusa.</string>
+    <string name="widget_crossword_label">Daily Crossword</string>
+    <string name="widget_crossword_description">Displays today\'s crossword puzzle screenshot and clue.</string>
+</resources>

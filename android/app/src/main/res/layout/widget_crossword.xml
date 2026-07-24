@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_background"
+    android:orientation="vertical"
+    android:padding="14dp">
+
+    <TextView
+        android:id="@+id/widget_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="DAILY CROSSWORD"
+        android:textColor="#D97706"
+        android:textSize="11sp"
+        android:fontFamily="sans-serif-medium"
+        android:includeFontPadding="false" />
+
+    <ImageView
+        android:id="@+id/widget_crossword_image"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="6dp"
+        android:scaleType="fitCenter"
+        android:contentDescription="Crossword Grid of the Day" />
+
+    <TextView
+        android:id="@+id/widget_clue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="Tap to play today\'s crossword puzzle!"
+        android:textColor="#334155"
+        android:textSize="11sp"
+        android:fontFamily="sans-serif"
+        android:includeFontPadding="false"
+        android:gravity="center_horizontal" />
+</LinearLayout>

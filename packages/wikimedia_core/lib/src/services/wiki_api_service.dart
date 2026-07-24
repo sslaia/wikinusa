@@ -135,14 +135,25 @@ class WikiApiService {
     if (isArticle || useActionApiForHome) {
       url =
           'https://$domain/w/api.php?action=parse&page=${Uri.encodeComponent(finalTitle)}&format=json&prop=text|images&mobileformat=1&redirects=1';
+      if (forceRefresh || isArticle) {
+        url += '&smaxage=0&maxage=0&nocache=1';
+      }
     } else {
       url =
           'https://$domain/w/rest.php/v1/page/${Uri.encodeComponent(finalTitle)}/html';
     }
 
+    final requestHeaders = {
+      ...WikiConfig.uaHeaders,
+      if (forceRefresh || isArticle) ...{
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+      },
+    };
+
     try {
       final response = await http
-          .get(Uri.parse(url), headers: WikiConfig.uaHeaders)
+          .get(Uri.parse(url), headers: requestHeaders)
           .timeout(const Duration(seconds: 15));
 
       if (response.statusCode == 200) {

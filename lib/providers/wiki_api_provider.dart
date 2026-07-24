@@ -4,6 +4,8 @@ import 'package:wikimedia_core/wikimedia_core.dart';
 import 'app_state.dart';
 import 'database_provider.dart';
 
+import '../services/widget_data_service.dart';
+
 /// Returns a String/Map for articles, and a `List<HomePageSection>` for the home page.
 final wikiApiProvider = FutureProvider.autoDispose.family<dynamic, String?>((ref, pageTitleArg) async {
   final currentProject = ref.watch(appStateProvider);
@@ -22,7 +24,7 @@ final wikiApiProvider = FutureProvider.autoDispose.family<dynamic, String?>((ref
     isArticle = true;
   }
 
-  return WikiApiService.fetchPageHtml(
+  final result = await WikiApiService.fetchPageHtml(
     currentProject,
     langCode,
     pageTitle,
@@ -43,7 +45,9 @@ final wikiApiProvider = FutureProvider.autoDispose.family<dynamic, String?>((ref
               'isOfflineCache': true,
             };
           } else if (!isArt && decoded is List) {
-            return decoded.map((e) => HomePageSection.fromJson(e)).toList();
+            final sections = decoded.map((e) => HomePageSection.fromJson(e)).toList();
+            WidgetDataService.updateHomeSectionsWidgets(sections, currentProject.name, langCode);
+            return sections;
           }
         } catch (_) {}
       }
@@ -60,4 +64,10 @@ final wikiApiProvider = FutureProvider.autoDispose.family<dynamic, String?>((ref
       );
     },
   );
+
+  if (!isArticle && result is List<HomePageSection>) {
+    WidgetDataService.updateHomeSectionsWidgets(result, currentProject.name, langCode);
+  }
+
+  return result;
 });

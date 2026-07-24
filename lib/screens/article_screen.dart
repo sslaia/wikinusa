@@ -23,6 +23,7 @@ import '../widgets/custom_bottom_app_bar.dart';
 import '../widgets/drawer_menu.dart';
 import '../widgets/adaptive_nav_actions.dart';
 import '../providers/auth_provider.dart';
+import '../providers/database_provider.dart';
 import 'edit_page_screen.dart';
 import 'image_screen.dart';
 
@@ -309,7 +310,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                                             const SizedBox(width: 8),
                                             Expanded(
                                               child: Text(
-                                                'Offline saved version',
+                                                'offline_saved_version'.tr(),
                                                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
                                                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                                                     ),
@@ -986,20 +987,22 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('refreshing_content').tr(),
-          duration: const Duration(seconds: 3),
+          duration: const Duration(seconds: 1),
         ),
       );
 
-      await Future.delayed(const Duration(seconds: 3));
-
-      if (mounted) {
-        await WikiApiService.clearCache(
-          currentProject,
-          langCode,
-          currentTitle,
-        );
-        ref.invalidate(wikiApiProvider(currentTitle));
-      }
+      final db = ref.read(appDatabaseProvider);
+      await db.clearCache(
+        project: currentProject.name.toLowerCase(),
+        languageCode: langCode,
+        pageTitle: currentTitle,
+      );
+      await WikiApiService.clearCache(
+        currentProject,
+        langCode,
+        currentTitle,
+      );
+      ref.invalidate(wikiApiProvider(currentTitle));
     }
   }
 

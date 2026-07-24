@@ -114,6 +114,7 @@ class _CrosswordsScreenState extends ConsumerState<CrosswordsScreen> {
                       floating: true,
                       snap: true,
                       elevation: 2,
+                      centerTitle: true,
                       shadowColor: Theme.of(
                         context,
                       ).colorScheme.shadow.withValues(alpha: 0.2),
@@ -198,61 +199,69 @@ class _CrosswordsScreenState extends ConsumerState<CrosswordsScreen> {
                       )
                     else ...[
                       SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: SegmentedButton<int>(
-                            emptySelectionAllowed: true,
-                            segments: [
-                              ButtonSegment<int>(
-                                value: 0,
-                                label: Text(
-                                  'crossword_daily'.tr(),
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                                icon: const Icon(Icons.grid_on),
+                        child: Center(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 750),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                                vertical: 8.0,
                               ),
-                              ButtonSegment<int>(
-                                value: 2,
-                                label: Text(
-                                  'crossword_favorites'.tr(),
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                                icon: const Icon(Icons.favorite),
+                              child: SegmentedButton<int>(
+                                emptySelectionAllowed: true,
+                                segments: [
+                                  ButtonSegment<int>(
+                                    value: 0,
+                                    label: Text(
+                                      'crossword_daily'.tr(),
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                    icon: const Icon(Icons.grid_on),
+                                  ),
+                                  ButtonSegment<int>(
+                                    value: 2,
+                                    label: Text(
+                                      'crossword_favorites'.tr(),
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                    icon: const Icon(Icons.favorite),
+                                  ),
+                                  ButtonSegment<int>(
+                                    value: 1,
+                                    label: Text(
+                                      'crossword_scoreboard'.tr(),
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                    icon: const Icon(Icons.leaderboard),
+                                  ),
+                                ],
+                                selected: <int>{
+                                  if (_currentIndex == 1)
+                                    1
+                                  else if (_currentIndex == 2)
+                                    2
+                                  else if (_currentIndex == 0 &&
+                                      (state.currentPuzzle == null ||
+                                          state.currentPuzzle!.puzzleId ==
+                                              ref
+                                                  .read(crosswordsProvider.notifier)
+                                                  .dailyPuzzleId))
+                                    0,
+                                },
+                                onSelectionChanged: (Set<int> newSelection) {
+                                  if (newSelection.isEmpty) return;
+                                  final int selectedIndex = newSelection.first;
+                                  if (selectedIndex == 0) {
+                                    ref
+                                        .read(crosswordsProvider.notifier)
+                                        .playDailyPuzzle();
+                                  }
+                                  setState(() {
+                                    _currentIndex = selectedIndex;
+                                  });
+                                },
                               ),
-                              ButtonSegment<int>(
-                                value: 1,
-                                label: Text(
-                                  'crossword_scoreboard'.tr(),
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                                icon: const Icon(Icons.leaderboard),
-                              ),
-                            ],
-                            selected: <int>{
-                              if (_currentIndex == 1)
-                                1
-                              else if (_currentIndex == 2)
-                                2
-                              else if (_currentIndex == 0 &&
-                                  (state.currentPuzzle == null ||
-                                      state.currentPuzzle!.puzzleId ==
-                                          ref
-                                              .read(crosswordsProvider.notifier)
-                                              .dailyPuzzleId))
-                                0,
-                            },
-                            onSelectionChanged: (Set<int> newSelection) {
-                              if (newSelection.isEmpty) return;
-                              final int selectedIndex = newSelection.first;
-                              if (selectedIndex == 0) {
-                                ref
-                                    .read(crosswordsProvider.notifier)
-                                    .playDailyPuzzle();
-                              }
-                              setState(() {
-                                _currentIndex = selectedIndex;
-                              });
-                            },
+                            ),
                           ),
                         ),
                       ),
@@ -411,12 +420,15 @@ class _CrosswordsScreenState extends ConsumerState<CrosswordsScreen> {
           color: Theme.of(context).scaffoldBackgroundColor,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Card(
-              elevation: 2,
-              clipBehavior: Clip.antiAlias,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 750),
+                child: Card(
+                  elevation: 2,
+                  clipBehavior: Clip.antiAlias,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
@@ -632,6 +644,8 @@ class _CrosswordsScreenState extends ConsumerState<CrosswordsScreen> {
           ),
         ),
       ),
-    );
-  }
+    ),
+  ),
+);
+}
 }

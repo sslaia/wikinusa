@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:home_widget/home_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'localizations/jv_material_localizations.dart';
@@ -14,6 +15,7 @@ import 'providers/font_size_provider.dart';
 import 'providers/app_state.dart';
 import 'screens/home_screen.dart';
 import 'screens/onboarding_screen.dart';
+import 'modules/crosswords/screens/crosswords_screen.dart';
 import 'theme/app_theme.dart';
 import 'package:wikimedia_core/wikimedia_core.dart';
 
@@ -35,7 +37,6 @@ void main() async {
 
   // Initialize wikimedia_core configuration
   await WikiConfig.init(appName: 'wikinusa');
-  await WikiApiService.clearCache(ProjectType.wikipedia, 'jv', null);
 
   final prefs = await SharedPreferences.getInstance();
 
@@ -58,18 +59,49 @@ void main() async {
   );
 }
 
-class WikiNusaApp extends ConsumerWidget {
+class WikiNusaApp extends ConsumerStatefulWidget {
   const WikiNusaApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<WikiNusaApp> createState() => _WikiNusaAppState();
+}
+
+class _WikiNusaAppState extends ConsumerState<WikiNusaApp> {
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _checkWidgetLaunch();
+  }
+
+  void _checkWidgetLaunch() {
+    HomeWidget.initiallyLaunchedFromHomeWidget().then(_handleWidgetUri);
+    HomeWidget.widgetClicked.listen(_handleWidgetUri);
+  }
+
+  void _handleWidgetUri(Uri? uri) {
+    if (uri == null) return;
+    final prefs = ref.read(sharedPreferencesProvider);
+    prefs.setBool('onboarding_completed', true);
+
+    if (uri.host == 'crossword' || uri.toString().contains('crossword')) {
+      _navigatorKey.currentState?.push(
+        MaterialPageRoute(builder: (_) => const CrosswordsScreen()),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final currentProject = ref.watch(appStateProvider);
     final themeMode = ref.watch(themeModeProvider);
     final fontSize = ref.watch(fontSizeProvider);
     final prefs = ref.watch(sharedPreferencesProvider);
-    final bool isFirstStart = prefs.getBool('onboarding_completed') ?? false;
+    final bool isCompleted = prefs.getBool('onboarding_completed') ?? false;
 
     return MaterialApp(
+      navigatorKey: _navigatorKey,
       title: 'WikiNusa',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.getTheme(currentProject, brightness: Brightness.light),
@@ -93,7 +125,7 @@ class WikiNusaApp extends ConsumerWidget {
           child: child!,
         );
       },
-      home: isFirstStart
+      home: isCompleted
           ? HomeScreen(key: ValueKey(currentProject))
           : const OnboardingScreen(),
     );
