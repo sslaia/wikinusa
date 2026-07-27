@@ -7,9 +7,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'localizations/jv_material_localizations.dart';
-import 'localizations/nia_material_localizations.dart';
+import 'localizations/fallback_localizations_delegate.dart';
 import 'providers/shared_prefs_provider.dart';
+
 import 'providers/theme_provider.dart';
 import 'providers/font_size_provider.dart';
 import 'providers/app_state.dart';
@@ -109,8 +109,8 @@ class _WikiNusaAppState extends ConsumerState<WikiNusaApp> {
       themeMode: themeMode,
       localizationsDelegates: [
         EasyLocalization.of(context)!.delegate,
-        const NiaMaterialLocalizationsDelegate(),
-        const JvMaterialLocalizationsDelegate(),
+        const FallbackMaterialLocalizationsDelegate(),
+        const FallbackCupertinoLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,

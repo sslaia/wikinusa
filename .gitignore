@@ -56,5 +56,14 @@ test_fetch.dart
 wb_nia_olayama.html
 wb_nia_olayama.json
 
-# OAuth Configuration
+# OAuth Configuration & Secrets
 lib/oauth_config.dart
+.env
+.env.*
+*.env
+android/key.properties
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+*.keystore
+*.jks
+
