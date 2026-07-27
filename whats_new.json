@@ -1,5 +1,22 @@
 [
   {
+    "version": "1.5.3",
+    "changes": {
+      "en": [
+        "Added native Android home screen widgets (featured article & crossword)",
+        "Added offline article caching with local SQLite database",
+        "Improved crosswords module (permanent clues UI & sound effects)",
+        "Branding & policy compliance updates (Nusapedia)"
+      ],
+      "id": [
+        "Menambahkan widget layar utama Android bawaan (artikel pilihan & teka-teki silang)",
+        "Menambahkan penembokan artikel luring dengan basis data SQLite lokal",
+        "Peningkatan modul teka-teki silang (petunjuk permanen & efek suara)",
+        "Pembaruan merek dan kepatuhan kebijakan (Nusapedia)"
+      ]
+    }
+  },
+  {
     "version": "1.5.2",
     "changes": {
       "en": [

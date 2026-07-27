@@ -283,7 +283,7 @@
   "webview_error": "WebView error",
   "webview_mobile_warning": "This Main Page is not yet fully mobile friendly. Some contents may not display as intended. You can help improve this page, i.e. encourage the administrator to improve the Main Page by following the Wikimedia's recommendations for mobile-friendly articles (Search for \"Recommendations for mobile friendly articles on Wikimedia wikis\")",
   "welcome_to": "Welcome to",
-  "whats_new_content": "<h3>New in version 1.5.2</h3>\n<ul>\n<li>Activated Javanese Wikipedia</li>\n</ul>\n\n<p>More on the app website at <a href=\"https://sslaia.github.io/wikinusa/\">https://sslaia.github.io/wikinusa</a>.</p>\n\n<p>The GitHub repository for the app is: <a href=\"https://github.com/sslaia/wikinusa\">https://github.com/sslaia/wikinusa</a>.</p>\n\n<p>Other wiki related apps are at <a href=\"https://sslaia.github.io/\">Nusa Apps</a></p>",
+  "whats_new_content": "<h3>New in version 1.5.3</h3>\n<ul>\n<li>Added native Android home screen widgets (featured article & crossword)</li>\n<li>Added offline article caching with local SQLite database</li>\n<li>Improved crosswords module (permanent clues UI & sound effects)</li>\n<li>Branding & policy compliance updates (Nusapedia)</li>\n</ul>\n\n<p>More on the app website at <a href=\"https://sslaia.github.io/wikinusa/\">https://sslaia.github.io/wikinusa</a>.</p>\n\n<p>The GitHub repository for the app is: <a href=\"https://github.com/sslaia/wikinusa\">https://github.com/sslaia/wikinusa</a>.</p>\n\n<p>Other wiki related apps are at <a href=\"https://sslaia.github.io/\">Nusa Apps</a></p>",
   "wiki_portals": "Wiki Portals",
   "wikibooks": "Wikibooks",
   "wikimedia_auth": "Login",

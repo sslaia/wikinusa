@@ -282,7 +282,7 @@
   "webview_error": "Galat WebView",
   "webview_mobile_warning": "Halaman Utama ini belum sepenuhnya ramah seluler. Beberapa konten mungkin tidak tampil sebagaimana mestinya. Anda dapat membantu membuat halaman ini ramah seluler dengan mendorong administrator wiki untuk mengikuti rekomendasi Wikimedia (Cari di Google: \"Recommendations for mobile friendly articles on Wikimedia wikis\")",
   "welcome_to": "Selamat Datang ke",
-  "whats_new_content": "<h3>Baru di versi 1.5.2</h3>\n<ul>\n<li>Mengaktifkan Wikipedia bahasa Jawa</li>\n</ul>\n\n<p>Selengkapnya di situs web aplikasi di <a href=\"https://sslaia.github.io/wikinusa/\">https://sslaia.github.io/wikinusa</a>.</p>\n\n<p>Repositori GitHub untuk aplikasi ini adalah: <a href=\"https://github.com/sslaia/wikinusa\">https://github.com/sslaia/wikinusa</a>.</p>\n\n<p>Aplikasi terkait wiki lainnya ada di <a href=\"https://sslaia.github.io/\">Aplikasi Nusa</a></p>",
+  "whats_new_content": "<h3>Baru di versi 1.5.3</h3>\n<ul>\n<li>Menambahkan widget layar utama Android bawaan (artikel pilihan & teka-teki silang)</li>\n<li>Menambahkan penembokan artikel luring dengan basis data SQLite lokal</li>\n<li>Peningkatan modul teka-teki silang (petunjuk permanen & efek suara)</li>\n<li>Pembaruan merek dan kepatuhan kebijakan (Nusapedia)</li>\n</ul>\n\n<p>Selengkapnya di situs web aplikasi di <a href=\"https://sslaia.github.io/wikinusa/\">https://sslaia.github.io/wikinusa</a>.</p>\n\n<p>Repositori GitHub untuk aplikasi ini adalah: <a href=\"https://github.com/sslaia/wikinusa\">https://github.com/sslaia/wikinusa</a>.</p>\n\n<p>Aplikasi terkait wiki lainnya ada di <a href=\"https://sslaia.github.io/\">Aplikasi Nusa</a></p>",
   "wiki_portals": "Portal Wiki",
   "wikibooks": "Wikibuku",
   "wikimedia_auth": "Masuk log",

@@ -7,16 +7,14 @@ An Android app for Nias, Indonesian and English Wikipedia as well as for Nias Wi
 ## Version's history
 
 <!-- WHATS_NEW_START -->
-### New 1.5.3+6
-- Add native Android home screen widgets
-- Add offline article caching with sqlite database
-- Improve crossword module
-- Branding & policy compliance (Wikipedia to Nusapedia/Niaspedia)
+### Version 1.5.3:
+- Added native Android home screen widgets (featured article & crossword)
+- Added offline article caching with local SQLite database
+- Improved crosswords module (permanent clues UI & sound effects)
+- Branding & policy compliance updates (Nusapedia)
 
 ### Version 1.5.2:
-- Activate Javanese Wikipedia
-- Improve tablet and desktop layout
-- Add a persistent formatting toolbar in the editor window
+- Activated Javanese Wikipedia
 
 ### Version 1.5.1:
 - Updated crosswords module (correct spellings)
