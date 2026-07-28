@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -31,6 +32,7 @@ class CustomBottomAppBar extends ConsumerWidget {
         child: Row(
           children: [
             IconButton(
+              tooltip: 'open_navigation_menu'.tr(),
               icon: const Icon(Icons.menu),
               onPressed: () {
                 scaffoldKey.currentState?.openDrawer();
@@ -49,8 +51,8 @@ class CustomBottomAppBar extends ConsumerWidget {
             ),
             const Spacer(),
             ...AdaptiveNavActions.buildActions(
-              context, 
-              ref, 
+              context,
+              ref,
               currentProject: currentProject,
               isHomeScreen: isHomeScreen,
               pageTitle: pageTitle,

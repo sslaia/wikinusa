@@ -1010,9 +1010,10 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     ThemeData theme,
     IconData icon,
     Color color, {
+    String? tooltip,
     VoidCallback? onPressed,
   }) {
-    return Material(
+    final widget = Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onPressed,
@@ -1023,6 +1024,10 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
         ),
       ),
     );
+    if (tooltip != null && tooltip.isNotEmpty) {
+      return Tooltip(message: tooltip, child: widget);
+    }
+    return widget;
   }
 
   Widget _buildDivider(ThemeData theme) {

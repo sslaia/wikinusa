@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:html/parser.dart' as html_parser;
 import 'package:wikimedia_core/wikimedia_core.dart';
 import '../providers/app_state.dart';
+import '../providers/database_provider.dart';
+import '../services/connectivity_service.dart';
 import 'article_screen.dart';
 
 class SearchResultsScreen extends ConsumerStatefulWidget {
@@ -22,6 +24,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
   bool _isLoading = true;
   bool _isLoadingMore = false;
   bool _hasError = false;
+  bool _isOfflineResults = false;
   String _errorMessage = '';
   int? _nextOffset = 0;
 
@@ -34,7 +37,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
   }
 
   Future<void> _fetchResults({bool isLoadMore = false}) async {
-    if (_isLoadingMore || _nextOffset == null) return;
+    if (_isLoadingMore || (_nextOffset == null && isLoadMore)) return;
     if (_isLoading && _results.isNotEmpty && !isLoadMore) return;
 
     setState(() {
@@ -46,6 +49,12 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
       _hasError = false;
     });
 
+    final isOnline = await ConnectivityService.isOnline();
+    if (!isOnline && !isLoadMore) {
+      await _fetchLocalResults();
+      return;
+    }
+
     try {
       final langCode = ref.read(languageProvider);
       final currentProject = ref.read(appStateProvider);
@@ -54,13 +63,14 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
         widget.query,
         langCode,
         currentProject.name.toLowerCase(),
-        offset: _nextOffset!,
+        offset: _nextOffset ?? 0,
         limit: 20,
       );
 
       if (!mounted) return;
 
       setState(() {
+        _isOfflineResults = false;
         _results.addAll(response['results'] as List<Map<String, dynamic>>);
         _nextOffset = response['nextOffset'] as int?;
         if (isLoadMore) {
@@ -71,16 +81,70 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
       });
     } catch (e) {
       if (!mounted) return;
+      if (!isLoadMore) {
+        await _fetchLocalResults();
+      } else {
+        setState(() {
+          _hasError = true;
+          _errorMessage = e.toString();
+          _isLoadingMore = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _fetchLocalResults() async {
+    try {
+      final db = ref.read(appDatabaseProvider);
+      final langCode = ref.read(languageProvider);
+      final currentProject = ref.read(appStateProvider);
+
+      final localCaches = await db.searchLocalArticles(
+        project: currentProject.name,
+        languageCode: langCode,
+        query: widget.query,
+      );
+
+      final List<Map<String, dynamic>> localMapped = localCaches.map((cache) {
+        final snippetText = _extractHtmlText(cache.htmlContent);
+        return {
+          'title': cache.pageTitle,
+          'snippet': snippetText.length > 150
+              ? '${snippetText.substring(0, 150)}...'
+              : snippetText,
+        };
+      }).toList();
+
+      if (!mounted) return;
 
       setState(() {
+        _isOfflineResults = true;
+        _results.clear();
+        _results.addAll(localMapped);
+        _nextOffset = null;
+        _isLoading = false;
+        _isLoadingMore = false;
+        _hasError = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _isOfflineResults = true;
+        _results.clear();
+        _isLoading = false;
+        _isLoadingMore = false;
         _hasError = true;
         _errorMessage = e.toString();
-        if (isLoadMore) {
-          _isLoadingMore = false;
-        } else {
-          _isLoading = false;
-        }
       });
+    }
+  }
+
+  String _extractHtmlText(String htmlContent) {
+    try {
+      final parsed = html_parser.parse(htmlContent);
+      return parsed.body?.text.trim() ?? '';
+    } catch (_) {
+      return '';
     }
   }
 
@@ -121,6 +185,41 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
               ),
             ),
           ),
+          if (_isOfflineResults && _results.isNotEmpty)
+            SliverToBoxAdapter(
+              child: Container(
+                margin: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.secondaryContainer.withValues(
+                    alpha: 0.6,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.offline_pin_outlined,
+                      size: 18,
+                      color: theme.colorScheme.onSecondaryContainer,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'search_offline_results_label'.tr(),
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          color: theme.colorScheme.onSecondaryContainer,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           if (_isLoading)
             const SliverFillRemaining(
               child: Center(child: CircularProgressIndicator()),
@@ -166,23 +265,39 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
             SliverFillRemaining(
               hasScrollBody: false,
               child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.search_off_rounded,
-                      size: 64,
-                      color: theme.colorScheme.outline,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'search_no_results'.tr(),
-                      style: theme.textTheme.titleMedium?.copyWith(
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        _isOfflineResults
+                            ? Icons.wifi_off_rounded
+                            : Icons.search_off_rounded,
+                        size: 64,
                         color: theme.colorScheme.outline,
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 16),
+                      Text(
+                        _isOfflineResults
+                            ? 'search_offline_no_results'.tr()
+                            : 'search_no_results'.tr(),
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      if (_isOfflineResults) ...[
+                        const SizedBox(height: 24),
+                        ElevatedButton.icon(
+                          onPressed: () => _fetchResults(),
+                          icon: const Icon(Icons.refresh),
+                          label: Text('search_retry'.tr()),
+                        ),
+                      ],
+                    ],
+                  ),
                 ),
               ),
             )

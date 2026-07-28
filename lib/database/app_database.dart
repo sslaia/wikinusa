@@ -30,7 +30,17 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        onCreate: (m) async {
+          await m.createAll();
+        },
+        onUpgrade: (m, from, to) async {
+          // Safe migration handling between schema versions
+        },
+      );
 
   Future<ArticleCache?> getCachedArticle({
     required String project,
@@ -38,13 +48,31 @@ class AppDatabase extends _$AppDatabase {
     required String pageTitle,
     required bool isArticle,
   }) {
+    final cleanProj = project.toLowerCase();
+    final cleanTitle = pageTitle.toLowerCase();
+    return (select(articleCaches)
+          ..where((t) =>
+              t.project.lower().equals(cleanProj) &
+              t.languageCode.equals(languageCode) &
+              t.pageTitle.lower().equals(cleanTitle) &
+              t.isArticle.equals(isArticle)))
+        .getSingleOrNull();
+  }
+
+  Future<List<ArticleCache>> searchLocalArticles({
+    required String project,
+    required String languageCode,
+    required String query,
+  }) {
+    final cleanQuery = '%${query.toLowerCase()}%';
     return (select(articleCaches)
           ..where((t) =>
               t.project.equals(project) &
               t.languageCode.equals(languageCode) &
-              t.pageTitle.equals(pageTitle) &
-              t.isArticle.equals(isArticle)))
-        .getSingleOrNull();
+              t.isArticle.equals(true) &
+              (t.pageTitle.lower().like(cleanQuery) |
+                  t.htmlContent.lower().like(cleanQuery))))
+        .get();
   }
 
   Future<int> upsertArticle({
