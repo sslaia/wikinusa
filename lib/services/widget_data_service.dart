@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:wikimedia_core/wikimedia_core.dart';
@@ -23,11 +24,11 @@ class WidgetDataService {
           final plainText = _stripHtml(section.textHtml);
           final extractedTitle = _extractTitle(section.textHtml);
 
-          String labelTitle = 'FEATURED ARTICLE';
+          String labelTitle = 'featuredArticle'.tr().toUpperCase();
           if (projLower == 'wiktionary' || titleKey == 'featuredWord') {
-            labelTitle = 'WORD OF THE DAY';
+            labelTitle = 'featuredWord'.tr().toUpperCase();
           } else if (projLower == 'wikibooks' || titleKey == 'featuredStory') {
-            labelTitle = 'FEATURED STORY';
+            labelTitle = 'featuredStory'.tr().toUpperCase();
           }
 
           final displayTitle = extractedTitle.isNotEmpty ? extractedTitle : labelTitle;
@@ -82,10 +83,11 @@ class WidgetDataService {
     try {
       final clueCount = puzzle.words.length;
       final sampleClue = puzzle.words.isNotEmpty ? puzzle.words.first.clue : '';
+      final title = 'crosswords'.tr().toUpperCase();
 
       await HomeWidget.saveWidgetData<String>(
         'crossword_title',
-        'DAILY CROSSWORD',
+        title,
       );
       await HomeWidget.saveWidgetData<String>(
         'crossword_puzzle_id',
