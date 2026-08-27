@@ -76,12 +76,25 @@ class _WikiNusaAppState extends ConsumerState<WikiNusaApp> {
   }
 
   void _checkWidgetLaunch() {
-    HomeWidget.initiallyLaunchedFromHomeWidget().then(_handleWidgetUri);
-    HomeWidget.widgetClicked.listen(_handleWidgetUri);
+    try {
+      HomeWidget.initiallyLaunchedFromHomeWidget()
+          .then(_handleWidgetUri)
+          .catchError((e) {
+        debugPrint('Error getting initial widget launch: $e');
+      });
+      HomeWidget.widgetClicked.listen(
+        _handleWidgetUri,
+        onError: (e) {
+          debugPrint('Error listening to widget clicks: $e');
+        },
+      );
+    } catch (e) {
+      debugPrint('Error initializing widget launch handler: $e');
+    }
   }
 
   void _handleWidgetUri(Uri? uri) {
-    if (uri == null) return;
+    if (uri == null || !mounted) return;
     final prefs = ref.read(sharedPreferencesProvider);
     prefs.setBool('onboarding_completed', true);
 

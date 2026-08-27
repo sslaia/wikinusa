@@ -88,7 +88,8 @@ class WikiApiService {
     String finalTitle = pageTitle;
     
     final rules = WikiConfig.getRules(languageCode, project.name.toLowerCase());
-    final mainPageTitle = rules?['mainPageTitle'] as String? ?? 'Main Page';
+    final mainPageTitle = rules?['mainPageTitle'] as String? ??
+        _getDefaultMainPageTitle(languageCode, project);
     if (pageTitle == 'Main Page') {
       finalTitle = mainPageTitle;
     }
@@ -99,13 +100,13 @@ class WikiApiService {
     if (apiPrefix.isNotEmpty) {
       if (!isArticle) {
         useActionApiForHome = true;
-        finalTitle = '${apiPrefix}Olayama'; // 'Olayama' is hardcoded main page title, but let's check original logic
+        finalTitle = '$apiPrefix$finalTitle';
       }
     }
 
     if (apiPrefix.isNotEmpty && isArticle) {
         if (pageTitle == 'Main Page') {
-          finalTitle = '${apiPrefix}Olayama';
+          finalTitle = '$apiPrefix$mainPageTitle';
         } else if (!pageTitle.contains(apiPrefix)) {
           final lowerTitle = pageTitle.toLowerCase();
           if (lowerTitle.startsWith('special:') ||
@@ -139,8 +140,9 @@ class WikiApiService {
         url += '&smaxage=0&maxage=0&nocache=1';
       }
     } else {
+      final formattedTitle = finalTitle.replaceAll(' ', '_');
       url =
-          'https://$domain/w/rest.php/v1/page/${Uri.encodeComponent(finalTitle)}/html';
+          'https://$domain/w/rest.php/v1/page/${Uri.encodeComponent(formattedTitle)}/html';
     }
 
     final requestHeaders = {
@@ -428,5 +430,28 @@ class WikiApiService {
       }
     } catch (_) {}
     return null;
+  }
+
+  static String _getDefaultMainPageTitle(
+    String languageCode,
+    ProjectType project,
+  ) {
+    switch (languageCode) {
+      case 'id':
+        if (project == ProjectType.wiktionary) return 'Wikikamus:Halaman_Utama';
+        return 'Halaman_Utama';
+      case 'nia':
+        if (project == ProjectType.wikipedia) return 'Wikipedia:Olayama';
+        if (project == ProjectType.wiktionary) return 'Wikikamus:Olayama';
+        return 'Olayama';
+      case 'jv':
+        if (project == ProjectType.wiktionary) return 'Wikisastra:Pendhapa';
+        return 'Wikipédia:Pendhapa';
+      case 'en':
+        if (project == ProjectType.wiktionary) return 'Wiktionary:Main_Page';
+        return 'Main_Page';
+      default:
+        return 'Main_Page';
+    }
   }
 }

@@ -92,7 +92,7 @@ class DrawerAuthSection extends ConsumerWidget {
           ],
         ),
         child: Material(
-          color: Colors.transparent,
+          type: MaterialType.transparency,
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 8),
             leading: Icon(

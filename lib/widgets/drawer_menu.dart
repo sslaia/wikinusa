@@ -418,7 +418,7 @@ class DrawerContent extends ConsumerWidget {
           ],
         ),
         child: Material(
-          color: Colors.transparent,
+          type: MaterialType.transparency,
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 8),
             leading: Icon(
@@ -559,25 +559,28 @@ class DrawerContent extends ConsumerWidget {
           ),
         ],
       ),
-      child: SwitchListTile(
-        secondary: Icon(
-          isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
-          color: theme.colorScheme.primary,
-          size: 20,
-        ),
-        title: Text(
-          isDark ? 'dark_mode'.tr() : 'light_mode'.tr(),
-          style: theme.textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.w600,
+      child: Material(
+        type: MaterialType.transparency,
+        child: SwitchListTile(
+          secondary: Icon(
+            isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
+            color: theme.colorScheme.primary,
+            size: 20,
           ),
+          title: Text(
+            isDark ? 'dark_mode'.tr() : 'light_mode'.tr(),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          value: isDark,
+          onChanged: (val) {
+            ref
+                .read(themeModeProvider.notifier)
+                .setThemeMode(val ? ThemeMode.dark : ThemeMode.light);
+          },
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
-        value: isDark,
-        onChanged: (val) {
-          ref
-              .read(themeModeProvider.notifier)
-              .setThemeMode(val ? ThemeMode.dark : ThemeMode.light);
-        },
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
     );
   }
@@ -600,45 +603,48 @@ class DrawerContent extends ConsumerWidget {
           ),
         ],
       ),
-      child: Row(
-        children: AppFontSize.values.map((size) {
-          final isSelected = size == currentFontSize;
-          return Expanded(
-            child: InkWell(
-              onTap: () =>
-                  ref.read(fontSizeProvider.notifier).setFontSize(size),
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                decoration: isSelected
-                    ? BoxDecoration(
-                        color: theme.colorScheme.primary,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: theme.colorScheme.primary.withValues(
-                              alpha: 0.3,
+      child: Material(
+        type: MaterialType.transparency,
+        child: Row(
+          children: AppFontSize.values.map((size) {
+            final isSelected = size == currentFontSize;
+            return Expanded(
+              child: InkWell(
+                onTap: () =>
+                    ref.read(fontSizeProvider.notifier).setFontSize(size),
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: isSelected
+                      ? BoxDecoration(
+                          color: theme.colorScheme.primary,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: theme.colorScheme.primary.withValues(
+                                alpha: 0.3,
+                              ),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
                             ),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      )
-                    : null,
-                alignment: Alignment.center,
-                child: Text(
-                  size.label[0].toUpperCase(),
-                  style: theme.textTheme.labelLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: isSelected
-                        ? Colors.white
-                        : theme.colorScheme.onSurfaceVariant,
+                          ],
+                        )
+                      : null,
+                  alignment: Alignment.center,
+                  child: Text(
+                    size.label[0].toUpperCase(),
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: isSelected
+                          ? Colors.white
+                          : theme.colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ),
               ),
-            ),
-          );
-        }).toList(),
+            );
+          }).toList(),
+        ),
       ),
     );
   }

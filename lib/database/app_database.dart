@@ -28,6 +28,7 @@ class ArticleCaches extends Table {
 @DriftDatabase(tables: [ArticleCaches])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
+  AppDatabase.forTesting(super.executor);
 
   @override
   int get schemaVersion => 2;
@@ -64,15 +65,31 @@ class AppDatabase extends _$AppDatabase {
     required String languageCode,
     required String query,
   }) {
+    final cleanProj = project.toLowerCase();
     final cleanQuery = '%${query.toLowerCase()}%';
     return (select(articleCaches)
           ..where((t) =>
-              t.project.equals(project) &
+              t.project.lower().equals(cleanProj) &
               t.languageCode.equals(languageCode) &
               t.isArticle.equals(true) &
               (t.pageTitle.lower().like(cleanQuery) |
                   t.htmlContent.lower().like(cleanQuery))))
         .get();
+  }
+
+  Future<ArticleCache?> getRandomCachedArticle({
+    required String project,
+    required String languageCode,
+  }) {
+    final cleanProj = project.toLowerCase();
+    return (select(articleCaches)
+          ..where((t) =>
+              t.project.lower().equals(cleanProj) &
+              t.languageCode.equals(languageCode) &
+              t.isArticle.equals(true))
+          ..orderBy([(t) => OrderingTerm.random()])
+          ..limit(1))
+        .getSingleOrNull();
   }
 
   Future<int> upsertArticle({

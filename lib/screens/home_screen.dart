@@ -19,6 +19,7 @@ import '../providers/app_state.dart';
 import '../providers/wiki_api_provider.dart';
 import '../widgets/drawer_menu.dart';
 import '../utils/wiki_utils.dart';
+import '../services/connectivity_service.dart';
 import '../modules/crosswords/screens/crosswords_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -38,8 +39,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _checkWidgetLaunch() {
-    HomeWidget.initiallyLaunchedFromHomeWidget().then(_handleWidgetUri);
-    HomeWidget.widgetClicked.listen(_handleWidgetUri);
+    try {
+      HomeWidget.initiallyLaunchedFromHomeWidget()
+          .then(_handleWidgetUri)
+          .catchError((e) {
+        debugPrint('Error getting initial widget launch: $e');
+      });
+      HomeWidget.widgetClicked.listen(
+        _handleWidgetUri,
+        onError: (e) {
+          debugPrint('Error listening to widget clicks: $e');
+        },
+      );
+    } catch (e) {
+      debugPrint('Error initializing widget launch handler: $e');
+    }
   }
 
   void _handleWidgetUri(Uri? uri) {
@@ -58,6 +72,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final wikiContent = ref.watch(wikiApiProvider(null));
     final currentLanguage = ref.watch(languageProvider);
     final theme = Theme.of(context);
+    final isOnlineAsync = ref.watch(isOnlineProvider);
+    final isOffline = isOnlineAsync.value == false;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -123,6 +139,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         },
                       ),
                     ),
+                    if (isOffline)
+                      const SliverToBoxAdapter(
+                        child: _OfflineBannerWidget(),
+                      ),
                     SliverToBoxAdapter(
                       child: WikiPortalsWidget(
                         project: currentProject,
@@ -353,6 +373,59 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _OfflineBannerWidget extends StatelessWidget {
+  const _OfflineBannerWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.secondaryContainer.withValues(alpha: 0.6),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.wifi_off_rounded,
+            size: 20,
+            color: theme.colorScheme.onSecondaryContainer,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'offline_banner_title'.tr(),
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: theme.colorScheme.onSecondaryContainer,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'offline_mode_banner'.tr(),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSecondaryContainer.withValues(alpha: 0.85),
+                    height: 1.3,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

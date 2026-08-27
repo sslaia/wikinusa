@@ -292,5 +292,9 @@
   "wikipedia": "Wikipedia",
   "wiktionary": "Wikikamus",
   "word": "Lema",
-  "yes": "Ya"
+  "yes": "Ya",
+  "offline_mode_banner": "Anda sedang luring (tanpa koneksi internet). Pencarian dan artikel acak akan menggunakan basis data luring yang tersimpan.",
+  "offline_banner_title": "Mode Luring",
+  "random_article_offline": "Luring: menampilkan artikel acak tersimpan.",
+  "no_offline_articles_found": "Tidak ada artikel tersimpan di basis data luring untuk proyek ini. Hubungkan ke internet untuk mengunduh artikel."
 }

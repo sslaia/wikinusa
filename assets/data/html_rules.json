@@ -78,6 +78,7 @@
   },
   "en": {
     "wikipedia": {
+      "mainPageTitle": "Main_Page",
       "remove": [
         ".infobox",
         ".side-box-flex",
@@ -121,6 +122,7 @@
       }
     },
     "wiktionary": {
+      "mainPageTitle": "Wiktionary:Main_Page",
       "remove": [
         ".infobox"
       ],
@@ -141,6 +143,7 @@
       }
     },
     "wikibooks": {
+      "mainPageTitle": "Main_Page",
       "remove": [
         ".infobox"
       ],
@@ -152,6 +155,7 @@
   },
   "id": {
     "wikipedia": {
+      "mainPageTitle": "Halaman_Utama",
       "remove": [
         ".infobox",
         ".side-box-flex",
@@ -191,6 +195,7 @@
       }
     },
     "wiktionary": {
+      "mainPageTitle": "Wikikamus:Halaman_Utama",
       "remove": [
         ".nomobile",
         ".side-box-flex",
@@ -223,6 +228,7 @@
       }
     },
     "wikibooks": {
+      "mainPageTitle": "Halaman_Utama",
       "remove": [
         ".nomobile"
       ],
@@ -240,6 +246,7 @@
   },
   "nia": {
     "wikipedia": {
+      "mainPageTitle": "Wikipedia:Olayama",
       "remove": [
         ".infobox",
         ".side-box-flex",
@@ -258,6 +265,7 @@
       }
     },
     "wiktionary": {
+      "mainPageTitle": "Wikikamus:Olayama",
       "processingFlags": [
         "removeEmptySections",
         "removeEmptyImageSections"
@@ -280,6 +288,7 @@
       }
     },
     "wikibooks": {
+      "mainPageTitle": "Olayama",
       "domainOverride": "incubator.wikimedia.org",
       "apiPrefix": "Wb/nia/",
       "remove": [
@@ -293,6 +302,7 @@
         "featuredStory": "mp-featured-article-body",
         "featuredImage": "mp-featured-photo-body",
         "doYouKnow": "mp-dyk-body"
+      }
     }
   },
   "jv": {
@@ -312,6 +322,19 @@
         "featuredImage": {},
         "onThisDay": {}
       }
+    },
+    "wiktionary": {
+      "mainPageTitle": "Wikisastra:Pendhapa",
+      "remove": [
+        ".infobox",
+        ".side-box-flex",
+        ".toc",
+        "toc"
+      ],
+      "hide": [
+        ".nomobile"
+      ],
+      "homePageSections": {}
     }
   }
 }

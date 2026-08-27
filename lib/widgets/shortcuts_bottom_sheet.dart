@@ -167,7 +167,7 @@ Widget _buildShortcutCard(
         ),
       ),
       child: Material(
-        color: Colors.transparent,
+        type: MaterialType.transparency,
         child: ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           leading: Container(

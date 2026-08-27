@@ -293,5 +293,9 @@
   "wikipedia": "Wikipedia",
   "wiktionary": "Wiktionary",
   "word": "Word",
-  "yes": "Yes"
+  "yes": "Yes",
+  "offline_mode_banner": "You are currently offline. Search and random articles will use your saved offline database.",
+  "offline_banner_title": "Offline Mode",
+  "random_article_offline": "Offline: displaying a random saved article.",
+  "no_offline_articles_found": "No saved articles found in offline database for this project. Connect to the internet to download articles."
 }

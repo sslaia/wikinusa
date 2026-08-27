@@ -1,3 +1,12 @@
 {
-    "cmake.sourceDirectory": "/data/Projects/AntiGravityProjects/wikinusa/linux"
+    "cmake.sourceDirectory": "/data/Projects/AntiGravityProjects/wikinusa/linux",
+    "java.import.gradle.enabled": false,
+    "java.import.maven.enabled": false,
+    "files.watcherExclude": {
+        "**/packages/flutter_mw/**": true,
+        "**/.settings/**": true
+    },
+    "files.exclude": {
+        "**/packages/flutter_mw/**": true
+    }
 }

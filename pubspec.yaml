@@ -1,7 +1,7 @@
 name: wikinusa
 description: "An Android app for Wikipedia, Wiktionary and Wikibooks in local languages in Indonesia"
 publish_to: 'none'
-version: 1.5.3+6
+version: 1.5.5+8
 
 environment:
   sdk: ^3.11.4
@@ -20,7 +20,7 @@ dependencies:
   just_audio_windows: ^0.2.3
   drift: ^2.24.0
   sqlite3: ^2.4.0
-  sqlite3_flutter_libs: ^0.5.24
+  sqlite3_flutter_libs: ^0.5.42
   path: ^1.9.0
   path_provider: ^2.1.5
   shared_preferences: ^2.5.5

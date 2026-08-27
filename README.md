@@ -7,6 +7,16 @@ An Android app for Nias, Javanese, Indonesian and English Wikipedia as well as f
 ## Version's history
 
 <!-- WHATS_NEW_START -->
+### New 1.5.5:
+- Database reflection failure fix
+- 16KB ELF page size compatibility
+- ProGuard rules 
+<!-- WHATS_NEW_END -->
+
+### New 1.5.4:
+- Emergency bug fixes
+- Enhanced offline feature
+
 ### Version 1.5.3:
 - Added native Android home screen widgets (featured article & crossword)
 - Added offline article caching with local SQLite database
@@ -48,7 +58,6 @@ An Android app for Nias, Javanese, Indonesian and English Wikipedia as well as f
 - There is a special button for shortcuts to the most important places on Wikipedia, Wikikamus and Wikibuku.
 - Intelligent link handling. Local link will be opened normally, but the link to external web pages will be open in a in-app browser.
 - Support for dark/light mode and font size selection.
-<!-- WHATS_NEW_END -->
 
 ## Getting the app
 

@@ -291,5 +291,9 @@
   "wikipedia": "Wikipedia",
   "wiktionary": "Wikikamus",
   "word": "Ngawua wehede",
-  "yes": "Ya'ia"
+  "yes": "Ya'ia",
+  "offline_mode_banner": "Lö fakhai ba gu'ö internet. Ha tola mu'alui zura si no mu'irö'ö ba hape.",
+  "offline_banner_title": "Lö fakhai ba gu'ö internet",
+  "random_article_offline": "Lö fakhai ba gu'ö: ha te'oroma'ö zura si no mu'irö'ö ba hape.",
+  "no_offline_articles_found": "Lö tesöndra. Fakhai ba gu'ö internet ena'ö tola ösöndra ngawalö zura."
 }
