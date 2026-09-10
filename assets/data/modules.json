@@ -1,0 +1,98 @@
+{
+  "nia": {
+    "crosswords": {
+      "enabled": true,
+      "project": "wiktionary",
+      "dataFile": "assets/data/nia_crosswords.json",
+      "pageTitle": "Wikikamus:Dahö-dahö"
+    },
+    "course": {
+      "enabled": true,
+      "project": "wiktionary",
+      "pageTitle": "Wikikamus:Sulu"
+    },
+    "gallery": {
+      "enabled": true,
+      "project": "wikipedia",
+      "dataFile": "assets/data/gallery.json",
+      "pageTitle": "Wikipedia:Galeri"
+    },
+    "newsletter": {
+      "enabled": true,
+      "project": "wikipedia",
+      "pageTitle": "Wikipedia:Turia"
+    }
+  },
+  "id": {
+    "crosswords": {
+      "enabled": false,
+      "project": "wiktionary",
+      "dataFile": "assets/data/id_crosswords.json",
+      "pageTitle": "Wikisumber:Teka-Teki_Silang"
+    },
+    "course": {
+      "enabled": false,
+      "project": "wiktionary",
+      "pageTitle": "Wikikamus:Belajar"
+    },
+    "gallery": {
+      "enabled": false,
+      "project": "wikipedia",
+      "dataFile": "assets/data/gallery.json",
+      "pageTitle": "Wikipedia:Galeri"
+    },
+    "newsletter": {
+      "enabled": false,
+      "project": "wikipedia",
+      "pageTitle": "Wikipedia:Warta"
+    }
+  },
+  "en": {
+    "crosswords": {
+      "enabled": false,
+      "project": "wiktionary",
+      "dataFile": "assets/data/en_crosswords.json",
+      "pageTitle": "Wiktionary:Crosswords"
+    },
+    "course": {
+      "enabled": false,
+      "project": "wiktionary",
+      "pageTitle": "Wiktionary:Course"
+    },
+    "gallery": {
+      "enabled": false,
+      "project": "wikipedia",
+      "dataFile": "assets/data/gallery.json",
+      "pageTitle": "Wikipedia:Picture_of_the_day"
+    },
+    "newsletter": {
+      "enabled": false,
+      "project": "wikipedia",
+      "pageTitle": "Wikipedia:Wikipedia_Signpost"
+    }
+  },
+  "jv": {
+    "crosswords": {
+      "enabled": false,
+      "project": "wiktionary",
+      "dataFile": "assets/data/jv_crosswords.json",
+      "pageTitle": "Wikisastra:Teka-Teki_Silang"
+    },
+    "course": {
+      "enabled": false,
+      "project": "wiktionary",
+      "pageTitle": "Wikisastra:Sinau"
+    },
+    "gallery": {
+      "enabled": false,
+      "project": "wikipedia",
+      "dataFile": "assets/data/gallery.json",
+      "pageTitle": "Wikipedia:Galeri"
+    },
+    "newsletter": {
+      "enabled": false,
+      "project": "wikipedia",
+      "pageTitle": "Wikipedia:Pawarta"
+    }
+  }
+}

@@ -4,10 +4,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import '../models/gallery_item.dart';
 import '../../../providers/app_state.dart';
+import '../../../providers/modules_provider.dart';
 
 final galleryDataProvider =
     FutureProvider<Map<String, List<GalleryItem>>>((ref) async {
   final langCode = ref.watch(languageProvider);
+  final config = ref.watch(
+    moduleConfigProvider((moduleKey: 'gallery', langCode: langCode)),
+  );
+  final localDataFile = config?.dataFile ?? 'assets/data/gallery.json';
   Map<String, dynamic> jsonData;
 
   const onlineUrl =
@@ -25,8 +30,7 @@ final galleryDataProvider =
     }
   } catch (e) {
     // Fallback to local asset
-    final String jsonString =
-        await rootBundle.loadString('assets/data/gallery.json');
+    final String jsonString = await rootBundle.loadString(localDataFile);
     jsonData = jsonDecode(jsonString);
   }
 

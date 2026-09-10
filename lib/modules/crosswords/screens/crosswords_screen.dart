@@ -79,14 +79,14 @@ class _CrosswordsScreenState extends ConsumerState<CrosswordsScreen> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final deviceType = ResponsiveUtils.getDeviceType(context);
-        final isTablet = deviceType != DeviceType.compact;
         final isLandscape = ResponsiveUtils.isLandscape(context);
 
         final bool showBottomNavBar = !isLandscape;
         final bool showNavigationRail = isLandscape;
-        final bool showPermanentDrawer = isTablet && isLandscape;
-        final bool showMenuButtonInRail = showNavigationRail && !showPermanentDrawer;
+        final bool showPermanentDrawer =
+            ResponsiveUtils.isTabletLandscape(context);
+        final bool showMenuButtonInRail =
+            showNavigationRail && !showPermanentDrawer;
         final double bottomAppBarHeight = showBottomNavBar ? 80.0 : 0.0;
 
         return Scaffold(
@@ -104,7 +104,7 @@ class _CrosswordsScreenState extends ConsumerState<CrosswordsScreen> {
               if (showPermanentDrawer)
                 const SizedBox(
                   width: 304,
-                  child: DrawerMenu(),
+                  child: DrawerMenu(isPermanent: true),
                 ),
               Expanded(
                 child: CustomScrollView(
@@ -289,6 +289,7 @@ class _CrosswordsScreenState extends ConsumerState<CrosswordsScreen> {
                         IconButton(
                           icon: const Icon(Icons.menu),
                           color: theme.colorScheme.onPrimary,
+                          tooltip: 'open_navigation_menu'.tr(),
                           onPressed: () =>
                               _scaffoldKey.currentState?.openDrawer(),
                         ),

@@ -7,32 +7,45 @@ An Android app for Nias, Javanese, Indonesian and English Wikipedia as well as f
 ## Version's history
 
 <!-- WHATS_NEW_START -->
-### New 1.5.5:
-- Database reflection failure fix
-- 16KB ELF page size compatibility
-- ProGuard rules 
 <!-- WHATS_NEW_END -->
 
-### New 1.5.4:
+## New 1.5.6
+
+- Memory usage optimization
+- New newsletter module
+- Various minor improvements
+
+### New 1.5.5
+
+- Database reflection failure fix
+- 16KB ELF page size compatibility
+- ProGuard rules
+
+### New 1.5.4
+
 - Emergency bug fixes
 - Enhanced offline feature
 
-### Version 1.5.3:
+### Version 1.5.3
+
 - Added native Android home screen widgets (featured article & crossword)
 - Added offline article caching with local SQLite database
 - Improved crosswords module (permanent clues UI & sound effects)
 - Branding & policy compliance updates (Nusapedia)
 
-### Version 1.5.2:
+### Version 1.5.2
+
 - Activated Javanese Wikipedia
 
-### Version 1.5.1:
+### Version 1.5.1
+
 - Updated crosswords module (correct spellings)
 - Resolved keyboard/touch focus issues in editing interface
 - Resolved FAB issues
 - Minor bug fixes
 
-### Version 1.5.0:
+### Version 1.5.0
+
 - New module: crosswords
 - New feature: edit pages using native app editor
 - New feature: Find in page in article's page (with highlighting and auto-scrolling)
@@ -43,12 +56,14 @@ An Android app for Nias, Javanese, Indonesian and English Wikipedia as well as f
 - Improve image loading and search results page
 - Various fixes
 
-### Version 1.1.0:
+### Version 1.1.0
+
 - Fixed: empty shortcuts, pop-up references, portals
 - New modules: Gallery and Nias language course
 - Various fixes improvements
 
-### Version 1.0.0:
+### Version 1.0.0
+
 - Support for Nias, Indonesian and English Wikipedia
 - Full support for Wikipedia, Wikikamus and Wikibuku Nias
 - Users can bookmark pages they like and find them later.

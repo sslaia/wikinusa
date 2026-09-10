@@ -16,19 +16,40 @@ import '../screens/about_screen.dart';
 import '../screens/bookmarks_screen.dart';
 import '../modules/gallery/screens/gallery_carousel_screen.dart';
 import '../modules/course/screens/nias_course_screen.dart';
+import '../modules/newsletter/screens/newsletter_screen.dart';
 import '../utils/shortcut_utils.dart';
 import '../utils/wiki_utils.dart';
+import '../providers/modules_provider.dart';
 import 'drawer_auth_section.dart';
 
 class DrawerMenu extends ConsumerWidget {
-  const DrawerMenu({super.key});
+  final bool isPermanent;
+  const DrawerMenu({super.key, this.isPermanent = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     return Drawer(
+      elevation: isPermanent ? 0 : null,
+      shape: isPermanent
+          ? const RoundedRectangleBorder(
+              borderRadius: BorderRadius.zero,
+            )
+          : null,
       backgroundColor: theme.colorScheme.surfaceContainerLow,
-      child: const DrawerContent(),
+      child: Container(
+        decoration: isPermanent
+            ? BoxDecoration(
+                border: Border(
+                  right: BorderSide(
+                    color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+                    width: 1,
+                  ),
+                ),
+              )
+            : null,
+        child: const DrawerContent(),
+      ),
     );
   }
 }
@@ -43,6 +64,28 @@ class DrawerContent extends ConsumerWidget {
     final currentProject = ref.watch(appStateProvider);
     final currentLanguage = ref.watch(languageProvider);
     final currentFontSize = ref.watch(fontSizeProvider);
+
+    final crosswordsConfig = ref.watch(
+      moduleConfigProvider((moduleKey: 'crosswords', langCode: currentLanguage)),
+    );
+    final courseConfig = ref.watch(
+      moduleConfigProvider((moduleKey: 'course', langCode: currentLanguage)),
+    );
+    final galleryConfig = ref.watch(
+      moduleConfigProvider((moduleKey: 'gallery', langCode: currentLanguage)),
+    );
+    final newsletterConfig = ref.watch(
+      moduleConfigProvider((moduleKey: 'newsletter', langCode: currentLanguage)),
+    );
+
+    final isCrosswordsEnabled =
+        crosswordsConfig?.enabled ?? (currentLanguage == 'nia');
+    final isCourseEnabled =
+        courseConfig?.enabled ?? (currentLanguage == 'nia');
+    final isGalleryEnabled =
+        galleryConfig?.enabled ?? (currentLanguage == 'nia');
+    final isNewsletterEnabled =
+        newsletterConfig?.enabled ?? (currentLanguage == 'nia');
 
     final isDark =
         themeMode == ThemeMode.dark ||
@@ -118,66 +161,134 @@ class DrawerContent extends ConsumerWidget {
             ),
           ],
         ),
-        // Show modules only for Nias language
-        // Until Indonesian and English modules are implemented
-        if (currentLanguage == 'nia')
-          _buildExpansionSection(
-            theme,
-            titleKey: 'drawer_modules',
-            initiallyExpanded: true,
-            children: [
-              _buildDrawerItem(
-                theme,
-                icon: Icons.grid_on_rounded,
-                title: 'crosswords'.tr(),
-                onTap: () {
-                  if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
-                    Navigator.pop(context);
-                  }
-                  ref
-                      .read(appStateProvider.notifier)
-                      .setProject(ProjectType.wiktionary, currentLanguage);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const CrosswordsScreen()),
-                  );
-                },
-              ),
-              _buildDrawerItem(
-                theme,
-                icon: Icons.school_rounded,
-                title: 'nias_course'.tr(),
-                onTap: () {
-                  if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
-                    Navigator.pop(context);
-                  }
-                  ref
-                      .read(appStateProvider.notifier)
-                      .setProject(ProjectType.wiktionary, currentLanguage);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const NiasCourseScreen()),
-                  );
-                },
-              ),
-              _buildDrawerItem(
-                theme,
-                icon: Icons.photo_library_rounded,
-                title: 'gallery'.tr(),
-                onTap: () {
-                  if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
-                    Navigator.pop(context);
-                  }
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const GalleryCarouselScreen(),
+        // Modules are visible across all languages, greyed out when not available in the active language
+        _buildExpansionSection(
+          theme,
+          titleKey: 'drawer_modules',
+          initiallyExpanded: true,
+          children: [
+            _buildDrawerItem(
+              theme,
+              icon: Icons.grid_on_rounded,
+              title: 'crosswords'.tr(),
+              enabled: isCrosswordsEnabled,
+              onTap: () {
+                if (!isCrosswordsEnabled) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('module_not_available_hint'.tr()),
+                      duration: const Duration(seconds: 2),
                     ),
                   );
-                },
-              ),
-            ],
-          ),
+                  return;
+                }
+                if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
+                  Navigator.pop(context);
+                }
+                final project =
+                    crosswordsConfig?.project ?? ProjectType.wiktionary;
+                ref
+                    .read(appStateProvider.notifier)
+                    .setProject(project, currentLanguage);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const CrosswordsScreen()),
+                );
+              },
+            ),
+            _buildDrawerItem(
+              theme,
+              icon: Icons.school_rounded,
+              title: 'nias_course'.tr(),
+              enabled: isCourseEnabled,
+              onTap: () {
+                if (!isCourseEnabled) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('module_not_available_hint'.tr()),
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                  return;
+                }
+                if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
+                  Navigator.pop(context);
+                }
+                final project =
+                    courseConfig?.project ?? ProjectType.wiktionary;
+                ref
+                    .read(appStateProvider.notifier)
+                    .setProject(project, currentLanguage);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const NiasCourseScreen()),
+                );
+              },
+            ),
+            _buildDrawerItem(
+              theme,
+              icon: Icons.photo_library_rounded,
+              title: 'gallery'.tr(),
+              enabled: isGalleryEnabled,
+              onTap: () {
+                if (!isGalleryEnabled) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('module_not_available_hint'.tr()),
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                  return;
+                }
+                if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
+                  Navigator.pop(context);
+                }
+                final project =
+                    galleryConfig?.project ?? ProjectType.wikipedia;
+                ref
+                    .read(appStateProvider.notifier)
+                    .setProject(project, currentLanguage);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const GalleryCarouselScreen(),
+                  ),
+                );
+              },
+            ),
+            _buildDrawerItem(
+              theme,
+              icon: Icons.feed_rounded,
+              title: 'newsletter'.tr(),
+              enabled: isNewsletterEnabled,
+              onTap: () {
+                if (!isNewsletterEnabled) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('module_not_available_hint'.tr()),
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                  return;
+                }
+                if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
+                  Navigator.pop(context);
+                }
+                final project =
+                    newsletterConfig?.project ?? ProjectType.wikipedia;
+                ref
+                    .read(appStateProvider.notifier)
+                    .setProject(project, currentLanguage);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const NewsletterScreen(),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
         _buildExpansionSection(
           theme,
           titleKey: 'drawer_language',
@@ -402,6 +513,7 @@ class DrawerContent extends ConsumerWidget {
     required IconData icon,
     required String title,
     required VoidCallback onTap,
+    bool enabled = true,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
@@ -409,13 +521,15 @@ class DrawerContent extends ConsumerWidget {
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.02),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          boxShadow: enabled
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.02),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
         ),
         child: Material(
           type: MaterialType.transparency,
@@ -423,14 +537,19 @@ class DrawerContent extends ConsumerWidget {
             contentPadding: const EdgeInsets.symmetric(horizontal: 8),
             leading: Icon(
               icon,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+              color: enabled
+                  ? theme.colorScheme.onSurface.withValues(alpha: 0.7)
+                  : Colors.grey.withValues(alpha: 0.4),
               size: 22,
             ),
             title: Text(
               title,
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: theme.colorScheme.onSurface,
+                color: enabled
+                    ? theme.colorScheme.onSurface
+                    : Colors.grey.withValues(alpha: 0.5),
+                decoration: !enabled ? TextDecoration.lineThrough : null,
               ),
             ),
             onTap: onTap,

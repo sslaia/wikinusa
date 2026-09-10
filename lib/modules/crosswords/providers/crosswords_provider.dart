@@ -7,6 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/crossword_model.dart';
 import '../../../providers/shared_prefs_provider.dart';
 import '../../../services/widget_data_service.dart';
+import '../../../providers/app_state.dart';
+import '../../../providers/modules_provider.dart';
 
 class CrosswordsState {
   final List<CrosswordPuzzle> puzzles;
@@ -69,15 +71,16 @@ class CrosswordsNotifier extends StateNotifier<CrosswordsState> {
   Future<void> _fetchData() async {
     List<CrosswordPuzzle> fetchedPuzzles = [];
     final prefs = ref.read(sharedPreferencesProvider);
+    final currentLanguage = ref.read(languageProvider);
 
     // Check if we need to sync today
     final now = DateTime.now();
     final todayStr =
         '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
-    final lastSyncStr = prefs.getString('crossword_last_sync');
+    final lastSyncStr = prefs.getString('crossword_last_sync_$currentLanguage');
     bool shouldSync = lastSyncStr != todayStr;
 
-    if (shouldSync) {
+    if (shouldSync && currentLanguage == 'nia') {
       try {
         final response = await http.get(
           Uri.parse(
@@ -91,8 +94,8 @@ class CrosswordsNotifier extends StateNotifier<CrosswordsState> {
               .toList();
 
           // Cache the downloaded JSON and update sync date
-          await prefs.setString('cached_crosswords', response.body);
-          await prefs.setString('crossword_last_sync', todayStr);
+          await prefs.setString('cached_crosswords_$currentLanguage', response.body);
+          await prefs.setString('crossword_last_sync_$currentLanguage', todayStr);
         } else {
           await _loadLocalData(prefs, fetchedPuzzles);
         }
@@ -101,7 +104,7 @@ class CrosswordsNotifier extends StateNotifier<CrosswordsState> {
         await _loadLocalData(prefs, fetchedPuzzles);
       }
     } else {
-      // Load local data since we already synced today
+      // Load local data
       await _loadLocalData(prefs, fetchedPuzzles);
     }
 
@@ -118,20 +121,37 @@ class CrosswordsNotifier extends StateNotifier<CrosswordsState> {
     SharedPreferences prefs,
     List<CrosswordPuzzle> outList,
   ) async {
-    final cachedStr = prefs.getString('cached_crosswords');
+    final currentLanguage = ref.read(languageProvider);
+    final cachedStr = prefs.getString('cached_crosswords_$currentLanguage') ??
+        (currentLanguage == 'nia' ? prefs.getString('cached_crosswords') : null);
     if (cachedStr != null) {
       final List<dynamic> data = jsonDecode(cachedStr);
       outList.addAll(
         data.map((json) => CrosswordPuzzle.fromJson(json)).toList(),
       );
     } else {
-      final jsonString = await rootBundle.loadString(
-        'assets/data/nia_crosswords.json',
+      final config = ref.read(
+        moduleConfigProvider((
+          moduleKey: 'crosswords',
+          langCode: currentLanguage,
+        )),
       );
-      final List<dynamic> data = jsonDecode(jsonString);
-      outList.addAll(
-        data.map((json) => CrosswordPuzzle.fromJson(json)).toList(),
-      );
+      final dataFile = config?.dataFile ?? 'assets/data/nia_crosswords.json';
+      try {
+        final jsonString = await rootBundle.loadString(dataFile);
+        final List<dynamic> data = jsonDecode(jsonString);
+        outList.addAll(
+          data.map((json) => CrosswordPuzzle.fromJson(json)).toList(),
+        );
+      } catch (_) {
+        final jsonString = await rootBundle.loadString(
+          'assets/data/nia_crosswords.json',
+        );
+        final List<dynamic> data = jsonDecode(jsonString);
+        outList.addAll(
+          data.map((json) => CrosswordPuzzle.fromJson(json)).toList(),
+        );
+      }
     }
   }
 

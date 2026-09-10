@@ -77,13 +77,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final deviceType = ResponsiveUtils.getDeviceType(context);
-        final isTablet = deviceType != DeviceType.compact;
         final isLandscape = ResponsiveUtils.isLandscape(context);
 
         final bool showBottomNavBar = !isLandscape;
         final bool showNavigationRail = isLandscape;
-        final bool showPermanentDrawer = isTablet && isLandscape;
+        final bool showPermanentDrawer =
+            ResponsiveUtils.isTabletLandscape(context);
         final bool showMenuButtonInRail =
             showNavigationRail && !showPermanentDrawer;
         final double bottomAppBarHeight = showBottomNavBar ? 80.0 : 0.0;
@@ -101,7 +100,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           body: Row(
             children: [
               if (showPermanentDrawer)
-                const SizedBox(width: 304, child: DrawerMenu()),
+                const SizedBox(
+                  width: 304,
+                  child: DrawerMenu(isPermanent: true),
+                ),
               Expanded(
                 child: CustomScrollView(
                   slivers: [
@@ -203,6 +205,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       if (showMenuButtonInRail)
                         IconButton(
                           icon: const Icon(Icons.menu, color: Colors.white),
+                          tooltip: 'open_navigation_menu'.tr(),
                           onPressed: () =>
                               _scaffoldKey.currentState?.openDrawer(),
                         ),

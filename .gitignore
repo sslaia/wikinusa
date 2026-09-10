@@ -55,6 +55,7 @@ out.json
 test_fetch.dart
 wb_nia_olayama.html
 wb_nia_olayama.json
+MODULAR_MODULES_SPECIFICATION.md
 
 # OAuth Configuration & Secrets
 lib/oauth_config.dart

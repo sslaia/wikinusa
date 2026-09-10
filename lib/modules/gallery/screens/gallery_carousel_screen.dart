@@ -58,14 +58,15 @@ class _GalleryCarouselScreenState extends ConsumerState<GalleryCarouselScreen> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final deviceType = ResponsiveUtils.getDeviceType(context);
-        final isTablet = deviceType != DeviceType.compact;
         final isLandscape = ResponsiveUtils.isLandscape(context);
         final bool isCompactPortrait = deviceType == DeviceType.compact && !isLandscape;
 
         final bool showBottomNavBar = !isLandscape;
         final bool showNavigationRail = isLandscape;
-        final bool showPermanentDrawer = isTablet && isLandscape;
-        final bool showMenuButtonInRail = showNavigationRail && !showPermanentDrawer;
+        final bool showPermanentDrawer =
+            ResponsiveUtils.isTabletLandscape(context);
+        final bool showMenuButtonInRail =
+            showNavigationRail && !showPermanentDrawer;
 
         return Scaffold(
           key: _scaffoldKey,
@@ -83,7 +84,7 @@ class _GalleryCarouselScreenState extends ConsumerState<GalleryCarouselScreen> {
               if (showPermanentDrawer)
                 const SizedBox(
                   width: 304,
-                  child: DrawerMenu(),
+                  child: DrawerMenu(isPermanent: true),
                 ),
               Expanded(
                 child: galleryDataAsync.when(
@@ -313,7 +314,9 @@ class _GalleryCarouselScreenState extends ConsumerState<GalleryCarouselScreen> {
                       if (showMenuButtonInRail)
                         IconButton(
                           icon: const Icon(Icons.menu, color: Colors.white),
-                          onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+                          tooltip: 'open_navigation_menu'.tr(),
+                          onPressed: () =>
+                              _scaffoldKey.currentState?.openDrawer(),
                         ),
                       Expanded(
                         child: Align(

@@ -15,6 +15,8 @@ import '../../../widgets/adaptive_nav_actions.dart';
 import '../../../widgets/drawer_menu.dart';
 import '../../../widgets/custom_bottom_app_bar.dart';
 import '../../../providers/bookmarks_provider.dart';
+import '../../../providers/modules_provider.dart';
+import '../../../providers/app_state.dart';
 import '../../../screens/image_screen.dart';
 
 class NiasCourseScreen extends ConsumerStatefulWidget {
@@ -26,18 +28,26 @@ class NiasCourseScreen extends ConsumerStatefulWidget {
 
 class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  late String _courseTitle;
-
-  @override
-  void initState() {
-    super.initState();
-    _courseTitle = 'Wikikamus:Sulu';
-  }
 
   @override
   Widget build(BuildContext context) {
-    // Explicitly target Nias Wiktionary
-    final courseContent = ref.watch(courseApiProvider(_courseTitle));
+    final currentLanguage = ref.watch(languageProvider);
+    final courseConfig = ref.watch(
+      moduleConfigProvider((moduleKey: 'course', langCode: currentLanguage)),
+    );
+
+    final courseTitle = (courseConfig?.pageTitle.isNotEmpty ?? false)
+        ? courseConfig!.pageTitle
+        : 'Wikikamus:Sulu';
+    final project = courseConfig?.project ?? ProjectType.wiktionary;
+
+    final courseContent = ref.watch(
+      courseApiProvider((
+        pageTitle: courseTitle,
+        langCode: currentLanguage,
+        project: project,
+      )),
+    );
     final theme = Theme.of(context);
 
     // Mix of project colors
@@ -51,19 +61,23 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
       0.5,
     )!;
 
+    final domain = WikiConfig.getDomain(
+      currentLanguage,
+      project.name.toLowerCase(),
+    );
     final String pageUrl =
-        'https://nia.wiktionary.org/wiki/${_courseTitle.replaceAll(' ', '_')}';
+        'https://$domain/wiki/${courseTitle.replaceAll(' ', '_')}';
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final deviceType = ResponsiveUtils.getDeviceType(context);
-        final isTablet = deviceType != DeviceType.compact;
         final isLandscape = ResponsiveUtils.isLandscape(context);
 
         final bool showBottomNavBar = !isLandscape;
         final bool showNavigationRail = isLandscape;
-        final bool showPermanentDrawer = isTablet && isLandscape;
-        final bool showMenuButtonInRail = showNavigationRail && !showPermanentDrawer;
+        final bool showPermanentDrawer =
+            ResponsiveUtils.isTabletLandscape(context);
+        final bool showMenuButtonInRail =
+            showNavigationRail && !showPermanentDrawer;
 
         return Scaffold(
           key: _scaffoldKey,
@@ -71,8 +85,8 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
           bottomNavigationBar: showBottomNavBar
               ? CustomBottomAppBar(
                   scaffoldKey: _scaffoldKey,
-                  currentProject: ProjectType.wiktionary,
-                  pageTitle: _courseTitle,
+                  currentProject: project,
+                  pageTitle: courseTitle,
                 )
               : null,
           body: Row(
@@ -80,7 +94,7 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
               if (showPermanentDrawer)
                 const SizedBox(
                   width: 304,
-                  child: DrawerMenu(),
+                  child: DrawerMenu(isPermanent: true),
                 ),
               Expanded(
                 child: Stack(
@@ -310,7 +324,13 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
                         ),
                       ],
                     ),
-                    _buildFloatingActionBar(theme, pageUrl, _courseTitle),
+                    _buildFloatingActionBar(
+                      theme,
+                      pageUrl,
+                      courseTitle,
+                      project,
+                      currentLanguage,
+                    ),
                   ],
                 ),
               ),
@@ -325,6 +345,7 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
                         IconButton(
                           icon: const Icon(Icons.menu),
                           color: theme.colorScheme.onPrimary,
+                          tooltip: 'open_navigation_menu'.tr(),
                           onPressed: () =>
                               _scaffoldKey.currentState?.openDrawer(),
                         ),
@@ -339,10 +360,10 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
                                   AdaptiveNavActions.buildActions(
                                         context,
                                         ref,
-                                        currentProject: ProjectType.wiktionary,
+                                        currentProject: project,
                                         isHomeScreen: false,
                                         showHome: true,
-                                        pageTitle: _courseTitle,
+                                        pageTitle: courseTitle,
                                         color: theme.colorScheme.onPrimary,
                                       )
                                       .map(
@@ -372,10 +393,11 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
     ThemeData theme,
     String pageUrl,
     String currentTitle,
+    ProjectType project,
+    String langCode,
   ) {
     final bookmarks = ref.watch(bookmarksProvider);
-    const langCode = 'nia';
-    final projectName = ProjectType.wiktionary.name;
+    final projectName = project.name;
 
     final isBookmarked = bookmarks.any(
       (b) =>
@@ -544,15 +566,16 @@ extension ColorToHtml on Color {
   }
 }
 
-// Special provider for course to force Nias Wiktionary
-final courseApiProvider = FutureProvider.autoDispose.family<dynamic, String>((
+// Special provider for course data dynamically configured per language
+final courseApiProvider = FutureProvider.autoDispose
+    .family<dynamic, ({String pageTitle, String langCode, ProjectType project})>((
   ref,
-  pageTitle,
+  params,
 ) async {
   return WikiApiService.fetchPageHtml(
-    ProjectType.wiktionary,
-    'nia',
-    pageTitle,
+    params.project,
+    params.langCode,
+    params.pageTitle,
     true,
   );
 });

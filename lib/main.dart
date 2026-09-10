@@ -38,6 +38,10 @@ void main() async {
   // Initialize wikimedia_core configuration
   await WikiConfig.init(appName: 'wikinusa');
 
+  // Memory optimization: Cap Flutter image cache to reduce memory footprint (RSS)
+  PaintingBinding.instance.imageCache.maximumSize = 100;
+  PaintingBinding.instance.imageCache.maximumSizeBytes = 40 * 1024 * 1024; // 40 MB
+
   final prefs = await SharedPreferences.getInstance();
 
   runApp(
@@ -66,13 +70,41 @@ class WikiNusaApp extends ConsumerStatefulWidget {
   ConsumerState<WikiNusaApp> createState() => _WikiNusaAppState();
 }
 
-class _WikiNusaAppState extends ConsumerState<WikiNusaApp> {
+class _WikiNusaAppState extends ConsumerState<WikiNusaApp>
+    with WidgetsBindingObserver {
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _checkWidgetLaunch();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didHaveMemoryPressure() {
+    super.didHaveMemoryPressure();
+    // Comply with Google Play Android Vitals memory requirements: purge bitmap cache under pressure
+    PaintingBinding.instance.imageCache.clear();
+    PaintingBinding.instance.imageCache.clearLiveImages();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    // Release bitmap resources when app is paused/hidden to avoid holding bitmaps in background
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.hidden ||
+        state == AppLifecycleState.detached) {
+      PaintingBinding.instance.imageCache.clear();
+      PaintingBinding.instance.imageCache.clearLiveImages();
+    }
   }
 
   void _checkWidgetLaunch() {

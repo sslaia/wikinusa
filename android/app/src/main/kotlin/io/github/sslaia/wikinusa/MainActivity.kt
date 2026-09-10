@@ -8,4 +8,8 @@ class MainActivity : FlutterActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
     }
+
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+    }
 }

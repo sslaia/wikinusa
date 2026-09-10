@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 enum DeviceType { compact, medium, expanded }
 
 class ResponsiveUtils {
-  static const double compactBreakpoint = 600;
+  static const double compactBreakpoint = 500;
   static const double expandedBreakpoint = 840;
 
   static DeviceType getDeviceType(BuildContext context) {
@@ -31,8 +31,16 @@ class ResponsiveUtils {
 
   static bool isPortrait(BuildContext context) =>
       MediaQuery.of(context).orientation == Orientation.portrait;
-  
-  /// Tablet is considered Medium or Expanded
-  static bool isTablet(BuildContext context) =>
-      getDeviceType(context) != DeviceType.compact;
+
+  /// Tablet is considered Medium or Expanded, or shortestSide >= 480, or landscape width >= 720 with height >= 480
+  static bool isTablet(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    return size.shortestSide >= 480 ||
+        (size.width >= 720 && size.height >= 480) ||
+        getDeviceType(context) != DeviceType.compact;
+  }
+
+  /// Whether tablet landscape mode is active (permanent drawer mode)
+  static bool isTabletLandscape(BuildContext context) =>
+      isTablet(context) && isLandscape(context);
 }
