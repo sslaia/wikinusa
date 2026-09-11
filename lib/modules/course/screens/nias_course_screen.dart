@@ -398,6 +398,7 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
   ) {
     final bookmarks = ref.watch(bookmarksProvider);
     final projectName = project.name;
+    final wikiColor = project.primaryColor;
 
     final isBookmarked = bookmarks.any(
       (b) =>
@@ -414,13 +415,17 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: theme.colorScheme.surface,
+            color: theme.colorScheme.surface.withValues(alpha: 0.95),
             borderRadius: BorderRadius.circular(32),
+            border: Border.all(
+              color: wikiColor.withValues(alpha: 0.25),
+              width: 1.5,
+            ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.08),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
+                color: wikiColor.withValues(alpha: 0.15),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -430,9 +435,10 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
               _buildActionButton(
                 theme,
                 isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-                isBookmarked
-                    ? theme.colorScheme.primary
-                    : theme.colorScheme.onSurface,
+                wikiColor,
+                tooltip: isBookmarked
+                    ? 'bookmarks_removed'.tr()
+                    : 'bookmarks_added'.tr(),
                 onPressed: () {
                   ref
                       .read(bookmarksProvider.notifier)
@@ -451,22 +457,24 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
                   );
                 },
               ),
-              _buildDivider(theme),
+              _buildDivider(theme, wikiColor),
               _buildActionButton(
                 theme,
                 Icons.share_outlined,
-                theme.colorScheme.onSurface,
+                wikiColor,
+                tooltip: 'share'.tr(),
                 onPressed: () {
                   SharePlus.instance.share(
                     ShareParams(uri: Uri.parse(pageUrl)),
                   );
                 },
               ),
-              _buildDivider(theme),
+              _buildDivider(theme, wikiColor),
               _buildActionButton(
                 theme,
                 Icons.visibility_outlined,
-                theme.colorScheme.onSurface,
+                wikiColor,
+                tooltip: 'open_in_browser'.tr(),
                 onPressed: () async {
                   final uri = Uri.parse(pageUrl);
                   try {
@@ -491,9 +499,10 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
     ThemeData theme,
     IconData icon,
     Color color, {
+    String? tooltip,
     VoidCallback? onPressed,
   }) {
-    return Material(
+    final widget = Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onPressed,
@@ -504,13 +513,17 @@ class _NiasCourseScreenState extends ConsumerState<NiasCourseScreen> {
         ),
       ),
     );
+    if (tooltip != null && tooltip.isNotEmpty) {
+      return Tooltip(message: tooltip, child: widget);
+    }
+    return widget;
   }
 
-  Widget _buildDivider(ThemeData theme) {
+  Widget _buildDivider(ThemeData theme, Color wikiColor) {
     return Container(
       height: 20,
       width: 1,
-      color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+      color: wikiColor.withValues(alpha: 0.2),
       margin: const EdgeInsets.symmetric(horizontal: 8),
     );
   }

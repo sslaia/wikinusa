@@ -27,11 +27,13 @@ class AppTheme {
     final primaryColor = projectType.primaryColor;
     final bool isLight = brightness == Brightness.light;
 
+    final colorScheme = ColorScheme.fromSeed(
+      seedColor: primaryColor,
+      brightness: brightness,
+    );
+
     return ThemeData(
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: primaryColor,
-        brightness: brightness,
-      ),
+      colorScheme: colorScheme,
       useMaterial3: true,
       textTheme: const TextTheme().apply(
         fontSizeFactor: fontSize.scale,
@@ -42,12 +44,18 @@ class AppTheme {
         foregroundColor: Colors.white,
       )
           : const AppBarTheme(),
-      floatingActionButtonTheme: isLight
-          ? FloatingActionButtonThemeData(
-        backgroundColor: primaryColor,
-        foregroundColor: Colors.white,
-      )
-          : const FloatingActionButtonThemeData(),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: colorScheme.surface.withValues(alpha: 0.95),
+        foregroundColor: primaryColor,
+        elevation: 3,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color: primaryColor.withValues(alpha: 0.25),
+            width: 1.5,
+          ),
+        ),
+      ),
     );
   }
 }

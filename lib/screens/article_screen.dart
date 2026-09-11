@@ -770,6 +770,11 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
   ) {
     final bookmarks = ref.watch(bookmarksProvider);
     final history = ref.watch(historyProvider);
+    final currentProject = ref.watch(appStateProvider);
+    final projectColor = ProjectType.values.firstWhere(
+      (p) => p.name == projectName,
+      orElse: () => currentProject,
+    ).primaryColor;
 
     final isBookmarked = bookmarks.any(
       (b) =>
@@ -783,8 +788,9 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
         theme,
         Icons.arrow_back_ios_new,
         history.canGoBack
-            ? theme.colorScheme.primary
-            : theme.colorScheme.onSurface.withValues(alpha: 0.5),
+            ? projectColor
+            : projectColor.withValues(alpha: 0.38),
+        tooltip: 'back'.tr(),
         onPressed: history.canGoBack
             ? () {
                 ref.read(historyProvider.notifier).goBack();
@@ -792,11 +798,14 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
               }
             : null,
       ),
-      _buildDivider(theme),
+      _buildDivider(theme, projectColor),
       _buildActionButton(
         theme,
         isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-        isBookmarked ? theme.colorScheme.primary : theme.colorScheme.onSurface,
+        projectColor,
+        tooltip: isBookmarked
+            ? 'bookmarks_removed'.tr()
+            : 'bookmarks_added'.tr(),
         onPressed: () {
           ref
               .read(bookmarksProvider.notifier)
@@ -815,27 +824,30 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
           );
         },
       ),
-      _buildDivider(theme),
+      _buildDivider(theme, projectColor),
       _buildActionButton(
         theme,
         Icons.share_outlined,
-        theme.colorScheme.onSurface,
+        projectColor,
+        tooltip: 'share'.tr(),
         onPressed: () {
           SharePlus.instance.share(ShareParams(uri: Uri.parse(pageUrl)));
         },
       ),
-      _buildDivider(theme),
+      _buildDivider(theme, projectColor),
       _buildActionButton(
         theme,
         Icons.find_in_page_outlined,
-        theme.colorScheme.onSurface,
+        projectColor,
+        tooltip: 'find_in_page'.tr(),
         onPressed: _startSearch,
       ),
-      _buildDivider(theme),
+      _buildDivider(theme, projectColor),
       _buildActionButton(
         theme,
         Icons.edit_outlined,
-        theme.colorScheme.onSurface,
+        projectColor,
+        tooltip: 'edit'.tr(),
         onPressed: () async {
           var authState = ref.read(authProvider);
           if (authState.isLoading) {
@@ -901,11 +913,12 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
           }
         },
       ),
-      _buildDivider(theme),
+      _buildDivider(theme, projectColor),
       _buildActionButton(
         theme,
         Icons.visibility_outlined,
-        theme.colorScheme.onSurface,
+        projectColor,
+        tooltip: 'open_in_browser'.tr(),
         onPressed: () async {
           final uri = Uri.parse(pageUrl);
           try {
@@ -919,13 +932,14 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
           }
         },
       ),
-      _buildDivider(theme),
+      _buildDivider(theme, projectColor),
       _buildActionButton(
         theme,
         Icons.arrow_forward_ios,
         history.canGoForward
-            ? theme.colorScheme.primary
-            : theme.colorScheme.onSurface.withValues(alpha: 0.5),
+            ? projectColor
+            : projectColor.withValues(alpha: 0.38),
+        tooltip: 'forward'.tr(),
         onPressed: history.canGoForward
             ? () {
                 final nextTitle = ref
@@ -952,13 +966,17 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: theme.colorScheme.surface,
+            color: theme.colorScheme.surface.withValues(alpha: 0.95),
             borderRadius: BorderRadius.circular(32),
+            border: Border.all(
+              color: projectColor.withValues(alpha: 0.25),
+              width: 1.5,
+            ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.08),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
+                color: projectColor.withValues(alpha: 0.15),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -1030,27 +1048,30 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     return widget;
   }
 
-  Widget _buildDivider(ThemeData theme) {
+  Widget _buildDivider(ThemeData theme, Color projectColor) {
     return Container(
       height: 20,
       width: 1,
-      color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+      color: projectColor.withValues(alpha: 0.2),
       margin: const EdgeInsets.symmetric(horizontal: 6),
     );
   }
 
   Widget _buildSearchPanel(ThemeData theme) {
+    final currentProject = ref.watch(appStateProvider);
+    final projectColor = currentProject.primaryColor;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
+        color: theme.colorScheme.surface.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+          color: projectColor.withValues(alpha: 0.25),
+          width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: projectColor.withValues(alpha: 0.15),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),

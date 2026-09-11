@@ -28,12 +28,12 @@
       "enabled": false,
       "project": "wiktionary",
       "dataFile": "assets/data/id_crosswords.json",
-      "pageTitle": "Wikisumber:Teka-Teki_Silang"
+      "pageTitle": "Wikisumber:Teka-Teki"
     },
     "course": {
       "enabled": false,
       "project": "wiktionary",
-      "pageTitle": "Wikikamus:Belajar"
+      "pageTitle": "Wikikamus:Belajar Bahasa"
     },
     "gallery": {
       "enabled": false,
@@ -44,7 +44,7 @@
     "newsletter": {
       "enabled": false,
       "project": "wikipedia",
-      "pageTitle": "Wikipedia:Warta"
+      "pageTitle": "Wikipedia:Warta Komunitas"
     }
   },
   "en": {
@@ -63,7 +63,7 @@
       "enabled": false,
       "project": "wikipedia",
       "dataFile": "assets/data/gallery.json",
-      "pageTitle": "Wikipedia:Picture_of_the_day"
+      "pageTitle": "Wikipedia:Gallery"
     },
     "newsletter": {
       "enabled": false,
@@ -76,7 +76,7 @@
       "enabled": false,
       "project": "wiktionary",
       "dataFile": "assets/data/jv_crosswords.json",
-      "pageTitle": "Wikisastra:Teka-Teki_Silang"
+      "pageTitle": "Wikisastra:Teka-Teki"
     },
     "course": {
       "enabled": false,

@@ -92,10 +92,24 @@ class ArticleHeroImage extends StatelessWidget {
         SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: CircleAvatar(
-              backgroundColor: theme.colorScheme.surface.withValues(alpha: 0.5),
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: theme.colorScheme.surface.withValues(alpha: 0.95),
+                border: Border.all(
+                  color: project.primaryColor.withValues(alpha: 0.25),
+                  width: 1.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: project.primaryColor.withValues(alpha: 0.15),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
               child: IconButton(
-                icon: Icon(Icons.arrow_back, color: theme.colorScheme.primary),
+                icon: Icon(Icons.arrow_back, color: project.primaryColor),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },

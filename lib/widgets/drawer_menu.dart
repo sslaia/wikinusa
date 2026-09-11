@@ -32,9 +32,7 @@ class DrawerMenu extends ConsumerWidget {
     return Drawer(
       elevation: isPermanent ? 0 : null,
       shape: isPermanent
-          ? const RoundedRectangleBorder(
-              borderRadius: BorderRadius.zero,
-            )
+          ? const RoundedRectangleBorder(borderRadius: BorderRadius.zero)
           : null,
       backgroundColor: theme.colorScheme.surfaceContainerLow,
       child: Container(
@@ -42,7 +40,9 @@ class DrawerMenu extends ConsumerWidget {
             ? BoxDecoration(
                 border: Border(
                   right: BorderSide(
-                    color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+                    color: theme.colorScheme.outlineVariant.withValues(
+                      alpha: 0.3,
+                    ),
                     width: 1,
                   ),
                 ),
@@ -66,7 +66,10 @@ class DrawerContent extends ConsumerWidget {
     final currentFontSize = ref.watch(fontSizeProvider);
 
     final crosswordsConfig = ref.watch(
-      moduleConfigProvider((moduleKey: 'crosswords', langCode: currentLanguage)),
+      moduleConfigProvider((
+        moduleKey: 'crosswords',
+        langCode: currentLanguage,
+      )),
     );
     final courseConfig = ref.watch(
       moduleConfigProvider((moduleKey: 'course', langCode: currentLanguage)),
@@ -75,13 +78,15 @@ class DrawerContent extends ConsumerWidget {
       moduleConfigProvider((moduleKey: 'gallery', langCode: currentLanguage)),
     );
     final newsletterConfig = ref.watch(
-      moduleConfigProvider((moduleKey: 'newsletter', langCode: currentLanguage)),
+      moduleConfigProvider((
+        moduleKey: 'newsletter',
+        langCode: currentLanguage,
+      )),
     );
 
     final isCrosswordsEnabled =
         crosswordsConfig?.enabled ?? (currentLanguage == 'nia');
-    final isCourseEnabled =
-        courseConfig?.enabled ?? (currentLanguage == 'nia');
+    final isCourseEnabled = courseConfig?.enabled ?? (currentLanguage == 'nia');
     final isGalleryEnabled =
         galleryConfig?.enabled ?? (currentLanguage == 'nia');
     final isNewsletterEnabled =
@@ -105,6 +110,7 @@ class DrawerContent extends ConsumerWidget {
               icon: Icons.edit_note_rounded,
               title: 'create_new_page'.tr(),
               onTap: () {
+                _closeDrawer(context);
                 Widget destination;
                 if (currentProject == ProjectType.wikipedia) {
                   destination = const CreatePageScreen();
@@ -129,9 +135,7 @@ class DrawerContent extends ConsumerWidget {
               icon: Icons.bookmark_rounded,
               title: 'bookmarks'.tr(),
               onTap: () {
-                if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
-                  Navigator.pop(context);
-                }
+                _closeDrawer(context);
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const BookmarksScreen()),
@@ -182,9 +186,7 @@ class DrawerContent extends ConsumerWidget {
                   );
                   return;
                 }
-                if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
-                  Navigator.pop(context);
-                }
+                _closeDrawer(context);
                 final project =
                     crosswordsConfig?.project ?? ProjectType.wiktionary;
                 ref
@@ -199,7 +201,7 @@ class DrawerContent extends ConsumerWidget {
             _buildDrawerItem(
               theme,
               icon: Icons.school_rounded,
-              title: 'nias_course'.tr(),
+              title: 'language_course'.tr(),
               enabled: isCourseEnabled,
               onTap: () {
                 if (!isCourseEnabled) {
@@ -211,11 +213,8 @@ class DrawerContent extends ConsumerWidget {
                   );
                   return;
                 }
-                if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
-                  Navigator.pop(context);
-                }
-                final project =
-                    courseConfig?.project ?? ProjectType.wiktionary;
+                _closeDrawer(context);
+                final project = courseConfig?.project ?? ProjectType.wiktionary;
                 ref
                     .read(appStateProvider.notifier)
                     .setProject(project, currentLanguage);
@@ -240,11 +239,8 @@ class DrawerContent extends ConsumerWidget {
                   );
                   return;
                 }
-                if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
-                  Navigator.pop(context);
-                }
-                final project =
-                    galleryConfig?.project ?? ProjectType.wikipedia;
+                _closeDrawer(context);
+                final project = galleryConfig?.project ?? ProjectType.wikipedia;
                 ref
                     .read(appStateProvider.notifier)
                     .setProject(project, currentLanguage);
@@ -271,9 +267,7 @@ class DrawerContent extends ConsumerWidget {
                   );
                   return;
                 }
-                if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
-                  Navigator.pop(context);
-                }
+                _closeDrawer(context);
                 final project =
                     newsletterConfig?.project ?? ProjectType.wikipedia;
                 ref
@@ -281,9 +275,7 @@ class DrawerContent extends ConsumerWidget {
                     .setProject(project, currentLanguage);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => const NewsletterScreen(),
-                  ),
+                  MaterialPageRoute(builder: (_) => const NewsletterScreen()),
                 );
               },
             ),
@@ -401,9 +393,7 @@ class DrawerContent extends ConsumerWidget {
               icon: ShortcutUtils.getIconData(iconName),
               title: title,
               onTap: () {
-                if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
-                  Navigator.pop(context);
-                }
+                _closeDrawer(context);
                 ShortcutUtils.handleShortcutTap(
                   context,
                   pageTitle,
@@ -576,6 +566,7 @@ class DrawerContent extends ConsumerWidget {
           ref
               .read(appStateProvider.notifier)
               .setProject(newValue, currentLanguage);
+          _closeDrawer(context);
           Navigator.of(context).popUntil((route) => route.isFirst);
         }
       },
@@ -640,6 +631,7 @@ class DrawerContent extends ConsumerWidget {
         if (newValue != null) {
           ref.read(languageProvider.notifier).setLanguage(newValue);
           context.setLocale(Locale(newValue));
+          _closeDrawer(context);
           Navigator.of(context).popUntil((route) => route.isFirst);
         }
       },
@@ -698,7 +690,9 @@ class DrawerContent extends ConsumerWidget {
                 .read(themeModeProvider.notifier)
                 .setThemeMode(val ? ThemeMode.dark : ThemeMode.light);
           },
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
         ),
       ),
     );
@@ -768,10 +762,15 @@ class DrawerContent extends ConsumerWidget {
     );
   }
 
-  void _navigateToAbout(BuildContext context, String titleKey, String body) {
-    if (Scaffold.maybeOf(context)?.hasDrawer ?? false) {
-      Navigator.pop(context);
+  void _closeDrawer(BuildContext context) {
+    final scaffold = Scaffold.maybeOf(context);
+    if (scaffold?.isDrawerOpen ?? false) {
+      scaffold?.closeDrawer();
     }
+  }
+
+  void _navigateToAbout(BuildContext context, String titleKey, String body) {
+    _closeDrawer(context);
     Navigator.push(
       context,
       MaterialPageRoute(

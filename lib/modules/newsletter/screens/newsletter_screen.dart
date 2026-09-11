@@ -409,7 +409,7 @@ class _NewsletterScreenState extends ConsumerState<NewsletterScreen> {
     Color wikiColor,
   ) {
     return Positioned(
-      bottom: 24,
+      bottom: 24 + MediaQuery.paddingOf(context).bottom,
       right: 24,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
