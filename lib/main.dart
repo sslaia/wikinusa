@@ -4,7 +4,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:home_widget/home_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'localizations/fallback_localizations_delegate.dart';
@@ -15,7 +14,6 @@ import 'providers/font_size_provider.dart';
 import 'providers/app_state.dart';
 import 'screens/home_screen.dart';
 import 'screens/onboarding_screen.dart';
-import 'modules/crosswords/screens/crosswords_screen.dart';
 import 'theme/app_theme.dart';
 import 'package:wikimedia_core/wikimedia_core.dart';
 
@@ -78,7 +76,6 @@ class _WikiNusaAppState extends ConsumerState<WikiNusaApp>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _checkWidgetLaunch();
   }
 
   @override
@@ -104,36 +101,6 @@ class _WikiNusaAppState extends ConsumerState<WikiNusaApp>
         state == AppLifecycleState.detached) {
       PaintingBinding.instance.imageCache.clear();
       PaintingBinding.instance.imageCache.clearLiveImages();
-    }
-  }
-
-  void _checkWidgetLaunch() {
-    try {
-      HomeWidget.initiallyLaunchedFromHomeWidget()
-          .then(_handleWidgetUri)
-          .catchError((e) {
-        debugPrint('Error getting initial widget launch: $e');
-      });
-      HomeWidget.widgetClicked.listen(
-        _handleWidgetUri,
-        onError: (e) {
-          debugPrint('Error listening to widget clicks: $e');
-        },
-      );
-    } catch (e) {
-      debugPrint('Error initializing widget launch handler: $e');
-    }
-  }
-
-  void _handleWidgetUri(Uri? uri) {
-    if (uri == null || !mounted) return;
-    final prefs = ref.read(sharedPreferencesProvider);
-    prefs.setBool('onboarding_completed', true);
-
-    if (uri.host == 'crossword' || uri.toString().contains('crossword')) {
-      _navigatorKey.currentState?.push(
-        MaterialPageRoute(builder: (_) => const CrosswordsScreen()),
-      );
     }
   }
 

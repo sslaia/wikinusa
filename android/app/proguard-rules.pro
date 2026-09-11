@@ -10,9 +10,6 @@
 -keep class io.github.sslaia.wikinusa.** { *; }
 -keepclassmembers class io.github.sslaia.wikinusa.** { *; }
 
-# Home Widget
--keep class es.antonborri.home_widget.** { *; }
--keepclassmembers class es.antonborri.home_widget.** { *; }
 
 # SQLite3 & Drift
 -keep class org.sqlite.** { *; }
@@ -34,7 +31,7 @@
 }
 -keep class androidx.startup.** { *; }
 
-# AndroidX WorkManager & Room (used by home_widget and background tasks)
+# AndroidX WorkManager & Room (used by background tasks)
 -keep class androidx.work.impl.WorkDatabase_Impl {
     <init>();
     *;

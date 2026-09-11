@@ -15,8 +15,9 @@ import '../providers/shortcuts_provider.dart';
 import '../screens/about_screen.dart';
 import '../screens/bookmarks_screen.dart';
 import '../modules/gallery/screens/gallery_carousel_screen.dart';
-import '../modules/course/screens/nias_course_screen.dart';
+import '../modules/course/screens/language_course_screen.dart';
 import '../modules/newsletter/screens/newsletter_screen.dart';
+import '../screens/module_settings_screen.dart';
 import '../utils/shortcut_utils.dart';
 import '../utils/wiki_utils.dart';
 import '../providers/modules_provider.dart';
@@ -177,15 +178,6 @@ class DrawerContent extends ConsumerWidget {
               title: 'crosswords'.tr(),
               enabled: isCrosswordsEnabled,
               onTap: () {
-                if (!isCrosswordsEnabled) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('module_not_available_hint'.tr()),
-                      duration: const Duration(seconds: 2),
-                    ),
-                  );
-                  return;
-                }
                 _closeDrawer(context);
                 final project =
                     crosswordsConfig?.project ?? ProjectType.wiktionary;
@@ -204,15 +196,6 @@ class DrawerContent extends ConsumerWidget {
               title: 'language_course'.tr(),
               enabled: isCourseEnabled,
               onTap: () {
-                if (!isCourseEnabled) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('module_not_available_hint'.tr()),
-                      duration: const Duration(seconds: 2),
-                    ),
-                  );
-                  return;
-                }
                 _closeDrawer(context);
                 final project = courseConfig?.project ?? ProjectType.wiktionary;
                 ref
@@ -220,7 +203,9 @@ class DrawerContent extends ConsumerWidget {
                     .setProject(project, currentLanguage);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const NiasCourseScreen()),
+                  MaterialPageRoute(
+                    builder: (_) => const LanguageCourseScreen(),
+                  ),
                 );
               },
             ),
@@ -230,15 +215,6 @@ class DrawerContent extends ConsumerWidget {
               title: 'gallery'.tr(),
               enabled: isGalleryEnabled,
               onTap: () {
-                if (!isGalleryEnabled) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('module_not_available_hint'.tr()),
-                      duration: const Duration(seconds: 2),
-                    ),
-                  );
-                  return;
-                }
                 _closeDrawer(context);
                 final project = galleryConfig?.project ?? ProjectType.wikipedia;
                 ref
@@ -258,15 +234,6 @@ class DrawerContent extends ConsumerWidget {
               title: 'newsletter'.tr(),
               enabled: isNewsletterEnabled,
               onTap: () {
-                if (!isNewsletterEnabled) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('module_not_available_hint'.tr()),
-                      duration: const Duration(seconds: 2),
-                    ),
-                  );
-                  return;
-                }
                 _closeDrawer(context);
                 final project =
                     newsletterConfig?.project ?? ProjectType.wikipedia;
@@ -276,6 +243,20 @@ class DrawerContent extends ConsumerWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const NewsletterScreen()),
+                );
+              },
+            ),
+            _buildDrawerItem(
+              theme,
+              icon: Icons.tune_rounded,
+              title: 'module_settings'.tr(),
+              onTap: () {
+                _closeDrawer(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const ModuleSettingsScreen(),
+                  ),
                 );
               },
             ),

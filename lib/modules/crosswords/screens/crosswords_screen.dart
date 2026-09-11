@@ -10,12 +10,15 @@ import '../providers/crosswords_provider.dart';
 import '../widgets/crossword_grid.dart';
 import '../widgets/scoreboard_widget.dart';
 import '../models/crossword_model.dart';
+import 'package:wikimedia_core/wikimedia_core.dart';
 import '../../../screens/article_screen.dart';
 import '../../../providers/app_state.dart';
+import '../../../providers/modules_provider.dart';
 import '../../../utils/responsive_utils.dart';
 import '../../../widgets/custom_bottom_app_bar.dart';
 import '../../../widgets/drawer_menu.dart';
 import '../../../widgets/adaptive_nav_actions.dart';
+import '../../../widgets/module_disabled_view.dart';
 
 class CrosswordsScreen extends ConsumerStatefulWidget {
   const CrosswordsScreen({super.key});
@@ -75,6 +78,14 @@ class _CrosswordsScreenState extends ConsumerState<CrosswordsScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(crosswordsProvider);
     final currentProject = ref.watch(appStateProvider);
+    final currentLanguage = ref.watch(languageProvider);
+    final crosswordsConfig = ref.watch(
+      moduleConfigProvider((
+        moduleKey: 'crosswords',
+        langCode: currentLanguage,
+      )),
+    );
+    final isEnabled = crosswordsConfig?.enabled ?? false;
     final theme = Theme.of(context);
 
     return LayoutBuilder(
@@ -83,11 +94,34 @@ class _CrosswordsScreenState extends ConsumerState<CrosswordsScreen> {
 
         final bool showBottomNavBar = !isLandscape;
         final bool showNavigationRail = isLandscape;
-        final bool showPermanentDrawer =
-            ResponsiveUtils.isTabletLandscape(context);
+        final bool showPermanentDrawer = ResponsiveUtils.isTabletLandscape(
+          context,
+        );
         final bool showMenuButtonInRail =
             showNavigationRail && !showPermanentDrawer;
         final double bottomAppBarHeight = showBottomNavBar ? 80.0 : 0.0;
+
+        if (!isEnabled) {
+          return Scaffold(
+            key: _scaffoldKey,
+            drawer: showPermanentDrawer ? null : const DrawerMenu(),
+            appBar: AppBar(
+              title: Text('crosswords'.tr()),
+            ),
+            bottomNavigationBar: showBottomNavBar
+                ? CustomBottomAppBar(
+                    scaffoldKey: _scaffoldKey,
+                    currentProject: currentProject,
+                    pageTitle: 'crosswords'.tr(),
+                  )
+                : null,
+            body: ModuleDisabledView(
+              moduleTitle: 'crosswords'.tr(),
+              icon: Icons.grid_on_rounded,
+              color: ProjectType.wiktionary.primaryColor,
+            ),
+          );
+        }
 
         return Scaffold(
           key: _scaffoldKey,
@@ -244,7 +278,9 @@ class _CrosswordsScreenState extends ConsumerState<CrosswordsScreen> {
                                       (state.currentPuzzle == null ||
                                           state.currentPuzzle!.puzzleId ==
                                               ref
-                                                  .read(crosswordsProvider.notifier)
+                                                  .read(
+                                                    crosswordsProvider.notifier,
+                                                  )
                                                   .dailyPuzzleId))
                                     0,
                                 },
@@ -430,223 +466,234 @@ class _CrosswordsScreenState extends ConsumerState<CrosswordsScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Icon(
-                          Icons.calendar_month_outlined,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'crossword_daily'.tr(),
-                          style: Theme.of(context).textTheme.headlineSmall
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    CrosswordGrid(
-                      puzzle: state.currentPuzzle!,
-                      isFillable:
-                          !canReveal &&
-                          state.currentPuzzle!.puzzleId ==
-                              ref
-                                  .read(crosswordsProvider.notifier)
-                                  .dailyPuzzleId,
-                    ),
-                    const SizedBox(height: 24),
-                    if (canReveal)
-                      if (isFullySolved && bonusWord != null)
-                        Container(
-                          padding: const EdgeInsets.all(16.0),
-                          decoration: BoxDecoration(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.primaryContainer,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: Theme.of(context).colorScheme.primary,
-                              width: 1,
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.star,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'crossword_bonus'.tr(),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.primary,
-                                        ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              InkWell(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => ArticleScreen(
-                                        title: bonusWord!.pageTitle,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                borderRadius: BorderRadius.circular(8),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 4.0,
-                                    horizontal: 8.0,
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Flexible(
-                                        child: Text(
-                                          '${bonusWord.word.toUpperCase()} - ${bonusWord.clue}',
-                                          textAlign: TextAlign.center,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge
-                                              ?.copyWith(
-                                                fontWeight: FontWeight.w600,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onPrimaryContainer,
-                                                decoration:
-                                                    TextDecoration.underline,
-                                              ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Icon(
-                                        Icons.open_in_new,
-                                        size: 16,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onPrimaryContainer,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      else
-                        FilledButton.icon(
-                          icon: Icon(
-                            state.isTemporarilyRevealed
-                                ? Icons.visibility_off
-                                : Icons.visibility,
-                          ),
-                          label: Text(
-                            state.isTemporarilyRevealed
-                                ? 'crossword_hide_words'.tr()
-                                : 'crossword_check_words'.tr(),
-                          ),
-                          style: FilledButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          onPressed: () {
-                            ref.read(crosswordsProvider.notifier).revealWords();
-                          },
-                        )
-                    else
-                      Container(
-                        padding: const EdgeInsets.all(16.0),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .surfaceContainerHighest
-                              .withValues(alpha: 0.5),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: Theme.of(context).colorScheme.outlineVariant,
-                          ),
-                        ),
-                        child: Column(
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.info_outline,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurfaceVariant,
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  'crossword_notes'.tr(),
-                                  style: Theme.of(context).textTheme.titleMedium
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onSurfaceVariant,
-                                      ),
-                                ),
-                              ],
+                            Icon(
+                              Icons.calendar_month_outlined,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
-                            const SizedBox(height: 12),
+                            const SizedBox(width: 8),
                             Text(
-                              "crossword_notes_1".tr(),
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              "crossword_notes_2".tr(),
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.bodyMedium
+                              'crossword_daily'.tr(),
+                              style: Theme.of(context).textTheme.headlineSmall
                                   ?.copyWith(
+                                    fontWeight: FontWeight.bold,
                                     color: Theme.of(
                                       context,
                                     ).colorScheme.primary,
-                                    fontWeight: FontWeight.w600,
                                   ),
                             ),
                           ],
                         ),
-                      ),
-                  ],
+                        const SizedBox(height: 24),
+                        CrosswordGrid(
+                          puzzle: state.currentPuzzle!,
+                          isFillable:
+                              !canReveal &&
+                              state.currentPuzzle!.puzzleId ==
+                                  ref
+                                      .read(crosswordsProvider.notifier)
+                                      .dailyPuzzleId,
+                        ),
+                        const SizedBox(height: 24),
+                        if (canReveal)
+                          if (isFullySolved && bonusWord != null)
+                            Container(
+                              padding: const EdgeInsets.all(16.0),
+                              decoration: BoxDecoration(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.primaryContainer,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.star,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        'crossword_bonus'.tr(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.primary,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => ArticleScreen(
+                                            title: bonusWord!.pageTitle,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 4.0,
+                                        horizontal: 8.0,
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Flexible(
+                                            child: Text(
+                                              '${bonusWord.word.toUpperCase()} - ${bonusWord.clue}',
+                                              textAlign: TextAlign.center,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge
+                                                  ?.copyWith(
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .onPrimaryContainer,
+                                                    decoration: TextDecoration
+                                                        .underline,
+                                                  ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Icon(
+                                            Icons.open_in_new,
+                                            size: 16,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.onPrimaryContainer,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          else
+                            FilledButton.icon(
+                              icon: Icon(
+                                state.isTemporarilyRevealed
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                              ),
+                              label: Text(
+                                state.isTemporarilyRevealed
+                                    ? 'crossword_hide_words'.tr()
+                                    : 'crossword_check_words'.tr(),
+                              ),
+                              style: FilledButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              onPressed: () {
+                                ref
+                                    .read(crosswordsProvider.notifier)
+                                    .revealWords();
+                              },
+                            )
+                        else
+                          Container(
+                            padding: const EdgeInsets.all(16.0),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest
+                                  .withValues(alpha: 0.5),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.outlineVariant,
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.info_outline,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'crossword_notes'.tr(),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.onSurfaceVariant,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  "crossword_notes_1".tr(),
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  "crossword_notes_2".tr(),
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
         ),
       ),
-    ),
-  ),
-);
-}
+    );
+  }
 }

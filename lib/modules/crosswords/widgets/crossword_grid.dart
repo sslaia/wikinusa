@@ -695,19 +695,23 @@ class _CrosswordGridState extends ConsumerState<CrosswordGrid> {
                           ),
                           const SizedBox(height: 8),
                           Expanded(
-                            child: Text(
-                              word.clue,
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: isSelected
-                                    ? theme.colorScheme.onPrimaryContainer
-                                    : theme.colorScheme.onSurface,
-                                fontWeight: isSelected
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
-                                height: 1.25,
+                            child: Scrollbar(
+                              thumbVisibility: isSelected,
+                              child: SingleChildScrollView(
+                                physics: const BouncingScrollPhysics(),
+                                child: Text(
+                                  word.clue,
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: isSelected
+                                        ? theme.colorScheme.onPrimaryContainer
+                                        : theme.colorScheme.onSurface,
+                                    fontWeight: isSelected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                    height: 1.25,
+                                  ),
+                                ),
                               ),
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],

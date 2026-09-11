@@ -5,12 +5,14 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:wikimedia_core/wikimedia_core.dart';
 import '../../../providers/app_state.dart';
+import '../../../providers/modules_provider.dart';
 import '../providers/gallery_provider.dart';
 import '../../../services/commons_service.dart';
 import '../../../utils/responsive_utils.dart';
 import '../../../widgets/adaptive_nav_actions.dart';
 import '../../../widgets/custom_bottom_app_bar.dart';
 import '../../../widgets/drawer_menu.dart';
+import '../../../widgets/module_disabled_view.dart';
 import '../../../screens/image_screen.dart';
 
 class GalleryCarouselScreen extends ConsumerStatefulWidget {
@@ -45,6 +47,11 @@ class _GalleryCarouselScreenState extends ConsumerState<GalleryCarouselScreen> {
     final galleryDataAsync = ref.watch(galleryDataProvider);
     final selectedCategory = ref.watch(selectedCategoryProvider);
     final currentProject = ref.watch(appStateProvider);
+    final currentLanguage = ref.watch(languageProvider);
+    final galleryConfig = ref.watch(
+      moduleConfigProvider((moduleKey: 'gallery', langCode: currentLanguage)),
+    );
+    final isEnabled = galleryConfig?.enabled ?? false;
 
     // Reset scroll position when category changes
     ref.listen(selectedCategoryProvider, (previous, next) {
@@ -59,14 +66,38 @@ class _GalleryCarouselScreenState extends ConsumerState<GalleryCarouselScreen> {
       builder: (context, constraints) {
         final deviceType = ResponsiveUtils.getDeviceType(context);
         final isLandscape = ResponsiveUtils.isLandscape(context);
-        final bool isCompactPortrait = deviceType == DeviceType.compact && !isLandscape;
+        final bool isCompactPortrait =
+            deviceType == DeviceType.compact && !isLandscape;
 
         final bool showBottomNavBar = !isLandscape;
         final bool showNavigationRail = isLandscape;
-        final bool showPermanentDrawer =
-            ResponsiveUtils.isTabletLandscape(context);
+        final bool showPermanentDrawer = ResponsiveUtils.isTabletLandscape(
+          context,
+        );
         final bool showMenuButtonInRail =
             showNavigationRail && !showPermanentDrawer;
+
+        if (!isEnabled) {
+          return Scaffold(
+            key: _scaffoldKey,
+            drawer: showPermanentDrawer ? null : const DrawerMenu(),
+            appBar: AppBar(
+              title: Text('gallery'.tr()),
+            ),
+            bottomNavigationBar: showBottomNavBar
+                ? CustomBottomAppBar(
+                    scaffoldKey: _scaffoldKey,
+                    currentProject: currentProject,
+                    isHomeScreen: false,
+                  )
+                : null,
+            body: ModuleDisabledView(
+              moduleTitle: 'gallery'.tr(),
+              icon: Icons.photo_library_rounded,
+              color: const Color(0xFF006699),
+            ),
+          );
+        }
 
         return Scaffold(
           key: _scaffoldKey,
@@ -249,7 +280,9 @@ class _GalleryCarouselScreenState extends ConsumerState<GalleryCarouselScreen> {
                                     selected: isSelected,
                                     selectedColor:
                                         GalleryCarouselScreen.niasYellow,
-                                    backgroundColor: Colors.black.withValues(alpha: 0.6),
+                                    backgroundColor: Colors.black.withValues(
+                                      alpha: 0.6,
+                                    ),
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 4,
                                       vertical: 0,
@@ -325,17 +358,24 @@ class _GalleryCarouselScreenState extends ConsumerState<GalleryCarouselScreen> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               mainAxisAlignment: MainAxisAlignment.end,
-                              children: AdaptiveNavActions.buildActions(
-                                context,
-                                ref,
-                                currentProject: currentProject,
-                                isHomeScreen: false,
-                                showHome: true,
-                                color: Colors.white,
-                              ).map((w) => Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 4),
-                                child: w,
-                              )).toList(),
+                              children:
+                                  AdaptiveNavActions.buildActions(
+                                        context,
+                                        ref,
+                                        currentProject: currentProject,
+                                        isHomeScreen: false,
+                                        showHome: true,
+                                        color: Colors.white,
+                                      )
+                                      .map(
+                                        (w) => Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 4,
+                                          ),
+                                          child: w,
+                                        ),
+                                      )
+                                      .toList(),
                             ),
                           ),
                         ),

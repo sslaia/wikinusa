@@ -11,6 +11,7 @@ class CustomBottomAppBar extends ConsumerWidget {
   final ProjectType currentProject;
   final bool isHomeScreen;
   final String? pageTitle;
+  final Future<void> Function()? onRefresh;
 
   const CustomBottomAppBar({
     super.key,
@@ -18,6 +19,7 @@ class CustomBottomAppBar extends ConsumerWidget {
     required this.currentProject,
     this.isHomeScreen = false,
     this.pageTitle,
+    this.onRefresh,
   });
 
   @override
@@ -57,6 +59,7 @@ class CustomBottomAppBar extends ConsumerWidget {
               isHomeScreen: isHomeScreen,
               pageTitle: pageTitle,
               showShortcuts: false,
+              onRefresh: onRefresh,
             ),
           ],
         ),

@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -6,7 +8,6 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/crossword_model.dart';
 import '../../../providers/shared_prefs_provider.dart';
-import '../../../services/widget_data_service.dart';
 import '../../../providers/app_state.dart';
 import '../../../providers/modules_provider.dart';
 
@@ -72,6 +73,33 @@ class CrosswordsNotifier extends StateNotifier<CrosswordsState> {
     List<CrosswordPuzzle> fetchedPuzzles = [];
     final prefs = ref.read(sharedPreferencesProvider);
     final currentLanguage = ref.read(languageProvider);
+    final config = ref.read(
+      moduleConfigProvider((
+        moduleKey: 'crosswords',
+        langCode: currentLanguage,
+      )),
+    );
+
+    // If custom data file is provided, load directly from disk without syncing from GitHub
+    if (config?.isCustomDataFile == true &&
+        config?.dataFile != null &&
+        File(config!.dataFile!).existsSync()) {
+      try {
+        final jsonString = await File(config.dataFile!).readAsString();
+        final List<dynamic> data = jsonDecode(jsonString);
+        fetchedPuzzles =
+            data.map((json) => CrosswordPuzzle.fromJson(json)).toList();
+        state = state.copyWith(puzzles: fetchedPuzzles);
+        if (state.puzzles.isNotEmpty) {
+          _selectDailyPuzzle();
+          await _checkAndResetDailyPuzzleIfNeeded();
+          await _loadUserAnswers();
+        }
+        return;
+      } catch (e) {
+        debugPrint('Error loading custom crossword file: $e');
+      }
+    }
 
     // Check if we need to sync today
     final now = DateTime.now();
@@ -94,8 +122,14 @@ class CrosswordsNotifier extends StateNotifier<CrosswordsState> {
               .toList();
 
           // Cache the downloaded JSON and update sync date
-          await prefs.setString('cached_crosswords_$currentLanguage', response.body);
-          await prefs.setString('crossword_last_sync_$currentLanguage', todayStr);
+          await prefs.setString(
+            'cached_crosswords_$currentLanguage',
+            response.body,
+          );
+          await prefs.setString(
+            'crossword_last_sync_$currentLanguage',
+            todayStr,
+          );
         } else {
           await _loadLocalData(prefs, fetchedPuzzles);
         }
@@ -122,23 +156,30 @@ class CrosswordsNotifier extends StateNotifier<CrosswordsState> {
     List<CrosswordPuzzle> outList,
   ) async {
     final currentLanguage = ref.read(languageProvider);
+    final config = ref.read(
+      moduleConfigProvider((
+        moduleKey: 'crosswords',
+        langCode: currentLanguage,
+      )),
+    );
+
     final cachedStr = prefs.getString('cached_crosswords_$currentLanguage') ??
         (currentLanguage == 'nia' ? prefs.getString('cached_crosswords') : null);
-    if (cachedStr != null) {
+    if (cachedStr != null && config?.isCustomDataFile != true) {
       final List<dynamic> data = jsonDecode(cachedStr);
       outList.addAll(
         data.map((json) => CrosswordPuzzle.fromJson(json)).toList(),
       );
     } else {
-      final config = ref.read(
-        moduleConfigProvider((
-          moduleKey: 'crosswords',
-          langCode: currentLanguage,
-        )),
-      );
       final dataFile = config?.dataFile ?? 'assets/data/nia_crosswords.json';
       try {
-        final jsonString = await rootBundle.loadString(dataFile);
+        String jsonString;
+        final file = File(dataFile);
+        if (file.existsSync()) {
+          jsonString = await file.readAsString();
+        } else {
+          jsonString = await rootBundle.loadString(dataFile);
+        }
         final List<dynamic> data = jsonDecode(jsonString);
         outList.addAll(
           data.map((json) => CrosswordPuzzle.fromJson(json)).toList(),
@@ -176,7 +217,6 @@ class CrosswordsNotifier extends StateNotifier<CrosswordsState> {
       orElse: () => state.puzzles.first,
     );
     state = state.copyWith(currentPuzzle: puzzle);
-    WidgetDataService.updateCrosswordWidget(puzzle, 'Wikipedia');
   }
 
   Future<void> _checkAndResetDailyPuzzleIfNeeded() async {

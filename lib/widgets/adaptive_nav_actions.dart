@@ -29,6 +29,7 @@ class AdaptiveNavActions {
     bool showHome = true,
     bool showShortcuts = true,
     String? pageTitle,
+    Future<void> Function()? onRefresh,
   }) {
     final isFetchingRandom = ref.watch(randomArticleProvider);
 
@@ -45,6 +46,11 @@ class AdaptiveNavActions {
         icon: Icons.refresh,
         label: 'refresh'.tr(),
         onPressed: () async {
+          if (onRefresh != null) {
+            await onRefresh();
+            return;
+          }
+
           final langCode = ref.read(languageProvider);
           final db = ref.read(appDatabaseProvider);
           final targetTitle = isHomeScreen ? null : pageTitle;
@@ -96,6 +102,7 @@ class AdaptiveNavActions {
     bool showShortcuts = true,
     String? pageTitle,
     Color? color,
+    Future<void> Function()? onRefresh,
   }) {
     final actions = getActions(
       context, 
@@ -104,7 +111,8 @@ class AdaptiveNavActions {
       isHomeScreen: isHomeScreen,
       showHome: showHome,
       showShortcuts: showShortcuts,
-      pageTitle: pageTitle
+      pageTitle: pageTitle,
+      onRefresh: onRefresh,
     );
 
     return actions.map((action) {

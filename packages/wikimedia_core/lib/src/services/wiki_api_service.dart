@@ -138,6 +138,9 @@ class WikiApiService {
           'https://$domain/w/api.php?action=parse&page=${Uri.encodeComponent(finalTitle)}&format=json&prop=text|images&mobileformat=1&redirects=1';
       if (forceRefresh || isArticle) {
         url += '&smaxage=0&maxage=0&nocache=1';
+        if (forceRefresh) {
+          url += '&_t=${DateTime.now().millisecondsSinceEpoch}';
+        }
       }
     } else {
       final formattedTitle = finalTitle.replaceAll(' ', '_');

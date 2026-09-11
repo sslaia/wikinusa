@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:home_widget/home_widget.dart';
-
 import 'package:wikimedia_core/wikimedia_core.dart';
 import '../utils/responsive_utils.dart';
 import '../widgets/wiki_portals_widget.dart';
@@ -20,7 +18,6 @@ import '../providers/wiki_api_provider.dart';
 import '../widgets/drawer_menu.dart';
 import '../utils/wiki_utils.dart';
 import '../services/connectivity_service.dart';
-import '../modules/crosswords/screens/crosswords_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -31,40 +28,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  @override
-  void initState() {
-    super.initState();
-    _checkWidgetLaunch();
-  }
-
-  void _checkWidgetLaunch() {
-    try {
-      HomeWidget.initiallyLaunchedFromHomeWidget()
-          .then(_handleWidgetUri)
-          .catchError((e) {
-        debugPrint('Error getting initial widget launch: $e');
-      });
-      HomeWidget.widgetClicked.listen(
-        _handleWidgetUri,
-        onError: (e) {
-          debugPrint('Error listening to widget clicks: $e');
-        },
-      );
-    } catch (e) {
-      debugPrint('Error initializing widget launch handler: $e');
-    }
-  }
-
-  void _handleWidgetUri(Uri? uri) {
-    if (uri == null || !mounted) return;
-    if (uri.host == 'crossword' || uri.toString().contains('crossword')) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const CrosswordsScreen()),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
