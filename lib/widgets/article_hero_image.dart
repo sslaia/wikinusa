@@ -16,6 +16,9 @@ class ArticleHeroImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = theme.brightness == Brightness.dark;
+    final iconColor = project.getThemedColor(isDark);
+
     return Stack(
       children: [
         Container(
@@ -95,21 +98,25 @@ class ArticleHeroImage extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: theme.colorScheme.surface.withValues(alpha: 0.95),
+                color: isDark
+                    ? theme.colorScheme.surfaceContainerHigh.withValues(
+                        alpha: 0.95,
+                      )
+                    : theme.colorScheme.surface.withValues(alpha: 0.95),
                 border: Border.all(
-                  color: project.primaryColor.withValues(alpha: 0.25),
+                  color: iconColor.withValues(alpha: isDark ? 0.5 : 0.25),
                   width: 1.5,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: project.primaryColor.withValues(alpha: 0.15),
+                    color: iconColor.withValues(alpha: isDark ? 0.25 : 0.15),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
                 ],
               ),
               child: IconButton(
-                icon: Icon(Icons.arrow_back, color: project.primaryColor),
+                icon: Icon(Icons.arrow_back, color: iconColor),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },

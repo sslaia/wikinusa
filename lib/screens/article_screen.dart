@@ -771,10 +771,12 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     final bookmarks = ref.watch(bookmarksProvider);
     final history = ref.watch(historyProvider);
     final currentProject = ref.watch(appStateProvider);
-    final projectColor = ProjectType.values.firstWhere(
+    final isDark = theme.brightness == Brightness.dark;
+    final project = ProjectType.values.firstWhere(
       (p) => p.name == projectName,
       orElse: () => currentProject,
-    ).primaryColor;
+    );
+    final projectColor = project.getThemedColor(isDark);
 
     final isBookmarked = bookmarks.any(
       (b) =>
@@ -966,15 +968,17 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: theme.colorScheme.surface.withValues(alpha: 0.95),
+            color: isDark
+                ? theme.colorScheme.surfaceContainerHigh.withValues(alpha: 0.95)
+                : theme.colorScheme.surface.withValues(alpha: 0.95),
             borderRadius: BorderRadius.circular(32),
             border: Border.all(
-              color: projectColor.withValues(alpha: 0.25),
+              color: projectColor.withValues(alpha: isDark ? 0.5 : 0.25),
               width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: projectColor.withValues(alpha: 0.15),
+                color: projectColor.withValues(alpha: isDark ? 0.25 : 0.15),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
@@ -1049,29 +1053,33 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
   }
 
   Widget _buildDivider(ThemeData theme, Color projectColor) {
+    final isDark = theme.brightness == Brightness.dark;
     return Container(
       height: 20,
       width: 1,
-      color: projectColor.withValues(alpha: 0.2),
+      color: projectColor.withValues(alpha: isDark ? 0.35 : 0.2),
       margin: const EdgeInsets.symmetric(horizontal: 6),
     );
   }
 
   Widget _buildSearchPanel(ThemeData theme) {
     final currentProject = ref.watch(appStateProvider);
-    final projectColor = currentProject.primaryColor;
+    final isDark = theme.brightness == Brightness.dark;
+    final projectColor = currentProject.getThemedColor(isDark);
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface.withValues(alpha: 0.95),
+        color: isDark
+            ? theme.colorScheme.surfaceContainerHigh.withValues(alpha: 0.95)
+            : theme.colorScheme.surface.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: projectColor.withValues(alpha: 0.25),
+          color: projectColor.withValues(alpha: isDark ? 0.5 : 0.25),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: projectColor.withValues(alpha: 0.15),
+            color: projectColor.withValues(alpha: isDark ? 0.25 : 0.15),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),

@@ -567,7 +567,8 @@ class _LanguageCourseScreenState extends ConsumerState<LanguageCourseScreen> {
   ) {
     final bookmarks = ref.watch(bookmarksProvider);
     final projectName = project.name;
-    final wikiColor = project.primaryColor;
+    final isDark = theme.brightness == Brightness.dark;
+    final wikiColor = project.getThemedColor(isDark);
 
     final isBookmarked = bookmarks.any(
       (b) =>
@@ -584,15 +585,17 @@ class _LanguageCourseScreenState extends ConsumerState<LanguageCourseScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: theme.colorScheme.surface.withValues(alpha: 0.95),
+            color: isDark
+                ? theme.colorScheme.surfaceContainerHigh.withValues(alpha: 0.95)
+                : theme.colorScheme.surface.withValues(alpha: 0.95),
             borderRadius: BorderRadius.circular(32),
             border: Border.all(
-              color: wikiColor.withValues(alpha: 0.25),
+              color: wikiColor.withValues(alpha: isDark ? 0.5 : 0.25),
               width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: wikiColor.withValues(alpha: 0.15),
+                color: wikiColor.withValues(alpha: isDark ? 0.25 : 0.15),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
@@ -697,10 +700,11 @@ class _LanguageCourseScreenState extends ConsumerState<LanguageCourseScreen> {
   }
 
   Widget _buildDivider(ThemeData theme, Color wikiColor) {
+    final isDark = theme.brightness == Brightness.dark;
     return Container(
       height: 20,
       width: 1,
-      color: wikiColor.withValues(alpha: 0.2),
+      color: wikiColor.withValues(alpha: isDark ? 0.35 : 0.2),
       margin: const EdgeInsets.symmetric(horizontal: 8),
     );
   }

@@ -179,8 +179,10 @@ class _NewsletterScreenState extends ConsumerState<NewsletterScreen> {
         ? moduleConfig!.pageTitle
         : 'Wikipedia:Turia';
     final project = moduleConfig?.project ?? ProjectType.wikipedia;
-    final wikiColor = project.primaryColor;
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final headerColor = project.primaryColor;
+    final accentColor = project.getThemedColor(isDark);
 
     final newsletterContent = isEnabled
         ? ref.watch(
@@ -237,7 +239,7 @@ class _NewsletterScreenState extends ConsumerState<NewsletterScreen> {
               body: ModuleDisabledView(
                 moduleTitle: 'newsletter'.tr(),
                 icon: Icons.feed_rounded,
-                color: wikiColor,
+                color: accentColor,
               ),
             );
           }
@@ -272,7 +274,7 @@ class _NewsletterScreenState extends ConsumerState<NewsletterScreen> {
                             floating: true,
                             pinned: false,
                             snap: true,
-                            backgroundColor: wikiColor,
+                            backgroundColor: headerColor,
                             actions: [
                               IconButton(
                                 icon: const Icon(
@@ -327,8 +329,8 @@ class _NewsletterScreenState extends ConsumerState<NewsletterScreen> {
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                     colors: [
-                                      wikiColor,
-                                      wikiColor.withValues(alpha: 0.85),
+                                      headerColor,
+                                      headerColor.withValues(alpha: 0.85),
                                       const Color(0xFF1E3A8A),
                                     ],
                                   ),
@@ -483,7 +485,7 @@ class _NewsletterScreenState extends ConsumerState<NewsletterScreen> {
                                               Icon(
                                                 Icons.offline_pin_outlined,
                                                 size: 18,
-                                                color: wikiColor,
+                                                color: accentColor,
                                               ),
                                               const SizedBox(width: 8),
                                               Expanded(
@@ -556,7 +558,7 @@ class _NewsletterScreenState extends ConsumerState<NewsletterScreen> {
                                                               : 14,
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          color: wikiColor,
+                                                          color: accentColor,
                                                         ),
                                                   ),
                                                   const SizedBox(height: 5),
@@ -564,7 +566,7 @@ class _NewsletterScreenState extends ConsumerState<NewsletterScreen> {
                                                     width: isH2 ? 36 : 24,
                                                     height: 2.5,
                                                     decoration: BoxDecoration(
-                                                      color: wikiColor,
+                                                      color: accentColor,
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                             2,
@@ -590,7 +592,7 @@ class _NewsletterScreenState extends ConsumerState<NewsletterScreen> {
                                                     ),
                                                 child: _buildImageWidget(
                                                   fullUrl,
-                                                  wikiColor,
+                                                  accentColor,
                                                 ),
                                               );
                                             }
@@ -602,7 +604,7 @@ class _NewsletterScreenState extends ConsumerState<NewsletterScreen> {
                                               'blockquote') {
                                             return {
                                               'border-left':
-                                                  '4px solid ${wikiColor.toHtmlRgba()}',
+                                                  '4px solid ${accentColor.toHtmlRgba()}',
                                               'padding-left': '12px',
                                               'margin-left': '0',
                                               'font-style': 'italic',
@@ -644,14 +646,14 @@ class _NewsletterScreenState extends ConsumerState<NewsletterScreen> {
                           ),
                         ),
                       if (_tocChapters.isNotEmpty)
-                        _buildTocPill(theme, wikiColor),
+                        _buildTocPill(theme, accentColor, isDark),
                     ],
                   ),
                 ),
                 if (showNavigationRail)
                   Container(
                     width: 56,
-                    color: wikiColor,
+                    color: headerColor,
                     child: Column(
                       children: [
                         const SizedBox(height: 8),
@@ -705,7 +707,7 @@ class _NewsletterScreenState extends ConsumerState<NewsletterScreen> {
     );
   }
 
-  Widget _buildTocPill(ThemeData theme, Color wikiColor) {
+  Widget _buildTocPill(ThemeData theme, Color accentColor, bool isDark) {
     final bottomPadding = 24.0 + MediaQuery.paddingOf(context).bottom;
 
     if (!_isTocExpanded) {
@@ -724,15 +726,19 @@ class _NewsletterScreenState extends ConsumerState<NewsletterScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surface.withValues(alpha: 0.95),
+                color: isDark
+                    ? theme.colorScheme.surfaceContainerHigh.withValues(
+                        alpha: 0.95,
+                      )
+                    : theme.colorScheme.surface.withValues(alpha: 0.95),
                 borderRadius: BorderRadius.circular(30),
                 border: Border.all(
-                  color: wikiColor.withValues(alpha: 0.25),
+                  color: accentColor.withValues(alpha: isDark ? 0.5 : 0.25),
                   width: 1.5,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: wikiColor.withValues(alpha: 0.15),
+                    color: accentColor.withValues(alpha: isDark ? 0.25 : 0.15),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -741,21 +747,21 @@ class _NewsletterScreenState extends ConsumerState<NewsletterScreen> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.toc_rounded, size: 22, color: wikiColor),
+                  Icon(Icons.toc_rounded, size: 22, color: accentColor),
                   const SizedBox(width: 8),
                   Text(
                     'table_of_contents'.tr(),
                     style: GoogleFonts.cinzelDecorative(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
-                      color: wikiColor,
+                      color: accentColor,
                     ),
                   ),
                   const SizedBox(width: 6),
                   Icon(
                     Icons.keyboard_arrow_up_rounded,
                     size: 20,
-                    color: wikiColor,
+                    color: accentColor,
                   ),
                 ],
               ),
@@ -778,15 +784,17 @@ class _NewsletterScreenState extends ConsumerState<NewsletterScreen> {
         child: Container(
           constraints: BoxConstraints(maxWidth: maxWidth, maxHeight: maxHeight),
           decoration: BoxDecoration(
-            color: theme.colorScheme.surface.withValues(alpha: 0.98),
+            color: isDark
+                ? theme.colorScheme.surfaceContainerHigh.withValues(alpha: 0.98)
+                : theme.colorScheme.surface.withValues(alpha: 0.98),
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
-              color: wikiColor.withValues(alpha: 0.35),
+              color: accentColor.withValues(alpha: isDark ? 0.5 : 0.35),
               width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: wikiColor.withValues(alpha: 0.2),
+                color: accentColor.withValues(alpha: isDark ? 0.3 : 0.2),
                 blurRadius: 16,
                 offset: const Offset(0, 6),
               ),
@@ -809,7 +817,7 @@ class _NewsletterScreenState extends ConsumerState<NewsletterScreen> {
                     padding: const EdgeInsets.fromLTRB(16, 12, 10, 10),
                     child: Row(
                       children: [
-                        Icon(Icons.toc_rounded, size: 22, color: wikiColor),
+                        Icon(Icons.toc_rounded, size: 22, color: accentColor),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
@@ -817,20 +825,22 @@ class _NewsletterScreenState extends ConsumerState<NewsletterScreen> {
                             style: GoogleFonts.cinzelDecorative(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              color: wikiColor,
+                              color: accentColor,
                             ),
                           ),
                         ),
                         Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: wikiColor.withValues(alpha: 0.1),
+                            color: accentColor.withValues(
+                              alpha: isDark ? 0.2 : 0.1,
+                            ),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             Icons.keyboard_arrow_down_rounded,
                             size: 20,
-                            color: wikiColor,
+                            color: accentColor,
                           ),
                         ),
                       ],
@@ -840,7 +850,7 @@ class _NewsletterScreenState extends ConsumerState<NewsletterScreen> {
                 Divider(
                   height: 1,
                   thickness: 1,
-                  color: wikiColor.withValues(alpha: 0.15),
+                  color: accentColor.withValues(alpha: isDark ? 0.25 : 0.15),
                 ),
                 // Chapter list
                 Flexible(
@@ -888,7 +898,7 @@ class _NewsletterScreenState extends ConsumerState<NewsletterScreen> {
                                   width: 7,
                                   height: 7,
                                   decoration: BoxDecoration(
-                                    color: wikiColor,
+                                    color: accentColor,
                                     shape: BoxShape.circle,
                                   ),
                                 )
@@ -896,7 +906,9 @@ class _NewsletterScreenState extends ConsumerState<NewsletterScreen> {
                                 Icon(
                                   Icons.subdirectory_arrow_right_rounded,
                                   size: 15,
-                                  color: wikiColor.withValues(alpha: 0.7),
+                                  color: accentColor.withValues(
+                                    alpha: isDark ? 0.9 : 0.7,
+                                  ),
                                 ),
                               const SizedBox(width: 10),
                               Expanded(

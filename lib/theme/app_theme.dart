@@ -46,12 +46,14 @@ class AppTheme {
           : const AppBarTheme(),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: colorScheme.surface.withValues(alpha: 0.95),
-        foregroundColor: primaryColor,
+        foregroundColor: isLight ? primaryColor : colorScheme.primary,
         elevation: 3,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(
-            color: primaryColor.withValues(alpha: 0.25),
+            color: (isLight ? primaryColor : colorScheme.primary).withValues(
+              alpha: isLight ? 0.25 : 0.4,
+            ),
             width: 1.5,
           ),
         ),

@@ -43,6 +43,21 @@ extension ProjectTypeExtension on ProjectType {
     }
   }
 
+  /// Returns a brighter, high-contrast accent color suitable for dark mode backgrounds
+  Color get darkPrimaryColor {
+    switch (this) {
+      case ProjectType.wikipedia:
+        return const Color(0xFF9EAEFF); // Bright Indigo / Periwinkle (accessible on dark surfaces)
+      case ProjectType.wiktionary:
+        return const Color(0xFFFFAB91); // Bright Coral / Warm Peach
+      case ProjectType.wikibooks:
+        return const Color(0xFFCE93D8); // Bright Lilac / Lavender
+    }
+  }
+
+  /// Returns the appropriate primary or accent color depending on whether dark mode is active
+  Color getThemedColor(bool isDark) => isDark ? darkPrimaryColor : primaryColor;
+
   String get homeHeroImagePath {
     switch (this) {
       case ProjectType.wikipedia:

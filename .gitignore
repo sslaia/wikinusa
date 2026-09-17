@@ -56,6 +56,7 @@ test_fetch.dart
 wb_nia_olayama.html
 wb_nia_olayama.json
 MODULAR_MODULES_SPECIFICATION.md
+ADDING_A_LANGUAGE.md
 
 # OAuth Configuration & Secrets
 lib/oauth_config.dart
@@ -68,3 +69,5 @@ ios/Runner/GoogleService-Info.plist
 *.keystore
 *.jks
 
+# AGENTS
+.agents/
