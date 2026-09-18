@@ -40,9 +40,11 @@ class AppTheme {
       ),
       appBarTheme: isLight
           ? AppBarTheme(
-        backgroundColor: primaryColor,
-        foregroundColor: Colors.white,
-      )
+              backgroundColor: primaryColor,
+              foregroundColor: Colors.white,
+              iconTheme: const IconThemeData(color: Colors.white),
+              actionsIconTheme: const IconThemeData(color: Colors.white),
+            )
           : const AppBarTheme(),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: colorScheme.surface.withValues(alpha: 0.95),

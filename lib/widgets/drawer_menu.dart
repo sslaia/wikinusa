@@ -17,6 +17,7 @@ import '../screens/bookmarks_screen.dart';
 import '../modules/gallery/screens/gallery_carousel_screen.dart';
 import '../modules/course/screens/language_course_screen.dart';
 import '../modules/newsletter/screens/newsletter_screen.dart';
+import '../modules/chat/screens/chat_topics_screen.dart';
 import '../screens/module_settings_screen.dart';
 import '../utils/shortcut_utils.dart';
 import '../utils/wiki_utils.dart';
@@ -84,6 +85,12 @@ class DrawerContent extends ConsumerWidget {
         langCode: currentLanguage,
       )),
     );
+    final chatConfig = ref.watch(
+      moduleConfigProvider((
+        moduleKey: 'chat',
+        langCode: currentLanguage,
+      )),
+    );
 
     final isCrosswordsEnabled =
         crosswordsConfig?.enabled ?? (currentLanguage == 'nia');
@@ -92,6 +99,7 @@ class DrawerContent extends ConsumerWidget {
         galleryConfig?.enabled ?? (currentLanguage == 'nia');
     final isNewsletterEnabled =
         newsletterConfig?.enabled ?? (currentLanguage == 'nia');
+    final isChatEnabled = chatConfig?.enabled ?? true;
 
     final isDark =
         themeMode == ThemeMode.dark ||
@@ -243,6 +251,19 @@ class DrawerContent extends ConsumerWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const NewsletterScreen()),
+                );
+              },
+            ),
+            _buildDrawerItem(
+              theme,
+              icon: Icons.chat_bubble_outline_rounded,
+              title: 'chat'.tr(),
+              enabled: isChatEnabled,
+              onTap: () {
+                _closeDrawer(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ChatTopicsScreen()),
                 );
               },
             ),

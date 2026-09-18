@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:wikimedia_core/wikimedia_core.dart';
 import '../providers/app_state.dart';
 import '../providers/modules_provider.dart';
+import '../modules/chat/config/chat_module_config.dart';
 
 class ModuleSettingsScreen extends ConsumerStatefulWidget {
   const ModuleSettingsScreen({super.key});
@@ -24,6 +25,7 @@ class _ModuleSettingsScreenState extends ConsumerState<ModuleSettingsScreen> {
   final TextEditingController _newsletterTitleController =
       TextEditingController();
   final TextEditingController _courseTitleController = TextEditingController();
+  final TextEditingController _chatTitleController = TextEditingController();
 
   // Temporary state for current language editing
   bool _newsletterEnabled = false;
@@ -39,6 +41,9 @@ class _ModuleSettingsScreenState extends ConsumerState<ModuleSettingsScreen> {
   bool _galleryEnabled = false;
   String? _galleryDataFile;
   bool _galleryIsCustom = false;
+
+  bool _chatEnabled = true;
+  ProjectType _chatProject = ProjectType.wikipedia;
 
   bool _isInitialized = false;
 
@@ -99,6 +104,20 @@ class _ModuleSettingsScreenState extends ConsumerState<ModuleSettingsScreen> {
     _galleryEnabled = gallery.enabled;
     _galleryDataFile = gallery.dataFile;
     _galleryIsCustom = gallery.isCustomDataFile;
+
+    // 5. WikiChat
+    final defaultChatTitle =
+        ChatModuleConfig.getDefaultPageTitle(langCode, ProjectType.wikipedia);
+    final chat = langConfigs['chat'] ??
+        ModuleConfig(
+          enabled: true,
+          project: ProjectType.wikipedia,
+          pageTitle: defaultChatTitle,
+        );
+    _chatEnabled = chat.enabled;
+    _chatProject = chat.project;
+    _chatTitleController.text =
+        chat.pageTitle.isNotEmpty ? chat.pageTitle : defaultChatTitle;
   }
 
   Future<void> _pickJsonFile({
@@ -207,6 +226,17 @@ class _ModuleSettingsScreenState extends ConsumerState<ModuleSettingsScreen> {
       ),
     );
 
+    // Save WikiChat
+    await notifier.updateModuleConfig(
+      langCode: _selectedLanguage,
+      moduleKey: 'chat',
+      config: ModuleConfig(
+        enabled: _chatEnabled,
+        project: _chatProject,
+        pageTitle: _chatTitleController.text.trim(),
+      ),
+    );
+
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('settings_saved'.tr())),
@@ -231,6 +261,7 @@ class _ModuleSettingsScreenState extends ConsumerState<ModuleSettingsScreen> {
   void dispose() {
     _newsletterTitleController.dispose();
     _courseTitleController.dispose();
+    _chatTitleController.dispose();
     super.dispose();
   }
 
@@ -440,6 +471,49 @@ class _ModuleSettingsScreenState extends ConsumerState<ModuleSettingsScreen> {
                     _galleryIsCustom = false;
                   });
                 },
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // 5. WikiChat section
+          _buildModuleSection(
+            theme: theme,
+            primaryColor: primaryColor,
+            icon: Icons.chat_bubble_outline_rounded,
+            title: 'chat'.tr(),
+            enabled: _chatEnabled,
+            onChangedEnabled: (val) => setState(() => _chatEnabled = val),
+            children: [
+              _buildProjectDropdown(
+                theme: theme,
+                value: _chatProject,
+                onChanged: (proj) {
+                  if (proj != null) {
+                    setState(() {
+                      _chatProject = proj;
+                      _chatTitleController.text =
+                          ChatModuleConfig.getDefaultPageTitle(
+                        _selectedLanguage,
+                        proj,
+                      );
+                    });
+                  }
+                },
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _chatTitleController,
+                decoration: InputDecoration(
+                  labelText: 'chat_page_title'.tr(),
+                  hintText: 'chat_page_title_hint'.tr(),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  isDense: true,
+                  helperText:
+                      '${'default'.tr()}: ${ChatModuleConfig.getDefaultPageTitle(_selectedLanguage, _chatProject)}',
+                ),
               ),
             ],
           ),

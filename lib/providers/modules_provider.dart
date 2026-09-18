@@ -182,8 +182,10 @@ final moduleConfigProvider = Provider.family<
   if (config != null) return config;
 
   return ModuleConfig(
-    enabled: arg.langCode == 'nia',
-    project: (arg.moduleKey == 'newsletter' || arg.moduleKey == 'gallery')
+    enabled: arg.langCode == 'nia' || arg.moduleKey == 'chat',
+    project: (arg.moduleKey == 'newsletter' ||
+            arg.moduleKey == 'gallery' ||
+            arg.moduleKey == 'chat')
         ? ProjectType.wikipedia
         : ProjectType.wiktionary,
     pageTitle: arg.moduleKey == 'newsletter'

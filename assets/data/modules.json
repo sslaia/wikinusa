@@ -21,6 +21,11 @@
       "enabled": true,
       "project": "wikipedia",
       "pageTitle": "Wikipedia:Turia"
+    },
+    "chat": {
+      "enabled": true,
+      "project": "wikipedia",
+      "pageTitle": "Wikipedia:Monganga_afo"
     }
   },
   "id": {
@@ -45,6 +50,11 @@
       "enabled": false,
       "project": "wikipedia",
       "pageTitle": "Wikipedia:Warta Komunitas"
+    },
+    "chat": {
+      "enabled": true,
+      "project": "wikipedia",
+      "pageTitle": "Wikipedia:Warung_Kopi"
     }
   },
   "en": {
@@ -69,6 +79,11 @@
       "enabled": false,
       "project": "wikipedia",
       "pageTitle": "Wikipedia:Wikipedia_Signpost"
+    },
+    "chat": {
+      "enabled": true,
+      "project": "wikipedia",
+      "pageTitle": "Wikipedia:Village_pump_(general)"
     }
   },
   "jv": {
@@ -93,6 +108,11 @@
       "enabled": false,
       "project": "wikipedia",
       "pageTitle": "Wikipedia:Pawarta"
+    },
+    "chat": {
+      "enabled": true,
+      "project": "wikipedia",
+      "pageTitle": "Wikipedia:Angkringan"
     }
   }
 }
