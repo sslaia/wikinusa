@@ -93,6 +93,52 @@ class WikiChatApiService {
     return topics;
   }
 
+  /// Fetch the latest revision ID for the specified page.
+  /// Returns null if the page does not exist, has no revisions, or on network error.
+  Future<int?> fetchLatestRevisionId({
+    required String domain,
+    required String pageTitle,
+    String? accessToken,
+  }) async {
+    final uri = Uri.https(domain, '/w/api.php', {
+      'action': 'query',
+      'prop': 'revisions',
+      'titles': pageTitle,
+      'rvprop': 'ids',
+      'format': 'json',
+      'formatversion': '2',
+    });
+
+    final headers = <String, String>{
+      'User-Agent': ChatModuleConfig.userAgent,
+      if (accessToken != null && accessToken.isNotEmpty)
+        'Authorization': 'Bearer $accessToken',
+    };
+
+    try {
+      final response = await _client.get(uri, headers: headers).timeout(
+            const Duration(seconds: 10),
+          );
+
+      if (response.statusCode != 200) return null;
+
+      final data = json.decode(response.body) as Map<String, dynamic>;
+      final pages = data['query']?['pages'] as List<dynamic>?;
+      if (pages == null || pages.isEmpty) return null;
+
+      final page = pages.first as Map<String, dynamic>;
+      if (page['missing'] == true) return null;
+
+      final revisions = page['revisions'] as List<dynamic>?;
+      if (revisions == null || revisions.isEmpty) return null;
+
+      final rev = revisions.first as Map<String, dynamic>;
+      return (rev['revid'] as num?)?.toInt();
+    } catch (_) {
+      return null;
+    }
+  }
+
   /// Retrieve a CSRF token from MediaWiki API.
   Future<String> fetchCsrfToken({
     required String domain,
@@ -150,11 +196,16 @@ class WikiChatApiService {
       'Authorization': 'Bearer $accessToken',
     };
 
+    // Defense-in-depth: Ensure commentId never contains synthetic '_content' suffix
+    final sanitizedCommentId = commentId.endsWith('_content')
+        ? commentId.substring(0, commentId.length - 8)
+        : commentId;
+
     final body = {
       'action': 'discussiontoolsedit',
       'paction': 'addcomment',
       'page': pageTitle,
-      'commentid': commentId,
+      'commentid': sanitizedCommentId,
       'wikitext': wikitext,
       'token': csrfToken,
       'format': 'json',

@@ -18,6 +18,7 @@ import '../modules/gallery/screens/gallery_carousel_screen.dart';
 import '../modules/course/screens/language_course_screen.dart';
 import '../modules/newsletter/screens/newsletter_screen.dart';
 import '../modules/chat/screens/chat_topics_screen.dart';
+import '../modules/chat/state/chat_providers.dart';
 import '../screens/module_settings_screen.dart';
 import '../utils/shortcut_utils.dart';
 import '../utils/wiki_utils.dart';
@@ -259,6 +260,7 @@ class DrawerContent extends ConsumerWidget {
               icon: Icons.chat_bubble_outline_rounded,
               title: 'chat'.tr(),
               enabled: isChatEnabled,
+              hasBadge: isChatEnabled && ref.watch(chatUnreadProvider).hasUnread,
               onTap: () {
                 _closeDrawer(context);
                 Navigator.push(
@@ -506,7 +508,16 @@ class DrawerContent extends ConsumerWidget {
     required String title,
     required VoidCallback onTap,
     bool enabled = true,
+    bool hasBadge = false,
   }) {
+    final iconWidget = Icon(
+      icon,
+      color: enabled
+          ? theme.colorScheme.onSurface.withValues(alpha: 0.7)
+          : Colors.grey.withValues(alpha: 0.4),
+      size: 22,
+    );
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: Container(
@@ -527,13 +538,14 @@ class DrawerContent extends ConsumerWidget {
           type: MaterialType.transparency,
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-            leading: Icon(
-              icon,
-              color: enabled
-                  ? theme.colorScheme.onSurface.withValues(alpha: 0.7)
-                  : Colors.grey.withValues(alpha: 0.4),
-              size: 22,
-            ),
+            leading: hasBadge
+                ? Badge(
+                    isLabelVisible: true,
+                    smallSize: 8,
+                    backgroundColor: theme.colorScheme.primary,
+                    child: iconWidget,
+                  )
+                : iconWidget,
             title: Text(
               title,
               style: theme.textTheme.bodyMedium?.copyWith(
@@ -544,6 +556,16 @@ class DrawerContent extends ConsumerWidget {
                 decoration: !enabled ? TextDecoration.lineThrough : null,
               ),
             ),
+            trailing: hasBadge
+                ? Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primary,
+                      shape: BoxShape.circle,
+                    ),
+                  )
+                : null,
             onTap: onTap,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),

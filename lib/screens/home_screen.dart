@@ -278,7 +278,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 children: [
                   Text(
                     'welcome_to'.tr(),
-                    style: GoogleFonts.offside(
+                    style: GoogleFonts.plusJakartaSans(
                       textStyle: Theme.of(context).textTheme.bodyLarge
                           ?.copyWith(
                             color: Colors.white.withValues(alpha: 0.9),
@@ -320,7 +320,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   Text(
                     'motto'.tr(),
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.offside(
+                    style: GoogleFonts.plusJakartaSans(
                       textStyle: Theme.of(context).textTheme.bodyLarge
                           ?.copyWith(
                             color: Colors.white.withValues(alpha: 0.9),

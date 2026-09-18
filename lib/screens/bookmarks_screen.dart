@@ -178,7 +178,7 @@ class BookmarksScreen extends ConsumerWidget {
                   const SizedBox(height: 12),
                   Text(
                     bookmark.title,
-                    style: GoogleFonts.notoSerif(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: theme.colorScheme.onSurface,
@@ -296,7 +296,7 @@ class BookmarksScreen extends ConsumerWidget {
   //                     const SizedBox(height: 12),
   //                     Text(
   //                       bookmark.title,
-  //                       style: GoogleFonts.notoSerif(
+  //                       style: GoogleFonts.plusJakartaSans(
   //                         fontSize: 20,
   //                         fontWeight: FontWeight.bold,
   //                         color: theme.colorScheme.onSurface,

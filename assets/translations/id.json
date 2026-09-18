@@ -338,5 +338,13 @@
   "chat_captcha_title": "Verifikasi Keamanan",
   "chat_captcha_desc": "Wikimedia memerlukan verifikasi CAPTCHA sebelum memublikasikan pesan dari akun ini.",
   "chat_captcha_solve": "Selesaikan CAPTCHA",
-  "chat_open_web": "Kirim lewat Peramban Web"
+  "chat_open_web": "Kirim lewat Peramban Web",
+  "reset_confirm": "Apakah Anda yakin ingin mengatur ulang setelan bahasa ini ke bawaan?",
+  "chat_new_topic_hint": "mis., Pertanyaan tentang pemformatan artikel",
+  "chat_enter_title": "Silakan masukkan judul topik",
+  "chat_enter_message": "Silakan masukkan pesan",
+  "chat_comment_single": "komentar",
+  "chat_comment_plural": "komentar",
+  "chat_no_comments": "Belum ada komentar",
+  "chat_domain": "Domain"
 }

@@ -298,9 +298,7 @@ class _ModuleSettingsScreenState extends ConsumerState<ModuleSettingsScreen> {
                 context: context,
                 builder: (ctx) => AlertDialog(
                   title: Text('reset_to_default'.tr()),
-                  content: Text(
-                    'Are you sure you want to reset settings for this language to defaults?',
-                  ),
+                  content: Text('reset_confirm'.tr()),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(ctx, false),

@@ -32,7 +32,7 @@ class AdaptiveSectionCard extends ConsumerWidget {
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             section.titleKey.tr(),
-            style: GoogleFonts.montserratAlternates(
+            style: GoogleFonts.plusJakartaSans(
               textStyle: theme.textTheme.labelMedium?.copyWith(
                 color: theme.colorScheme.secondary,
                 fontWeight: FontWeight.bold,
@@ -132,7 +132,7 @@ class AdaptiveSectionCard extends ConsumerWidget {
     return HtmlWidget(
       section.textHtml,
       onTapUrl: (url) => WikiUtils.handleTapUrl(context, url, null, project, langCode),
-      textStyle: GoogleFonts.notoSerif(
+      textStyle: GoogleFonts.plusJakartaSans(
         textStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
           height: 1.6,
           color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),

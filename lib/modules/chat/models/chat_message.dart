@@ -25,6 +25,16 @@ class WikiChatMessage {
     this.hasError = false,
   });
 
+  /// The DiscussionTools comment or heading ID to use when replying to this message.
+  /// If this message was generated from heading othercontent (ending with `_content`),
+  /// returns the valid MediaWiki heading ID without `_content`.
+  String get replyTargetCommentId {
+    if (id.endsWith('_content')) {
+      return id.substring(0, id.length - 8);
+    }
+    return id;
+  }
+
   /// Parse from DiscussionTools JSON item (`type == 'comment'`).
   factory WikiChatMessage.fromDiscussionToolsJson(
     Map<String, dynamic> json, {

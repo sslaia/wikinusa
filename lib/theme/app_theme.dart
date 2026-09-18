@@ -32,12 +32,17 @@ class AppTheme {
       brightness: brightness,
     );
 
+    final textTheme = const TextTheme().apply(
+      fontFamily: 'PlusJakartaSans',
+      fontSizeFactor: fontSize.scale,
+      letterSpacingDelta: -0.3,
+    );
+
     return ThemeData(
       colorScheme: colorScheme,
       useMaterial3: true,
-      textTheme: const TextTheme().apply(
-        fontSizeFactor: fontSize.scale,
-      ),
+      fontFamily: 'PlusJakartaSans',
+      textTheme: textTheme,
       appBarTheme: isLight
           ? AppBarTheme(
               backgroundColor: primaryColor,

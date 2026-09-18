@@ -147,9 +147,12 @@ class _ChatSettingsDialogState extends ConsumerState<ChatSettingsDialog> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text(
-                        '${target.project.getDisplayName(target.langCode)} (${target.langCode.toUpperCase()})',
-                        style: theme.textTheme.labelMedium,
+                      Expanded(
+                        child: Text(
+                          '${target.project.getDisplayName(target.langCode)} (${target.langCode.toUpperCase()})',
+                          style: theme.textTheme.labelMedium,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ],
                   ),
@@ -157,7 +160,7 @@ class _ChatSettingsDialogState extends ConsumerState<ChatSettingsDialog> {
                   Row(
                     children: [
                       Text(
-                        'Domain: ',
+                        '${'chat_domain'.tr()}: ',
                         style: theme.textTheme.labelMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),

@@ -222,7 +222,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   children: [
                     Text(
                       page.titleKey.tr(),
-                      style: GoogleFonts.montserratAlternates(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: isTablet ? 32 : 24,
                         fontWeight: FontWeight.w800,
                         color: page.color,
@@ -231,7 +231,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     SizedBox(height: isTablet ? 24 : 12),
                     Text(
                       page.descKey.tr(),
-                      style: GoogleFonts.notoSerif(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: isTablet ? 18 : 14,
                         height: 1.5,
                         color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
@@ -273,7 +273,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   Text(
                     page.titleKey.tr(),
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.montserratAlternates(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: isCompact ? 22 : (isTablet ? 32 : 26),
                       fontWeight: FontWeight.w800,
                       color: page.color,
@@ -283,7 +283,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   Text(
                     page.descKey.tr(),
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.notoSerif(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: isCompact ? 14 : (isTablet ? 18 : 16),
                       height: 1.4,
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
@@ -317,7 +317,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             Text(
               'select_project_language'.tr(),
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserratAlternates(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: isCompact ? 22 : (isTablet ? 32 : 26),
                 fontWeight: FontWeight.w800,
                 color: theme.colorScheme.primary,
@@ -327,7 +327,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             Text(
               'select_language_description'.tr(),
               textAlign: TextAlign.center,
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: isCompact ? 14 : (isTablet ? 18 : 16),
                 height: 1.4,
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.7),

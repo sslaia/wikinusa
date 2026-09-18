@@ -98,7 +98,7 @@ class AboutScreen extends ConsumerWidget {
                     padding: const EdgeInsets.all(24),
                     child: HtmlWidget(
                       body,
-                      textStyle: GoogleFonts.notoSerif(
+                      textStyle: GoogleFonts.plusJakartaSans(
                         fontSize: 16,
                         height: 1.8,
                         color: theme.colorScheme.onSurface.withValues(

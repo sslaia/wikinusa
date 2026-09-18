@@ -203,7 +203,7 @@ class _LanguageCourseScreenState extends ConsumerState<LanguageCourseScreen> {
                                             child: Text(
                                               courseTitle,
                                               textAlign: TextAlign.center,
-                                              style: GoogleFonts.merriweather(
+                                              style: GoogleFonts.plusJakartaSans(
                                                 fontSize: 14,
                                                 color: Colors.white.withValues(
                                                   alpha: 0.9,
@@ -338,7 +338,7 @@ class _LanguageCourseScreenState extends ConsumerState<LanguageCourseScreen> {
                                               lessonTitle,
                                               textAlign: TextAlign.center,
                                               style:
-                                                  GoogleFonts.montserratAlternates(
+                                                  GoogleFonts.plusJakartaSans(
                                                     fontSize: 22,
                                                     fontWeight: FontWeight.bold,
                                                     color: mixedColor,
@@ -348,7 +348,7 @@ class _LanguageCourseScreenState extends ConsumerState<LanguageCourseScreen> {
                                           ],
                                           HtmlWidget(
                                             cleanBody,
-                                            textStyle: GoogleFonts.notoSerif(
+                                            textStyle: GoogleFonts.plusJakartaSans(
                                               height: 1.8,
                                               fontSize: 16,
                                               color: theme.colorScheme.onSurface

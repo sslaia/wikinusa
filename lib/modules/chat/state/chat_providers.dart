@@ -374,3 +374,131 @@ final topicConversationProvider = StateNotifierProvider.autoDispose
   });
   return notifier;
 });
+
+/// Represents unread discussion status for the active target page.
+class ChatUnreadState {
+  final bool hasUnread;
+  final int? latestRevId;
+  final int? lastSeenRevId;
+
+  const ChatUnreadState({
+    this.hasUnread = false,
+    this.latestRevId,
+    this.lastSeenRevId,
+  });
+
+  ChatUnreadState copyWith({
+    bool? hasUnread,
+    int? latestRevId,
+    int? lastSeenRevId,
+  }) {
+    return ChatUnreadState(
+      hasUnread: hasUnread ?? this.hasUnread,
+      latestRevId: latestRevId ?? this.latestRevId,
+      lastSeenRevId: lastSeenRevId ?? this.lastSeenRevId,
+    );
+  }
+}
+
+class ChatUnreadNotifier extends StateNotifier<ChatUnreadState> {
+  final Ref ref;
+
+  ChatUnreadNotifier(this.ref) : super(const ChatUnreadState()) {
+    checkUnread();
+  }
+
+  String _storageKey(ChatTargetInfo target) {
+    return 'wikichat_last_seen_revid_${target.langCode.toLowerCase()}_${target.project.name.toLowerCase()}';
+  }
+
+  /// Check whether the target discussion page has new revisions since last seen.
+  Future<void> checkUnread() async {
+    try {
+      final target = ref.read(chatTargetProvider);
+      final prefs = ref.read(sharedPreferencesProvider);
+      final api = ref.read(chatApiServiceProvider);
+      final auth = ref.read(chatAuthAdapterProvider);
+      final token = await auth.getValidAccessToken();
+
+      final key = _storageKey(target);
+      final lastSeen = prefs.getInt(key);
+
+      final latestRevId = await api.fetchLatestRevisionId(
+        domain: target.domain,
+        pageTitle: target.pageTitle,
+        accessToken: token,
+      );
+
+      if (latestRevId == null) {
+        state = state.copyWith(
+          hasUnread: false,
+          lastSeenRevId: lastSeen,
+        );
+        return;
+      }
+
+      if (lastSeen == null) {
+        // First time initialization: record current revid so user starts clean,
+        // but any future edits will trigger the unread badge.
+        await prefs.setInt(key, latestRevId);
+        state = ChatUnreadState(
+          hasUnread: false,
+          latestRevId: latestRevId,
+          lastSeenRevId: latestRevId,
+        );
+      } else {
+        final hasUnread = latestRevId > lastSeen;
+        state = ChatUnreadState(
+          hasUnread: hasUnread,
+          latestRevId: latestRevId,
+          lastSeenRevId: lastSeen,
+        );
+      }
+    } catch (_) {
+      // Ignore network/service errors gracefully
+    }
+  }
+
+  /// Mark the current target page discussions as read/seen.
+  Future<void> markAsSeen() async {
+    try {
+      final target = ref.read(chatTargetProvider);
+      final prefs = ref.read(sharedPreferencesProvider);
+      int? latest = state.latestRevId;
+
+      if (latest == null) {
+        final api = ref.read(chatApiServiceProvider);
+        final auth = ref.read(chatAuthAdapterProvider);
+        final token = await auth.getValidAccessToken();
+        latest = await api.fetchLatestRevisionId(
+          domain: target.domain,
+          pageTitle: target.pageTitle,
+          accessToken: token,
+        );
+      }
+
+      if (latest != null && latest > 0) {
+        final key = _storageKey(target);
+        await prefs.setInt(key, latest);
+        state = ChatUnreadState(
+          hasUnread: false,
+          latestRevId: latest,
+          lastSeenRevId: latest,
+        );
+      } else {
+        state = state.copyWith(hasUnread: false);
+      }
+    } catch (_) {}
+  }
+}
+
+final chatUnreadProvider =
+    StateNotifierProvider<ChatUnreadNotifier, ChatUnreadState>((ref) {
+  final notifier = ChatUnreadNotifier(ref);
+  ref.listen(chatTargetProvider, (prev, next) {
+    if (prev != next) {
+      notifier.checkUnread();
+    }
+  });
+  return notifier;
+});

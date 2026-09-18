@@ -55,13 +55,17 @@ class ChatBubble extends StatelessWidget {
                   _buildAvatar(theme, message.author, accentColor),
                   const SizedBox(width: 6),
                 ],
-                Text(
-                  message.author,
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: isCurrentUser
-                        ? accentColor
-                        : theme.colorScheme.onSurface,
+                Flexible(
+                  child: Text(
+                    message.author,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: isCurrentUser
+                          ? accentColor
+                          : theme.colorScheme.onSurface,
+                    ),
                   ),
                 ),
                 if (message.timestamp != null) ...[

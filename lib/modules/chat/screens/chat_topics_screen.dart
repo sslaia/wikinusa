@@ -18,6 +18,23 @@ class ChatTopicsScreen extends ConsumerStatefulWidget {
 }
 
 class _ChatTopicsScreenState extends ConsumerState<ChatTopicsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ref.read(chatUnreadProvider.notifier).markAsSeen();
+      }
+    });
+  }
+
+  Future<void> _refresh() async {
+    await ref.read(chatTopicsProvider.notifier).refresh();
+    if (mounted) {
+      await ref.read(chatUnreadProvider.notifier).markAsSeen();
+    }
+  }
+
   Future<void> _showNewTopicDialog(BuildContext context) async {
     final titleController = TextEditingController();
     final messageController = TextEditingController();
@@ -129,16 +146,18 @@ class _ChatTopicsScreenState extends ConsumerState<ChatTopicsScreen> {
                         Icon(
                           Icons.add_comment_rounded,
                           color: accentColor,
-                          size: 22,
+                          size: 20,
                         ),
                         const SizedBox(width: 8),
-                        Text(
-                          'chat_new_topic'.tr(),
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
+                        Expanded(
+                          child: Text(
+                            'chat_new_topic'.tr(),
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        const Spacer(),
                         IconButton(
                           icon: const Icon(Icons.close_rounded),
                           onPressed: () => Navigator.pop(modalContext),
@@ -150,12 +169,12 @@ class _ChatTopicsScreenState extends ConsumerState<ChatTopicsScreen> {
                       controller: titleController,
                       decoration: InputDecoration(
                         labelText: 'chat_topic_title'.tr(),
-                        hintText: 'e.g. Question about article formatting',
+                        hintText: 'chat_new_topic_hint'.tr(),
                         border: const OutlineInputBorder(),
                       ),
                       validator: (val) {
                         if (val == null || val.trim().isEmpty) {
-                          return 'Please enter a topic title';
+                          return 'chat_enter_title'.tr();
                         }
                         return null;
                       },
@@ -171,7 +190,7 @@ class _ChatTopicsScreenState extends ConsumerState<ChatTopicsScreen> {
                       ),
                       validator: (val) {
                         if (val == null || val.trim().isEmpty) {
-                          return 'Please enter a message';
+                          return 'chat_enter_message'.tr();
                         }
                         return null;
                       },
@@ -294,10 +313,11 @@ class _ChatTopicsScreenState extends ConsumerState<ChatTopicsScreen> {
             Text(
               'chat'.tr(),
               style: (theme.appBarTheme.titleTextStyle ??
-                      theme.textTheme.titleLarge)
+                      theme.textTheme.titleMedium)
                   ?.copyWith(
                 color: appBarForeground,
                 fontWeight: FontWeight.bold,
+                fontSize: 18,
               ),
             ),
             Text(
@@ -315,7 +335,7 @@ class _ChatTopicsScreenState extends ConsumerState<ChatTopicsScreen> {
             icon: const Icon(Icons.refresh_rounded),
             color: appBarForeground,
             tooltip: 'refresh'.tr(),
-            onPressed: () => ref.read(chatTopicsProvider.notifier).refresh(),
+            onPressed: _refresh,
           ),
           IconButton(
             icon: const Icon(Icons.tune_rounded),
@@ -392,7 +412,7 @@ class _ChatTopicsScreenState extends ConsumerState<ChatTopicsScreen> {
 
           return RefreshIndicator(
             color: accentColor,
-            onRefresh: () => ref.read(chatTopicsProvider.notifier).refresh(),
+            onRefresh: _refresh,
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 8),
               itemCount: topics.length,

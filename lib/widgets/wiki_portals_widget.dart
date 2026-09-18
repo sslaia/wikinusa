@@ -36,7 +36,7 @@ class WikiPortalsWidget extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           child: Text(
             'wiki_portals'.tr(),
-            style: GoogleFonts.montserratAlternates(
+            style: GoogleFonts.plusJakartaSans(
               textStyle: theme.textTheme.labelMedium?.copyWith(
                 color: theme.colorScheme.secondary,
                 fontWeight: FontWeight.bold,

@@ -354,7 +354,7 @@ class _NewsletterScreenState extends ConsumerState<NewsletterScreen> {
                                         child: Text(
                                           'newsletter_subtitle'.tr(),
                                           textAlign: TextAlign.center,
-                                          style: GoogleFonts.merriweather(
+                                          style: GoogleFonts.plusJakartaSans(
                                             fontSize: 13,
                                             color: Colors.white.withValues(
                                               alpha: 0.9,
@@ -506,7 +506,7 @@ class _NewsletterScreenState extends ConsumerState<NewsletterScreen> {
                                         ),
                                       HtmlWidget(
                                         cleanBody,
-                                        textStyle: GoogleFonts.notoSerif(
+                                        textStyle: GoogleFonts.plusJakartaSans(
                                           height: 1.8,
                                           fontSize: 16,
                                           color: theme.colorScheme.onSurface
@@ -916,7 +916,7 @@ class _NewsletterScreenState extends ConsumerState<NewsletterScreen> {
                                   chapter.title,
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.merriweather(
+                                  style: GoogleFonts.plusJakartaSans(
                                     fontSize: isH2 ? 13 : 12,
                                     fontWeight: isH2
                                         ? FontWeight.bold

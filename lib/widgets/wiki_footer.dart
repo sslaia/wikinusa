@@ -17,7 +17,12 @@ class WikiFooter extends StatelessWidget {
     final String disclaimerUrl = 'https://sslaia.github.io/wikinusa/disclaimer.html';
     final String privacyPolicyUrl = 'https://sslaia.github.io/wikinusa/privacy-policy.html';
 
-    final String langCode = context.locale.languageCode;
+    String langCode = 'id';
+    try {
+      langCode = context.locale.languageCode;
+    } catch (_) {
+      langCode = Localizations.maybeLocaleOf(context)?.languageCode ?? 'id';
+    }
     final String activeDisclaimer = langCode == 'en' ? disclaimerEn : disclaimerId;
     final String activeLicenseNotice = langCode == 'en' ? licenseNoticeEn : licenseNoticeId;
 
@@ -57,14 +62,16 @@ class WikiFooter extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 16,
+            runSpacing: 8,
             children: [
               _FooterLink(
                 label: 'disclaimer_label'.tr(),
                 url: disclaimerUrl,
               ),
-              const SizedBox(width: 16),
               _FooterLink(
                 label: 'privacy_policy'.tr(),
                 url: privacyPolicyUrl,

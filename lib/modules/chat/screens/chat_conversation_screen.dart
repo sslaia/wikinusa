@@ -53,12 +53,15 @@ class _ChatConversationScreenState
 
     if (topic == null) return;
 
-    // Target comment ID: If replying to a specific message, use its ID.
-    // Otherwise, reply to the last message in the thread or fallback to topic heading id.
-    final targetCommentId = _replyingToMessage?.id ??
-        (topic.messages.isNotEmpty ? topic.messages.last.id : topic.id);
+    // Target comment ID: If replying to a specific message, use its valid MediaWiki target ID.
+    // Otherwise, reply to the last real message in the thread or fallback to topic heading id.
+    final targetCommentId = _replyingToMessage?.replyTargetCommentId ??
+        topic.replyTargetCommentId;
 
-    final replyingAuthor = _replyingToMessage?.author;
+    final replyingAuthor = (_replyingToMessage?.id.endsWith('_content') == true ||
+            _replyingToMessage?.author == 'Wiki')
+        ? null
+        : _replyingToMessage?.author;
 
     // Clear replying state
     setState(() {
@@ -199,7 +202,7 @@ class _ChatConversationScreenState
             ),
             if (topic != null)
               Text(
-                '${messages.length} ${messages.length == 1 ? "comment" : "comments"}',
+                '${messages.length} ${messages.length == 1 ? "chat_comment_single".tr() : "chat_comment_plural".tr()}',
                 style: (theme.textTheme.labelSmall ?? const TextStyle()).copyWith(
                   fontSize: 10,
                   color: Colors.white,
@@ -222,7 +225,7 @@ class _ChatConversationScreenState
             child: messages.isEmpty
                 ? Center(
                     child: Text(
-                      'No comments yet.',
+                      'chat_no_comments'.tr(),
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),

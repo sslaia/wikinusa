@@ -203,7 +203,7 @@ class WikiUtils {
           children: [
             Text(
               element.text,
-              style: GoogleFonts.notoSerif(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: theme.colorScheme.primary,

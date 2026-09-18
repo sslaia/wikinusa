@@ -178,7 +178,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
             iconTheme: IconThemeData(color: theme.colorScheme.primary),
             title: Text(
               '${'search_results'.tr()}: ${widget.query}',
-              style: GoogleFonts.montserratAlternates(
+              style: GoogleFonts.plusJakartaSans(
                 fontWeight: FontWeight.bold,
                 color: theme.colorScheme.primary,
                 fontSize: 18,
@@ -376,7 +376,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
                                   child: Text(
                                     title,
                                     style:
-                                        GoogleFonts.notoSerif(
+                                        GoogleFonts.plusJakartaSans(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 18,
                                           color: theme.colorScheme.onSurface,
@@ -400,7 +400,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
                                 _cleanSnippet(snippet),
                                 maxLines: 3,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.notoSerif(
+                                style: GoogleFonts.plusJakartaSans(
                                   fontSize: 14,
                                   height: 1.5,
                                   color: theme.colorScheme.onSurfaceVariant,

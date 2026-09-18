@@ -22,6 +22,19 @@ class WikiChatTopic {
     this.messages = const [],
   });
 
+  /// The target comment ID to use when replying to the topic as a whole.
+  /// If there are real comments (not ending with `_content`), targets the last real comment.
+  /// Otherwise, targets the section heading ID (`id`).
+  String get replyTargetCommentId {
+    for (int i = messages.length - 1; i >= 0; i--) {
+      final msg = messages[i];
+      if (!msg.id.endsWith('_content') && !msg.isPending) {
+        return msg.id;
+      }
+    }
+    return id;
+  }
+
   /// Parse a heading item from DiscussionTools API JSON and recursively flatten
   /// nested `.replies` and subheadings into a chronological chat message list.
   factory WikiChatTopic.fromDiscussionToolsJson(

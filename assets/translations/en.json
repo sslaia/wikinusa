@@ -339,5 +339,13 @@
   "chat_captcha_title": "Security Verification",
   "chat_captcha_desc": "Wikimedia requires CAPTCHA verification before publishing edits from this account.",
   "chat_captcha_solve": "Solve CAPTCHA",
-  "chat_open_web": "Post via Web Browser"
+  "chat_open_web": "Post via Web Browser",
+  "reset_confirm": "Are you sure you want to reset settings for this language to defaults?",
+  "chat_new_topic_hint": "e.g. Question about article formatting",
+  "chat_enter_title": "Please enter a topic title",
+  "chat_enter_message": "Please enter a message",
+  "chat_comment_single": "comment",
+  "chat_comment_plural": "comments",
+  "chat_no_comments": "No comments yet",
+  "chat_domain": "Domain"
 }

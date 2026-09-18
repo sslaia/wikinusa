@@ -337,5 +337,13 @@
   "chat_captcha_title": "Fanörö Bawandruhö (CAPTCHA)",
   "chat_captcha_desc": "Moguna wanörö bawandruhö CAPTCHA moroi khö Wikimedia fatua lö tefa'ohe'ö huhuo moroi ba akun da'a.",
   "chat_captcha_solve": "Törö CAPTCHA",
-  "chat_open_web": "Bokai ba Wuka Gu'ö"
+  "chat_open_web": "Bokai ba Wuka Gu'ö",
+  "reset_confirm": "Hadia sindruhu omasi'ö wangawuli ba mböröta?",
+  "chat_new_topic_hint": "Duma-dumania: Hawara rafe ba mbaŵa fönada",
+  "chat_enter_title": "Sura duho huhuo",
+  "chat_enter_message": "Sura nösi huhuo",
+  "chat_comment_single": "fanema li",
+  "chat_comment_plural": "fanema li",
+  "chat_no_comments": "Lö nasa fanema li",
+  "chat_domain": "Domain"
 }

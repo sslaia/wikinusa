@@ -171,6 +171,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
 
     /// Fallback fonts for Javanese and other scripts
     final List<String> fontFallbacks = [
+      'PlusJakartaSans',
       GoogleFonts.notoSansJavanese().fontFamily!,
       'Roboto',
     ];
@@ -332,7 +333,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                                           displayedHtml,
                                           key: _htmlWidgetKey,
                                           textStyle:
-                                              GoogleFonts.notoSerif(
+                                              GoogleFonts.plusJakartaSans(
                                                 fontSize: Theme.of(context)
                                                     .textTheme
                                                     .bodyMedium
@@ -405,7 +406,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                                                     child: Text(
                                                       text,
                                                       style: GoogleFonts
-                                                          .notoSerif(
+                                                          .plusJakartaSans(
                                                             fontSize: Theme.of(
                                                                   context,
                                                                 )
