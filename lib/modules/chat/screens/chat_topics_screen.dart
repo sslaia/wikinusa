@@ -2,6 +2,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wikimedia_core/wikimedia_core.dart';
+import '../../../utils/responsive_utils.dart';
+import '../../../widgets/adaptive_nav_actions.dart';
+import '../../../widgets/custom_bottom_app_bar.dart';
+import '../../../widgets/drawer_menu.dart';
 import '../services/wiki_chat_api_service.dart';
 import '../state/chat_providers.dart';
 import '../widgets/chat_settings_dialog.dart';
@@ -18,6 +22,8 @@ class ChatTopicsScreen extends ConsumerStatefulWidget {
 }
 
 class _ChatTopicsScreenState extends ConsumerState<ChatTopicsScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   void initState() {
     super.initState();
@@ -273,7 +279,7 @@ class _ChatTopicsScreenState extends ConsumerState<ChatTopicsScreen> {
                                 ),
                               )
                             : Text(
-                                'create_submit'.tr(),
+                                'submit'.tr(),
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
@@ -301,8 +307,26 @@ class _ChatTopicsScreenState extends ConsumerState<ChatTopicsScreen> {
     final appBarForeground = theme.appBarTheme.foregroundColor ??
         (isDark ? theme.colorScheme.onSurface : Colors.white);
 
+    final isLandscape = ResponsiveUtils.isLandscape(context);
+    final bool showBottomNavBar = !isLandscape;
+    final bool showNavigationRail = isLandscape;
+    final bool showPermanentDrawer =
+        ResponsiveUtils.isTabletLandscape(context);
+    final bool showMenuButtonInRail =
+        showNavigationRail && !showPermanentDrawer;
+
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: theme.colorScheme.surface,
+      drawer: showPermanentDrawer ? null : const DrawerMenu(),
+      bottomNavigationBar: showBottomNavBar
+          ? CustomBottomAppBar(
+              scaffoldKey: _scaffoldKey,
+              currentProject: target.project,
+              pageTitle: target.pageTitle,
+              onRefresh: _refresh,
+            )
+          : null,
       appBar: AppBar(
         foregroundColor: appBarForeground,
         iconTheme: IconThemeData(color: appBarForeground),
@@ -345,96 +369,156 @@ class _ChatTopicsScreenState extends ConsumerState<ChatTopicsScreen> {
           ),
         ],
       ),
-      body: topicsAsync.when(
-        loading: () => Center(
-          child: CircularProgressIndicator(color: accentColor),
-        ),
-        error: (err, _) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.cloud_off_rounded,
-                  size: 48,
-                  color: theme.colorScheme.error,
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  err.toString().replaceFirst('Exception: ', ''),
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 16),
-                FilledButton.tonal(
-                  onPressed: () =>
-                      ref.read(chatTopicsProvider.notifier).refresh(),
-                  child: Text('retry'.tr()),
-                ),
-              ],
+      body: Row(
+        children: [
+          if (showPermanentDrawer)
+            const SizedBox(
+              width: 304,
+              child: DrawerMenu(isPermanent: true),
             ),
-          ),
-        ),
-        data: (topics) {
-          if (topics.isEmpty) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.forum_outlined,
-                      size: 64,
-                      color: accentColor.withValues(alpha: 0.5),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'chat_no_topics'.tr(),
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+          Expanded(
+            child: topicsAsync.when(
+              loading: () => Center(
+                child: CircularProgressIndicator(color: accentColor),
+              ),
+              error: (err, _) => Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.cloud_off_rounded,
+                        size: 48,
+                        color: theme.colorScheme.error,
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'chat_empty_prompt'.tr(),
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
+                      const SizedBox(height: 12),
+                      Text(
+                        err.toString().replaceFirst('Exception: ', ''),
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.bodyMedium,
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 16),
+                      FilledButton.tonal(
+                        onPressed: _refresh,
+                        child: Text('retry'.tr()),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            );
-          }
-
-          return RefreshIndicator(
-            color: accentColor,
-            onRefresh: _refresh,
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              itemCount: topics.length,
-              itemBuilder: (context, index) {
-                final topic = topics[index];
-                return TopicCard(
-                  topic: topic,
-                  project: target.project,
-                  langCode: target.langCode,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => ChatConversationScreen(topicId: topic.id),
+              data: (topics) {
+                if (topics.isEmpty) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.forum_outlined,
+                            size: 64,
+                            color: theme.colorScheme.outlineVariant,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'chat_no_topics'.tr(),
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'chat_empty_prompt'.tr(),
+                            textAlign: TextAlign.center,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
                       ),
-                    );
-                  },
+                    ),
+                  );
+                }
+
+                return RefreshIndicator(
+                  color: accentColor,
+                  onRefresh: _refresh,
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    itemCount: topics.length,
+                    itemBuilder: (context, index) {
+                      final topic = topics[index];
+                      return TopicCard(
+                        topic: topic,
+                        project: target.project,
+                        langCode: target.langCode,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ChatConversationScreen(topicId: topic.id),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
                 );
               },
             ),
-          );
-        },
+          ),
+          if (showNavigationRail)
+            Container(
+              width: 56,
+              color: theme.colorScheme.primary,
+              child: Column(
+                children: [
+                  const SizedBox(height: 8),
+                  if (showMenuButtonInRail)
+                    IconButton(
+                      icon: const Icon(Icons.menu),
+                      tooltip: 'open_navigation_menu'.tr(),
+                      color: theme.colorScheme.onPrimary,
+                      onPressed: () =>
+                          _scaffoldKey.currentState?.openDrawer(),
+                    ),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children:
+                              AdaptiveNavActions.buildActions(
+                                    context,
+                                    ref,
+                                    currentProject: target.project,
+                                    isHomeScreen: false,
+                                    showHome: true,
+                                    pageTitle: target.pageTitle,
+                                    color: theme.colorScheme.onPrimary,
+                                    onRefresh: _refresh,
+                                  )
+                                  .map(
+                                    (w) => Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 4,
+                                      ),
+                                      child: w,
+                                    ),
+                                  )
+                                  .toList(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showNewTopicDialog(context),

@@ -9,6 +9,8 @@ import 'package:wikimedia_core/wikimedia_core.dart';
 import '../providers/app_state.dart';
 import '../providers/modules_provider.dart';
 import '../modules/chat/config/chat_module_config.dart';
+import '../utils/responsive_utils.dart';
+import '../widgets/drawer_menu.dart';
 
 class ModuleSettingsScreen extends ConsumerStatefulWidget {
   const ModuleSettingsScreen({super.key});
@@ -286,7 +288,10 @@ class _ModuleSettingsScreenState extends ConsumerState<ModuleSettingsScreen> {
     final currentProject = ref.watch(appStateProvider);
     final primaryColor = currentProject.primaryColor;
 
+    final showPermanentDrawer = ResponsiveUtils.isTabletLandscape(context);
+
     return Scaffold(
+      drawer: showPermanentDrawer ? null : const DrawerMenu(),
       appBar: AppBar(
         title: Text('module_settings'.tr()),
         actions: [
@@ -323,9 +328,17 @@ class _ModuleSettingsScreenState extends ConsumerState<ModuleSettingsScreen> {
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      body: Row(
         children: [
+          if (showPermanentDrawer)
+            const SizedBox(
+              width: 304,
+              child: DrawerMenu(isPermanent: true),
+            ),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              children: [
           // 1. Newsletter section
           _buildModuleSection(
             theme: theme,
@@ -530,6 +543,9 @@ class _ModuleSettingsScreenState extends ConsumerState<ModuleSettingsScreen> {
             ),
           ),
           const SizedBox(height: 48),
+        ],
+      ),
+          ),
         ],
       ),
     );

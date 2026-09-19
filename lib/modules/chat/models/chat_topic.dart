@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'chat_message.dart';
 
@@ -207,7 +208,9 @@ class WikiChatTopic {
 
     return WikiChatTopic(
       id: id,
-      title: cleanTopicTitle.isEmpty ? 'Untitled Topic' : cleanTopicTitle,
+      title: cleanTopicTitle.isEmpty
+          ? 'chat_untitled_topic'.tr()
+          : cleanTopicTitle,
       placeholderHeading: json['placeholderheading'] as String?,
       commentCount: commentCount > 0 ? commentCount : flattenedMessages.length,
       authorCount: authorCount > 0

@@ -118,138 +118,144 @@ class _GalleryCarouselScreenState extends ConsumerState<GalleryCarouselScreen> {
                   child: DrawerMenu(isPermanent: true),
                 ),
               Expanded(
-                child: galleryDataAsync.when(
-                  data: (data) {
-                    final items = selectedCategory != null
-                        ? data[selectedCategory]
-                        : null;
-                    return Stack(
-                      children: [
-                        // Main Vertical Carousel
-                        if (items != null && items.isNotEmpty)
-                          CarouselView(
-                            controller: _carouselController,
-                            scrollDirection: Axis.vertical,
-                            itemExtent: constraints.maxHeight,
-                            shrinkExtent: constraints.maxHeight * 0.2,
-                            padding: EdgeInsets.zero,
-                            onTap: (index) {
-                              final item = items[index];
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ImageScreen(
-                                    imagePath: CommonsService.getOriginalUrl(
-                                      item.fileName,
+                child: LayoutBuilder(
+                  builder: (context, innerConstraints) {
+                    final carouselHeight = innerConstraints.maxHeight;
+                    return galleryDataAsync.when(
+                      data: (data) {
+                        final items = selectedCategory != null
+                            ? data[selectedCategory]
+                            : null;
+                        return Stack(
+                          children: [
+                            // Main Vertical Carousel
+                            if (items != null && items.isNotEmpty)
+                              CarouselView.builder(
+                                controller: _carouselController,
+                                scrollDirection: Axis.vertical,
+                                itemExtent: carouselHeight,
+                                shrinkExtent: carouselHeight * 0.2,
+                                padding: EdgeInsets.zero,
+                                itemCount: items.length,
+                                onTap: (index) {
+                                  final item = items[index];
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ImageScreen(
+                                        imagePath: CommonsService.getOriginalUrl(
+                                          item.fileName,
+                                        ),
+                                        fileName: item.fileName,
+                                        title: item.title,
+                                      ),
                                     ),
-                                    fileName: item.fileName,
-                                    title: item.title,
-                                  ),
-                                ),
-                              );
-                            },
-                            children: items.map((item) {
-                              final thumbnailUrl =
-                                  CommonsService.getThumbnailUrl(
+                                  );
+                                },
+                                itemBuilder: (context, index) {
+                                  final item = items[index];
+                                  final thumbnailUrl =
+                                      CommonsService.getThumbnailUrl(
                                     item.fileName,
                                     width: 900,
                                   );
 
-                              return Stack(
-                                fit: StackFit.expand,
-                                children: [
-                                  Image.network(
-                                    thumbnailUrl,
-                                    fit: BoxFit.cover,
-                                    loadingBuilder:
-                                        (context, child, loadingProgress) {
-                                          if (loadingProgress == null) {
-                                            return child;
-                                          }
-                                          return const Center(
-                                            child: CircularProgressIndicator(
-                                              color:
-                                                  GalleryCarouselScreen.niasRed,
-                                            ),
-                                          );
-                                        },
-                                    errorBuilder:
-                                        (context, error, stackTrace) =>
-                                            const Center(
-                                              child: Icon(
-                                                Icons.error,
-                                                color: GalleryCarouselScreen
-                                                    .niasRed,
-                                              ),
-                                            ),
-                                  ),
-                                  // Overlay Gradient
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topCenter,
-                                        end: Alignment.bottomCenter,
-                                        colors: [
-                                          Colors.black.withValues(alpha: 0.4),
-                                          Colors.transparent,
-                                          Colors.black.withValues(alpha: 0.7),
-                                        ],
+                                  return Stack(
+                                    fit: StackFit.expand,
+                                    children: [
+                                      Image.network(
+                                        thumbnailUrl,
+                                        cacheWidth: 800,
+                                        fit: BoxFit.cover,
+                                        loadingBuilder:
+                                            (context, child, loadingProgress) {
+                                              if (loadingProgress == null) {
+                                                return child;
+                                              }
+                                              return const Center(
+                                                child: CircularProgressIndicator(
+                                                  color:
+                                                      GalleryCarouselScreen.niasRed,
+                                                ),
+                                              );
+                                            },
+                                        errorBuilder:
+                                            (context, error, stackTrace) =>
+                                                const Center(
+                                                  child: Icon(
+                                                    Icons.error,
+                                                    color: GalleryCarouselScreen
+                                                        .niasRed,
+                                                  ),
+                                                ),
                                       ),
-                                    ),
-                                  ),
-                                  // Caption
-                                  Positioned(
-                                    bottom: isCompactPortrait ? 40 : 100,
-                                    left: 20,
-                                    right: 20,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          item.title,
-                                          style: GoogleFonts.cinzelDecorative(
-                                            fontSize: isCompactPortrait
-                                                ? 20
-                                                : 28,
-                                            fontWeight: FontWeight.bold,
-                                            color: GalleryCarouselScreen
-                                                .niasYellow,
-                                            shadows: const [
-                                              Shadow(
-                                                blurRadius: 4,
-                                                color: Colors.black,
-                                                offset: Offset(2, 2),
-                                              ),
+                                      // Overlay Gradient
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            colors: [
+                                              Colors.black.withValues(alpha: 0.4),
+                                              Colors.transparent,
+                                              Colors.black.withValues(alpha: 0.7),
                                             ],
                                           ),
                                         ),
-                                        if (item.description != null) ...[
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            item.description!,
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: isCompactPortrait
-                                                  ? 12
-                                                  : 16,
+                                      ),
+                                      // Caption
+                                      Positioned(
+                                        bottom: isCompactPortrait ? 40 : 100,
+                                        left: 20,
+                                        right: 20,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              item.title,
+                                              style: GoogleFonts.cinzelDecorative(
+                                                fontSize: isCompactPortrait
+                                                    ? 20
+                                                    : 28,
+                                                fontWeight: FontWeight.bold,
+                                                color: GalleryCarouselScreen
+                                                    .niasYellow,
+                                                shadows: const [
+                                                  Shadow(
+                                                    blurRadius: 4,
+                                                    color: Colors.black,
+                                                    offset: Offset(2, 2),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              );
-                            }).toList(),
-                          )
-                        else
-                          Center(
-                            child: Text(
-                              'gallery_no_images'.tr(),
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ),
+                                            if (item.description != null) ...[
+                                              const SizedBox(height: 8),
+                                              Text(
+                                                item.description!,
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: isCompactPortrait
+                                                      ? 12
+                                                      : 16,
+                                                ),
+                                              ),
+                                            ],
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              )
+                            else
+                              Center(
+                                child: Text(
+                                  'gallery_no_images'.tr(),
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              ),
 
                         // Category Selector (Top)
                         Positioned(
@@ -335,8 +341,10 @@ class _GalleryCarouselScreenState extends ConsumerState<GalleryCarouselScreen> {
                       ),
                     ),
                   ),
-                ),
-              ),
+                );
+              },
+            ),
+          ),
               if (showNavigationRail)
                 Container(
                   width: 56,

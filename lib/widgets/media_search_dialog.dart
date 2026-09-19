@@ -15,49 +15,6 @@ class _MediaSearchDialogState extends State<MediaSearchDialog> {
   bool _isLoading = false;
   String? _errorMessage;
 
-  String _getLocalString(String key, String localeCode) {
-    final Map<String, Map<String, String>> strings = {
-      'en': {
-        'search_images': 'Search Commons',
-        'search_hint': 'Search for images...',
-        'no_results_found': 'No images found.',
-        'image_caption': 'Image Caption',
-        'caption_hint': 'Enter image description...',
-        'select': 'Select Image',
-        'ok': 'OK',
-      },
-      'id': {
-        'search_images': 'Cari di Commons',
-        'search_hint': 'Cari gambar...',
-        'no_results_found': 'Gambar tidak ditemukan.',
-        'image_caption': 'Keterangan Gambar',
-        'caption_hint': 'Masukkan deskripsi gambar...',
-        'select': 'Pilih Gambar',
-        'ok': 'OK',
-      },
-      'nia': {
-        'search_images': 'Alui ba Commons',
-        'search_hint': 'Alui gambara...',
-        'no_results_found': 'Lö gambara si faudu.',
-        'image_caption': 'Keterangan Gambara',
-        'caption_hint': 'Suratö zanandrösa ba gambara...',
-        'select': 'Fili Gambara',
-        'ok': 'OK',
-      },
-      'jv': {
-        'search_images': 'Golek ing Commons',
-        'search_hint': 'Golek gambar...',
-        'no_results_found': 'Gambar ora ditemokake.',
-        'image_caption': 'Katrangan Gambar',
-        'caption_hint': 'Lebokake katrangan gambar...',
-        'select': 'Pilih Gambar',
-        'ok': 'OK',
-      },
-    };
-    final lang = strings.containsKey(localeCode) ? localeCode : 'en';
-    return strings[lang]?[key] ?? strings['en']![key]!;
-  }
-
   Future<void> _performSearch() async {
     final query = _searchController.text.trim();
     if (query.isEmpty) return;
@@ -67,15 +24,13 @@ class _MediaSearchDialogState extends State<MediaSearchDialog> {
       _errorMessage = null;
     });
 
-    final locale = EasyLocalization.of(context)?.locale.languageCode ?? 'en';
-
     try {
       final results = await CommonsService.searchImages(query);
       setState(() {
         _results = results;
         _isLoading = false;
         if (results.isEmpty) {
-          _errorMessage = _getLocalString('no_results_found', locale);
+          _errorMessage = 'no_results_found'.tr();
         }
       });
     } catch (e) {
@@ -95,15 +50,11 @@ class _MediaSearchDialogState extends State<MediaSearchDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final locale = EasyLocalization.of(context)?.locale.languageCode ?? 'en';
-    
-    final String searchTitle = _getLocalString('search_images', locale);
-    final String searchHint = _getLocalString('search_hint', locale);
 
     return Dialog.fullscreen(
       child: Scaffold(
         appBar: AppBar(
-          title: Text(searchTitle),
+          title: Text('search_images'.tr()),
           leading: IconButton(
             icon: const Icon(Icons.close),
             onPressed: () => Navigator.of(context).pop(),
@@ -119,7 +70,7 @@ class _MediaSearchDialogState extends State<MediaSearchDialog> {
                     child: TextField(
                       controller: _searchController,
                       decoration: InputDecoration(
-                        hintText: searchHint,
+                        hintText: 'search_hint'.tr(),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -193,7 +144,7 @@ class _MediaSearchDialogState extends State<MediaSearchDialog> {
   void _openPreview(Map<String, dynamic> image) async {
     final result = await showDialog<String>(
       context: context,
-      builder: (context) => MediaPreviewDialog(image: image, getLocalString: _getLocalString),
+      builder: (context) => MediaPreviewDialog(image: image),
     );
     if (result != null && mounted) {
       Navigator.of(context).pop(result);
@@ -203,18 +154,15 @@ class _MediaSearchDialogState extends State<MediaSearchDialog> {
 
 class MediaPreviewDialog extends StatelessWidget {
   final Map<String, dynamic> image;
-  final String Function(String key, String localeCode) getLocalString;
 
   const MediaPreviewDialog({
     super.key,
     required this.image,
-    required this.getLocalString,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final locale = EasyLocalization.of(context)?.locale.languageCode ?? 'en';
     final fileName = image['fileName'] as String;
     final url = image['url'] as String;
 
@@ -271,7 +219,7 @@ class MediaPreviewDialog extends StatelessWidget {
                   Expanded(
                     child: FilledButton(
                       onPressed: () => _promptCaption(context),
-                      child: Text(getLocalString('select', locale)),
+                      child: Text('select'.tr()),
                     ),
                   ),
                 ],
@@ -284,17 +232,16 @@ class MediaPreviewDialog extends StatelessWidget {
   }
 
   void _promptCaption(BuildContext context) async {
-    final locale = EasyLocalization.of(context)?.locale.languageCode ?? 'en';
     final caption = await showDialog<String>(
       context: context,
       builder: (context) {
         final controller = TextEditingController();
         return AlertDialog(
-          title: Text(getLocalString('image_caption', locale)),
+          title: Text('image_caption'.tr()),
           content: TextField(
             controller: controller,
             decoration: InputDecoration(
-              hintText: getLocalString('caption_hint', locale),
+              hintText: 'caption_hint'.tr(),
             ),
             autofocus: true,
           ),
@@ -305,7 +252,7 @@ class MediaPreviewDialog extends StatelessWidget {
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(controller.text.trim()),
-              child: Text(getLocalString('ok', locale)),
+              child: Text('ok'.tr()),
             ),
           ],
         );

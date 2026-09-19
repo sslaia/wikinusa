@@ -7,6 +7,8 @@ import 'package:wikimedia_core/wikimedia_core.dart';
 import '../providers/app_state.dart';
 import '../providers/database_provider.dart';
 import '../services/connectivity_service.dart';
+import '../utils/responsive_utils.dart';
+import '../widgets/drawer_menu.dart';
 import 'article_screen.dart';
 
 class SearchResultsScreen extends ConsumerStatefulWidget {
@@ -165,9 +167,20 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
       'Roboto',
     ];
 
+    final showPermanentDrawer = ResponsiveUtils.isTabletLandscape(context);
+
     return Scaffold(
       backgroundColor: theme.colorScheme.surfaceContainerLow,
-      body: CustomScrollView(
+      drawer: showPermanentDrawer ? null : const DrawerMenu(),
+      body: Row(
+        children: [
+          if (showPermanentDrawer)
+            const SizedBox(
+              width: 304,
+              child: DrawerMenu(isPermanent: true),
+            ),
+          Expanded(
+            child: CustomScrollView(
         slivers: [
           SliverAppBar(
             floating: true,
@@ -415,6 +428,9 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
                 }, childCount: _results.length + 1),
               ),
             ),
+        ],
+      ),
+          ),
         ],
       ),
     );

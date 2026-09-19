@@ -2,10 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'shared_prefs_provider.dart';
 
 enum AppFontSize {
-  small('Small', 1.0),
-  normal('Default', 1.2),
-  large('Large', 1.4),
-  extraLarge('Extra Large', 1.6);
+  small('Small', 0.8),
+  normal('Default', 0.9),
+  large('Large', 1.05),
+  extraLarge('Extra Large', 1.25);
 
   final String label;
   final double scale;

@@ -72,6 +72,35 @@
             -webkit-text-fill-color: transparent;
         }
 
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .lang-switch {
+            display: inline-flex;
+            background: #E2E8F0;
+            padding: 3px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .lang-switch a {
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-decoration: none;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .lang-switch a.active {
+            background: #FFFFFF;
+            color: var(--wikipedia-indigo);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+
         .btn-back {
             padding: 8px 16px;
             border-radius: 20px;
@@ -488,9 +517,15 @@
             <img src="wikinusa-icon.png" alt="WikiNusa Logo">
             <span class="header-title">WikiNusa</span>
         </a>
-        <a href="index.html" class="btn-back">
-            &larr; Kembali ke Beranda
-        </a>
+        <div class="header-actions">
+            <div class="lang-switch" aria-label="Pilih Bahasa / Choose Language">
+                <a href="guide-wikinusa-id.html" class="active" title="Bahasa Indonesia">ID</a>
+                <a href="guide-wikinusa-en.html" title="English">EN</a>
+            </div>
+            <a href="index.html" class="btn-back">
+                &larr; Kembali ke Beranda
+            </a>
+        </div>
     </div>
 </header>
 
@@ -510,6 +545,11 @@
                 <li class="toc-item"><a href="#wikipedia" class="toc-link">Wikipedia</a></li>
                 <li class="toc-item"><a href="#wikikamus" class="toc-link">Wikikamus</a></li>
                 <li class="toc-item"><a href="#wikibuku" class="toc-link">Wikibuku</a></li>
+                <li class="toc-item"><a href="#wikichat" class="toc-link">WikiChat</a></li>
+                <li class="toc-item"><a href="#newsletter" class="toc-link">Buletin Komunitas</a></li>
+                <li class="toc-item"><a href="#crosswords" class="toc-link">Teka-Teki Silang</a></li>
+                <li class="toc-item"><a href="#course" class="toc-link">Kursus Bahasa</a></li>
+                <li class="toc-item"><a href="#gallery" class="toc-link">Galeri Budaya</a></li>
             </ul>
         </div>
     </div>
@@ -823,6 +863,79 @@
             <h3>Apa saja bisa dimuat di Wikibuku?</h3>
             <p>Semua jenis tulisan panjang lainnya yang tidak memenuhi kriteria sebagai artikel ensiklopedia di Wikipedia atau entri kata di Wikikamus. Di Wikibuku Anda bisa memuat teks lagu, hoho, hendri-hendri, cerpen, novela, dongeng, blog, paper ilmiah, opini, buku pelajaran, dan lain sebagainya.</p>
         </section>
+
+        <section id="wikichat">
+            <h2>WikiChat (Obrolan Komunitas)</h2>
+            <p>WikiChat adalah modul percakapan langsung yang terintegrasi secara penuh dengan halaman pembicaraan Wikimedia (seperti halaman <strong>Monganga Afo</strong> di Wikipedia bahasa Nias atau halaman pembicaraan pengguna). Modul ini memudahkan para kontributor untuk berkoordinasi, bertanya, dan berdiskusi seputar artikel langsung di dalam aplikasi melalui antarmuka pesan modern.</p>
+
+            <h3>Bagaimana cara membuka WikiChat?</h3>
+            <p>Buka Laci Menu Samping (tekan ikon menu tiga garis di kiri bawah). Pada bagian <strong>HALÖWÖ BÖ'Ö</strong> (Modul), tekan menu <strong>Obrolan / Chat</strong> (atau <em>Huhuo</em>). Bila ada topik atau pesan pembicaraan baru yang belum dibaca, sistem akan menampilkan lencana merah (unread badge) sebagai pengingat.</p>
+
+            <h3>Bagaimana cara memulai topik diskusi baru?</h3>
+            <ol>
+                <li>Pada layar WikiChat, tekan tombol <strong>Tambah Topik</strong> (+).</li>
+                <li>Ketikkan judul topik pembicaraan pada kolom subjek.</li>
+                <li>Tulis pesan atau pertanyaan Anda di kolom isi pesan.</li>
+                <li>Tekan tombol <strong>Kirim</strong>. Apabila Wikimedia meminta verifikasi keamanan (CAPTCHA), masukkan teks verifikasi yang tampil untuk menyimpan topik secara langsung ke halaman pembicaraan resmi wiki.</li>
+            </ol>
+
+            <h3>Bagaimana cara membalas pesan dan mengutip?</h3>
+            <p>Pada setiap pesan di dalam topik obrolan, Anda dapat menekan tombol <strong>Balas</strong>. Anda juga dapat menggunakan fitur kutipan (quote) untuk menyertakan cuplikan pesan lawan bicara. Tanggapan Anda akan diformat secara otomatis sesuai tata letak pesan berindentasi standar MediaWiki.</p>
+        </section>
+
+        <section id="newsletter">
+            <h2>Buletin Komunitas (Newsletter)</h2>
+            <p>Modul Buletin Komunitas merupakan sarana publikasi warta berkala yang dirilis oleh komunitas wiki daerah (misalnya buletin <strong>Turia</strong> pada Wikipedia bahasa Nias). Modul ini memudahkan anggota komunitas mengikuti perkembangan gerakan Wikimedia, jadwal lokakarya penulisan, pengumuman kompetisi artikel, serta capaian proyek terkini.</p>
+
+            <h3>Bagaimana membaca buletin?</h3>
+            <ol>
+                <li>Buka Laci Menu Samping dan pilih menu <strong>Buletin / Newsletter</strong> (atau <em>Turia</em>) pada kelompok modul.</li>
+                <li>Aplikasi akan menampilkan daftar terbitan berkala yang tersedia, diurutkan mulai dari edisi paling mutakhir.</li>
+                <li>Pilih edisi yang ingin Anda baca.</li>
+                <li>Gunakan <strong>Daftar Isi</strong> (TOC) di bagian atas artikel buletin untuk melompat langsung ke rubrik atau berita tertentu yang Anda minati.</li>
+            </ol>
+        </section>
+
+        <section id="crosswords">
+            <h2>Teka-Teki Silang (Crosswords)</h2>
+            <p>Modul Teka-Teki Silang adalah permainan kata edukatif yang menguji dan memperkaya penguasaan kosakata bahasa daerah Anda. Seluruh kata kunci dan definisi petunjuk disinkronkan langsung dari entri kosakata resmi Wikikamus daerah.</p>
+
+            <h3>Bagaimana cara memainkan teka-teki silang?</h3>
+            <ol>
+                <li>Buka Laci Menu Samping dan ketuk <strong>Teka-Teki Silang / Crosswords</strong>.</li>
+                <li>Pilih teka-teki silang yang tersedia (tersedia variasi harian, bulanan, atau tahunan).</li>
+                <li>Ketuk salah satu kotak huruf pada kisi teka-teki. Kotak yang aktif akan menyala dan petunjuk (mendatar atau menurun) akan ditampilkan dengan jelas di panel petunjuk.</li>
+                <li>Ketik huruf yang sesuai menggunakan papan ketik. Huruf yang benar akan dikonfirmasi secara visual dan disertai efek audio yang memuaskan.</li>
+                <li>Jika Anda mengalami kesulitan menemukan jawaban, gunakan tombol <strong>Bantuan (Hint)</strong> untuk memeriksa kebenaran huruf atau membuka huruf berikutnya.</li>
+            </ol>
+
+            <h3>Widget Layar Beranda Android</h3>
+            <p>WikiNusa juga menyediakan widget Teka-Teki Silang resmi untuk layar beranda (home screen) smartphone Android Anda. Pasang widget ini di layar beranda agar Anda dapat melihat teka-teki kata harian tanpa harus membuka aplikasi terlebih dahulu.</p>
+        </section>
+
+        <section id="course">
+            <h2>Kursus Bahasa (Language Course)</h2>
+            <p>Bagi Anda yang ingin mempelajari bahasa daerah dari tingkat dasar atau mendalami tata bahasa lokal, WikiNusa menyediakan modul Kursus Bahasa interaktif (seperti program <strong>Sulu</strong> pada Wikikamus dan Wikibuku Nias).</p>
+
+            <h3>Fitur dan Cara Belajar di Kursus Bahasa:</h3>
+            <ul>
+                <li><strong>Materi Bertahap & Tematis</strong>: Pelajaran disusun mulai dari pengenalan sapaan sehari-hari, kosakata keluarga, angka, waktu, hingga pembentukan kalimat percakapan praktis.</li>
+                <li><strong>Pelafalan Audio Asli</strong>: Setiap frasa dan kosakata penting dilengkapi tombol audio pelafalan autentik dari penutur asli bahasa ibu.</li>
+                <li><strong>Latihan Interaktif</strong>: Uji pemahaman Anda melalui kuis dan latihan pencocokan kata di akhir setiap bab pembelajaran.</li>
+            </ul>
+        </section>
+
+        <section id="gallery">
+            <h2>Galeri Budaya & Media Commons</h2>
+            <p>Modul Galeri Budaya menyajikan pameran karya fotografi beresolusi tinggi yang dihimpun langsung dari lumbung media Wikimedia Commons. Modul ini mendokumentasikan keindahan seni ukir megalitik, rumah adat tradisional (seperti <em>omo hada</em>), busana upacara adat, tari-tarian tradisional, dan pesona lanskap Nusantara.</p>
+
+            <h3>Fitur Galeri:</h3>
+            <ul>
+                <li><strong>Carousel Sentuh yang Mulus</strong>: Geser (swipe) ke kiri dan ke kanan untuk menelusuri galeri foto pilihan kurasi komunitas.</li>
+                <li><strong>Keterangan Foto & Metadata Lengkap</strong>: Setiap foto dilengkapi judul, narasi latar belakang budaya, nama fotografer atau pembuat karya, serta lisensi Creative Commons resmi.</li>
+                <li><strong>Penampil Layar Penuh (Zoom)</strong>: Ketuk foto untuk membuka tampilan layar penuh (fullscreen) dan cubit layar (pinch-to-zoom) untuk melihat keindahan detail ukiran atau tekstur secara tajam.</li>
+            </ul>
+        </section>
     </main>
 </div>
 
@@ -831,6 +944,7 @@
 <footer>
     <div class="footer-links">
         <a href="index.html">Beranda</a>
+        <a href="guide-wikinusa-en.html">English Guide</a>
         <a href="guide-wikinusa-id.html">Panduan WikiNusa</a>
         <a href="guide-keyboard-id.html">Panduan Nusa Keyboard</a>
         <a href="privacy-policy.html">Privacy Policy</a>

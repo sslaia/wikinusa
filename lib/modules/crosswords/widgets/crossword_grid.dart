@@ -24,6 +24,7 @@ class _CrosswordGridState extends ConsumerState<CrosswordGrid> {
   int? selectedY;
   CrosswordWord? selectedWord;
   late final ScrollController _clueScrollController = ScrollController();
+  bool _isShowingBottomSheet = false;
 
   @override
   void dispose() {
@@ -57,30 +58,6 @@ class _CrosswordGridState extends ConsumerState<CrosswordGrid> {
     return false;
   }
 
-  bool _isCellInWrongWord(
-    int x,
-    int y,
-    List<CrosswordWord> words,
-    Map<String, String> userAnswers,
-  ) {
-    for (var word in words) {
-      bool isPart = false;
-      if (word.direction == 'across') {
-        if (y == word.y && x >= word.x && x < word.x + word.word.length) {
-          isPart = true;
-        }
-      } else {
-        if (x == word.x && y >= word.y && y < word.y + word.word.length) {
-          isPart = true;
-        }
-      }
-      if (isPart && _isWordWrong(word, userAnswers)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   bool _isWordWrongOrIncomplete(CrosswordWord word, Map<String, String> userAnswers) {
     for (int i = 0; i < word.word.length; i++) {
       int cx = word.direction == 'across' ? word.x + i : word.x;
@@ -96,31 +73,9 @@ class _CrosswordGridState extends ConsumerState<CrosswordGrid> {
     return false;
   }
 
-  bool _isCellInWrongOrIncompleteWord(
-    int x,
-    int y,
-    List<CrosswordWord> words,
-    Map<String, String> userAnswers,
-  ) {
-    for (var word in words) {
-      bool isPart = false;
-      if (word.direction == 'across') {
-        if (y == word.y && x >= word.x && x < word.x + word.word.length) {
-          isPart = true;
-        }
-      } else {
-        if (x == word.x && y >= word.y && y < word.y + word.word.length) {
-          isPart = true;
-        }
-      }
-      if (isPart && _isWordWrongOrIncomplete(word, userAnswers)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   void _handleLockedCellTap(BuildContext context, int x, int y) {
+    if (_isShowingBottomSheet) return;
+
     final matchingWords = widget.puzzle.words.where((word) {
       if (word.direction == 'across') {
         return y == word.y && x >= word.x && x < word.x + word.word.length;
@@ -132,6 +87,7 @@ class _CrosswordGridState extends ConsumerState<CrosswordGrid> {
     if (matchingWords.isEmpty) return;
 
     final theme = Theme.of(context);
+    _isShowingBottomSheet = true;
 
     showModalBottomSheet(
       context: context,
@@ -141,15 +97,13 @@ class _CrosswordGridState extends ConsumerState<CrosswordGrid> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
       ),
       builder: (builderContext) {
-        return Container(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.75,
-          ),
-          padding: const EdgeInsets.only(top: 12, bottom: 24),
+        final screenHeight = MediaQuery.of(builderContext).size.height;
+        return SizedBox(
+          height: screenHeight * 0.65,
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 12),
               Center(
                 child: Container(
                   width: 40,
@@ -205,7 +159,10 @@ class _CrosswordGridState extends ConsumerState<CrosswordGrid> {
                   itemBuilder: (context, index) {
                     final word = matchingWords[index];
                     final wordIndex = widget.puzzle.words.indexOf(word) + 1;
-                    final directionLabel = word.direction == 'across' ? 'Misa' : 'Mitou';
+                    final directionLabel =
+                        word.direction == 'across'
+                            ? 'crossword_across'.tr()
+                            : 'crossword_down'.tr();
                     
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 12.0),
@@ -297,7 +254,9 @@ class _CrosswordGridState extends ConsumerState<CrosswordGrid> {
           ),
         );
       },
-    );
+    ).whenComplete(() {
+      _isShowingBottomSheet = false;
+    });
   }
 
   @override
@@ -314,6 +273,21 @@ class _CrosswordGridState extends ConsumerState<CrosswordGrid> {
     Map<String, int> wordNumbers = {};
     Map<String, String> correctMap = {};
 
+    // Precompute wrong and incomplete cells once per build to avoid O(N^2) work in itemBuilder
+    final wrongCells = <String>{};
+    final wrongOrIncompleteCells = <String>{};
+    for (final word in widget.puzzle.words) {
+      final isWrong = _isWordWrong(word, state.userAnswers);
+      final isWrongOrInc = _isWordWrongOrIncomplete(word, state.userAnswers);
+      for (int i = 0; i < word.word.length; i++) {
+        final cx = word.direction == 'across' ? word.x + i : word.x;
+        final cy = word.direction == 'down' ? word.y + i : word.y;
+        final key = '$cx,$cy';
+        if (isWrong) wrongCells.add(key);
+        if (isWrongOrInc) wrongOrIncompleteCells.add(key);
+      }
+    }
+
     for (var i = 0; i < widget.puzzle.words.length; i++) {
       var word = widget.puzzle.words[i];
       wordNumbers['${word.x},${word.y}'] = i + 1;
@@ -324,7 +298,7 @@ class _CrosswordGridState extends ConsumerState<CrosswordGrid> {
 
         if (cx < size && cy < size) {
           correctMap['$cx,$cy'] = word.word[j].toUpperCase();
-          final isCellWrong = _isCellInWrongOrIncompleteWord(cx, cy, widget.puzzle.words, state.userAnswers);
+          final isCellWrong = wrongOrIncompleteCells.contains('$cx,$cy');
           if (state.isTemporarilyRevealed && isCellWrong) {
             grid[cy][cx] = word.word[j].toUpperCase();
           } else {
@@ -425,22 +399,11 @@ class _CrosswordGridState extends ConsumerState<CrosswordGrid> {
                     );
                   }
 
-                  bool isWrong = false;
-                  bool isWrongOrIncomplete = false;
-                  if (cellValue.isNotEmpty) {
-                    isWrong = _isCellInWrongWord(
-                      x,
-                      y,
-                      widget.puzzle.words,
-                      state.userAnswers,
-                    );
-                  }
-                  isWrongOrIncomplete = _isCellInWrongOrIncompleteWord(
-                    x,
-                    y,
-                    widget.puzzle.words,
-                    state.userAnswers,
-                  );
+                  final cellKey = '$x,$y';
+                  final bool isWrong =
+                      cellValue.isNotEmpty && wrongCells.contains(cellKey);
+                  final bool isWrongOrIncomplete =
+                      wrongOrIncompleteCells.contains(cellKey);
 
                   final cellColor = isSelected
                       ? Theme.of(context).colorScheme.primaryContainer
@@ -612,7 +575,9 @@ class _CrosswordGridState extends ConsumerState<CrosswordGrid> {
                   final wordNum = index + 1;
                   final isSelected = selectedWord == word;
                   final directionLabel =
-                      word.direction == 'across' ? 'Misa' : 'Mitou';
+                      word.direction == 'across'
+                          ? 'crossword_across'.tr()
+                          : 'crossword_down'.tr();
 
                   return GestureDetector(
                     onTap: () => _selectWordFromClueCard(word),

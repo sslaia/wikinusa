@@ -230,14 +230,14 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
       },
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final deviceType = ResponsiveUtils.getDeviceType(context);
-          final isTablet = deviceType != DeviceType.compact;
           final isLandscape = ResponsiveUtils.isLandscape(context);
 
           final bool showBottomNavBar = !isLandscape;
           final bool showNavigationRail = isLandscape;
-          final bool showPermanentDrawer = isTablet && isLandscape;
-          final bool showMenuButtonInRail = showNavigationRail && !showPermanentDrawer;
+          final bool showPermanentDrawer =
+              ResponsiveUtils.isTabletLandscape(context);
+          final bool showMenuButtonInRail =
+              showNavigationRail && !showPermanentDrawer;
 
           return PopScope(
             canPop: !_isSearchActive,
@@ -249,13 +249,13 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
             },
             child: Scaffold(
             key: _scaffoldKey,
-            drawer: showPermanentDrawer ? null : DrawerMenu(),
+            drawer: showPermanentDrawer ? null : const DrawerMenu(),
             body: Row(
               children: [
                 if (showPermanentDrawer)
                   const SizedBox(
                     width: 304,
-                    child: DrawerMenu(),
+                    child: DrawerMenu(isPermanent: true),
                   ),
                 Expanded(
                   child: Stack(

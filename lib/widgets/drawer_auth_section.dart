@@ -24,7 +24,7 @@ class DrawerAuthSection extends ConsumerWidget {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
-              'wikimedia_auth'.tr().toUpperCase(),
+              'login'.tr().toUpperCase(),
               style: theme.textTheme.labelSmall?.copyWith(
                 color: theme.colorScheme.primary.withValues(alpha: 0.7),
                 fontWeight: FontWeight.bold,

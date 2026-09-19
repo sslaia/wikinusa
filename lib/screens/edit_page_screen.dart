@@ -266,60 +266,8 @@ class _EditPageScreenState extends ConsumerState<EditPageScreen> {
     );
   }
 
-  String _getToolbarTooltip(String key, String locale) {
-    final Map<String, Map<String, String>> tooltips = {
-      'en': {
-        'heading': 'Heading 2 (==)',
-        'bold': "Bold (''')",
-        'italic': "Italic ('')",
-        'link': 'Link ([[]])',
-        'pipe': 'Pipe (|)',
-        'template': 'Template ({{}})',
-        'media': 'Insert Image from Commons',
-        'numbered_list': 'Numbered List (#)',
-        'unordered_list': 'Bullet List (*)',
-        'signature': 'Signature (~~~~)',
-      },
-      'id': {
-        'heading': 'Judul 2 (==)',
-        'bold': "Tebal (''')",
-        'italic': "Miring ('')",
-        'link': 'Tautan ([[]])',
-        'pipe': 'Pipa (|)',
-        'template': 'Templat ({{}})',
-        'media': 'Sisipkan Gambar dari Commons',
-        'numbered_list': 'Daftar Bernomor (#)',
-        'unordered_list': 'Daftar Bulatan (*)',
-        'signature': 'Tanda Tangan (~~~~)',
-      },
-      'nia': {
-        'heading': 'Högö 2 (==)',
-        'bold': "Ni'awe'e-we'e'ö (''')",
-        'italic': "Nifaöndrö ('')",
-        'link': 'Khai-khai ([[]])',
-        'pipe': 'Pipa (|)',
-        'template': 'Templat ({{}})',
-        'media': 'Sigö\'ö Gambara moroi ba Commons',
-        'numbered_list': 'Angolita nifonumero (#)',
-        'unordered_list': 'Angolita nifondröfi (*)',
-        'signature': 'Teka (~~~~)',
-      },
-      'jv': {
-        'heading': 'Judul 2 (==)',
-        'bold': "Tebal (''')",
-        'italic': "Miring ('')",
-        'link': 'Tautan ([[]])',
-        'pipe': 'Pipa (|)',
-        'template': 'Templat ({{}})',
-        'media': 'Sisipkan Gambar dari Commons',
-        'numbered_list': 'Daftar Bernomor (#)',
-        'unordered_list': 'Daftar Bulatan (*)',
-        'signature': 'Tanda Tangan (~~~~)',
-      },
-    };
-
-    final lang = tooltips.containsKey(locale) ? locale : 'en';
-    return tooltips[lang]?[key] ?? tooltips['en']![key]!;
+  String _getToolbarTooltip(String key, [String? locale]) {
+    return 'toolbar_$key'.tr();
   }
 
   Widget _buildToolbarButton({

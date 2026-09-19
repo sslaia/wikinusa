@@ -7,6 +7,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:wikimedia_core/wikimedia_core.dart';
 import '../providers/app_state.dart';
 import '../providers/bookmarks_provider.dart';
+import '../utils/responsive_utils.dart';
+import '../widgets/drawer_menu.dart';
 import 'article_screen.dart';
 
 class BookmarksScreen extends ConsumerWidget {
@@ -17,12 +19,22 @@ class BookmarksScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final bookmarks = ref.watch(bookmarksProvider);
     final currentProject = ref.watch(appStateProvider);
+    final showPermanentDrawer = ResponsiveUtils.isTabletLandscape(context);
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surfaceContainerLow,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32.0),
-        child: CustomScrollView(
+      drawer: showPermanentDrawer ? null : const DrawerMenu(),
+      body: Row(
+        children: [
+          if (showPermanentDrawer)
+            const SizedBox(
+              width: 304,
+              child: DrawerMenu(isPermanent: true),
+            ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32.0),
+              child: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
               child: Column(
@@ -60,6 +72,9 @@ class BookmarksScreen extends ConsumerWidget {
             const SliverToBoxAdapter(child: SizedBox(height: 32)),
           ],
         ),
+      ),
+          ),
+        ],
       ),
     );
   }

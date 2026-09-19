@@ -5,6 +5,8 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wikinusa/widgets/wiki_footer.dart';
+import '../utils/responsive_utils.dart';
+import '../widgets/drawer_menu.dart';
 
 class AboutScreen extends ConsumerWidget {
   final String title;
@@ -15,10 +17,20 @@ class AboutScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final showPermanentDrawer = ResponsiveUtils.isTabletLandscape(context);
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surfaceContainerLow,
-      body: CustomScrollView(
+      drawer: showPermanentDrawer ? null : const DrawerMenu(),
+      body: Row(
+        children: [
+          if (showPermanentDrawer)
+            const SizedBox(
+              width: 304,
+              child: DrawerMenu(isPermanent: true),
+            ),
+          Expanded(
+            child: CustomScrollView(
         slivers: [
           SliverAppBar(
             backgroundColor: Colors.transparent,
@@ -117,6 +129,9 @@ class AboutScreen extends ConsumerWidget {
                 ],
               ),
             ),
+          ),
+        ],
+      ),
           ),
         ],
       ),

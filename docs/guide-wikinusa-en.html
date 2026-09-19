@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WikiNusa App Guide</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Inter:wght@400;500;600;700;800&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --wikipedia-indigo: #121298;
+            --wiktionary-orange: #FF5722;
+            --wikibooks-purple: #9B00A1;
+            --bg-light: #F8F9FA;
+            --text-main: #2C3E50;
+            --text-muted: #5A6B7C;
+            --border-color: #E2E8F0;
+            --white: #FFFFFF;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            --header-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            --radius-md: 16px;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            line-height: 1.7;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: var(--white);
+            box-shadow: var(--header-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 15px 20px;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .header-logo img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+        }
+
+        .header-title {
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--wikipedia-indigo), var(--wiktionary-orange), var(--wikibooks-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .lang-switch {
+            display: inline-flex;
+            background: #E2E8F0;
+            padding: 3px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .lang-switch a {
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-decoration: none;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .lang-switch a.active {
+            background: #FFFFFF;
+            color: var(--wikipedia-indigo);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+
+        .btn-back {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1.5px solid var(--border-color);
+            background-color: var(--white);
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-back:hover {
+            border-color: var(--wikipedia-indigo);
+            color: var(--wikipedia-indigo);
+            transform: translateX(-2px);
+        }
+
+        .layout-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+        }
+
+        @media (max-width: 900px) {
+            .layout-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                margin: 20px auto;
+            }
+        }
+
+        /* Sidebar & Table of Contents */
+        .sidebar {
+            position: sticky;
+            top: 90px;
+            height: calc(100vh - 120px);
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                position: static;
+                height: auto;
+                padding-right: 0;
+            }
+        }
+
+        .toc-card {
+            background-color: var(--white);
+            border-radius: var(--radius-md);
+            box-shadow: var(--card-shadow);
+            padding: 24px;
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+
+        .toc-title {
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 1.1rem;
+            margin-top: 0;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--bg-light);
+            color: var(--wikipedia-indigo);
+        }
+
+        .toc-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .toc-item {
+            margin-bottom: 8px;
+        }
+
+        .toc-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: var(--transition);
+            display: block;
+            padding: 4px 8px;
+            border-left: 2px solid transparent;
+        }
+
+        .toc-link:hover, .toc-link.active {
+            color: var(--wikipedia-indigo);
+            border-left-color: var(--wikipedia-indigo);
+            padding-left: 12px;
+        }
+
+        /* Main Content */
+        .content-card {
+            background-color: var(--white);
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            padding: 40px;
+            border: 1px solid rgba(0,0,0,0.02);
+            min-width: 0;
+        }
+
+        @media (max-width: 600px) {
+            .content-card {
+                padding: 24px 16px;
+            }
+        }
+
+        h1.guide-title {
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 2.2rem;
+            margin-top: 0;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, var(--wikipedia-indigo), var(--wiktionary-orange), var(--wikibooks-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.3;
+        }
+
+        .guide-intro-meta {
+            font-family: 'Noto Serif', serif;
+            font-style: italic;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h2 {
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 1.5rem;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border-color);
+            color: var(--wikipedia-indigo);
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(to right, var(--wikipedia-indigo), var(--wiktionary-orange));
+        }
+
+        h3 {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            color: var(--wiktionary-orange);
+        }
+
+        p {
+            margin-top: 0;
+            margin-bottom: 16px;
+            color: var(--text-main);
+        }
+
+        ol, ul {
+            margin-top: 0;
+            margin-bottom: 24px;
+            padding-left: 24px;
+            color: var(--text-main);
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .image-container {
+            margin: 20px 0 25px 0;
+            background-color: var(--bg-light);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            display: block;
+            margin: 0 auto;
+        }
+
+        .image-caption {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .badge-link img {
+            height: 55px;
+            margin-top: 8px;
+            transition: transform 0.2s;
+        }
+
+        .badge-link img:hover {
+            transform: scale(1.03);
+        }
+
+        code {
+            background-color: rgba(18, 18, 152, 0.06);
+            color: var(--wikipedia-indigo);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        pre {
+            background-color: #2D3748;
+            color: #F7FAFC;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        pre code {
+            background-color: transparent;
+            color: inherit;
+            padding: 0;
+            font-weight: normal;
+        }
+
+        .note-box {
+            background-color: rgba(255, 87, 34, 0.06);
+            border-left: 4px solid var(--wiktionary-orange);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 24px 0;
+        }
+
+        .note-box p {
+            margin: 0;
+        }
+
+        .note-box.keyboard-link {
+            background-color: rgba(18, 18, 152, 0.06);
+            border-left-color: var(--wikipedia-indigo);
+        }
+
+        .note-box a {
+            color: var(--wikipedia-indigo);
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 60px;
+            padding: 40px 20px;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--white);
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--wikipedia-indigo);
+        }
+
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background-color: var(--wikipedia-indigo);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 99;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .back-to-top:hover {
+            background-color: #0b0b63;
+            transform: translateY(-3px);
+        }
+
+        .ui-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0 25px 0;
+        }
+
+        .ui-card {
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .ui-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .ui-card p {
+            font-size: 0.85rem;
+            margin: 0;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-container">
+        <a href="index-en.html" class="header-logo">
+            <img src="wikinusa-icon.png" alt="WikiNusa Logo">
+            <span class="header-title">WikiNusa</span>
+        </a>
+        <div class="header-actions">
+            <div class="lang-switch" aria-label="Choose Language / Pilih Bahasa">
+                <a href="guide-wikinusa-id.html" title="Bahasa Indonesia">ID</a>
+                <a href="guide-wikinusa-en.html" class="active" title="English">EN</a>
+            </div>
+            <a href="index-en.html" class="btn-back">
+                &larr; Back to Home
+            </a>
+        </div>
+    </div>
+</header>
+
+<div class="layout-container">
+    <div class="sidebar">
+        <div class="toc-card">
+            <h3 class="toc-title">Table of Contents</h3>
+            <ul class="toc-list">
+                <li class="toc-item"><a href="#intro" class="toc-link">Introduction</a></li>
+                <li class="toc-item"><a href="#instal" class="toc-link">Installation</a></li>
+                <li class="toc-item"><a href="#menjalankan" class="toc-link">Launching the App</a></li>
+                <li class="toc-item"><a href="#antarmuka" class="toc-link">User Interface</a></li>
+                <li class="toc-item"><a href="#login" class="toc-link">Wikimedia Login</a></li>
+                <li class="toc-item"><a href="#orientasi" class="toc-link">Home Screen Layout</a></li>
+                <li class="toc-item"><a href="#fitur" class="toc-link">Core Features</a></li>
+                <li class="toc-item"><a href="#penyuntingan" class="toc-link">Editing Guide</a></li>
+                <li class="toc-item"><a href="#wikipedia" class="toc-link">Wikipedia</a></li>
+                <li class="toc-item"><a href="#wikikamus" class="toc-link">Wiktionary</a></li>
+                <li class="toc-item"><a href="#wikibuku" class="toc-link">Wikibooks</a></li>
+                <li class="toc-item"><a href="#wikichat" class="toc-link">WikiChat</a></li>
+                <li class="toc-item"><a href="#newsletter" class="toc-link">Newsletter</a></li>
+                <li class="toc-item"><a href="#crosswords" class="toc-link">Crosswords</a></li>
+                <li class="toc-item"><a href="#course" class="toc-link">Language Course</a></li>
+                <li class="toc-item"><a href="#gallery" class="toc-link">Cultural Gallery</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <main class="content-card">
+        <h1 class="guide-title">WIKINUSA APPLICATION GUIDE</h1>
+        <p class="guide-intro-meta">Step-by-step documentation for installing, configuring, reading, editing, and using all interactive modules in WikiNusa.</p>
+
+        <section id="intro">
+            <h2>Introduction</h2>
+            <p>Looking to explore knowledge, dictionaries, and literature in indigenous and regional languages? With WikiNusa, you can seamlessly access Wikipedia articles, search word definitions on Wiktionary, and read open textbooks and folklore on Wikibooks across Indonesian and Pacific regional languages.</p>
+        </section>
+
+        <section id="instal">
+            <h2>How to Install WikiNusa</h2>
+            <ol>
+                <li>
+                    Click the Google Play badge below to open the Google Play Store:
+                    <br>
+                    <a href="https://play.google.com/store/apps/details?id=io.github.sslaia.wikinusa" class="badge-link" target="_blank" rel="noopener noreferrer">
+                        <img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/apps/en-play-badge.png"/>
+                    </a>
+                </li>
+                <li>
+                    Locate the <strong>WikiNusa</strong> app page and tap <strong>"Install"</strong>. Wait until the download finishes and the blue <strong>"Open"</strong> button appears.
+                    <div class="image-container">
+                        <img src="images/wikinusa.webp" alt="WikiNusa installed">
+                        <span class="image-caption">WikiNusa installation completed</span>
+                    </div>
+                </li>
+                <li>
+                    Launch the app directly from Google Play or tap the WikiNusa icon in your device's app drawer.
+                    <div class="image-container">
+                        <img src="images/laci-aplikasi.webp" alt="WikiNusa in app drawer">
+                        <span class="image-caption">WikiNusa icon in the app drawer</span>
+                    </div>
+                </li>
+                <li>All set!</li>
+            </ol>
+        </section>
+
+        <section id="menjalankan">
+            <h2>Launching & Onboarding</h2>
+            <ol>
+                <li>Open your Android app drawer.
+                    <div class="image-container">
+                        <img src="images/laci-aplikasi.webp" alt="App drawer">
+                        <span class="image-caption">App drawer</span>
+                    </div>
+                </li>
+                <li>Tap <strong>WikiNusa</strong>. On the very first launch, you will be greeted by an introductory feature showcase.</li>
+                <li>Explore the onboarding carousel:
+                    <div class="ui-gallery">
+                        <div class="ui-card">
+                            <img src="images/onboarding1.webp" alt="All wikis in one place">
+                            <p>All wikis in one place: Wikipedia, Wiktionary, Wikibooks</p>
+                        </div>
+                        <div class="ui-card">
+                            <img src="images/onboarding2.webp" alt="Multilingual support">
+                            <p>Multi-language support: Regional languages, Indonesian, English</p>
+                        </div>
+                        <div class="ui-card">
+                            <img src="images/onboarding3.webp" alt="Bookmark, share, and edit">
+                            <p>Bookmark favorites, share, and edit articles</p>
+                        </div>
+                    </div>
+                    <div class="ui-gallery">
+                        <div class="ui-card">
+                            <img src="images/onboarding4.webp" alt="Dark mode & font sizing">
+                            <p>Dark/light theme mode and flexible font sizing</p>
+                        </div>
+                        <div class="ui-card">
+                            <img src="images/onboarding5.webp" alt="Magic Randomizer Button">
+                            <p>Randomizer button to explore serendipitous articles</p>
+                        </div>
+                        <div class="ui-card">
+                            <img src="images/onboarding6.webp" alt="Essential shortcuts">
+                            <p>Quick shortcuts to essential community spaces</p>
+                        </div>
+                    </div>
+                </li>
+                <li>Select your initial language preference (e.g. Nias, Javanese, Indonesian, or English).
+                    <div class="ui-gallery">
+                        <div class="ui-card">
+                            <img src="images/onboarding7.webp" alt="Select your language">
+                            <p>Select your preferred language</p>
+                        </div>
+                        <div class="ui-card">
+                            <img src="images/onboarding8.webp" alt="Language active">
+                            <p>Language successfully set</p>
+                        </div>
+                    </div>
+                </li>
+            </ol>
+        </section>
+
+        <section id="antarmuka">
+            <h2>Exploring the User Interface</h2>
+            <ol>
+                <li>
+                    <strong>Home Screens</strong>: Each wiki project features a tailored home screen layout with featured articles, pictures of the day, and portals.
+                    <div class="ui-gallery">
+                        <div class="ui-card">
+                            <img src="images/hu-wikipedia.webp" alt="Wikipedia home screen">
+                            <p>Wikipedia Home Screen</p>
+                        </div>
+                        <div class="ui-card">
+                            <img src="images/hu-wikikamus.webp" alt="Wiktionary home screen">
+                            <p>Wiktionary Home Screen</p>
+                        </div>
+                        <div class="ui-card">
+                            <img src="images/hu-wikibuku.webp" alt="Wikibooks home screen">
+                            <p>Wikibooks Home Screen</p>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <strong>Bottom Navigation Bar</strong>: Side Drawer Menu, Home Screen, Reload Page, and the Magic Randomizer button (fetches a random article).
+                    <div class="image-container">
+                        <img src="images/bilah-navigasi-bawah.webp" alt="Bottom navigation bar">
+                        <span class="image-caption">Bottom navigation bar</span>
+                    </div>
+                </li>
+                <li>
+                    <strong>Side Drawer Menu</strong>:
+                    Provides fast access to <code>Quick Shortcuts</code> (Create Page, Bookmarks), <code>Project Shortcuts</code> (Portals, Recent Changes), <code>Wiki Projects</code> (Wikipedia, Wiktionary, Wikibooks), <code>Modules</code> (WikiChat, Newsletter, Crosswords, Course, Gallery), <code>Language Picker</code>, <code>Theme Toggle</code> (Light/Dark), <code>Font Size Controls</code>, <code>About WikiNusa</code>, and <code>Wikimedia Login / Logout</code>.
+                    <div class="image-container">
+                        <img src="images/laci-menu-samping.webp" alt="Side drawer menu">
+                        <span class="image-caption">Side Drawer Menu</span>
+                    </div>
+                </li>
+                <li>
+                    <strong>Article Reader Screen</strong>:
+                    <div class="image-container">
+                        <img src="images/halaman-artikel.webp" alt="Article screen">
+                        <span class="image-caption">Article Screen</span>
+                    </div>
+                </li>
+                <li>
+                    <strong>Floating Action Button (FAB)</strong> on article pages: Tap the expandable action bar to Bookmark, Share, Search in page, Edit in-app, or Open in external web browser.
+                </li>
+            </ol>
+        </section>
+
+        <section id="login">
+            <h2>Wikimedia Authentication (Login)</h2>
+            <ol>
+                <li>
+                    Open the Side Drawer Menu. The login action button is located at the bottom of the drawer.
+                    <div class="image-container">
+                        <img src="images/laci-menu-samping.webp" alt="Side drawer login button">
+                        <span class="image-caption">Side drawer login section</span>
+                    </div>
+                </li>
+                <li>
+                    Tap the <strong>LOGIN (AE BAKHA)</strong> button. The official Wikimedia OAuth authentication page will open.
+                    <div class="image-container">
+                        <img src="images/halaman-login.webp" alt="Wikimedia login screen">
+                        <span class="image-caption">Wikimedia official login screen</span>
+                    </div>
+                </li>
+                <li>Enter your Wikimedia username and password, then tap <strong>LOG IN</strong>.</li>
+                <li>If you have enabled Two-Factor Authentication (2FA), input your authentication code.</li>
+                <li>
+                    Authorize the WikiNusa app to read and edit articles on your behalf.
+                    <div class="image-container">
+                        <img src="images/otentikasi-wikimedia.webp" alt="Wikimedia authorization">
+                        <span class="image-caption">Authorizing Wikimedia access</span>
+                    </div>
+                </li>
+                <li>Tap <strong>Allow</strong>.</li>
+            </ol>
+            <p>You are now authenticated! You can publish direct wiki edits from inside the app without being redirected to an external browser.</p>
+            <div class="note-box">
+                <p><strong>Note:</strong> Logging in is completely optional. You can browse, read, search, play crosswords, and access all modules without creating an account.</p>
+            </div>
+        </section>
+
+        <section id="orientasi">
+            <h2>Home Screen Navigation</h2>
+            <ol>
+                <li>
+                    <strong>Search Header</strong>: Use the top search bar to query articles, definitions, or books across the active wiki.
+                    <div class="image-container">
+                        <img src="images/hu-wikikamus.webp" alt="Header search">
+                        <span class="image-caption">Search bar located in the header</span>
+                    </div>
+                </li>
+                <li>
+                    <strong>Home Sections</strong>: Featured articles, Pictures of the Day, This Month in History, and Did You Know trivia.
+                    <div class="ui-gallery">
+                        <div class="ui-card">
+                            <img src="images/hd-buku-amilita.webp" alt="Featured Book on Wikibooks">
+                            <p>Featured Book on Wikibooks</p>
+                        </div>
+                        <div class="ui-card">
+                            <img src="images/hd-otm.webp" alt="This Month in History">
+                            <p>This Month in History on Wikipedia</p>
+                        </div>
+                    </div>
+                </li>
+            </ol>
+        </section>
+
+        <section id="fitur">
+            <h2>Core Features</h2>
+
+            <h3 id="memulai-tulisan-baru">How to Create a New Article or Entry?</h3>
+            <p>There are two convenient methods:</p>
+            <ul>
+                <li>Tap the <strong>START (BÖRÖGÖ)</strong> button at the bottom of the Home Screen.</li>
+                <li>Or open the Side Drawer Menu and select <strong>Create New Page</strong> under Quick Shortcuts.</li>
+            </ul>
+            <p>The creation form automatically adapts to whether you are writing an encyclopedia article (Wikipedia), a dictionary headword entry (Wiktionary), or a book chapter (Wikibooks).</p>
+            <div class="note-box keyboard-link">
+                <p>💡 <strong>Tip:</strong> <a href="guide-keyboard-en.html">Check the Nusa Keyboard Guide</a> to learn how to type special regional characters like <strong>ö</strong> and <strong>ŵ</strong> and use wiki markup shortcuts.</p>
+            </div>
+
+            <h3 id="menyunting-tulisan">How to Edit Existing Articles?</h3>
+            <p>While viewing any article, tap the <strong>Pencil Icon</strong> on the floating action button to open the native in-app editor.</p>
+            <div class="image-container">
+                <img src="images/halaman-artikel.webp" alt="Article view with floating action button">
+                <span class="image-caption">Article screen showing the action bar</span>
+            </div>
+
+            <h3 id="mencari-kata">How to Search Articles and Words?</h3>
+            <ol>
+                <li>Navigate to the Home Screen.</li>
+                <li>Type your keyword into the search bar. Real-time autocomplete results will appear instantly.</li>
+            </ol>
+            <div class="image-container">
+                <img src="images/hd-mencari.webp" alt="Search results">
+                <span class="image-caption">Search results displaying matching pages</span>
+            </div>
+
+            <h3 id="menandai-tulisan">How to Bookmark Articles?</h3>
+            <p>Tap the <strong>Bookmark Icon</strong> on the floating action button while reading. All bookmarked pages are saved locally and can be accessed anytime from the Side Drawer.</p>
+
+            <h3 id="mengapa-perlu-login">Why Authenticate with Wikimedia?</h3>
+            <p>Authentication is only required if you wish to submit edits directly under your registered Wikimedia account. If you prefer, you can also edit anonymously or via an external browser.</p>
+        </section>
+
+        <section id="penyuntingan">
+            <h2>Wiki Markup & Editing Guide</h2>
+
+            <h3>Bold Text</h3>
+            <p>Enclose text in three single quotes (<code>'''</code>), for example <code>'''bold text'''</code>.</p>
+
+            <h3>Italic Text</h3>
+            <p>Enclose text in two single quotes (<code>''</code>), for example <code>''italic text''</code>.</p>
+
+            <h3>Section Headings</h3>
+            <p>Surround section titles with equal signs (<code>=</code>). Use <code>== Heading 2 ==</code>, <code>=== Heading 3 ===</code>, etc.</p>
+            <pre><code>== Section Title ==</code></pre>
+
+            <h3>Internal Wikilinks</h3>
+            <p>Wrap target titles in double square brackets (<code>[[...]]</code>), e.g. <code>[[Nias]]</code>. For piped custom anchor text, use a pipe (<code>|</code>):</p>
+            <pre><code>[[Village|Traditional Village]]</code></pre>
+
+            <h3>General Community Discussions</h3>
+            <p>Please post general questions and announcements in the community village pump (e.g. <strong>Monganga Afo</strong> or equivalent discussion page in the drawer menu).</p>
+        </section>
+
+        <section id="wikipedia">
+            <h2>Wikipedia</h2>
+            <h3>What is the difference between Wikipedia and Wiktionary?</h3>
+            <p><strong>Wiktionary</strong> is a linguistic dictionary explaining word definitions, etymology, phonetic pronunciations, and grammatical inflections.</p>
+            <p><strong>Wikipedia</strong> is an open encyclopedia providing comprehensive, in-depth narratives on historical events, notable figures, scientific concepts, geography, and living culture.</p>
+        </section>
+
+        <section id="wikikamus">
+            <h2>Wiktionary</h2>
+            <h3>Dialect and Context Tags</h3>
+            <p>Regional entries utilize templates to mark dialectal variations or specialized terminology. For instance, Southern dialect terms can be tagged with <code>{{sel}}</code>, while Catholic ecclesiastical terms use <code>{{kat}}</code>.</p>
+
+            <h3>Adding Images to Dictionary Entries</h3>
+            <p>Include images using standard MediaWiki syntax with a localized caption:</p>
+            <pre><code>[[File:hilimondregeraya.png|thumb|Hilimondregeraya Village, South Nias]]</code></pre>
+
+            <h3>Audio Pronunciation Files</h3>
+            <p>Pronunciation audio templates are placed above definitions using:</p>
+            <pre><code>{{IPA|ipa=|audio=pronunciation_filename.ogg}}</code></pre>
+        </section>
+
+        <section id="wikibuku">
+            <h2>Wikibooks</h2>
+            <h3>What Content Belongs on Wikibooks?</h3>
+            <p>All long-form literary works and educational materials that exceed the encyclopedic scope of Wikipedia or dictionary scope of Wiktionary: oral poetry, traditional chants, folklore, short stories, essays, academic papers, and textbooks.</p>
+        </section>
+
+        <section id="wikichat">
+            <h2>WikiChat (Community Talk Pages)</h2>
+            <p>WikiChat is a real-time discussion module fully integrated with official Wikimedia talk pages (such as village pumps and user discussion namespaces). Contributors can communicate, exchange advice, and coordinate wiki initiatives seamlessly through an intuitive messaging experience.</p>
+
+            <h3>How to Access WikiChat?</h3>
+            <p>Open the Side Drawer Menu and select <strong>Chat / Obrolan</strong> under <strong>Modules</strong>. When unread talk messages are received, a red notification badge will alert you.</p>
+
+            <h3>Starting a Discussion Topic</h3>
+            <ol>
+                <li>Tap the <strong>Add Topic (+)</strong> button in WikiChat.</li>
+                <li>Enter a topic subject title in the header field.</li>
+                <li>Compose your message in the body field.</li>
+                <li>Tap <strong>Send</strong>. If prompted by Wikimedia CAPTCHA security, enter the verification characters to save your topic to the official wiki talk page.</li>
+            </ol>
+
+            <h3>Replying and Quoting Messages</h3>
+            <p>On any message within a topic thread, tap <strong>Reply</strong>. You can quote snippets from previous replies to keep discussion threads structured and organized according to standard MediaWiki indentation conventions.</p>
+        </section>
+
+        <section id="newsletter">
+            <h2>Community Newsletter</h2>
+            <p>The Newsletter module acts as a dedicated digital reading portal for community periodicals (such as the <em>Turia</em> bulletin on Nias Wikipedia). Stay informed on global Wikimedia milestones, editing contests, writing workshops, and community spotlights.</p>
+
+            <h3>Browsing Editions</h3>
+            <ol>
+                <li>Open the Side Drawer Menu and tap <strong>Newsletter</strong>.</li>
+                <li>Browse through published editions sorted chronologically, from the newest release to historical archives.</li>
+                <li>Select an edition to read.</li>
+                <li>Use the <strong>Table of Contents (TOC)</strong> at the top of the edition to jump directly to specific articles and reports.</li>
+            </ol>
+        </section>
+
+        <section id="crosswords">
+            <h2>Interactive Crosswords</h2>
+            <p>The Crosswords module provides educational word puzzles built dynamically from authentic regional vocabulary and definitions stored in local Wiktionary databases.</p>
+
+            <h3>How to Play Crosswords?</h3>
+            <ol>
+                <li>Open the Side Drawer Menu and tap <strong>Crosswords</strong>.</li>
+                <li>Choose from daily, monthly, or yearly puzzle collections.</li>
+                <li>Tap any square on the puzzle grid. The active cell will illuminate, and corresponding Across or Down clues will appear in the clue banner.</li>
+                <li>Type letters using your on-screen keyboard. Correct words are validated with interactive visual cues and sound effects.</li>
+                <li>If you need assistance, tap <strong>Hint</strong> to verify or reveal tricky letters.</li>
+            </ol>
+
+            <h3>Android Home Screen Widget</h3>
+            <p>WikiNusa includes a native Android home screen Crossword widget. Pin the widget to your device's home screen to see the daily puzzle word challenge at a glance without having to launch the app first.</p>
+        </section>
+
+        <section id="course">
+            <h2>Language Course</h2>
+            <p>For learners eager to study regional languages from scratch or master vernacular grammar, WikiNusa offers structured interactive language courses (such as the <em>Sulu</em> series on Wiktionary and Wikibooks).</p>
+
+            <h3>Features & Learning Methodology:</h3>
+            <ul>
+                <li><strong>Thematic Units</strong>: Lessons progress logically from practical everyday greetings and family relationships to numerical systems, calendar expressions, and dialogue sentences.</li>
+                <li><strong>Native Audio Pronunciations</strong>: Tap the audio player icon beside vocabulary items to hear authentic pronunciations recorded by mother-tongue speakers.</li>
+                <li><strong>Interactive Exercises</strong>: Reinforce your retention through quizzes, flashcards, and word-matching exercises at the end of each lesson.</li>
+            </ul>
+        </section>
+
+        <section id="gallery">
+            <h2>Cultural & Media Gallery</h2>
+            <p>The Cultural Gallery module curates high-resolution media collections directly from Wikimedia Commons. It celebrates indigenous cultural heritage, vernacular architecture (such as <em>omo hada</em> ancestral houses), megalithic stone monuments, traditional weaving, performing arts, and pristine natural landscapes.</p>
+
+            <h3>Gallery Features:</h3>
+            <ul>
+                <li><strong>Fluid Touch Carousel</strong>: Swipe left and right effortlessly to explore curated collections.</li>
+                <li><strong>Rich Metadata & Attribution</strong>: Every image includes cultural descriptions, historical background, photographer credits, and official Creative Commons licenses.</li>
+                <li><strong>Full-Screen Zoom Viewer</strong>: Tap any photo to expand into full-screen mode and pinch-to-zoom to admire intricate carving details and high-resolution textures.</li>
+            </ul>
+        </section>
+    </main>
+</div>
+
+<a href="#" class="back-to-top" title="Back to top">&uarr;</a>
+
+<footer>
+    <div class="footer-links">
+        <a href="index-en.html">Home</a>
+        <a href="guide-wikinusa-id.html">Versi Bahasa Indonesia</a>
+        <a href="guide-wikinusa-en.html">WikiNusa Guide</a>
+        <a href="guide-keyboard-en.html">Nusa Keyboard Guide</a>
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="disclaimer.html">Disclaimer</a>
+    </div>
+    <p style="color: #bbb; font-size: 0.85rem; margin-top: 25px;">&copy; 2026 WikiNusa Project &bull; Liberating Knowledge in Regional & Indigenous Languages</p>
+</footer>
+
+<script>
+    // Smooth scrolling for table of contents
+    document.querySelectorAll('.toc-link').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            
+            if (targetElement) {
+                const headerHeight = document.querySelector('header').offsetHeight;
+                const targetPosition = targetElement.getBoundingClientRect().top + window.scrollY - headerHeight - 20;
+                
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // Show/hide Back to Top button
+    const backToTopBtn = document.querySelector('.back-to-top');
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 300) {
+            backToTopBtn.classList.add('visible');
+        } else {
+            backToTopBtn.classList.remove('visible');
+        }
+        
+        // Dynamic active TOC link based on scroll position
+        const sections = document.querySelectorAll('section');
+        const scrollPosition = window.scrollY + 150; // offset
+
+        sections.forEach(section => {
+            const top = section.offsetTop;
+            const height = section.offsetHeight;
+            const id = section.getAttribute('id');
+            
+            if (scrollPosition >= top && scrollPosition < top + height) {
+                document.querySelectorAll('.toc-link').forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + id) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

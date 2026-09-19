@@ -87,10 +87,7 @@ class DrawerContent extends ConsumerWidget {
       )),
     );
     final chatConfig = ref.watch(
-      moduleConfigProvider((
-        moduleKey: 'chat',
-        langCode: currentLanguage,
-      )),
+      moduleConfigProvider((moduleKey: 'chat', langCode: currentLanguage)),
     );
 
     final isCrosswordsEnabled =
@@ -183,6 +180,39 @@ class DrawerContent extends ConsumerWidget {
           children: [
             _buildDrawerItem(
               theme,
+              icon: Icons.chat_bubble_outline_rounded,
+              title: 'chat'.tr(),
+              enabled: isChatEnabled,
+              hasBadge:
+                  isChatEnabled && ref.watch(chatUnreadProvider).hasUnread,
+              onTap: () {
+                _closeDrawer(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ChatTopicsScreen()),
+                );
+              },
+            ),
+            _buildDrawerItem(
+              theme,
+              icon: Icons.feed_rounded,
+              title: 'newsletter'.tr(),
+              enabled: isNewsletterEnabled,
+              onTap: () {
+                _closeDrawer(context);
+                final project =
+                    newsletterConfig?.project ?? ProjectType.wikipedia;
+                ref
+                    .read(appStateProvider.notifier)
+                    .setProject(project, currentLanguage);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const NewsletterScreen()),
+                );
+              },
+            ),
+            _buildDrawerItem(
+              theme,
               icon: Icons.grid_on_rounded,
               title: 'crosswords'.tr(),
               enabled: isCrosswordsEnabled,
@@ -234,38 +264,6 @@ class DrawerContent extends ConsumerWidget {
                   MaterialPageRoute(
                     builder: (_) => const GalleryCarouselScreen(),
                   ),
-                );
-              },
-            ),
-            _buildDrawerItem(
-              theme,
-              icon: Icons.feed_rounded,
-              title: 'newsletter'.tr(),
-              enabled: isNewsletterEnabled,
-              onTap: () {
-                _closeDrawer(context);
-                final project =
-                    newsletterConfig?.project ?? ProjectType.wikipedia;
-                ref
-                    .read(appStateProvider.notifier)
-                    .setProject(project, currentLanguage);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const NewsletterScreen()),
-                );
-              },
-            ),
-            _buildDrawerItem(
-              theme,
-              icon: Icons.chat_bubble_outline_rounded,
-              title: 'chat'.tr(),
-              enabled: isChatEnabled,
-              hasBadge: isChatEnabled && ref.watch(chatUnreadProvider).hasUnread,
-              onTap: () {
-                _closeDrawer(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ChatTopicsScreen()),
                 );
               },
             ),
@@ -420,65 +418,71 @@ class DrawerContent extends ConsumerWidget {
     ProjectType currentProject,
   ) {
     final topPadding = MediaQuery.paddingOf(context).top;
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.only(
-        top: topPadding + 24,
-        bottom: 24,
-        left: 24,
-        right: 24,
-      ),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: const BorderRadius.only(bottomRight: Radius.circular(32)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            height: 64,
-            width: 64,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              image: const DecorationImage(
-                image: AssetImage('assets/images/rai.webp'),
-                fit: BoxFit.cover,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: currentProject.primaryColor.withValues(alpha: 0.2),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
+    return InkWell(
+      onTap: () {
+        _closeDrawer(context);
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      },
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.only(
+          top: topPadding + 24,
+          bottom: 24,
+          left: 24,
+          right: 24,
+        ),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: const BorderRadius.only(bottomRight: Radius.circular(32)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 64,
+              width: 64,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                image: const DecorationImage(
+                  image: AssetImage('assets/images/rai.webp'),
+                  fit: BoxFit.cover,
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'WikiNusa',
-            style: GoogleFonts.cinzelDecorative(
-              textStyle: theme.textTheme.headlineMedium?.copyWith(
-                color: theme.colorScheme.primary,
-                fontWeight: FontWeight.bold,
-                fontSize: 28,
+                boxShadow: [
+                  BoxShadow(
+                    color: currentProject.primaryColor.withValues(alpha: 0.2),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
             ),
-          ),
-          Text(
-            'motto'.tr(),
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-              fontStyle: FontStyle.italic,
+            const SizedBox(height: 16),
+            Text(
+              'WikiNusa',
+              style: GoogleFonts.cinzelDecorative(
+                textStyle: theme.textTheme.headlineMedium?.copyWith(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 28,
+                ),
+              ),
             ),
-          ),
-        ],
+            Text(
+              'motto'.tr(),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

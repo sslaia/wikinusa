@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../modules/crosswords/models/crossword_model.dart';
 
@@ -42,7 +43,7 @@ class CrosswordPreviewWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'WikiNusa Crossword #${puzzle.puzzleId}',
+                '${'crosswords'.tr()} #${puzzle.puzzleId}',
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -56,7 +57,7 @@ class CrosswordPreviewWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
-                  '${puzzle.words.length} Clues',
+                  '${puzzle.words.length} ${'crossword_clues'.tr()}',
                   style: const TextStyle(
                     color: Colors.black,
                     fontSize: 10,

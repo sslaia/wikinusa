@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panduan Nusa Keyboard</title>
+    <title>Nusa Keyboard Guide</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Inter:wght@400;500;600;700;800&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -171,7 +171,7 @@
             margin-bottom: 16px;
             padding-bottom: 8px;
             border-bottom: 2px solid var(--bg-light);
-            color: var(--wiktionary-orange);
+            color: var(--wikipedia-indigo);
         }
 
         .toc-list {
@@ -196,8 +196,8 @@
         }
 
         .toc-link:hover, .toc-link.active {
-            color: var(--wiktionary-orange);
-            border-left-color: var(--wiktionary-orange);
+            color: var(--wikipedia-indigo);
+            border-left-color: var(--wikipedia-indigo);
             padding-left: 12px;
         }
 
@@ -245,7 +245,7 @@
             margin-bottom: 20px;
             padding-bottom: 8px;
             border-bottom: 2px solid var(--border-color);
-            color: var(--wiktionary-orange);
+            color: var(--wikipedia-indigo);
             position: relative;
         }
 
@@ -256,7 +256,16 @@
             left: 0;
             width: 60px;
             height: 2px;
-            background: linear-gradient(to right, var(--wiktionary-orange), var(--wikibooks-purple));
+            background: linear-gradient(to right, var(--wikipedia-indigo), var(--wiktionary-orange));
+        }
+
+        h3 {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            color: var(--wiktionary-orange);
         }
 
         p {
@@ -269,118 +278,60 @@
             margin-top: 0;
             margin-bottom: 24px;
             padding-left: 24px;
+            color: var(--text-main);
         }
 
         li {
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
 
-        strong {
-            color: #1A202C;
-            font-weight: 700;
-        }
-
-        /* Image styling */
         .image-container {
-            margin: 20px 0 30px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            margin: 20px 0 25px 0;
+            background-color: var(--bg-light);
+            border-radius: 12px;
+            padding: 12px;
             text-align: center;
+            border: 1px solid var(--border-color);
         }
 
         .image-container img {
             max-width: 100%;
-            max-height: 480px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s ease;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-
-        .image-container img:hover {
-            transform: scale(1.01);
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            display: block;
+            margin: 0 auto;
         }
 
         .image-caption {
+            display: block;
             font-size: 0.85rem;
             color: var(--text-muted);
             margin-top: 8px;
             font-style: italic;
         }
 
-        .badge-link {
-            display: inline-block;
-            margin: 10px 0;
-        }
-
         .badge-link img {
-            height: 50px;
+            height: 55px;
+            margin-top: 8px;
             transition: transform 0.2s;
         }
 
         .badge-link img:hover {
-            transform: scale(1.05);
+            transform: scale(1.03);
         }
 
-        /* Note boxes */
-        .note-box {
-            background-color: rgba(255, 87, 34, 0.03);
-            border-left: 4px solid var(--wiktionary-orange);
-            padding: 16px 20px;
-            border-radius: 0 8px 8px 0;
-            margin: 24px 0;
-        }
-
-        .note-box p:last-child {
-            margin-bottom: 0;
-        }
-
-        /* Links */
-        a {
+        code {
+            background-color: rgba(18, 18, 152, 0.06);
             color: var(--wikipedia-indigo);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+            font-weight: 600;
         }
 
-        a:hover {
-            color: var(--wiktionary-orange);
-            text-decoration: underline;
-        }
-
-        /* Back to top button */
-        .back-to-top {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 45px;
-            height: 45px;
-            background-color: var(--wiktionary-orange);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            text-decoration: none;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s ease;
-            z-index: 99;
-            font-size: 1.2rem;
-        }
-
-        .back-to-top.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .back-to-top:hover {
-            transform: translateY(-5px);
-            background-color: var(--wikipedia-indigo);
-        }
-
+        /* Footer */
         footer {
             background-color: var(--white);
             border-top: 1px solid var(--border-color);
@@ -404,23 +355,53 @@
         html {
             scroll-behavior: smooth;
         }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background-color: var(--wikipedia-indigo);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 99;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .back-to-top:hover {
+            background-color: #0b0b63;
+            transform: translateY(-3px);
+        }
     </style>
 </head>
 <body>
 
 <header>
     <div class="header-container">
-        <a href="index.html" class="header-logo">
+        <a href="index-en.html" class="header-logo">
             <img src="wikinusa-icon.png" alt="WikiNusa Logo">
             <span class="header-title">WikiNusa</span>
         </a>
         <div class="header-actions">
-            <div class="lang-switch" aria-label="Pilih Bahasa / Choose Language">
-                <a href="guide-keyboard-id.html" class="active" title="Bahasa Indonesia">ID</a>
-                <a href="guide-keyboard-en.html" title="English">EN</a>
+            <div class="lang-switch" aria-label="Choose Language / Pilih Bahasa">
+                <a href="guide-keyboard-id.html" title="Bahasa Indonesia">ID</a>
+                <a href="guide-keyboard-en.html" class="active" title="English">EN</a>
             </div>
-            <a href="index.html" class="btn-back">
-                &larr; Kembali ke Beranda
+            <a href="index-en.html" class="btn-back">
+                &larr; Back to Home
             </a>
         </div>
     </div>
@@ -429,106 +410,106 @@
 <div class="layout-container">
     <div class="sidebar">
         <div class="toc-card">
-            <h3 class="toc-title">Daftar Isi</h3>
+            <h3 class="toc-title">Table of Contents</h3>
             <ul class="toc-list">
-                <li class="toc-item"><a href="#intro" class="toc-link">Intro</a></li>
-                <li class="toc-item"><a href="#instal" class="toc-link">Menginstal & Mengatur</a></li>
-                <li class="toc-item"><a href="#menggunakan" class="toc-link">Menggunakan Keyboard</a></li>
+                <li class="toc-item"><a href="#intro" class="toc-link">Introduction</a></li>
+                <li class="toc-item"><a href="#instal" class="toc-link">Installation & Setup</a></li>
+                <li class="toc-item"><a href="#menggunakan" class="toc-link">Using the Keyboard</a></li>
             </ul>
         </div>
     </div>
 
     <main class="content-card">
-        <h1 class="guide-title">PANDUAN APLIKASI NUSA KEYBOARD</h1>
-        <p class="guide-intro-meta">Cara menginstal, mengatur, dan menggunakan Nusa Keyboard untuk mengetik karakter khusus bahasa Nias.</p>
+        <h1 class="guide-title">NUSA KEYBOARD APP GUIDE</h1>
+        <p class="guide-intro-meta">Step-by-step instructions for installing, activating, and typing regional characters with Nusa Keyboard.</p>
 
         <section id="intro">
-            <h2>Intro</h2>
-            <p>Anda ingin mengetik dalam bahasa Nias? Dengan aplikasi Nusa Keyboard bisa! <strong>Huruf <code>ö</code> dan <code>ŵ</code> telah tersedia</strong>. Anda bisa menukar papan ketik antara <strong>bahasa Nias dan bahasa Indonesia</strong>.</p>
-            <p>Selain itu papan ketik ini memiliki <strong>tombol untuk mengaktifkan kode wiki</strong>. Jadi merupakan peralatan penting buat mereka yang sering menulis di Wikipedia, Wikikamus, dan Wikibuku Nias.</p>
+            <h2>Introduction</h2>
+            <p>Need to type in regional languages such as Nias? With the Nusa Keyboard app, you can easily type specialized letters! <strong>Characters <code>ö</code> and <code>ŵ</code> are natively available on the keyboard layout</strong>. You can switch effortlessly between <strong>regional language and Indonesian layouts</strong>.</p>
+            <p>In addition, this keyboard features a dedicated top row with <strong>instant wiki markup shortcut buttons</strong> (bold, italics, headings, wikilinks, footnotes), making it an indispensable tool for active contributors on Wikipedia, Wiktionary, and Wikibooks.</p>
         </section>
 
         <section id="instal">
-            <h2>Menginstal dan Mengatur Aplikasi Nusa Keyboard</h2>
+            <h2>Installing and Configuring Nusa Keyboard</h2>
             <ol>
                 <li>
-                    Klik gambar badge Google Play di bawah ini untuk pergi ke Google Play Store:
+                    Click the Google Play badge below to visit the Google Play Store:
                     <br>
                     <a href="https://play.google.com/store/apps/details?id=io.github.sslaia.nusakeyboard" class="badge-link" target="_blank" rel="noopener noreferrer">
                         <img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/apps/en-play-badge.png"/>
                     </a>
                 </li>
                 <li>
-                    Pastikan Anda melihat aplikasi Nusa Keyboard. Klik pada tombol <strong>"Instal"</strong>. Tunggu sampai selesai dan Anda melihat tombol biru <strong>"Buka"</strong>.
+                    Locate the Nusa Keyboard app and tap <strong>"Install"</strong>. Wait until the download finishes and the blue <strong>"Open"</strong> button is displayed.
                     <div class="image-container">
-                        <img src="images/nusa-keyboard.webp" alt="Nusa Keyboard telah terinstal">
-                        <span class="image-caption">Nusa Keyboard telah terinstal</span>
+                        <img src="images/nusa-keyboard.webp" alt="Nusa Keyboard installed">
+                        <span class="image-caption">Nusa Keyboard installation completed</span>
                     </div>
                 </li>
                 <li>
-                    Anda bisa langsung menjalankan aplikasi dari sini dengan mengetuk tombol <strong>BUKA</strong> atau Anda pergi ke laci aplikasi smartphone Anda dan mengetuk ikon Nusa Keyboard di sana.
+                    Launch the app directly by tapping <strong>OPEN</strong> or navigate to your device's app drawer and tap the Nusa Keyboard icon.
                     <div class="image-container">
-                        <img src="images/laci-aplikasi.webp" alt="Nusa Keyboard di laci aplikasi">
-                        <span class="image-caption">Nusa Keyboard di laci aplikasi</span>
+                        <img src="images/laci-aplikasi.webp" alt="Nusa Keyboard in app drawer">
+                        <span class="image-caption">Nusa Keyboard icon in app drawer</span>
                     </div>
                 </li>
                 <li>
-                    Anda akan melihat halaman Pengaturan papan ketik. Klik pada tombol <strong>AKTIFKAN KEYBOARD</strong>.
+                    You will be presented with the Keyboard Setup screen. Tap the <strong>ACTIVATE KEYBOARD</strong> button.
                     <div class="image-container">
-                        <img src="images/nk-pengaturan.webp" alt="Halaman Pengaturan Nusa Keyboard">
-                        <span class="image-caption">Halaman Pengaturan Nusa Keyboard</span>
+                        <img src="images/nk-pengaturan.webp" alt="Nusa Keyboard Settings screen">
+                        <span class="image-caption">Nusa Keyboard Settings screen</span>
                     </div>
                 </li>
                 <li>
-                    Anda melihat daftar berbagai papan ketik yang telah terinstal di smartphone Anda. Aktifkan <strong>Nusa Keyboard</strong>.
+                    Your device's system keyboard list will appear. Toggle the switch to enable <strong>Nusa Keyboard</strong>.
                     <div class="image-container">
-                        <img src="images/nk-aktif.webp" alt="Nusa Keyboard Aktif">
-                        <span class="image-caption">Nusa Keyboard Aktif</span>
+                        <img src="images/nk-aktif.webp" alt="Nusa Keyboard enabled">
+                        <span class="image-caption">Nusa Keyboard enabled in system settings</span>
                     </div>
                 </li>
-                <li>Selesai. Anda siap menggunakan Nusa Keyboard untuk mengetik.</li>
+                <li>Finished! Nusa Keyboard is now active and ready for use.</li>
             </ol>
         </section>
 
         <section id="menggunakan">
-            <h2>Menggunakan Papan Ketik Nusa Keyboard</h2>
+            <h2>Using Nusa Keyboard</h2>
             <ol>
-                <li>Jalankan aplikasi penulisan seperti <strong>WikiNusa</strong>.</li>
+                <li>Launch any text editing or browsing app, such as <strong>WikiNusa</strong>.</li>
                 <li>
-                    Klik di kolom pencarian atau kolom teks, yang secara otomatis menampilkan papan ketik <em>default</em> (bawaan) yang aktif saat ini. Klik pada ikon menukar papan ketik (keyboard switcher, biasanya ikon keyboard di bilah navigasi bawah kanan atau di menu notifikasi).
+                    Tap on the search bar or text input field. Your system will show the currently active keyboard. Tap the <strong>Keyboard Switcher icon</strong> (usually on the bottom right navigation bar or in the notification pull-down menu).
                     <div class="image-container">
-                        <img src="images/nk-tukar-papan-ketik.webp" alt="Klik ikon menukar papan ketik">
-                        <span class="image-caption">Klik ikon menukar papan ketik</span>
+                        <img src="images/nk-tukar-papan-ketik.webp" alt="Tap keyboard switcher">
+                        <span class="image-caption">Tap the keyboard switcher icon</span>
                     </div>
                 </li>
                 <li>
-                    Pilih/klik pada pilihan <strong>Nusa Keyboard</strong> untuk mengaktifkan papan ketik Nusa Keyboard.
+                    Select <strong>Nusa Keyboard</strong> from the input method list.
                     <div class="image-container">
-                        <img src="images/nk-terpilih.webp" alt="Memilih papan ketik Nusa Keyboard">
-                        <span class="image-caption">Memilih papan ketik Nusa Keyboard</span>
+                        <img src="images/nk-terpilih.webp" alt="Nusa Keyboard selected">
+                        <span class="image-caption">Selecting Nusa Keyboard</span>
                     </div>
                 </li>
                 <li>
-                    Sekarang Anda siap mengetik dalam bahasa Nias.
+                    You are now ready to type special characters like <code>ö</code> and <code>ŵ</code> with ease.
                     <div class="image-container">
-                        <img src="images/nk-nusa-keyboard.webp" alt="Papan ketik Nusa Keyboard">
-                        <span class="image-caption">Papan ketik Nusa Keyboard</span>
+                        <img src="images/nk-nusa-keyboard.webp" alt="Nusa Keyboard typing layout">
+                        <span class="image-caption">Nusa Keyboard layout</span>
                     </div>
                 </li>
-                <li>Klik di <strong>ikon globe</strong> pada Nusa Keyboard untuk bergonta-ganti layout papan ketik antara layout bahasa Nias dan layout bahasa Indonesia secara cepat.</li>
+                <li>Tap the <strong>Globe icon</strong> on the bottom row of Nusa Keyboard to quickly toggle between regional language layout and standard Indonesian layout.</li>
             </ol>
         </section>
     </main>
 </div>
 
-<a href="#" class="back-to-top" title="Kembali ke atas">&uarr;</a>
+<a href="#" class="back-to-top" title="Back to top">&uarr;</a>
 
 <footer>
     <div class="footer-links">
-        <a href="index.html">Beranda</a>
-        <a href="guide-keyboard-en.html">English Guide</a>
-        <a href="guide-wikinusa-id.html">Panduan WikiNusa</a>
-        <a href="guide-keyboard-id.html">Panduan Nusa Keyboard</a>
+        <a href="index-en.html">Home</a>
+        <a href="guide-keyboard-id.html">Versi Bahasa Indonesia</a>
+        <a href="guide-wikinusa-en.html">WikiNusa Guide</a>
+        <a href="guide-keyboard-en.html">Nusa Keyboard Guide</a>
         <a href="privacy-policy.html">Privacy Policy</a>
         <a href="disclaimer.html">Disclaimer</a>
     </div>

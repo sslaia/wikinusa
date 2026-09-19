@@ -194,9 +194,63 @@ Misalakan nama berkas audio pengucapan ialah **fahalö.ogg**, maka penulisannya 
 
 **Fehede si fakhai** adalah kata bentukan yang maknanya menyimpan dari kata dasar. Misalkan kata dasar adalah **bua**, maka fehede si fakhai adalah **ebua** (besar), karena kata tsb. tidak ada lagi kemiripan makna dengan kata bua (buah). Demikian juga kata **abua** (berat). 
  
-### Wikibuku
+## Wikibuku
 
 ### Apa saja bisa dimuat di Wikibuku?
 
 Semua tulisan lainnya yang tidak memenuhi syarat sebagai entri di Wikikamus dan Wikipedia. Itu bisa teks lagu, hoho, hendri-hendri, cerpen, novela, dongeng, blog, paper, opini, dlsb.
+
+## WikiChat (Obrolan Komunitas)
+
+### Bagaimana cara menggunakan WikiChat?
+
+WikiChat adalah modul percakapan langsung yang terintegrasi dengan halaman pembicaraan Wikimedia (seperti halaman **Monganga Afo** atau halaman pembicaraan pengguna). 
+
+1. Buka Laci Menu Samping dan pilih **Obrolan / Chat** di bagian **HALÖWÖ BÖ'Ö** (Modul).
+2. Tekan tombol **+** untuk memulai topik diskusi baru, ketik judul subjek dan pesan, lalu kirim. Bila diminta verifikasi CAPTCHA oleh Wikimedia, masukkan teks verifikasi.
+3. Pada setiap pesan obrolan, tekan **Balas** untuk memberikan komentar berantai (threaded discussion) atau mengutip pesan rekan kontributor.
+
+## Buletin Komunitas (Newsletter)
+
+### Bagaimana membaca Buletin?
+
+Modul Buletin menyajikan terbitan majalah dan kabar berkala komunitas wiki (misalnya buletin **Turia** di Wikipedia Nias).
+
+1. Buka Laci Menu Samping dan ketuk **Buletin / Newsletter**.
+2. Pilih edisi terbitan yang ingin dibaca dari daftar edisi terkini maupun arsip terdahulu.
+3. Gunakan Daftar Isi (TOC) di bagian atas untuk melompat langsung ke artikel atau rubrik yang diminati.
+
+## Teka-Teki Silang (Crosswords)
+
+### Bagaimana cara memainkan Teka-Teki Silang?
+
+Teka-Teki Silang WikiNusa mengambil kata dan petunjuk definisi secara dinamis dari entri Wikikamus daerah.
+
+1. Buka Laci Menu Samping dan pilih **Teka-Teki Silang**.
+2. Pilih teka-teki harian, bulanan, atau tahunan.
+3. Ketuk kotak huruf pada kisi teka-teki untuk melihat petunjuk mendatar atau menurun, lalu ketik hurufnya.
+4. Gunakan tombol **Bantuan (Hint)** jika mengalami kebuntuan.
+5. Anda juga bisa memasang **Widget Teka-Teki Silang** langsung di layar beranda smartphone Android Anda.
+
+## Kursus Bahasa (Language Course)
+
+### Bagaimana belajar di Kursus Bahasa?
+
+Modul kursus bahasa interaktif (seperti program **Sulu**) membantu siapa saja mempelajari bahasa daerah dari nol.
+
+1. Buka Laci Menu Samping dan pilih **Kursus Bahasa**.
+2. Pilih bab pembelajaran tematis (percakapan praktis, sapaan keluarga, angka dan waktu).
+3. Ketuk ikon audio untuk mendengarkan pelafalan autentik dari penutur asli bahasa ibu.
+4. Selesaikan latihan dan kuis di akhir setiap modul pembelajaran.
+
+## Galeri Budaya & Media Commons
+
+### Bagaimana menikmati Galeri Budaya?
+
+Galeri Budaya menghadirkan mahakarya fotografi beresolusi tinggi yang dikurasi dari Wikimedia Commons untuk mendokumentasikan warisan budaya daerah.
+
+1. Buka Laci Menu Samping dan pilih **Galeri**.
+2. Geser (swipe) layar untuk menelusuri foto-foto artefak bersejarah, rumah adat (*omo hada*), busana adat, dan panorama alam.
+3. Ketuk foto untuk membuka penampil layar penuh (fullscreen) dan gunakan cubitan jari (pinch-to-zoom) untuk melihat detail ukiran dengan resolusi tinggi.
+
 
