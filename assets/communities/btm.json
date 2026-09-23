@@ -1,0 +1,67 @@
+{
+  "code": "btm",
+  "name": "Hata Batak Mandailing",
+  "englishName": "Batak Mandailing",
+  "direction": "ltr",
+  "experimental": true,
+  "projects": {
+    "wikipedia": {
+      "enabled": true,
+      "displayName": "Wikipedia",
+      "domain": "btm.wikipedia.org",
+      "apiPrefix": "",
+      "mainPageTitle": "Alaman Utamo",
+      "chatPageTitle": "Wikipedia:Lopo_Kopi",
+      "homePageSections": {
+        "featuredArticle": "mp-tfa",
+        "doYouKnow": "mp-dyk"
+      },
+      "portals": [],
+      "shortcuts": [
+        {
+          "icon": "history",
+          "title": "Mambaen pambagian",
+          "pageTitle": "Istimewa:Perubahan_terbaru"
+        },
+        {
+          "icon": "chat_bubble_outlined",
+          "title": "Lopo Kopi",
+          "pageTitle": "Wikipedia:Lopo_Kopi"
+        },
+        {
+          "icon": "pages_outlined",
+          "title": "Alaman istimewa",
+          "pageTitle": "Istimewa:Halaman_istimewa"
+        }
+      ]
+    },
+    "wiktionary": {
+      "enabled": false,
+      "displayName": "Wikikamus",
+      "domain": "btm.wiktionary.org",
+      "apiPrefix": "",
+      "mainPageTitle": "Wikikamus:Alaman Utamo",
+      "chatPageTitle": "Wikikamus:Lopo_Kopi",
+      "portals": [],
+      "shortcuts": [
+        {
+          "icon": "history",
+          "title": "Mambaen pambagian",
+          "pageTitle": "Istimewa:Perubahan_terbaru"
+        },
+        {
+          "icon": "pages_outlined",
+          "title": "Alaman istimewa",
+          "pageTitle": "Istimewa:Halaman_istimewa"
+        }
+      ]
+    }
+  },
+  "modules": {
+    "chat": {
+      "enabled": true,
+      "project": "wikipedia",
+      "pageTitle": "Wikipedia:Lopo_Kopi"
+    }
+  }
+}

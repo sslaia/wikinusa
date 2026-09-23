@@ -1,0 +1,63 @@
+{
+  "code": "mad",
+  "name": "Bhâsa Madhurâ",
+  "englishName": "Madurese",
+  "direction": "ltr",
+  "experimental": true,
+  "projects": {
+    "wikipedia": {
+      "enabled": true,
+      "displayName": "Wikipèḍia",
+      "domain": "mad.wikipedia.org",
+      "apiPrefix": "",
+      "mainPageTitle": "Tanèyan",
+      "chatPageTitle": "Wikipèḍia:Bârung_Kopi",
+      "portals": [],
+      "shortcuts": [
+        {
+          "icon": "history",
+          "title": "Panyalessayan anyar",
+          "pageTitle": "Istimewa:Perubahan_terbaru"
+        },
+        {
+          "icon": "chat_bubble_outlined",
+          "title": "Bârung Kopi",
+          "pageTitle": "Wikipèḍia:Bârung_Kopi"
+        },
+        {
+          "icon": "pages_outlined",
+          "title": "Kaca istimewa",
+          "pageTitle": "Istimewa:Halaman_istimewa"
+        }
+      ]
+    },
+    "wiktionary": {
+      "enabled": false,
+      "displayName": "Wikikamus",
+      "domain": "mad.wiktionary.org",
+      "apiPrefix": "",
+      "mainPageTitle": "Wikikamus:Tanèyan",
+      "chatPageTitle": "Wikikamus:Bârung_Kopi",
+      "portals": [],
+      "shortcuts": [
+        {
+          "icon": "history",
+          "title": "Panyalessayan anyar",
+          "pageTitle": "Istimewa:Perubahan_terbaru"
+        },
+        {
+          "icon": "pages_outlined",
+          "title": "Kaca istimewa",
+          "pageTitle": "Istimewa:Halaman_istimewa"
+        }
+      ]
+    }
+  },
+  "modules": {
+    "chat": {
+      "enabled": true,
+      "project": "wikipedia",
+      "pageTitle": "Wikipèḍia:Bârung_Kopi"
+    }
+  }
+}

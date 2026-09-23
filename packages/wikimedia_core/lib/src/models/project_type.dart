@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
+import '../core/community_registry.dart';
 
-enum ProjectType {
-  wikipedia,
-  wiktionary,
-  wikibooks,
-}
+enum ProjectType { wikipedia, wiktionary, wikibooks }
 
 extension ProjectTypeExtension on ProjectType {
   String get name {
@@ -19,6 +16,9 @@ extension ProjectTypeExtension on ProjectType {
   }
 
   String getDisplayName(String langCode) {
+    if (CommunityRegistry.isInitialized) {
+      return CommunityRegistry.getDisplayName(langCode, this);
+    }
     if (this == ProjectType.wikipedia) {
       switch (langCode.toLowerCase()) {
         case 'nia':
@@ -47,7 +47,9 @@ extension ProjectTypeExtension on ProjectType {
   Color get darkPrimaryColor {
     switch (this) {
       case ProjectType.wikipedia:
-        return const Color(0xFF9EAEFF); // Bright Indigo / Periwinkle (accessible on dark surfaces)
+        return const Color(
+          0xFF9EAEFF,
+        ); // Bright Indigo / Periwinkle (accessible on dark surfaces)
       case ProjectType.wiktionary:
         return const Color(0xFFFFAB91); // Bright Coral / Warm Peach
       case ProjectType.wikibooks:
@@ -63,9 +65,9 @@ extension ProjectTypeExtension on ProjectType {
       case ProjectType.wikipedia:
         return 'assets/images/woman_reading_a_book_on_lap.webp';
       case ProjectType.wiktionary:
-        return 'assets/images/rai.webp';
+        return 'assets/images/power_of_words.webp';
       case ProjectType.wikibooks:
-        return 'assets/images/adu-sarambia.webp';
+        return 'assets/images/reading_at_the_garden.webp';
     }
   }
 
@@ -74,22 +76,16 @@ extension ProjectTypeExtension on ProjectType {
       case ProjectType.wikipedia:
         return "assets/images/woman_reading_a_book_on_lap.webp";
       case ProjectType.wiktionary:
-        return 'assets/images/rai.webp';
+        return 'assets/images/power_of_words.webp';
       case ProjectType.wikibooks:
-        return 'assets/images/adu-sarambia.webp';
+        return 'assets/images/reading_at_the_garden.webp';
     }
   }
 
   bool isSupported(String langCode) {
-    if (langCode == 'jv') {
-      return this == ProjectType.wikipedia;
+    if (CommunityRegistry.isInitialized) {
+      return CommunityRegistry.isProjectSupported(langCode, this);
     }
-    if (this == ProjectType.wikibooks && (langCode == 'en' || langCode == 'id')) {
-      return false;
-    }
-    if (this == ProjectType.wiktionary && (langCode == 'en' || langCode == 'id')) {
-      return false;
-    }
-    return true;
+    return this == ProjectType.wikipedia;
   }
 }

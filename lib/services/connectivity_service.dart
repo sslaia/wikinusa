@@ -15,6 +15,48 @@ class ConnectivityService {
   }
 }
 
-final isOnlineProvider = FutureProvider.autoDispose<bool>((ref) async {
-  return await ConnectivityService.isOnline();
-});
+class ConnectivityNotifier extends AsyncNotifier<bool> {
+  Timer? _timer;
+
+  @override
+  Future<bool> build() async {
+    ref.onDispose(() {
+      _timer?.cancel();
+    });
+
+    final online = await ConnectivityService.isOnline();
+    _scheduleCheck(online: online);
+    return online;
+  }
+
+  void _scheduleCheck({bool? online}) {
+    _timer?.cancel();
+    final isOnlineNow = online ?? state.value ?? false;
+    final interval = isOnlineNow
+        ? const Duration(seconds: 30)
+        : const Duration(seconds: 4);
+
+    _timer = Timer(interval, () async {
+      await checkConnectivity();
+    });
+  }
+
+  Future<bool> checkConnectivity() async {
+    final online = await ConnectivityService.isOnline();
+    if (state.value != online) {
+      state = AsyncData(online);
+    }
+    _scheduleCheck(online: online);
+    return online;
+  }
+
+  void setOnline(bool online) {
+    if (state.value != online) {
+      state = AsyncData(online);
+      _scheduleCheck(online: online);
+    }
+  }
+}
+
+final isOnlineProvider =
+    AsyncNotifierProvider<ConnectivityNotifier, bool>(ConnectivityNotifier.new);

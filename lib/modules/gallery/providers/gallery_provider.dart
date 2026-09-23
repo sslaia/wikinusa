@@ -13,11 +13,11 @@ final galleryDataProvider =
   final config = ref.watch(
     moduleConfigProvider((moduleKey: 'gallery', langCode: langCode)),
   );
-  final localDataFile = config?.dataFile ?? 'assets/data/gallery.json';
+  final localDataFile = config?.dataFile ?? 'assets/data/nia_gallery.json';
   Map<String, dynamic> jsonData;
 
   const onlineUrl =
-      'https://raw.githubusercontent.com/sslaia/wikinusa/main/assets/data/gallery.json';
+      'https://raw.githubusercontent.com/sslaia/wikinusa/main/assets/data/nia_gallery.json';
 
   final customDataPath = config?.dataFile;
   if (config?.isCustomDataFile == true &&
@@ -27,7 +27,7 @@ final galleryDataProvider =
       final String jsonString = await File(customDataPath).readAsString();
       jsonData = jsonDecode(jsonString);
     } catch (_) {
-      final String jsonString = await rootBundle.loadString('assets/data/gallery.json');
+      final String jsonString = await rootBundle.loadString('assets/data/nia_gallery.json');
       jsonData = jsonDecode(jsonString);
     }
   } else {
@@ -47,7 +47,7 @@ final galleryDataProvider =
         final String jsonString = await rootBundle.loadString(localDataFile);
         jsonData = jsonDecode(jsonString);
       } catch (_) {
-        final String jsonString = await rootBundle.loadString('assets/data/gallery.json');
+        final String jsonString = await rootBundle.loadString('assets/data/nia_gallery.json');
         jsonData = jsonDecode(jsonString);
       }
     }

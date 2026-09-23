@@ -10,10 +10,19 @@ class HomePageSection {
   });
 
   /// Helper to get the image HTML using the dynamic key
-  String? get imageHtml => data['${titleKey}ImageHtml'];
+  String? get imageHtml => data['${titleKey}ImageHtml'] ?? data['imageHtml'];
 
   /// Helper to get the image URL using the dynamic key
-  String? get imageUrl => data['${titleKey}ImageUrl'];
+  String? get imageUrl {
+    final url = data['${titleKey}ImageUrl'] ?? data['imageUrl'];
+    if (url != null && url.isNotEmpty) return url;
+    final html = imageHtml;
+    if (html != null && html.isNotEmpty) {
+      final match = RegExp(r'src="([^"]+)"').firstMatch(html);
+      if (match != null) return match.group(1);
+    }
+    return null;
+  }
 
   Map<String, dynamic> toJson() => {
         'titleKey': titleKey,

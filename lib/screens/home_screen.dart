@@ -18,6 +18,7 @@ import '../providers/wiki_api_provider.dart';
 import '../widgets/drawer_menu.dart';
 import '../utils/wiki_utils.dart';
 import '../services/connectivity_service.dart';
+import '../providers/custom_hero_image_provider.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -26,11 +27,37 @@ class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen>
+    with WidgetsBindingObserver {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      ref.read(isOnlineProvider.notifier).checkConnectivity();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    ref.listen(isOnlineProvider, (previous, next) {
+      if (previous?.value == false && next.value == true) {
+        ref.invalidate(wikiApiProvider(null));
+      }
+    });
+
     final currentProject = ref.watch(appStateProvider);
     final wikiContent = ref.watch(wikiApiProvider(null));
     final currentLanguage = ref.watch(languageProvider);
@@ -80,15 +107,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           if (content is List<HomePageSection>) {
                             for (var section in content) {
                               if (section.titleKey == 'featuredImage') {
-                                featuredImageUrl = section.imageUrl;
-                                break;
+                                if (section.imageUrl != null &&
+                                    section.imageUrl!.isNotEmpty &&
+                                    !CoreWikiUtils.isIcon(section.imageUrl!)) {
+                                  featuredImageUrl = section.imageUrl;
+                                  break;
+                                }
                               }
                             }
                             if (featuredImageUrl == null ||
                                 featuredImageUrl.isEmpty) {
                               for (var section in content) {
                                 if (section.imageUrl != null &&
-                                    section.imageUrl!.isNotEmpty) {
+                                    section.imageUrl!.isNotEmpty &&
+                                    !CoreWikiUtils.isIcon(section.imageUrl!)) {
                                   featuredImageUrl = section.imageUrl;
                                   break;
                                 }
@@ -217,6 +249,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     String? featuredImageUrl,
   ) {
     final currentLanguage = ref.watch(languageProvider);
+    final customHeroImages = ref.watch(customHeroImageProvider);
+    final customHeroUrl = customHeroImages[currentProject];
+
+    final bool hasPageHero = featuredImageUrl != null &&
+        featuredImageUrl.isNotEmpty &&
+        !CoreWikiUtils.isIcon(featuredImageUrl);
+
+    final String? effectiveImageUrl = hasPageHero
+        ? featuredImageUrl
+        : (customHeroUrl != null &&
+                customHeroUrl.isNotEmpty &&
+                !CoreWikiUtils.isIcon(customHeroUrl)
+            ? customHeroUrl
+            : null);
+
     return Stack(
       children: [
         Container(
@@ -227,10 +274,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 500),
-            child: featuredImageUrl != null && featuredImageUrl.isNotEmpty
+            child: effectiveImageUrl != null
                 ? Image.network(
-                    featuredImageUrl,
-                    key: ValueKey(featuredImageUrl),
+                    effectiveImageUrl,
+                    key: ValueKey(effectiveImageUrl),
                     fit: BoxFit.cover,
                     width: double.infinity,
                     height: double.infinity,
@@ -343,11 +390,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 }
 
-class _OfflineBannerWidget extends StatelessWidget {
+class _OfflineBannerWidget extends ConsumerWidget {
   const _OfflineBannerWidget();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 12, 16, 4),
@@ -389,6 +436,14 @@ class _OfflineBannerWidget extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.refresh_rounded, size: 20),
+            tooltip: 'refresh'.tr(),
+            color: theme.colorScheme.onSecondaryContainer,
+            onPressed: () {
+              ref.read(isOnlineProvider.notifier).checkConnectivity();
+            },
           ),
         ],
       ),

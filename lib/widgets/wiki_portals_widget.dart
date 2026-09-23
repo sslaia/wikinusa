@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../data/home_portals.dart';
 import 'package:wikimedia_core/wikimedia_core.dart';
 import '../providers/app_state.dart';
 import '../utils/wiki_utils.dart';
@@ -20,10 +19,9 @@ class WikiPortalsWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final portalsData = HomePortals.getPortals(context);
-    final projectStr = project.name.toLowerCase();
-
-    final projectPortals = portalsData[languageCode]?[projectStr] ?? [];
+    final projectPortals = CommunityRegistry.isInitialized
+        ? CommunityRegistry.getPortals(languageCode, project)
+        : const <CommunityPortal>[];
 
     if (projectPortals.isEmpty) {
       return const SizedBox.shrink();
@@ -67,10 +65,10 @@ class WikiPortalsWidget extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     ThemeData theme,
-    Map<String, dynamic> portal,
+    CommunityPortal portal,
   ) {
-    final title = portal['title'] as String;
-    final label = (portal['label'] as String).tr();
+    final title = portal.title;
+    final label = portal.label.tr();
 
     final currentProject = ref.watch(appStateProvider);
     final langCode = languageCode;
@@ -104,7 +102,7 @@ class WikiPortalsWidget extends ConsumerWidget {
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                _getPortalIcon(portal['label'] as String),
+                _getPortalIcon(portal.label),
                 color: project.primaryColor,
                 size: 28,
               ),

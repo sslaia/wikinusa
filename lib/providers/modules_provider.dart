@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:wikimedia_core/wikimedia_core.dart';
@@ -74,23 +73,28 @@ class ModulesConfigNotifier
   }
 
   Future<void> _loadConfig() async {
-    Map<String, dynamic> rawDefaults = {};
-    try {
-      final assetJson = await rootBundle.loadString('assets/data/modules.json');
-      rawDefaults = json.decode(assetJson) as Map<String, dynamic>;
-    } catch (e) {
-      debugPrint('Failed to load modules.json: $e');
+    final Map<String, Map<String, ModuleConfig>> result = {};
+
+    if (!CommunityRegistry.isInitialized) {
+      try {
+        await CommunityRegistry.init();
+      } catch (e) {
+        debugPrint('ModulesProvider: Failed to initialize CommunityRegistry: $e');
+      }
     }
 
-    final Map<String, Map<String, ModuleConfig>> result = {};
-    for (final langEntry in rawDefaults.entries) {
-      final langCode = langEntry.key;
-      final modulesMap = langEntry.value as Map<String, dynamic>? ?? {};
-      result[langCode] = {};
-      for (final modEntry in modulesMap.entries) {
-        result[langCode]![modEntry.key] = ModuleConfig.fromJson(
-          modEntry.value as Map<String, dynamic>,
-        );
+    if (CommunityRegistry.languages.isNotEmpty) {
+      for (final lang in CommunityRegistry.languages) {
+        result[lang.code] = {};
+        for (final entry in lang.modules.entries) {
+          result[lang.code]![entry.key] = ModuleConfig(
+            enabled: entry.value.enabled,
+            project: entry.value.project,
+            pageTitle: entry.value.pageTitle,
+            dataFile: entry.value.dataFile,
+            isCustomDataFile: entry.value.isCustomDataFile,
+          );
+        }
       }
     }
 

@@ -27,15 +27,28 @@ class AppTheme {
     final primaryColor = projectType.primaryColor;
     final bool isLight = brightness == Brightness.light;
 
-    final colorScheme = ColorScheme.fromSeed(
+    final baseColorScheme = ColorScheme.fromSeed(
       seedColor: primaryColor,
       brightness: brightness,
     );
+
+    // Provide darker, high-contrast text and surface colors for enhanced readability
+    final colorScheme = isLight
+        ? baseColorScheme.copyWith(
+            onSurface: const Color(0xFF0F172A), // Deep dark slate (near black)
+            onSurfaceVariant: const Color(0xFF334155), // Dark slate for readable secondary text
+          )
+        : baseColorScheme.copyWith(
+            onSurface: const Color(0xFFF8FAFC),
+            onSurfaceVariant: const Color(0xFFCBD5E1),
+          );
 
     final textTheme = const TextTheme().apply(
       fontFamily: 'PlusJakartaSans',
       fontSizeFactor: fontSize.scale,
       letterSpacingDelta: -0.3,
+      bodyColor: isLight ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+      displayColor: isLight ? const Color(0xFF020617) : Colors.white,
     );
 
     return ThemeData(

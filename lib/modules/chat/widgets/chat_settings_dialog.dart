@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wikimedia_core/wikimedia_core.dart';
+import '../../../providers/modules_provider.dart';
 import '../../../providers/shared_prefs_provider.dart';
 import '../config/chat_module_config.dart';
 import '../state/chat_providers.dart';
@@ -60,6 +61,21 @@ class _ChatSettingsDialogState extends ConsumerState<ChatSettingsDialog> {
       );
     }
 
+    // Synchronize with Module Settings
+    final modulesNotifier = ref.read(modulesConfigNotifierProvider.notifier);
+    final currentChatConfig = ref.read(
+      moduleConfigProvider((moduleKey: 'chat', langCode: target.langCode)),
+    );
+    if (currentChatConfig != null) {
+      await modulesNotifier.updateModuleConfig(
+        langCode: target.langCode,
+        moduleKey: 'chat',
+        config: currentChatConfig.copyWith(
+          pageTitle: newTitle.isEmpty ? _defaultTitle : newTitle,
+        ),
+      );
+    }
+
     // Invalidate state to trigger refresh with new page title
     ref.invalidate(chatTargetProvider);
     ref.invalidate(chatTopicsProvider);
@@ -81,6 +97,21 @@ class _ChatSettingsDialogState extends ConsumerState<ChatSettingsDialog> {
       target.langCode,
       target.project,
     );
+
+    // Synchronize reset with Module Settings
+    final modulesNotifier = ref.read(modulesConfigNotifierProvider.notifier);
+    final currentChatConfig = ref.read(
+      moduleConfigProvider((moduleKey: 'chat', langCode: target.langCode)),
+    );
+    if (currentChatConfig != null) {
+      await modulesNotifier.updateModuleConfig(
+        langCode: target.langCode,
+        moduleKey: 'chat',
+        config: currentChatConfig.copyWith(
+          pageTitle: _defaultTitle,
+        ),
+      );
+    }
 
     setState(() {
       _controller.text = _defaultTitle;

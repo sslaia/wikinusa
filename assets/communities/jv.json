@@ -1,0 +1,84 @@
+{
+  "code": "jv",
+  "name": "Basa Jawa",
+  "englishName": "Javanese",
+  "direction": "ltr",
+  "experimental": true,
+  "projects": {
+    "wikipedia": {
+      "enabled": true,
+      "displayName": "Jawapedia",
+      "domain": "jv.wikipedia.org",
+      "apiPrefix": "",
+      "mainPageTitle": "Wikipédia:Pendhapa",
+      "chatPageTitle": "Wikipedia:Angkringan",
+      "portals": [],
+      "shortcuts": [
+        {
+          "icon": "history",
+          "title": "Owah-owahan pungkasan",
+          "pageTitle": "Mirunggan:Owah-owahan_pungkasan"
+        },
+        {
+          "icon": "chat_bubble_outlined",
+          "title": "Angkringan",
+          "pageTitle": "Wikipedia:Angkringan"
+        },
+        {
+          "icon": "pages_outlined",
+          "title": "Kaca mirunggan",
+          "pageTitle": "Mirunggan:Kaca_mirunggan"
+        }
+      ]
+    },
+    "wiktionary": {
+      "enabled": false,
+      "displayName": "Wikisastra",
+      "domain": "jv.wiktionary.org",
+      "apiPrefix": "",
+      "mainPageTitle": "Wikisastra:Pendhapa",
+      "chatPageTitle": "Wikisastra:Angkringan",
+      "portals": [],
+      "shortcuts": []
+    },
+    "wikibooks": {
+      "enabled": false,
+      "displayName": "Wikibuku",
+      "domain": "jv.wikibooks.org",
+      "apiPrefix": "",
+      "mainPageTitle": "Wikibuku:Pendhapa",
+      "chatPageTitle": "Wikibooks:Angkringan",
+      "portals": [],
+      "shortcuts": []
+    }
+  },
+  "modules": {
+    "crosswords": {
+      "enabled": false,
+      "project": "wiktionary",
+      "dataFile": "assets/data/jv_crosswords.json",
+      "pageTitle": "Wikisastra:Teka-Teki"
+    },
+    "course": {
+      "enabled": false,
+      "project": "wiktionary",
+      "pageTitle": "Wikisastra:Sinau"
+    },
+    "gallery": {
+      "enabled": false,
+      "project": "wikipedia",
+      "dataFile": "assets/data/jv_gallery.json",
+      "pageTitle": "Wikipedia:Galeri"
+    },
+    "newsletter": {
+      "enabled": false,
+      "project": "wikipedia",
+      "pageTitle": "Wikipedia:Layang_Panyambung"
+    },
+    "chat": {
+      "enabled": true,
+      "project": "wikipedia",
+      "pageTitle": "Wikipedia:Angkringan"
+    }
+  }
+}

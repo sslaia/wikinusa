@@ -7,6 +7,7 @@ import '../models/project_type.dart';
 import 'html_processor.dart';
 import 'home_page_builder.dart';
 import '../core/wiki_config.dart';
+import '../core/community_registry.dart';
 
 class WikiApiService {
   static String _getCacheKey(
@@ -74,7 +75,18 @@ class WikiApiService {
           if (cachedData != null && cachedData.isNotEmpty) {
             try {
               final List<dynamic> jsonList = jsonDecode(cachedData);
-              return jsonList.map((e) => HomePageSection.fromJson(e)).toList();
+              final sections =
+                  jsonList.map((e) => HomePageSection.fromJson(e)).toList();
+              final isFallback =
+                  sections.length == 1 &&
+                  (sections.first.titleKey == 'mainContent' ||
+                      sections.first.titleKey == 'main_content' ||
+                      sections.first.titleKey == 'no_content');
+              final hasNoImages = sections.length > 1 &&
+                  sections.every((s) => s.imageUrl == null || s.imageUrl!.isEmpty);
+              if (!isFallback && !hasNoImages) {
+                return sections;
+              }
             } catch (e) {
               await prefs.remove(cacheKey);
               await prefs.remove(cacheTimestampKey);
@@ -439,6 +451,9 @@ class WikiApiService {
     String languageCode,
     ProjectType project,
   ) {
+    if (CommunityRegistry.isInitialized) {
+      return CommunityRegistry.getMainPageTitle(languageCode, project);
+    }
     switch (languageCode) {
       case 'id':
         if (project == ProjectType.wiktionary) return 'Wikikamus:Halaman_Utama';

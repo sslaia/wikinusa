@@ -1,0 +1,95 @@
+{
+  "global": {
+    "wikipedia": {
+      "remove": [
+        ".ambox",
+        ".catlinks",
+        ".hatnote",
+        ".metadata",
+        ".mw-editsection",
+        ".navbox",
+        ".nomobile",
+        ".noprint",
+        "script",
+        "style",
+        ".infobox",
+        ".side-box-flex",
+        ".toc",
+        "toc"
+      ],
+      "hide": [
+        ".references",
+        ".reflist"
+      ],
+      "referenceKeywords": [
+        "reference",
+        "reflist",
+        "referensi",
+        "umbu",
+        "famotokhi ba gahe",
+        "catatan kaki",
+        "rujukan",
+        "sumber",
+        "notes"
+      ]
+    },
+    "wiktionary": {
+      "remove": [
+        ".navbox",
+        ".metadata",
+        ".ambox",
+        ".noprint",
+        ".mw-editsection",
+        "style",
+        "script",
+        ".infobox",
+        ".side-box-flex",
+        ".toc",
+        "toc",
+        ".nomobile"
+      ],
+      "hide": [
+        ".reflist",
+        ".references"
+      ],
+      "referenceKeywords": [
+        "reference",
+        "reflist",
+        "referensi",
+        "catatan kaki",
+        "rujukan",
+        "sumber",
+        "umbu",
+        "notes"
+      ]
+    },
+    "wikibooks": {
+      "remove": [
+        ".navbox",
+        ".metadata",
+        ".ambox",
+        ".noprint",
+        ".mw-editsection",
+        "style",
+        "script",
+        ".infobox",
+        ".nomobile"
+      ],
+      "hide": [
+        ".reflist",
+        ".references"
+      ],
+      "referenceKeywords": [
+        "reference",
+        "reflist",
+        "referensi",
+        "catatan kaki",
+        "umbu",
+        "famotokhi ba gahe",
+        "rujukan",
+        "sumber",
+        "notes"
+      ]
+    }
+  }
+}

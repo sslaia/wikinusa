@@ -1,54 +1,44 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart' as http;
+import 'package:wikimedia_core/wikimedia_core.dart';
 import 'shared_prefs_provider.dart';
 
 final shortcutsProvider = FutureProvider<Map<String, dynamic>>((ref) async {
-  const remoteUrl =
-      'https://raw.githubusercontent.com/sslaia/wikinusa/refs/heads/main/assets/data/shortcuts.json';
-  final prefs = ref.watch(sharedPreferencesProvider);
-
-  if (!kDebugMode) {
-    // Fetch remote shortcuts
+  if (!CommunityRegistry.isInitialized) {
     try {
-      final response = await http
-          .get(Uri.parse(remoteUrl))
-          .timeout(const Duration(seconds: 5));
-
-      if (response.statusCode == 200) {
-        final remoteJson = response.body;
-        final localJson = prefs.getString('cached_shortcuts');
-
-        // If different from what we have cached, update cache
-        if (remoteJson != localJson) {
-          await prefs.setString('cached_shortcuts', remoteJson);
-        }
-        return json.decode(remoteJson) as Map<String, dynamic>;
-      }
+      await CommunityRegistry.init();
     } catch (e) {
-      debugPrint('ShortcutsProvider: Failed to fetch remote shortcuts: $e');
-    }
-
-    // Fallback to cached shortcuts if available
-    final cachedJson = prefs.getString('cached_shortcuts');
-    if (cachedJson != null) {
-      try {
-        return json.decode(cachedJson) as Map<String, dynamic>;
-      } catch (e) {
-        debugPrint('ShortcutsProvider: Failed to decode cached shortcuts: $e');
-      }
+      debugPrint('ShortcutsProvider: Failed to initialize CommunityRegistry: $e');
     }
   }
 
-  // Final fallback: Load from local assets
-  try {
-    final assetJson = await rootBundle.loadString('assets/data/shortcuts.json');
-    return json.decode(assetJson) as Map<String, dynamic>;
-  } catch (e) {
-    debugPrint('ShortcutsProvider: Failed to load shortcuts from assets: $e');
-    // Absolute minimum fallback to prevent app crash
+  if (CommunityRegistry.languages.isNotEmpty) {
+    final Map<String, dynamic> result = {};
+    for (final lang in CommunityRegistry.languages) {
+      result[lang.code] = <String, dynamic>{};
+      for (final project in ProjectType.values) {
+        final shortcuts = CommunityRegistry.getShortcuts(lang.code, project);
+        result[lang.code][project.name.toLowerCase()] =
+            shortcuts.map((s) => s.toJson()).toList();
+      }
+    }
+    return result;
+  }
+
+  final prefs = ref.watch(sharedPreferencesProvider);
+
+  // Fallback to cached shortcuts if available
+  final cachedJson = prefs.getString('cached_shortcuts');
+  if (cachedJson != null) {
+    try {
+      return json.decode(cachedJson) as Map<String, dynamic>;
+    } catch (e) {
+      debugPrint('ShortcutsProvider: Failed to decode cached shortcuts: $e');
+    }
+  }
+
+  // Absolute minimum fallback to prevent app crash
     return {
       "nia": {
         "wikipedia": [
@@ -180,5 +170,4 @@ final shortcutsProvider = FutureProvider<Map<String, dynamic>>((ref) async {
         ],
       },
     };
-  }
 });

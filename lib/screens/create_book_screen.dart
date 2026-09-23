@@ -88,7 +88,9 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
     final currentProject = ref.read(appStateProvider);
 
     Future<void> launchWebEditor() async {
-      final String encodedTitle = Uri.encodeComponent(title.replaceAll(' ', '_'));
+      final String encodedTitle = Uri.encodeComponent(
+        title.replaceAll(' ', '_'),
+      );
       String formulir;
       if (part == "Nidunö-dunö") {
         formulir = 'preload=Template:Wb/nia/Famörögö wanura nidunö-dunö';
@@ -175,10 +177,8 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
         final didEdit = await Navigator.push<bool>(
           context,
           MaterialPageRoute(
-            builder: (context) => EditPageScreen(
-              title: title,
-              preloadTemplate: templateName,
-            ),
+            builder: (context) =>
+                EditPageScreen(title: title, preloadTemplate: templateName),
           ),
         );
 
@@ -198,9 +198,9 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('error_loading_content').tr()),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('error_loading_content').tr()));
       }
     } finally {
       if (mounted) {
@@ -339,7 +339,7 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
               fontSize: 18,
             ),
             decoration: InputDecoration(
-              hintText: 'title_example'.tr(),
+              hintText: 'title_example_wikibooks'.tr(),
               hintStyle: theme.textTheme.titleMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant.withValues(
                   alpha: 0.5,
@@ -348,7 +348,8 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
               ),
               border: InputBorder.none,
             ),
-            onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+            onTapOutside: (event) =>
+                FocusManager.instance.primaryFocus?.unfocus(),
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
                 return "enter_title_before_submit".tr();
@@ -405,8 +406,10 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
                       "Gofu sinura",
                     ]
                     .map(
-                      (option) =>
-                          DropdownMenuItem(value: option, child: Text(_getOptionLabel(option))),
+                      (option) => DropdownMenuItem(
+                        value: option,
+                        child: Text(_getOptionLabel(option)),
+                      ),
                     )
                     .toList(),
             onChanged: (value) {
@@ -454,7 +457,11 @@ class _CreateBookScreenState extends ConsumerState<CreateBookScreen> {
                           color: Colors.white,
                         ),
                       )
-                    : const Icon(Icons.arrow_upward, color: Colors.white, size: 18),
+                    : const Icon(
+                        Icons.arrow_upward,
+                        color: Colors.white,
+                        size: 18,
+                      ),
                 const SizedBox(width: 8),
                 Text(
                   _isLoading ? 'submitting'.tr() : 'open_the_editor'.tr(),

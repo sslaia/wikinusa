@@ -18,10 +18,12 @@ import '../providers/bookmarks_provider.dart';
 import '../widgets/wiki_footer.dart';
 import '../providers/app_state.dart';
 import '../providers/wiki_api_provider.dart';
+import '../providers/custom_hero_image_provider.dart';
 import '../widgets/article_hero_image.dart';
 import '../widgets/custom_bottom_app_bar.dart';
 import '../widgets/drawer_menu.dart';
 import '../widgets/adaptive_nav_actions.dart';
+import '../widgets/wiki_table_container.dart';
 import '../providers/auth_provider.dart';
 import '../providers/database_provider.dart';
 import 'edit_page_screen.dart';
@@ -272,6 +274,10 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                               if (data is Map<String, dynamic>) {
                                 htmlContent = data['html'] ?? '';
                                 imageUrl = data['imageUrl'];
+                                if (imageUrl != null &&
+                                    CoreWikiUtils.isIcon(imageUrl)) {
+                                  imageUrl = null;
+                                }
                                 isOfflineCache = data['isOfflineCache'] == true;
                               } else if (data is String) {
                                 htmlContent = data;
@@ -325,6 +331,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                                       title: widget.title,
                                       imageUrl: imageUrl ?? '',
                                       project: currentProject,
+                                      customHeroUrl: ref.watch(customHeroImageProvider)[currentProject],
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.all(16.0),
@@ -332,6 +339,8 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                                         child: HtmlWidget(
                                           displayedHtml,
                                           key: _htmlWidgetKey,
+                                          factoryBuilder: () =>
+                                              WikiWidgetFactory(),
                                           textStyle:
                                               GoogleFonts.plusJakartaSans(
                                                 fontSize: Theme.of(context)
@@ -339,10 +348,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                                                     .bodyMedium
                                                     ?.fontSize,
                                                 height: 1.8,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onSurface
-                                                    .withValues(alpha: 0.9),
+                                                color: theme.colorScheme.onSurface,
                                               ).copyWith(
                                                 fontFamilyFallback:
                                                     fontFallbacks,
@@ -365,6 +371,29 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                                                 WikiUtils.customWidgetBuilder(
                                                   context,
                                                   element,
+                                                  onTapUrl: (url) =>
+                                                      WikiUtils.handleTapUrl(
+                                                        context,
+                                                        url,
+                                                        htmlContent,
+                                                        currentProject,
+                                                        langCode,
+                                                      ),
+                                                  textStyle: GoogleFonts.plusJakartaSans(
+                                                    fontSize: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyMedium
+                                                        ?.fontSize,
+                                                    height: 1.6,
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .onSurface
+                                                        .withValues(alpha: 0.9),
+                                                  ).copyWith(
+                                                    fontFamilyFallback:
+                                                        fontFallbacks,
+                                                  ),
+                                                  fontFallbacks: fontFallbacks,
                                                 );
                                             if (sharedWidget != null) {
                                               return sharedWidget;

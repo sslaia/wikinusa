@@ -1,0 +1,111 @@
+{
+  "code": "ms",
+  "name": "Bahasa Melayu",
+  "englishName": "Malay",
+  "direction": "ltr",
+  "experimental": true,
+  "projects": {
+    "wikipedia": {
+      "enabled": true,
+      "displayName": "Wikipedia",
+      "domain": "ms.wikipedia.org",
+      "apiPrefix": "",
+      "mainPageTitle": "Laman Utama",
+      "chatPageTitle": "Wikipedia:Kedai_Kopi",
+      "homePageSections": {
+        "featuredArticle": "mp-tfa",
+        "inTheNews": "mp-itn",
+        "onThisDay": "mp-otd",
+        "featuredImage": "mp-gp"
+      },
+      "portals": [
+        {
+          "label": "portal_religion",
+          "title": "Portal:Agama"
+        },
+        {
+          "label": "portal_geography",
+          "title": "Portal:Geografi"
+        },
+        {
+          "label": "portal_history",
+          "title": "Portal:Sejarah"
+        },
+        {
+          "label": "portal_science",
+          "title": "Portal:Sains"
+        },
+        {
+          "label": "portal_technology",
+          "title": "Portal:Teknologi"
+        }
+      ],
+      "shortcuts": [
+        {
+          "icon": "history",
+          "title": "Perubahan terkini",
+          "pageTitle": "Khas:Perubahan_terkini"
+        },
+        {
+          "icon": "chat_bubble_outlined",
+          "title": "Kedai Kopi",
+          "pageTitle": "Wikipedia:Kedai_Kopi"
+        },
+        {
+          "icon": "pages_outlined",
+          "title": "Laman khas",
+          "pageTitle": "Khas:Laman_khas"
+        }
+      ]
+    },
+    "wiktionary": {
+      "enabled": false,
+      "displayName": "Wikikamus",
+      "domain": "ms.wiktionary.org",
+      "apiPrefix": "",
+      "mainPageTitle": "Wikikamus:Laman Utama",
+      "chatPageTitle": "Wikikamus:Kedai_Kopi",
+      "portals": [],
+      "shortcuts": [
+        {
+          "icon": "history",
+          "title": "Perubahan terkini",
+          "pageTitle": "Khas:Perubahan_terkini"
+        },
+        {
+          "icon": "pages_outlined",
+          "title": "Laman khas",
+          "pageTitle": "Khas:Laman_khas"
+        }
+      ]
+    },
+    "wikibooks": {
+      "enabled": false,
+      "displayName": "Wikibuku",
+      "domain": "ms.wikibooks.org",
+      "apiPrefix": "",
+      "mainPageTitle": "Laman Utama",
+      "chatPageTitle": "Wikibuku:Kedai Kopi",
+      "portals": [],
+      "shortcuts": [
+        {
+          "icon": "history",
+          "title": "Perubahan terkini",
+          "pageTitle": "Khas:Perubahan_terkini"
+        },
+        {
+          "icon": "pages_outlined",
+          "title": "Laman khas",
+          "pageTitle": "Khas:Laman_khas"
+        }
+      ]
+    }
+  },
+  "modules": {
+    "chat": {
+      "enabled": true,
+      "project": "wikipedia",
+      "pageTitle": "Wikipedia:Kedai_Kopi"
+    }
+  }
+}

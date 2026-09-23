@@ -24,6 +24,9 @@ import '../utils/shortcut_utils.dart';
 import '../utils/wiki_utils.dart';
 import '../providers/modules_provider.dart';
 import 'drawer_auth_section.dart';
+import 'manage_languages_modal.dart';
+import 'manage_projects_modal.dart';
+import 'custom_hero_image_modal.dart';
 
 class DrawerMenu extends ConsumerWidget {
   final bool isPermanent;
@@ -111,6 +114,7 @@ class DrawerContent extends ConsumerWidget {
         _buildExpansionSection(
           theme,
           titleKey: 'drawer_quick_shortcuts',
+          initiallyExpanded: false,
           children: [
             _buildDrawerItem(
               theme,
@@ -295,7 +299,19 @@ class DrawerContent extends ConsumerWidget {
           theme,
           titleKey: 'drawer_appearance',
           initiallyExpanded: false,
-          children: [_buildAppearanceToggle(ref, theme, isDark)],
+          children: [
+            _buildAppearanceToggle(ref, theme, isDark),
+            const SizedBox(height: 8),
+            _buildDrawerItem(
+              theme,
+              icon: Icons.wallpaper_rounded,
+              title: 'custom_hero_images'.tr(),
+              onTap: () {
+                _closeDrawer(context);
+                CustomHeroImageModal.show(context);
+              },
+            ),
+          ],
         ),
         _buildExpansionSection(
           theme,
@@ -433,7 +449,9 @@ class DrawerContent extends ConsumerWidget {
         ),
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
-          borderRadius: const BorderRadius.only(bottomRight: Radius.circular(32)),
+          borderRadius: const BorderRadius.only(
+            bottomRight: Radius.circular(32),
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
@@ -451,7 +469,7 @@ class DrawerContent extends ConsumerWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 image: const DecorationImage(
-                  image: AssetImage('assets/images/rai.webp'),
+                  image: AssetImage('assets/images/wikinusa-logo.png'),
                   fit: BoxFit.cover,
                 ),
                 boxShadow: [
@@ -587,56 +605,109 @@ class DrawerContent extends ConsumerWidget {
     ProjectType currentProject,
     String currentLanguage,
   ) {
-    return RadioGroup<ProjectType>(
-      groupValue: currentProject,
-      onChanged: (ProjectType? newValue) {
-        if (newValue != null) {
-          ref
-              .read(appStateProvider.notifier)
-              .setProject(newValue, currentLanguage);
-          _closeDrawer(context);
-          Navigator.of(context).popUntil((route) => route.isFirst);
-        }
-      },
-      child: Column(
-        children: ProjectType.values.map((project) {
-          final isSupported = project.isSupported(currentLanguage);
-          return RadioListTile<ProjectType>(
-            value: project,
-            enabled: isSupported,
-            title: Row(
+    final enabledProjects = ref.watch(enabledProjectsProvider);
+    final availableProjects = ProjectType.values
+        .where((p) => CommunityRegistry.hasProject(currentLanguage, p))
+        .toSet();
+
+    final visibleProjects = enabledProjects
+        .where((p) => availableProjects.contains(p))
+        .toList();
+
+    if (!visibleProjects.contains(currentProject) &&
+        availableProjects.contains(currentProject)) {
+      visibleProjects.add(currentProject);
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        RadioGroup<ProjectType>(
+          groupValue: currentProject,
+          onChanged: (ProjectType? newValue) {
+            if (newValue != null) {
+              ref
+                  .read(appStateProvider.notifier)
+                  .setProject(newValue, currentLanguage);
+              _closeDrawer(context);
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            }
+          },
+          child: Column(
+            children: visibleProjects.map((project) {
+              final isSupported = project.isSupported(currentLanguage);
+              return RadioListTile<ProjectType>(
+                value: project,
+                enabled: isSupported,
+                title: Row(
+                  children: [
+                    Icon(
+                      Icons.circle,
+                      size: 8,
+                      color: isSupported
+                          ? project.primaryColor
+                          : Colors.grey.withValues(alpha: 0.3),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      project.getLocalizedDisplayName(currentLanguage),
+                      style: TextStyle(
+                        color: !isSupported
+                            ? Colors.grey.withValues(alpha: 0.5)
+                            : (project == currentProject
+                                  ? project.primaryColor
+                                  : theme.colorScheme.onSurface),
+                        fontWeight: project == currentProject
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                        decoration: !isSupported
+                            ? TextDecoration.lineThrough
+                            : null,
+                      ),
+                    ),
+                  ],
+                ),
+                activeColor: project.primaryColor,
+                contentPadding: EdgeInsets.zero,
+              );
+            }).toList(),
+          ),
+        ),
+        const SizedBox(height: 4),
+        InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: () => ManageProjectsModal.show(context),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primaryContainer.withValues(alpha: 0.35),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: theme.colorScheme.primary.withValues(alpha: 0.2),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  Icons.circle,
-                  size: 8,
-                  color: isSupported
-                      ? project.primaryColor
-                      : Colors.grey.withValues(alpha: 0.3),
+                  Icons.tune_rounded,
+                  size: 16,
+                  color: theme.colorScheme.primary,
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  project.getLocalizedDisplayName(currentLanguage),
+                  'manage_projects'.tr(),
                   style: TextStyle(
-                    color: !isSupported
-                        ? Colors.grey.withValues(alpha: 0.5)
-                        : (project == currentProject
-                              ? project.primaryColor
-                              : theme.colorScheme.onSurface),
-                    fontWeight: project == currentProject
-                        ? FontWeight.bold
-                        : FontWeight.normal,
-                    decoration: !isSupported
-                        ? TextDecoration.lineThrough
-                        : null,
+                    color: theme.colorScheme.primary,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
             ),
-            activeColor: project.primaryColor,
-            contentPadding: EdgeInsets.zero,
-          );
-        }).toList(),
-      ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -646,42 +717,108 @@ class DrawerContent extends ConsumerWidget {
     ThemeData theme,
     String currentLanguage,
   ) {
-    final languages = [
-      {'code': 'en', 'name': 'english'},
-      {'code': 'id', 'name': 'indonesian'},
-      {'code': 'nia', 'name': 'nias'},
-      {'code': 'jv', 'name': 'javanese'},
-    ];
+    final enabledLangs = ref.watch(enabledLanguagesProvider);
+    final List<Map<String, String>> allLanguages;
+    if (CommunityRegistry.isInitialized &&
+        CommunityRegistry.languages.isNotEmpty) {
+      allLanguages = CommunityRegistry.languages.map((l) {
+        final trKey = switch (l.code) {
+          'en' => 'english',
+          'id' => 'indonesian',
+          'nia' => 'nias',
+          'jv' => 'javanese',
+          _ => '',
+        };
+        return {
+          'code': l.code,
+          'name': l.name.isNotEmpty ? l.name : l.code,
+          'translationKey': trKey,
+        };
+      }).toList();
+    } else {
+      allLanguages = const [
+        {'code': 'en', 'name': 'english', 'translationKey': 'english'},
+        {'code': 'id', 'name': 'indonesian', 'translationKey': 'indonesian'},
+        {'code': 'nia', 'name': 'nias', 'translationKey': 'nias'},
+        {'code': 'jv', 'name': 'javanese', 'translationKey': 'javanese'},
+      ];
+    }
 
-    return RadioGroup<String>(
-      groupValue: currentLanguage,
-      onChanged: (String? newValue) {
-        if (newValue != null) {
-          ref.read(languageProvider.notifier).setLanguage(newValue);
-          context.setLocale(Locale(newValue));
-          _closeDrawer(context);
-          Navigator.of(context).popUntil((route) => route.isFirst);
-        }
-      },
-      child: Column(
-        children: languages.map((lang) {
-          final code = lang['code']!;
-          return RadioListTile<String>(
-            value: code,
-            title: Text(
-              lang['name']!.tr(),
-              style: TextStyle(
-                color: theme.colorScheme.onSurface,
-                fontWeight: currentLanguage == code
-                    ? FontWeight.bold
-                    : FontWeight.normal,
+    final visibleLanguages = allLanguages.where((lang) {
+      final code = lang['code']!;
+      return enabledLangs.contains(code) || code == currentLanguage;
+    }).toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        RadioGroup<String>(
+          groupValue: currentLanguage,
+          onChanged: (String? newValue) {
+            if (newValue != null) {
+              ref.read(languageProvider.notifier).setLanguage(newValue);
+              context.setLocale(Locale(newValue));
+              _closeDrawer(context);
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            }
+          },
+          child: Column(
+            children: visibleLanguages.map((lang) {
+              final code = lang['code']!;
+              final trKey = lang['translationKey'] ?? '';
+              final displayName = trKey.isNotEmpty ? trKey.tr() : lang['name']!;
+              return RadioListTile<String>(
+                value: code,
+                title: Text(
+                  displayName,
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurface,
+                    fontWeight: currentLanguage == code
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                  ),
+                ),
+                activeColor: theme.colorScheme.primary,
+                contentPadding: EdgeInsets.zero,
+              );
+            }).toList(),
+          ),
+        ),
+        const SizedBox(height: 4),
+        InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: () => ManageLanguagesModal.show(context),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primaryContainer.withValues(alpha: 0.35),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: theme.colorScheme.primary.withValues(alpha: 0.2),
               ),
             ),
-            activeColor: theme.colorScheme.primary,
-            contentPadding: EdgeInsets.zero,
-          );
-        }).toList(),
-      ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.tune_rounded,
+                  size: 16,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'manage_languages'.tr(),
+                  style: TextStyle(
+                    color: theme.colorScheme.primary,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 

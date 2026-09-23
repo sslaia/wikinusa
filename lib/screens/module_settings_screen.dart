@@ -8,6 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:wikimedia_core/wikimedia_core.dart';
 import '../providers/app_state.dart';
 import '../providers/modules_provider.dart';
+import '../providers/shared_prefs_provider.dart';
 import '../modules/chat/config/chat_module_config.dart';
 import '../utils/responsive_utils.dart';
 import '../widgets/drawer_menu.dart';
@@ -96,12 +97,15 @@ class _ModuleSettingsScreenState extends ConsumerState<ModuleSettingsScreen> {
     _crosswordsIsCustom = crosswords.isCustomDataFile;
 
     // 4. Gallery (project is fixed to Wikimedia Commons)
+    final defaultGalleryDataFile = langCode == 'nia'
+        ? 'assets/data/nia_gallery.json'
+        : 'assets/data/${langCode}_gallery.json';
     final gallery = langConfigs['gallery'] ??
         ModuleConfig(
           enabled: langCode == 'nia',
           project: ProjectType.wikipedia,
           pageTitle: 'Wikipedia:Galeri',
-          dataFile: 'assets/data/gallery.json',
+          dataFile: defaultGalleryDataFile,
         );
     _galleryEnabled = gallery.enabled;
     _galleryDataFile = gallery.dataFile;
@@ -118,8 +122,7 @@ class _ModuleSettingsScreenState extends ConsumerState<ModuleSettingsScreen> {
         );
     _chatEnabled = chat.enabled;
     _chatProject = chat.project;
-    _chatTitleController.text =
-        chat.pageTitle.isNotEmpty ? chat.pageTitle : defaultChatTitle;
+    _chatTitleController.text = chat.pageTitle;
   }
 
   Future<void> _pickJsonFile({
@@ -229,15 +232,32 @@ class _ModuleSettingsScreenState extends ConsumerState<ModuleSettingsScreen> {
     );
 
     // Save WikiChat
+    final chatTitle = _chatTitleController.text.trim();
     await notifier.updateModuleConfig(
       langCode: _selectedLanguage,
       moduleKey: 'chat',
       config: ModuleConfig(
         enabled: _chatEnabled,
         project: _chatProject,
-        pageTitle: _chatTitleController.text.trim(),
+        pageTitle: chatTitle,
       ),
     );
+
+    final prefs = ref.read(sharedPreferencesProvider);
+    if (chatTitle.isNotEmpty) {
+      await ChatModuleConfig.setCustomPageTitle(
+        prefs,
+        _selectedLanguage,
+        _chatProject,
+        chatTitle,
+      );
+    } else {
+      await ChatModuleConfig.resetPageTitle(
+        prefs,
+        _selectedLanguage,
+        _chatProject,
+      );
+    }
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -478,7 +498,9 @@ class _ModuleSettingsScreenState extends ConsumerState<ModuleSettingsScreen> {
                 },
                 onResetDefault: () {
                   setState(() {
-                    _galleryDataFile = 'assets/data/gallery.json';
+                    _galleryDataFile = _selectedLanguage == 'nia'
+                        ? 'assets/data/nia_gallery.json'
+                        : 'assets/data/${_selectedLanguage}_gallery.json';
                     _galleryIsCustom = false;
                   });
                 },
@@ -625,6 +647,11 @@ class _ModuleSettingsScreenState extends ConsumerState<ModuleSettingsScreen> {
     required ProjectType value,
     required ValueChanged<ProjectType?> onChanged,
   }) {
+    final enabledProjects = ref.watch(enabledProjectsProvider);
+    final projects = enabledProjects.contains(value)
+        ? enabledProjects
+        : [value, ...enabledProjects];
+
     return DropdownButtonFormField<ProjectType>(
       key: ValueKey(value),
       initialValue: value,
@@ -635,7 +662,7 @@ class _ModuleSettingsScreenState extends ConsumerState<ModuleSettingsScreen> {
         ),
         prefixIcon: const Icon(Icons.language_rounded),
       ),
-      items: ProjectType.values.map((project) {
+      items: projects.map((project) {
         return DropdownMenuItem<ProjectType>(
           value: project,
           child: Row(

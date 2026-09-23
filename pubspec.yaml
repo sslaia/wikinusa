@@ -1,7 +1,7 @@
 name: wikinusa
-description: "An Android app for Wikipedia, Wiktionary and Wikibooks in local languages in Indonesia"
+description: "An Android app for reading and editing Wikipedia, Wiktionary and Wikibooks in Indonesian, local languages and beyond."
 publish_to: 'none'
-version: 1.5.7+10
+version: 1.5.8+11
 
 environment:
   sdk: ^3.11.4
@@ -48,12 +48,17 @@ flutter:
   uses-material-design: true
   assets:
     - assets/data/
+    - assets/communities/
+    - assets/communities_index.json
     - assets/images/
     - assets/images/onboarding1.webp
     - assets/images/onboarding2.webp
     - assets/images/onboarding3.webp
     - assets/images/onboarding4.webp
     - assets/images/onboarding5.webp
+    - assets/images/onboarding6.webp
+    - assets/images/onboarding7.webp
+    - assets/images/wikinusa-logo.png
     - assets/translations/
     - assets/translations/en.json
     - assets/translations/id.json

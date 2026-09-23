@@ -1,0 +1,89 @@
+{
+  "code": "su",
+  "name": "Basa Sunda",
+  "englishName": "Sundanese",
+  "direction": "ltr",
+  "experimental": true,
+  "projects": {
+    "wikipedia": {
+      "enabled": true,
+      "displayName": "Wikipedia",
+      "domain": "su.wikipedia.org",
+      "apiPrefix": "",
+      "mainPageTitle": "Tepas",
+      "chatPageTitle": "",
+      "portals": [
+        {
+          "label": "portal_sundanese",
+          "title": "Portal:Sunda"
+        }
+      ],
+      "shortcuts": [
+        {
+          "icon": "history",
+          "title": "Parobahan anyar",
+          "pageTitle": "Husus:Parobahan_anyar"
+        },
+        {
+          "icon": "chat_bubble_outlined",
+          "title": "Sawala",
+          "pageTitle": "Wikipedia:Sawala"
+        },
+        {
+          "icon": "pages_outlined",
+          "title": "Kaca husus",
+          "pageTitle": "Husus:Kaca_husus"
+        }
+      ]
+    },
+    "wiktionary": {
+      "enabled": false,
+      "displayName": "Wiktionary",
+      "domain": "su.wiktionary.org",
+      "apiPrefix": "",
+      "mainPageTitle": "Tepas",
+      "chatPageTitle": "Wiktionary:Sawala",
+      "portals": [],
+      "shortcuts": [
+        {
+          "icon": "history",
+          "title": "Parobahan anyar",
+          "pageTitle": "Husus:Parobahan_anyar"
+        },
+        {
+          "icon": "pages_outlined",
+          "title": "Kaca husus",
+          "pageTitle": "Husus:Kaca_husus"
+        }
+      ]
+    },
+    "wikibooks": {
+      "enabled": false,
+      "displayName": "Wikibuku",
+      "domain": "su.wikibooks.org",
+      "apiPrefix": "",
+      "mainPageTitle": "Tepas",
+      "chatPageTitle": "",
+      "portals": [],
+      "shortcuts": [
+        {
+          "icon": "history",
+          "title": "AnyarRobah",
+          "pageTitle": "Husus:AnyarRobah"
+        },
+        {
+          "icon": "pages_outlined",
+          "title": "KacaHusus",
+          "pageTitle": "Husus:KacaHusus"
+        }
+      ]
+    }
+  },
+  "modules": {
+    "chat": {
+      "enabled": true,
+      "project": "wikipedia",
+      "pageTitle": ""
+    }
+  }
+}

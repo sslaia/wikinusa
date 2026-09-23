@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:wikimedia_core/wikimedia_core.dart';
 import '../../../providers/app_state.dart';
+import '../../../providers/modules_provider.dart';
 import '../../../providers/shared_prefs_provider.dart';
 import '../config/chat_module_config.dart';
 import '../models/chat_message.dart';
@@ -51,11 +52,25 @@ final chatTargetProvider = Provider<ChatTargetInfo>((ref) {
   final langCode = ref.watch(languageProvider);
   final project = ref.watch(appStateProvider);
   final prefs = ref.watch(sharedPreferencesProvider);
+  final chatModuleConfig = ref.watch(
+    moduleConfigProvider((moduleKey: 'chat', langCode: langCode)),
+  );
 
   final domain = ChatModuleConfig.getDomain(langCode, project);
-  final pageTitle = ChatModuleConfig.getPageTitle(prefs, langCode, project);
+  final pageTitle = ChatModuleConfig.getPageTitle(
+    prefs,
+    langCode,
+    project,
+    moduleConfigPageTitle: chatModuleConfig?.project == project
+        ? chatModuleConfig?.pageTitle
+        : null,
+  );
   final isCustom =
-      ChatModuleConfig.hasCustomPageTitle(prefs, langCode, project);
+      ChatModuleConfig.hasCustomPageTitle(prefs, langCode, project) ||
+      (chatModuleConfig != null &&
+          chatModuleConfig.pageTitle.isNotEmpty &&
+          chatModuleConfig.pageTitle !=
+              ChatModuleConfig.getDefaultPageTitle(langCode, project));
 
   return ChatTargetInfo(
     langCode: langCode,
@@ -88,6 +103,11 @@ class ChatTopicsNotifier extends AsyncNotifier<List<WikiChatTopic>> {
     final target = ref.watch(chatTargetProvider);
     final api = ref.watch(chatApiServiceProvider);
     final auth = ref.watch(chatAuthAdapterProvider);
+
+    // If pageTitle is empty, don't try to load a non-existent page or listen to SSE
+    if (target.pageTitle.trim().isEmpty) {
+      return const <WikiChatTopic>[];
+    }
 
     // Dispose previous SSE connection
     _sseService?.dispose();
@@ -122,9 +142,14 @@ class ChatTopicsNotifier extends AsyncNotifier<List<WikiChatTopic>> {
 
   /// Manually trigger a refresh
   Future<void> refresh() async {
+    final target = ref.read(chatTargetProvider);
+    if (target.pageTitle.trim().isEmpty) {
+      state = const AsyncValue.data(<WikiChatTopic>[]);
+      return;
+    }
+
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
-      final target = ref.read(chatTargetProvider);
       final api = ref.read(chatApiServiceProvider);
       final auth = ref.read(chatAuthAdapterProvider);
       final token = await auth.getValidAccessToken();

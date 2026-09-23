@@ -29,26 +29,40 @@ class HtmlProcessor {
 
     /// Handle tables
     document.querySelectorAll('table').forEach((table) {
-      // 1. Remove inline width and set to 100%
+      final isInfobox = table.classes.any((c) => c.contains('infobox'));
+      final isNavbox = table.classes.any((c) =>
+          c.contains('navbox') ||
+          c.contains('navbox-inner') ||
+          c.contains('mw-collapsible'));
+      final isAmbox = table.classes.any((c) =>
+          c.contains('ambox') ||
+          c.contains('tmbox') ||
+          c.contains('cmbox') ||
+          c.contains('imbox') ||
+          c.contains('metadata'));
+
       table.attributes.remove('width');
       table.attributes.remove('style');
-      table.attributes['style'] =
-          'width: 100%; border-collapse: collapse; margin: 16px 0;';
+      table.classes.add('wikinusa-table');
 
-      // 2. Create a wrapper div for horizontal scrolling
-      final wrapper = dom.Element.tag('div');
-      wrapper.attributes['style'] =
-          'overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch;';
+      if (isInfobox || isNavbox || isAmbox) {
+        table.attributes['style'] =
+            'width: 100%; border-collapse: collapse; margin: 0;';
+      } else {
+        // Data table: do NOT force width: 100% so columns can size and scroll comfortably
+        table.attributes['style'] = 'border-collapse: collapse; margin: 0;';
 
-      // 3. Insert wrapper into the DOM and move the table inside it
-      table.parentNode?.insertBefore(wrapper, table);
-      wrapper.append(table);
-
-      // 4. Basic cell styling for readability
-      table.querySelectorAll('th, td').forEach((cell) {
-        cell.attributes['style'] =
-            'border: 1px solid #ddd; padding: 8px; text-align: left;';
-      });
+        // Style headers with subtle background, bold text, and balanced min/max width
+        table.querySelectorAll('th').forEach((th) {
+          th.attributes['style'] =
+              'padding: 10px 14px; font-weight: 700; text-align: left; vertical-align: middle; min-width: 90px; max-width: 260px; border: 1px solid rgba(128, 128, 128, 0.25); background-color: rgba(128, 128, 128, 0.08);';
+        });
+        // Style data cells with clean padding, balanced min/max width, and soft divider borders
+        table.querySelectorAll('td').forEach((td) {
+          td.attributes['style'] =
+              'padding: 8px 12px; text-align: left; vertical-align: top; min-width: 70px; max-width: 320px; border: 1px solid rgba(128, 128, 128, 0.18);';
+        });
+      }
     });
 
     final removeSelectors = WikiConfig.getCombinedRulesList(
@@ -74,7 +88,7 @@ class HtmlProcessor {
 
     for (var img in allImages) {
       final src = img.attributes['src'] ?? '';
-      if (!CoreWikiUtils.isIcon(src)) {
+      if (!CoreWikiUtils.isIcon(src, img)) {
         heroElement = img;
         break;
       }
@@ -85,12 +99,7 @@ class HtmlProcessor {
     for (var img in allImages) {
       final src = img.attributes['src'] ?? '';
       if (src.isNotEmpty) {
-        final widthAttr = int.tryParse(img.attributes['width'] ?? '');
-        final heightAttr = int.tryParse(img.attributes['height'] ?? '');
-        final isIcon =
-            (widthAttr != null && widthAttr <= 48) ||
-            (heightAttr != null && heightAttr <= 48) ||
-            CoreWikiUtils.isIcon(src);
+        final isIcon = CoreWikiUtils.isIcon(src, img);
 
         imageTasks.add(
           CoreWikiUtils.optimizeImageUrl(

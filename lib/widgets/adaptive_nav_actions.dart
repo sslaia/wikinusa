@@ -6,6 +6,7 @@ import '../providers/app_state.dart';
 import '../providers/database_provider.dart';
 import '../providers/random_article_provider.dart';
 import '../providers/wiki_api_provider.dart';
+import '../services/connectivity_service.dart';
 import 'shortcuts_bottom_sheet.dart';
 
 class NavAction {
@@ -67,6 +68,7 @@ class AdaptiveNavActions {
           );
           
           ref.invalidate(wikiApiProvider(targetTitle));
+          ref.read(isOnlineProvider.notifier).checkConnectivity();
           
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(

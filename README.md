@@ -1,15 +1,28 @@
 # WikiNusa
 
-An Android app for Nias, Javanese, Indonesian and English Wikipedia as well as for Nias Wiktionary and Wikibooks. Get it from Play Store:
+An Android app for reading and editing Wikipedia, Wiktionary and Wikibooks in Indonesian, local languages and beyond. Get it from Play Store:
 
 <a href="https://play.google.com/store/apps/details?id=io.github.sslaia.wikinusa"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/apps/en-play-badge.png" height="80pt"/></a>
 
 ## Version's history
 
 <!-- WHATS_NEW_START -->
+### New 1.5.8
+
+- Dynamic community registry architecture. Adding new language or wiki project only requires adding its domain and home section selectors in JSON, without modifying core Dart code.
+- Language management UI & expanded regional translation. Users can now enable or disable languages (13 languages in total) in the Settings.
+- Modular & config-driven community features: the interactive modules (WikiChat, Crosswords, Community Newsletter, Language Course and Gallery) can be configured, enabled or disabled from the Settings.
+- Custom hero header images: users can customize the project header banners across wiki projects by choosing images from the Wikimedia Commons
 <!-- WHATS_NEW_END -->
 
-## New 1.5.6
+### New 1.5.7
+
+- Users can write in Teahouse/Warung Kopi/Monganga afo page in a chat-like format
+- Users can now enable/disable modules in their language
+- Removed home widget feature due to KGP breaking changes
+- App theme updates
+
+### New 1.5.6
 
 - Memory usage optimization
 - New newsletter module
@@ -21,58 +34,21 @@ An Android app for Nias, Javanese, Indonesian and English Wikipedia as well as f
 - 16KB ELF page size compatibility
 - ProGuard rules
 
-### New 1.5.4
+## Updating Language Manifests & Translations (OTA Checklist)
 
-- Emergency bug fixes
-- Enhanced offline feature
+When adding a new language or updating existing language manifests and UI translations for Over-The-Air (OTA) distribution without releasing a new app version:
 
-### Version 1.5.3
+1. **Edit or Add Language Files**:
+   - Community manifest: `assets/communities/<lang_code>.json`
+   - UI translations: `assets/translations/<lang_code>.json`
+2. **Update [`assets/communities_index.json`](assets/communities_index.json)**:
+   - **Increment `"version"`** (e.g., `1` &rarr; `2`): **Crucial!** Existing app installations compare this version against their local cache and will skip downloading updates for existing languages if the version is not increased.
+   - **Update `"lastUpdated"`** timestamp (ISO 8601 UTC, e.g. `"2026-09-21T17:35:00Z"`).
+   - **Verify `"languages"` array**: Ensure the language code is present.
+3. **Commit & Push to `main`**:
+   - Once pushed to GitHub, installed WikiNusa apps detect the version bump and automatically download and apply the updated community files on next launch.
 
-- Added native Android home screen widgets (featured article & crossword)
-- Added offline article caching with local SQLite database
-- Improved crosswords module (permanent clues UI & sound effects)
-- Branding & policy compliance updates (Nusapedia)
-
-### Version 1.5.2
-
-- Activated Javanese Wikipedia
-
-### Version 1.5.1
-
-- Updated crosswords module (correct spellings)
-- Resolved keyboard/touch focus issues in editing interface
-- Resolved FAB issues
-- Minor bug fixes
-
-### Version 1.5.0
-
-- New module: crosswords
-- New feature: edit pages using native app editor
-- New feature: Find in page in article's page (with highlighting and auto-scrolling)
-- Improved the Create article form
-- Fixed link handling in language courses
-- Fixed the external link handling
-- Made the core app modular (out into an own package)
-- Improve image loading and search results page
-- Various fixes
-
-### Version 1.1.0
-
-- Fixed: empty shortcuts, pop-up references, portals
-- New modules: Gallery and Nias language course
-- Various fixes improvements
-
-### Version 1.0.0
-
-- Support for Nias, Indonesian and English Wikipedia
-- Full support for Wikipedia, Wikikamus and Wikibuku Nias
-- Users can bookmark pages they like and find them later.
-- Article can be shared, edited or simply viewed on the web.
-- Search directly from the home screen.
-- Users can see footnotes by clicking on its number. The corresponding footnote will be shown in a popup window.
-- There is a special button for shortcuts to the most important places on Wikipedia, Wikikamus and Wikibuku.
-- Intelligent link handling. Local link will be opened normally, but the link to external web pages will be open in a in-app browser.
-- Support for dark/light mode and font size selection.
+> Detailed guides available in [docs/guide-language-en.md](docs/guide-language-en.md) and [docs/guide-language-id.md](docs/guide-language-id.md).
 
 ## Getting the app
 

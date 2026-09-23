@@ -20,12 +20,16 @@ class RandomArticleNotifier extends StateNotifier<bool> {
       final db = ref.read(appDatabaseProvider);
 
       final isOnline = await ConnectivityService.isOnline();
+      ref.read(isOnlineProvider.notifier).setOnline(isOnline);
       String? randomTitle;
       bool isFromOfflineCache = false;
 
       if (isOnline) {
         try {
           randomTitle = await WikiApiService.fetchRandomArticleTitle(langCode, projectStr);
+          if (randomTitle != null) {
+            ref.read(isOnlineProvider.notifier).setOnline(true);
+          }
         } catch (_) {
           // If online fetch fails unexpectedly, fall back to offline
         }

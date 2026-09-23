@@ -7,7 +7,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'localizations/fallback_localizations_delegate.dart';
+import 'localizations/multi_source_asset_loader.dart';
 import 'providers/shared_prefs_provider.dart';
+import 'services/community_sync_service.dart';
 
 import 'providers/theme_provider.dart';
 import 'providers/font_size_provider.dart';
@@ -15,6 +17,7 @@ import 'providers/app_state.dart';
 import 'screens/home_screen.dart';
 import 'screens/onboarding_screen.dart';
 import 'theme/app_theme.dart';
+import 'utils/locale_utils.dart';
 import 'package:wikimedia_core/wikimedia_core.dart';
 
 class WikiHttpOverrides extends HttpOverrides {
@@ -42,17 +45,35 @@ void main() async {
 
   final prefs = await SharedPreferences.getInstance();
 
+  final communitiesDir = await CommunitySyncService.getCommunitiesDirectory();
+  final translationsDir = await CommunitySyncService.getTranslationsDirectory();
+
+  // Initialize CommunityRegistry with local overlay
+  await CommunityRegistry.init(
+    appName: 'wikinusa',
+    prefs: prefs,
+    localDirectoryPath: communitiesDir.path,
+  );
+
+  final savedLang = prefs.getString('selected_language_code');
+  final initialLang = savedLang ?? LocaleUtils.getOnboardingLanguage();
+
   runApp(
     EasyLocalization(
-      supportedLocales: const [
-        Locale('en'),
-        Locale('id'),
-        Locale('nia'),
-        Locale('jv'),
-      ],
-      startLocale: const Locale('id'),
+      supportedLocales: CommunityRegistry.languages.isNotEmpty
+          ? CommunityRegistry.languages.map((l) => Locale(l.code)).toList()
+          : const [
+              Locale('en'),
+              Locale('id'),
+              Locale('nia'),
+              Locale('jv'),
+            ],
+      startLocale: Locale(initialLang),
       fallbackLocale: const Locale('nia'),
       path: 'assets/translations',
+      assetLoader: MultiSourceAssetLoader(
+        localTranslationsDirectory: translationsDir.path,
+      ),
       child: ProviderScope(
         overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
         child: const WikiNusaApp(),

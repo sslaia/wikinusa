@@ -9,11 +9,9 @@ made.<br>
 1) The Nias ornament <em>Ni'oŵeŵemagai</em> 
 is by <strong>Lewi Zega</strong>, the image <em>Woman Reading a Book on Lap</em> 
 by <strong>Prasanna Kumar</strong>, 
-<em>Adu Sarambia</em> by <strong>Eriwanto Harefa</strong>.
+<em>Reading at the garden</em> by <strong>Pedro Ribeiro Simões</strong> and <em>Power of words</em> by <strong>Antonio Litterio</strong>.
 All via Wikimedia Commons. For more details, visit the Wikimedia Terms of Use 
-and the Creative Commons License. 
-3) The Nias ornament <em>Rai</em> is
-by <strong>Sirus Laia</strong> from the private collection.
+and the Creative Commons License.
 ''';
 
 const String licenseNoticeId = '''
@@ -27,10 +25,9 @@ dilakukan.<br>
 1) Ornamen Nias <em>Ni'oŵeŵemagai</em> 
 oleh <strong>Lewi Zega</strong>, gambar <em>Woman Reading a Book on Lap</em> 
 oleh <strong>Prasanna Kumar</strong>, 
-<em>Adu Sarambia</em> oleh <strong>Eriwanto Harefa</strong>.
+<em>Reading at the garden</em> oleh <strong>Pedro Ribeiro Simões</strong> dan <em>Power of words</em> oleh <strong>Antonio Litterio</strong>.
 Semua melalui Wikimedia Commons. Untuk detail lebih lanjut, kunjungi Ketentuan Penggunaan Wikimedia 
-dan Lisensi Creative Commons. 
-3) Ornamen Nias <em>Rai</em> oleh <strong>Sirus Laia</strong> dari koleksi pribadi.
+dan Lisensi Creative Commons.
 ''';
 
 const String licenseNotice = licenseNoticeEn;

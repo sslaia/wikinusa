@@ -23,7 +23,7 @@ class ChatModuleConfig {
       ProjectType.wikibooks: 'Wikibooks:Angkringan',
     },
     'en': {
-      ProjectType.wikipedia: 'Wikipedia:Village_pump_(general)',
+      ProjectType.wikipedia: 'Wikipedia:Teahouse',
       ProjectType.wiktionary: 'Wiktionary:Beer_parlour',
       ProjectType.wikibooks: 'Wikibooks:Staff_lounge',
     },
@@ -31,6 +31,10 @@ class ChatModuleConfig {
 
   /// Returns the default community discussion page for a given language & project.
   static String getDefaultPageTitle(String langCode, ProjectType project) {
+    if (CommunityRegistry.isInitialized) {
+      final title = CommunityRegistry.getChatPageTitle(langCode, project);
+      return title;
+    }
     final langPages = _defaultTalkPages[langCode.toLowerCase()];
     if (langPages != null && langPages.containsKey(project)) {
       return langPages[project]!;
@@ -55,12 +59,26 @@ class ChatModuleConfig {
   static String getPageTitle(
     SharedPreferences? prefs,
     String langCode,
-    ProjectType project,
-  ) {
+    ProjectType project, {
+    String? moduleConfigPageTitle,
+  }) {
     if (prefs != null) {
       final custom = prefs.getString(_prefsKey(langCode, project));
       if (custom != null && custom.trim().isNotEmpty) {
         return custom.trim();
+      }
+    }
+    if (moduleConfigPageTitle != null) {
+      return moduleConfigPageTitle.trim();
+    }
+    if (CommunityRegistry.isInitialized) {
+      final chatMod = CommunityRegistry.getLanguage(langCode)?.modules['chat'];
+      if (chatMod != null && chatMod.project == project) {
+        return chatMod.pageTitle.trim();
+      }
+      final projConfig = CommunityRegistry.getProject(langCode, project);
+      if (projConfig?.chatPageTitle != null) {
+        return projConfig!.chatPageTitle!.trim();
       }
     }
     return getDefaultPageTitle(langCode, project);

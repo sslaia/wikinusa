@@ -189,8 +189,11 @@ class WikiUtils {
 
   static Widget? customWidgetBuilder(
     BuildContext context,
-    dom.Element element,
-  ) {
+    dom.Element element, {
+    void Function(String)? onTapUrl,
+    TextStyle? textStyle,
+    List<String>? fontFallbacks,
+  }) {
     // Check if current element or any parent is marked as hidden
     if (_isHidden(element)) return const SizedBox.shrink();
 
@@ -375,7 +378,8 @@ class WikiUtils {
           if (child is dom.Element &&
               (child.localName == 'script' ||
                   child.localName == 'style' ||
-                  child.localName == 'a' && child.attributes['id'] == 'search-match')) {
+                  child.localName == 'a' &&
+                      child.attributes['id'] == 'search-match')) {
             continue;
           }
           traverse(child);
@@ -401,8 +405,30 @@ extension ProjectTypeDisplayNameExtension on ProjectType {
       switch (langCode.toLowerCase()) {
         case 'nia':
           return 'Niaspedia';
+        case 'bew':
+          return 'Betawipedia';
+        case 'bbc':
+          return 'Batakpedia';
+        case 'bjn':
+          return 'Banjarpedia';
+        case 'btm':
+          return 'Mandailingpedia';
+        case 'en':
+          return 'Englishpedia';
+        case 'gor':
+          return 'Gorontalopedia';
+        case 'id':
+          return 'Nusapedia';
         case 'jv':
           return 'Jawapedia';
+        case 'mad':
+          return 'Madurapedia';
+        case 'min':
+          return 'Minangpedia';
+        case 'ms':
+          return 'Melayupedia';
+        case 'su':
+          return 'Sundapedia';
         default:
           return 'Nusapedia';
       }

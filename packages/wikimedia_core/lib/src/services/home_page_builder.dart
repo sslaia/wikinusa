@@ -5,6 +5,7 @@ import '../models/home_page_section.dart';
 import '../models/project_type.dart';
 import '../utils/wiki_utils.dart';
 import '../core/wiki_config.dart';
+import '../core/community_registry.dart';
 
 class HomePageBuilder {
   static Future<List<HomePageSection>> build(
@@ -34,13 +35,16 @@ class HomePageBuilder {
     );
 
     final projectRules = WikiConfig.getRules(languageCode, projectStr);
-    final sectionsConfig =
+    final registrySections = CommunityRegistry.isInitialized
+        ? CommunityRegistry.getHomePageSections(languageCode, project)
+        : null;
+    final rulesSections =
         projectRules?['homePageSections'] as Map<String, dynamic>?;
 
     List<HomePageSection> sections = [];
 
-    if (sectionsConfig != null) {
-      for (final entry in sectionsConfig.entries) {
+    Future<void> extractFromConfig(Map<String, dynamic> configMap) async {
+      for (final entry in configMap.entries) {
         final titleKey = entry.key;
         final dynamic config = entry.value;
 
@@ -64,7 +68,24 @@ class HomePageBuilder {
             ? selector
             : '#$selector';
 
-        final element = document.querySelector(finalSelector);
+        dom.Element? element = document.querySelector(finalSelector);
+
+        // Resilient fallback for mp- vs mf- prefix differences
+        if (element == null) {
+          if (finalSelector.startsWith('#mp-')) {
+            element =
+                document.querySelector('#mf-${finalSelector.substring(4)}');
+          } else if (finalSelector.startsWith('#mf-')) {
+            element =
+                document.querySelector('#mp-${finalSelector.substring(4)}');
+          } else if (finalSelector.startsWith('.mp-')) {
+            element =
+                document.querySelector('.mf-${finalSelector.substring(4)}');
+          } else if (finalSelector.startsWith('.mf-')) {
+            element =
+                document.querySelector('.mp-${finalSelector.substring(4)}');
+          }
+        }
 
         if (element != null) {
           sections.add(
@@ -82,6 +103,11 @@ class HomePageBuilder {
           );
         }
       }
+    }
+
+    final homeSections = registrySections ?? rulesSections;
+    if (homeSections != null && homeSections.isNotEmpty) {
+      await extractFromConfig(homeSections);
     }
 
     /// Enhanced Fallback Logic for Wiktionary and pages with different structures
@@ -162,7 +188,7 @@ class HomePageBuilder {
 
     for (var img in allImages) {
       final src = img.attributes['src'] ?? '';
-      if (!CoreWikiUtils.isIcon(src)) {
+      if (!CoreWikiUtils.isIcon(src, img)) {
         validImg = img;
         break;
       }
@@ -190,7 +216,21 @@ class HomePageBuilder {
           'width: 100%; height: auto; display: block; border-radius: 12px;';
 
       imageHtml = imgClone.outerHtml;
-      validImg.remove();
+      dom.Element parent = validImg;
+      while (parent.parent != null && parent.parent != element) {
+        final parentTag = parent.parent!.localName;
+        if (parentTag == 'span' ||
+            parentTag == 'figure' ||
+            parentTag == 'a' ||
+            (parentTag == 'div' &&
+                (parent.parent!.classes.contains('image') ||
+                    parent.parent!.attributes['style']?.contains('float') == true))) {
+          parent = parent.parent!;
+        } else {
+          break;
+        }
+      }
+      parent.remove();
     }
 
     /// Apply removals
@@ -306,7 +346,7 @@ class HomePageBuilder {
         final width = int.tryParse(widthStr) ?? 100;
         if (width >= 100) {
           final src = img.attributes['src'] ?? '';
-          if (!CoreWikiUtils.isIcon(src)) {
+          if (!CoreWikiUtils.isIcon(src, img)) {
             validImg = img;
             break;
           }

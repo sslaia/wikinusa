@@ -1,0 +1,104 @@
+{
+  "code": "en",
+  "name": "English",
+  "englishName": "English",
+  "direction": "ltr",
+  "experimental": true,
+  "projects": {
+    "wikipedia": {
+      "enabled": true,
+      "displayName": "Wikipedia",
+      "domain": "en.wikipedia.org",
+      "apiPrefix": "",
+      "mainPageTitle": "Main_Page",
+      "chatPageTitle": "Wikipedia:Teahouse",
+      "homePageSections": {
+        "featuredArticle": {
+          "selector": "mp-tfa",
+          "keep": "p",
+          "firstOnly": true
+        },
+        "featuredImage": {
+          "selector": "mp-tfp",
+          "keep": "p",
+          "firstOnly": true
+        },
+        "doYouKnow": {
+          "selector": "mp-dyk",
+          "keep": "ul",
+          "firstOnly": true
+        },
+        "inTheNews": {
+          "selector": "mp-itn",
+          "keep": "ul",
+          "firstOnly": true
+        },
+        "onThisDay": {
+          "selector": "mp-otd",
+          "keep": [
+            "p",
+            "ul"
+          ],
+          "firstOnly": true
+        },
+        "featuredList": {
+          "selector": "mp-tfl",
+          "keep": "p",
+          "firstOnly": true
+        }
+      },
+      "portals": [],
+      "shortcuts": [
+        {
+          "icon": "history",
+          "title": "Recent changes",
+          "pageTitle": "Special:RecentChanges"
+        },
+        {
+          "icon": "chat_bubble_outlined",
+          "title": "Teahouse",
+          "pageTitle": "Wikipedia:Teahouse"
+        },
+        {
+          "icon": "help_outline",
+          "title": "Help desk",
+          "pageTitle": "Wikipedia:Help_desk"
+        },
+        {
+          "icon": "pages_outlined",
+          "title": "Special pages",
+          "pageTitle": "Special:SpecialPages"
+        }
+      ]
+    }
+  },
+  "modules": {
+    "crosswords": {
+      "enabled": false,
+      "project": "wiktionary",
+      "dataFile": "assets/data/en_crosswords.json",
+      "pageTitle": "Wiktionary:Crosswords"
+    },
+    "course": {
+      "enabled": false,
+      "project": "wiktionary",
+      "pageTitle": "Wiktionary:Course"
+    },
+    "gallery": {
+      "enabled": false,
+      "project": "wikipedia",
+      "dataFile": "assets/data/en_gallery.json",
+      "pageTitle": "Wikipedia:Gallery"
+    },
+    "newsletter": {
+      "enabled": false,
+      "project": "wikipedia",
+      "pageTitle": "Wikipedia:Wikipedia_Signpost"
+    },
+    "chat": {
+      "enabled": true,
+      "project": "wikipedia",
+      "pageTitle": "Wikipedia:Teahouse"
+    }
+  }
+}

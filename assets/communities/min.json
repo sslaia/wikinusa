@@ -1,0 +1,106 @@
+{
+  "code": "min",
+  "name": "Baso Minangkabau",
+  "englishName": "Minangkabau",
+  "direction": "ltr",
+  "experimental": true,
+  "projects": {
+    "wikipedia": {
+      "enabled": true,
+      "displayName": "Wikipedia",
+      "domain": "min.wikipedia.org",
+      "apiPrefix": "",
+      "mainPageTitle": "Laman Utamo",
+      "chatPageTitle": "Wikipedia:Kadai_Kopi",
+      "homePageSections": {
+        "featuredArticle": "mf-fa",
+        "inTheNews": "mf-itn",
+        "doYouKnow": "mf-dyk",
+        "onThisDay": "mf-otd",
+        "featuredImage": "mf-fp",
+        "sisterProjects": "mwCw"
+      },
+      "portals": [
+        {
+          "label": "portal_religion",
+          "title": "Portal:Islam"
+        },
+        {
+          "label": "portal_technology",
+          "title": "Portal:Teknologi"
+        }
+      ],
+      "shortcuts": [
+        {
+          "icon": "history",
+          "title": "Parubahan baru",
+          "pageTitle": "Istimewa:Parubahan_baru"
+        },
+        {
+          "icon": "chat_bubble_outlined",
+          "title": "Kadai Kopi",
+          "pageTitle": "Wikipedia:Kadai_Kopi"
+        },
+        {
+          "icon": "pages_outlined",
+          "title": "Laman istimewa",
+          "pageTitle": "Istimewa:Laman_istimewa"
+        }
+      ]
+    },
+    "wiktionary": {
+      "enabled": false,
+      "displayName": "Wikikato",
+      "domain": "min.wiktionary.org",
+      "apiPrefix": "",
+      "mainPageTitle": "Wikikato:Laman Utamo",
+      "chatPageTitle": "Wikikato:Kadai_Kopi",
+      "portals": [],
+      "shortcuts": [
+        {
+          "icon": "history",
+          "title": "Parubahan baru",
+          "pageTitle": "Istimewa:Parubahan_baru"
+        },
+        {
+          "icon": "pages_outlined",
+          "title": "Laman istimewa",
+          "pageTitle": "Istimewa:Laman_istimewa"
+        }
+      ]
+    },
+    "wikibooks": {
+      "enabled": false,
+      "displayName": "Wikibooks",
+      "domain": "incubator.wikimedia.org",
+      "apiPrefix": "Wb/min/",
+      "mainPageTitle": "Laman Utamo",
+      "chatPageTitle": "Wikibooks:Kadai_Kopi",
+      "portals": [],
+      "shortcuts": []
+    }
+  },
+  "modules": {
+    "crosswords": {
+      "enabled": false,
+      "project": "wiktionary"
+    },
+    "course": {
+      "enabled": false,
+      "project": "wiktionary"
+    },
+    "gallery": {
+      "enabled": false,
+      "project": "wikipedia"
+    },
+    "newsletter": {
+      "enabled": false,
+      "project": "wikipedia"
+    },
+    "chat": {
+      "enabled": true,
+      "project": "wikipedia",
+      "pageTitle": "Wikipedia:Kadai_Kopi"
+    }
+  }
+}

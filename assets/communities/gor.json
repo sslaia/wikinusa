@@ -1,0 +1,63 @@
+{
+  "code": "gor",
+  "name": "Bahasa Hulontalo",
+  "englishName": "Gorontalo",
+  "direction": "ltr",
+  "experimental": true,
+  "projects": {
+    "wikipedia": {
+      "enabled": true,
+      "displayName": "Wikipedia",
+      "domain": "gor.wikipedia.org",
+      "apiPrefix": "",
+      "mainPageTitle": "Halaman Bungaliyo",
+      "chatPageTitle": "Wikipedia:Būbu'a_lēmbo'a",
+      "portals": [],
+      "shortcuts": [
+        {
+          "icon": "history",
+          "title": "Bayaliya bohu",
+          "pageTitle": "Istimiwa:Bayaliya_bohu"
+        },
+        {
+          "icon": "chat_bubble_outlined",
+          "title": "Būbu'a lēmbo'a",
+          "pageTitle": "Wikipedia:Būbu'a_lēmbo'a"
+        },
+        {
+          "icon": "pages_outlined",
+          "title": "Halaman istimiwa",
+          "pageTitle": "Istimiwa:Halaman_istimiwa"
+        }
+      ]
+    },
+    "wiktionary": {
+      "enabled": false,
+      "displayName": "Wikikamus",
+      "domain": "gor.wiktionary.org",
+      "apiPrefix": "",
+      "mainPageTitle": "Palepelo",
+      "chatPageTitle": "Wikikamus:Būbu'a_lēmbo'a",
+      "portals": [],
+      "shortcuts": [
+        {
+          "icon": "history",
+          "title": "Bayaliya bohu",
+          "pageTitle": "Istimiwa:Bayaliya_bohu"
+        },
+        {
+          "icon": "pages_outlined",
+          "title": "Halaman istimiwa",
+          "pageTitle": "Istimiwa:Halaman_istimiwa"
+        }
+      ]
+    }
+  },
+  "modules": {
+    "chat": {
+      "enabled": true,
+      "project": "wikipedia",
+      "pageTitle": "Wikipedia:Būbu'a_lēmbo'a"
+    }
+  }
+}

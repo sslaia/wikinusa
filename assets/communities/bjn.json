@@ -1,0 +1,68 @@
+{
+  "code": "bjn",
+  "name": "Bahasa Banjar",
+  "englishName": "Banjarese",
+  "direction": "ltr",
+  "experimental": true,
+  "projects": {
+    "wikipedia": {
+      "enabled": true,
+      "displayName": "Wikipidia",
+      "domain": "bjn.wikipedia.org",
+      "apiPrefix": "",
+      "mainPageTitle": "Laman Tatambaian",
+      "chatPageTitle": "Wikipidia:Warung_Kupi",
+      "homePageSections": {
+        "featuredArticle": "mp-tfa",
+        "inTheNews": "mp-itn",
+        "doYouKnow": "mp-dyk"
+      },
+      "portals": [],
+      "shortcuts": [
+        {
+          "icon": "history",
+          "title": "Paubahan pahanyarnya",
+          "pageTitle": "Istimiwa:Paubahan_pahanyarnya"
+        },
+        {
+          "icon": "chat_bubble_outlined",
+          "title": "Warung Kupi",
+          "pageTitle": "Wikipidia:Warung_Kupi"
+        },
+        {
+          "icon": "pages_outlined",
+          "title": "Tungkaran istimiwa",
+          "pageTitle": "Istimiwa:Tungkaran_istimiwa"
+        }
+      ]
+    },
+    "wiktionary": {
+      "enabled": false,
+      "displayName": "Wiktionary",
+      "domain": "bjn.wiktionary.org",
+      "apiPrefix": "",
+      "mainPageTitle": "Laman Tatambaian",
+      "chatPageTitle": "Wiktionary:Warung_Kupi",
+      "portals": [],
+      "shortcuts": [
+        {
+          "icon": "history",
+          "title": "Paubahan pahanyarnya",
+          "pageTitle": "Istimiwa:Paubahan_pahanyarnya"
+        },
+        {
+          "icon": "pages_outlined",
+          "title": "Tungkaran istimiwa",
+          "pageTitle": "Istimiwa:Tungkaran_istimiwa"
+        }
+      ]
+    }
+  },
+  "modules": {
+    "chat": {
+      "enabled": true,
+      "project": "wikipedia",
+      "pageTitle": "Wikipidia:Warung_Kupi"
+    }
+  }
+}

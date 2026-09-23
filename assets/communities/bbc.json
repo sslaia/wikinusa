@@ -1,0 +1,42 @@
+{
+  "code": "bbc",
+  "name": "Hata Batak Toba",
+  "englishName": "Batak Toba",
+  "direction": "ltr",
+  "experimental": true,
+  "projects": {
+    "wikipedia": {
+      "enabled": true,
+      "displayName": "Wikipedia",
+      "domain": "bbc.wikipedia.org",
+      "apiPrefix": "",
+      "mainPageTitle": "Harbangan ni punguan",
+      "chatPageTitle": "Wikipedia:Sopo_Partungkoan",
+      "portals": [],
+      "shortcuts": [
+        {
+          "icon": "history",
+          "title": "Pangarobahan na imbaru",
+          "pageTitle": "Spesial:Perubahan_terbaru"
+        },
+        {
+          "icon": "chat_bubble_outlined",
+          "title": "Sopo Partungkoan",
+          "pageTitle": "Wikipedia:Sopo_Partungkoan"
+        },
+        {
+          "icon": "pages_outlined",
+          "title": "Alaman na marhasurungan",
+          "pageTitle": "Spesial:Halaman_istimewa"
+        }
+      ]
+    }
+  },
+  "modules": {
+    "chat": {
+      "enabled": true,
+      "project": "wikipedia",
+      "pageTitle": "Wikipedia:Harbangan ni punguan"
+    }
+  }
+}

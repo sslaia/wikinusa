@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wikimedia_core/wikimedia_core.dart';
+
 class ArticleHeroImage extends StatelessWidget {
   const ArticleHeroImage({
     super.key,
@@ -7,17 +8,28 @@ class ArticleHeroImage extends StatelessWidget {
     required this.title,
     required this.imageUrl,
     required this.project,
+    this.customHeroUrl,
   });
 
   final ThemeData theme;
   final String title;
   final String imageUrl;
   final ProjectType project;
+  final String? customHeroUrl;
 
   @override
   Widget build(BuildContext context) {
     final isDark = theme.brightness == Brightness.dark;
     final iconColor = project.getThemedColor(isDark);
+
+    final hasArticleImage = imageUrl.isNotEmpty && !CoreWikiUtils.isIcon(imageUrl);
+    final effectiveImageUrl = hasArticleImage
+        ? imageUrl
+        : (customHeroUrl != null &&
+                customHeroUrl!.isNotEmpty &&
+                !CoreWikiUtils.isIcon(customHeroUrl!)
+            ? customHeroUrl
+            : null);
 
     return Stack(
       children: [
@@ -25,9 +37,9 @@ class ArticleHeroImage extends StatelessWidget {
           height: 350,
           width: double.infinity,
           color: theme.colorScheme.surface,
-          child: imageUrl.isNotEmpty
+          child: effectiveImageUrl != null
               ? Image.network(
-                  imageUrl,
+                  effectiveImageUrl,
                   fit: BoxFit.cover,
                   headers: WikiConfig.uaHeaders,
                   loadingBuilder: (context, child, loadingProgress) {

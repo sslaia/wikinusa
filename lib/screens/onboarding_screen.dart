@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:wikimedia_core/wikimedia_core.dart';
 import '../providers/app_state.dart';
 import '../providers/onboarding_provider.dart';
+import '../providers/shared_prefs_provider.dart';
+import '../utils/locale_utils.dart';
 import '../utils/responsive_utils.dart';
 import 'home_screen.dart';
 
@@ -56,7 +58,36 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       imagePath: 'assets/images/onboarding6.webp',
       color: const Color(0xFFFF5722), // Orange
     ),
+    OnboardingData(
+      titleKey: 'onboarding_title_7',
+      descKey: 'onboarding_desc_7',
+      imagePath: 'assets/images/onboarding7.webp',
+      color: const Color(0xFF121298), // Blue
+    ),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _ensureOnboardingLocale();
+    });
+  }
+
+  void _ensureOnboardingLocale() {
+    if (!mounted) return;
+    final prefs = ref.read(sharedPreferencesProvider);
+    final isCompleted = prefs.getBool('onboarding_completed') ?? false;
+    final savedLang = prefs.getString('selected_language_code');
+
+    if (!isCompleted && savedLang == null) {
+      final initialLang = LocaleUtils.getOnboardingLanguage();
+      if (context.locale.languageCode != initialLang) {
+        context.setLocale(Locale(initialLang));
+      }
+      ref.read(languageProvider.notifier).setLanguage(initialLang);
+    }
+  }
 
   @override
   void dispose() {
@@ -359,6 +390,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   Future<void> _complete(WidgetRef ref, BuildContext context) async {
     final currentLang = ref.read(languageProvider);
+    ref.read(languageProvider.notifier).setLanguage(currentLang);
 
     // Ensure project is always set to Wikipedia on completion
     ref.read(appStateProvider.notifier).setProject(ProjectType.wikipedia, currentLang);
@@ -408,22 +440,33 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           ],
         ),
       ),
-      itemBuilder: (context) => [
-        PopupMenuItem(value: 'id', child: Text('indonesian'.tr())),
-        PopupMenuItem(value: 'en', child: Text('english'.tr())),
-        PopupMenuItem(value: 'nia', child: Text('nias'.tr())),
-        PopupMenuItem(value: 'jv', child: Text('javanese'.tr())),
-      ],
+      itemBuilder: (context) {
+        if (CommunityRegistry.isInitialized && CommunityRegistry.languages.isNotEmpty) {
+          return CommunityRegistry.languages.map((l) {
+            return PopupMenuItem(
+              value: l.code,
+              child: Text(_getLanguageName(l.code)),
+            );
+          }).toList();
+        }
+        return [
+          PopupMenuItem(value: 'id', child: Text('indonesian'.tr())),
+          PopupMenuItem(value: 'en', child: Text('english'.tr())),
+          PopupMenuItem(value: 'nia', child: Text('nias'.tr())),
+          PopupMenuItem(value: 'jv', child: Text('javanese'.tr())),
+        ];
+      },
     );
   }
 
   String _getLanguageName(String code) {
+    final langConfig = CommunityRegistry.getLanguage(code);
     switch (code) {
       case 'id': return 'indonesian'.tr();
       case 'en': return 'english'.tr();
       case 'nia': return 'nias'.tr();
       case 'jv': return 'javanese'.tr();
-      default: return code.toUpperCase();
+      default: return langConfig?.name.isNotEmpty == true ? langConfig!.name : code.toUpperCase();
     }
   }
 }

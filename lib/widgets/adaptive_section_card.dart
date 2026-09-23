@@ -25,6 +25,15 @@ class AdaptiveSectionCard extends ConsumerWidget {
     final isCompactPortrait = ResponsiveUtils.isCompact(context) && ResponsiveUtils.isPortrait(context);
     final langCode = ref.watch(languageProvider);
     
+    final imageUrl = section.imageUrl;
+    final hasValidImage = (imageUrl != null &&
+            imageUrl.isNotEmpty &&
+            !CoreWikiUtils.isIcon(imageUrl)) ||
+        (section.imageHtml != null &&
+            (imageUrl == null ||
+                (imageUrl.isNotEmpty &&
+                    !CoreWikiUtils.isIcon(imageUrl))));
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -50,37 +59,23 @@ class AdaptiveSectionCard extends ConsumerWidget {
           ),
           margin: const EdgeInsets.only(bottom: 24),
           child: isCompactPortrait 
-              ? _buildVerticalLayout(context, langCode) 
-              : _buildHorizontalLayout(context, langCode),
+              ? _buildVerticalLayout(context, langCode, hasValidImage) 
+              : _buildHorizontalLayout(context, langCode, hasValidImage),
         ),
       ],
     );
   }
 
-  Widget _buildVerticalLayout(BuildContext context, String langCode) {
+  Widget _buildVerticalLayout(
+    BuildContext context,
+    String langCode,
+    bool hasValidImage,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (section.imageHtml != null)
-          /// Make the image clickable on HomeScreen
-          GestureDetector(
-            onTap: () {
-              if (section.imageUrl != null) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => ImageScreen(
-                      imagePath: section.imageUrl!,
-                    ),
-                  ),
-                );
-              }
-            },
-            child: HtmlWidget(
-              section.imageHtml!,
-              onTapUrl: (url) => WikiUtils.handleTapUrl(context, url, null, project, langCode),
-            ),
-          ),
+        if (hasValidImage)
+          _buildSectionImage(context, langCode, isVertical: true),
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: _buildBodyText(context, langCode),
@@ -89,36 +84,24 @@ class AdaptiveSectionCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildHorizontalLayout(BuildContext context, String langCode) {
+  Widget _buildHorizontalLayout(
+    BuildContext context,
+    String langCode,
+    bool hasValidImage,
+  ) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        if (section.imageHtml != null)
+        if (hasValidImage)
           Expanded(
             flex: 2,
-            child: GestureDetector(
-              onTap: () {
-                if (section.imageUrl != null) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ImageScreen(
-                        imagePath: section.imageUrl!,
-                      ),
-                    ),
-                  );
-                }
-              },
-              child: Center(
-                child: HtmlWidget(
-                  section.imageHtml!,
-                  onTapUrl: (url) => WikiUtils.handleTapUrl(context, url, null, project, langCode),
-                ),
-              ),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: _buildSectionImage(context, langCode, isVertical: false),
             ),
           ),
         Expanded(
-          flex: 3,
+          flex: hasValidImage ? 3 : 1,
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: _buildBodyText(context, langCode),
@@ -126,6 +109,92 @@ class AdaptiveSectionCard extends ConsumerWidget {
         ),
       ],
     );
+  }
+
+  Widget _buildSectionImage(
+    BuildContext context,
+    String langCode, {
+    required bool isVertical,
+  }) {
+    final imageUrl = section.imageUrl;
+    if (imageUrl != null && imageUrl.isNotEmpty && !CoreWikiUtils.isIcon(imageUrl)) {
+      return GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ImageScreen(
+                imagePath: imageUrl,
+              ),
+            ),
+          );
+        },
+        child: ClipRRect(
+          borderRadius: isVertical
+              ? const BorderRadius.vertical(top: Radius.circular(12))
+              : BorderRadius.circular(8),
+          child: Image.network(
+            imageUrl,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: isVertical ? 200 : 140,
+            headers: WikiConfig.uaHeaders,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Container(
+                height: isVertical ? 200 : 140,
+                width: double.infinity,
+                color: Theme.of(context)
+                    .colorScheme
+                    .surfaceContainerHighest
+                    .withValues(alpha: 0.3),
+                child: const Center(
+                  child: SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                ),
+              );
+            },
+            errorBuilder: (context, error, stackTrace) {
+              if (section.imageHtml != null && section.imageHtml!.isNotEmpty) {
+                return HtmlWidget(
+                  section.imageHtml!,
+                  onTapUrl: (url) =>
+                      WikiUtils.handleTapUrl(context, url, null, project, langCode),
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      );
+    }
+
+    if (section.imageHtml != null && section.imageHtml!.isNotEmpty) {
+      return GestureDetector(
+        onTap: () {
+          if (imageUrl != null && imageUrl.isNotEmpty) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ImageScreen(
+                  imagePath: imageUrl,
+                ),
+              ),
+            );
+          }
+        },
+        child: HtmlWidget(
+          section.imageHtml!,
+          onTapUrl: (url) =>
+              WikiUtils.handleTapUrl(context, url, null, project, langCode),
+        ),
+      );
+    }
+
+    return const SizedBox.shrink();
   }
 
   Widget _buildBodyText(BuildContext context, String langCode) {

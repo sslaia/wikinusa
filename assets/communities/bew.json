@@ -1,0 +1,66 @@
+{
+  "code": "bew",
+  "name": "Bahasa Betawi",
+  "englishName": "Betawi",
+  "direction": "ltr",
+  "experimental": true,
+  "projects": {
+    "wikipedia": {
+      "enabled": true,
+      "displayName": "Wikipédi",
+      "domain": "bew.wikipedia.org",
+      "apiPrefix": "",
+      "mainPageTitle": "Balé-balé",
+      "chatPageTitle": "Wikipédi:Kaca-kaca jema'ah",
+      "referenceKeywords": [
+        "ruju'an"
+      ],
+      "portals": [],
+      "shortcuts": [
+        {
+          "icon": "history",
+          "title": "Perubahan terbaru",
+          "pageTitle": "Istimèwa:Perubahan_terbaru"
+        },
+        {
+          "icon": "chat_bubble_outlined",
+          "title": "Kaca-kaca jema'ah",
+          "pageTitle": "Wikipédi:Kaca-kaca jema'ah"
+        },
+        {
+          "icon": "pages_outlined",
+          "title": "Halaman Istimèwa",
+          "pageTitle": "Istimèwa:Halaman_istimewa"
+        }
+      ]
+    },
+    "wiktionary": {
+      "enabled": false,
+      "displayName": "Wikikamus",
+      "domain": "bew.wiktionary.org",
+      "apiPrefix": "",
+      "mainPageTitle": "Wikikamus:Balé-balé",
+      "chatPageTitle": "",
+      "portals": [],
+      "shortcuts": [
+        {
+          "icon": "history",
+          "title": "Perubahan terbaru",
+          "pageTitle": "Istimèwa:Perubahan_terbaru"
+        },
+        {
+          "icon": "pages_outlined",
+          "title": "Halaman Istimèwa",
+          "pageTitle": "Istimèwa:Halaman_istimewa"
+        }
+      ]
+    }
+  },
+  "modules": {
+    "chat": {
+      "enabled": false,
+      "project": "wikipedia",
+      "pageTitle": "Wikipédi:Kaca-kaca jema'ah"
+    }
+  }
+}

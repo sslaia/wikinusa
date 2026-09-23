@@ -52,6 +52,9 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
     });
 
     final isOnline = await ConnectivityService.isOnline();
+    if (mounted) {
+      ref.read(isOnlineProvider.notifier).setOnline(isOnline);
+    }
     if (!isOnline && !isLoadMore) {
       await _fetchLocalResults();
       return;

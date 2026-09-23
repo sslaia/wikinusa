@@ -1,6 +1,8 @@
 export 'src/core/wiki_config.dart';
+export 'src/core/community_registry.dart';
 export 'src/models/home_page_section.dart';
 export 'src/models/project_type.dart';
+export 'src/models/community_manifest.dart';
 export 'src/services/home_page_builder.dart';
 export 'src/services/html_processor.dart';
 export 'src/services/wiki_api_service.dart';

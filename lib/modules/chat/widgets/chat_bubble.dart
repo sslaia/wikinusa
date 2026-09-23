@@ -185,7 +185,17 @@ class ChatBubble extends StatelessWidget {
                   onTapUrl: (url) async {
                     final uri = Uri.tryParse(url);
                     if (uri != null) {
-                      await launchUrl(uri, mode: LaunchMode.externalApplication);
+                      try {
+                        final launched = await launchUrl(
+                          uri,
+                          mode: LaunchMode.inAppBrowserView,
+                        );
+                        if (!launched) {
+                          await launchUrl(uri, mode: LaunchMode.platformDefault);
+                        }
+                      } catch (_) {
+                        await launchUrl(uri, mode: LaunchMode.platformDefault);
+                      }
                     }
                     return true;
                   },

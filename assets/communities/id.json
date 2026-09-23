@@ -1,0 +1,219 @@
+{
+  "code": "id",
+  "name": "Bahasa Indonesia",
+  "englishName": "Indonesian",
+  "direction": "ltr",
+  "projects": {
+    "wikipedia": {
+      "enabled": true,
+      "displayName": "Nusapedia",
+      "domain": "id.wikipedia.org",
+      "apiPrefix": "",
+      "mainPageTitle": "Halaman_Utama",
+      "chatPageTitle": "Wikipedia:Warung_Kopi_(Semua)",
+      "homePageSections": {
+        "featuredArticle": {
+          "selector": "mf-artikelpilihan",
+          "keep": "p",
+          "firstOnly": true
+        },
+        "doYouKnow": {
+          "selector": "mf-tahukahanda",
+          "keep": "ul",
+          "firstOnly": true
+        },
+        "inTheNews": {
+          "selector": "mf-peristiwaterkini",
+          "keep": "ul",
+          "firstOnly": true
+        },
+        "onThisDay": {
+          "selector": "mf-hids",
+          "keep": [
+            "p",
+            "ul"
+          ],
+          "firstOnly": true
+        },
+        "featuredImage": {
+          "selector": "mf-gambarpilihan",
+          "keep": "div",
+          "firstOnly": true,
+          "stripStyle": true
+        }
+      },
+      "portals": [
+        {
+          "label": "portal_biography",
+          "title": "Portal:Biografi"
+        },
+        {
+          "label": "portal_geography",
+          "title": "Portal:Geografi"
+        },
+        {
+          "label": "portal_chemistry",
+          "title": "Portal:Kimia"
+        },
+        {
+          "label": "portal_community",
+          "title": "Portal:Komunitas"
+        },
+        {
+          "label": "portal_science",
+          "title": "Portal:Ilmu"
+        },
+        {
+          "label": "portal_history",
+          "title": "Portal:Sejarah"
+        },
+        {
+          "label": "portal_arts",
+          "title": "Portal:Seni"
+        },
+        {
+          "label": "portal_technology",
+          "title": "Portal:Teknologi"
+        }
+      ],
+      "shortcuts": [
+        {
+          "icon": "history",
+          "title": "Perubahan terbaru",
+          "pageTitle": "Istimewa:Perubahan_terbaru"
+        },
+        {
+          "icon": "construction_outlined",
+          "title": "Bak pasir",
+          "pageTitle": "Wikipedia:Bak_pasir"
+        },
+        {
+          "icon": "pages_outlined",
+          "title": "Halaman istimewa",
+          "pageTitle": "Istimewa:Halaman_istimewa"
+        }
+      ]
+    },
+    "wiktionary": {
+      "enabled": false,
+      "displayName": "Wikikamus",
+      "domain": "id.wiktionary.org",
+      "apiPrefix": "",
+      "mainPageTitle": "Wikikamus:Halaman_Utama",
+      "chatPageTitle": "Wikikamus:Warung_Kopi",
+      "homePageSections": {
+        "featuredWord": {
+          "selector": "mf-lematerpilih",
+          "keep": "p",
+          "firstOnly": true
+        },
+        "doYouKnow": {
+          "selector": "mf-tahukahanda",
+          "keep": "ul",
+          "firstOnly": true
+        },
+        "newWords": {
+          "selector": "mf-lemabaru",
+          "keep": "ul",
+          "firstOnly": true
+        }
+      },
+      "portals": [],
+      "shortcuts": [
+        {
+          "icon": "history",
+          "title": "Perubahan terbaru",
+          "pageTitle": "Istimewa:Perubahan_terbaru"
+        },
+        {
+          "icon": "chat_bubble_outlined",
+          "title": "Warung kopi",
+          "pageTitle": "Wikikamus:Warung_Kopi"
+        },
+        {
+          "icon": "construction_outlined",
+          "title": "Bak pasir",
+          "pageTitle": "Wikikamus:Bak_pasir"
+        },
+        {
+          "icon": "help_outline",
+          "title": "Bantuan",
+          "pageTitle": "Bantuan:Isi"
+        },
+        {
+          "icon": "pages_outlined",
+          "title": "Halaman istimewa",
+          "pageTitle": "Istimewa:Halaman_istimewa"
+        }
+      ]
+    },
+    "wikibooks": {
+      "enabled": false,
+      "displayName": "Wikibuku",
+      "domain": "id.wikibooks.org",
+      "apiPrefix": "",
+      "mainPageTitle": "Halaman_Utama",
+      "chatPageTitle": "Wikibuku:Warung_Kopi",
+      "homePageSections": {
+        "featuredBook": "buku_bagus"
+      },
+      "portals": [],
+      "shortcuts": [
+        {
+          "icon": "history",
+          "title": "Perubahan terbaru",
+          "pageTitle": "Istimewa:Perubahan_terbaru"
+        },
+        {
+          "icon": "pages_outlined",
+          "title": "Halaman istimewa",
+          "pageTitle": "Istimewa:Halaman_istimewa"
+        },
+        {
+          "icon": "chat_bubble_outlined",
+          "title": "Warung kopi",
+          "pageTitle": "Wikibuku:Warung_Kopi"
+        },
+        {
+          "icon": "construction_outlined",
+          "title": "Bak pasir",
+          "pageTitle": "Wikibuku:Bak_pasir"
+        },
+        {
+          "icon": "help_outline",
+          "title": "Bantuan",
+          "pageTitle": "Bantuan:Isi"
+        }
+      ]
+    }
+  },
+  "modules": {
+    "crosswords": {
+      "enabled": false,
+      "project": "wiktionary",
+      "dataFile": "assets/data/id_crosswords.json",
+      "pageTitle": "Wikisumber:Teka-Teki"
+    },
+    "course": {
+      "enabled": false,
+      "project": "wiktionary",
+      "pageTitle": "Wikikamus:Belajar Bahasa"
+    },
+    "gallery": {
+      "enabled": false,
+      "project": "wikipedia",
+      "dataFile": "assets/data/id_gallery.json",
+      "pageTitle": "Wikipedia:Galeri"
+    },
+    "newsletter": {
+      "enabled": false,
+      "project": "wikipedia",
+      "pageTitle": "Wikipedia:Warta Komunitas"
+    },
+    "chat": {
+      "enabled": true,
+      "project": "wikipedia",
+      "pageTitle": "Wikipedia:Warung_Kopi_(Semua)"
+    }
+  }
+}

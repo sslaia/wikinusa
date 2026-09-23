@@ -25,113 +25,112 @@ class AboutScreen extends ConsumerWidget {
       body: Row(
         children: [
           if (showPermanentDrawer)
-            const SizedBox(
-              width: 304,
-              child: DrawerMenu(isPermanent: true),
-            ),
+            const SizedBox(width: 304, child: DrawerMenu(isPermanent: true)),
           Expanded(
             child: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            leading: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CircleAvatar(
-                backgroundColor: theme.colorScheme.surface.withValues(
-                  alpha: 0.5,
-                ),
-                child: IconButton(
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: theme.colorScheme.primary,
-                  ),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ),
-            ),
-            expandedHeight: 300,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Image.asset('assets/images/rai.webp', fit: BoxFit.cover),
-                  DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          theme.colorScheme.surfaceContainerLow.withValues(
-                            alpha: 0.8,
-                          ),
-                          theme.colorScheme.surfaceContainerLow,
-                        ],
-                        stops: const [0.4, 0.85, 1.0],
+              slivers: [
+                SliverAppBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  leading: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CircleAvatar(
+                      backgroundColor: theme.colorScheme.surface.withValues(
+                        alpha: 0.5,
+                      ),
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: theme.colorScheme.primary,
+                        ),
+                        onPressed: () => Navigator.of(context).pop(),
                       ),
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildHeaderBadge(theme),
-                  const SizedBox(height: 12),
-                  Text(
-                    title.tr(),
-                    style: theme.textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      color: theme.colorScheme.onSurface,
-                      fontSize: 32,
-                      letterSpacing: -1,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.surface,
-                      borderRadius: BorderRadius.circular(24),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.04),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
+                  expandedHeight: 300,
+                  pinned: true,
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        Image.asset(
+                          'assets/images/power_of_words.webp',
+                          fit: BoxFit.cover,
+                        ),
+                        DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.transparent,
+                                theme.colorScheme.surfaceContainerLow
+                                    .withValues(alpha: 0.8),
+                                theme.colorScheme.surfaceContainerLow,
+                              ],
+                              stops: const [0.4, 0.85, 1.0],
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                    padding: const EdgeInsets.all(24),
-                    child: HtmlWidget(
-                      body,
-                      textStyle: GoogleFonts.plusJakartaSans(
-                        fontSize: 16,
-                        height: 1.8,
-                        color: theme.colorScheme.onSurface.withValues(
-                          alpha: 0.9,
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildHeaderBadge(theme),
+                        const SizedBox(height: 12),
+                        Text(
+                          title.tr(),
+                          style: theme.textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            color: theme.colorScheme.onSurface,
+                            fontSize: 32,
+                            letterSpacing: -1,
+                          ),
                         ),
-                      ),
-                      onTapUrl: (url) {
-                        launchUrl(Uri.parse(url));
-                        return true;
-                      },
+                        const SizedBox(height: 24),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.surface,
+                            borderRadius: BorderRadius.circular(24),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.04),
+                                blurRadius: 12,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          padding: const EdgeInsets.all(24),
+                          child: HtmlWidget(
+                            body,
+                            textStyle: GoogleFonts.plusJakartaSans(
+                              fontSize: 16,
+                              height: 1.8,
+                              color: theme.colorScheme.onSurface.withValues(
+                                alpha: 0.9,
+                              ),
+                            ),
+                            onTapUrl: (url) {
+                              launchUrl(Uri.parse(url));
+                              return true;
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+                        const WikiFooter(),
+                        const SizedBox(height: 48),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 32),
-                  const WikiFooter(),
-                  const SizedBox(height: 48),
-                ],
-              ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
           ),
         ],
       ),

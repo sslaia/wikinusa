@@ -142,9 +142,7 @@ class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
         final didEdit = await Navigator.push<bool>(
           context,
           MaterialPageRoute(
-            builder: (context) => EditPageScreen(
-              title: capitalizedTitle,
-            ),
+            builder: (context) => EditPageScreen(title: capitalizedTitle),
           ),
         );
 
@@ -164,9 +162,9 @@ class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('error_loading_content').tr()),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('error_loading_content').tr()));
       }
     } finally {
       if (mounted) {
@@ -273,6 +271,7 @@ class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
   }
 
   Widget _buildTitleField(ThemeData theme) {
+    final currentProject = ref.watch(appStateProvider);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -307,7 +306,11 @@ class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
               fontSize: 18,
             ),
             decoration: InputDecoration(
-              hintText: 'title_example'.tr(),
+              hintText: (currentProject.name == 'Wikipedia')
+                  ? 'title_example_wikipedia'.tr()
+                  : (currentProject.name == 'Wiktionary')
+                  ? 'title_example_wiktionary'.tr()
+                  : 'title_example_wikibooks'.tr(),
               hintStyle: theme.textTheme.titleMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant.withValues(
                   alpha: 0.5,
@@ -316,7 +319,8 @@ class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
               ),
               border: InputBorder.none,
             ),
-            onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+            onTapOutside: (event) =>
+                FocusManager.instance.primaryFocus?.unfocus(),
           ),
         ),
         const SizedBox(height: 8),
@@ -377,7 +381,11 @@ class _CreatePageScreenState extends ConsumerState<CreatePageScreen> {
                           color: Colors.white,
                         ),
                       )
-                    : const Icon(Icons.arrow_upward, color: Colors.white, size: 18),
+                    : const Icon(
+                        Icons.arrow_upward,
+                        color: Colors.white,
+                        size: 18,
+                      ),
                 const SizedBox(width: 8),
                 Text(
                   _isLoading ? 'submitting'.tr() : 'open_the_editor'.tr(),
