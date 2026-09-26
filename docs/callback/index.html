@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WikiNusa Authentication</title>
+  <link rel="icon" type="image/png" href="../wikinusa-icon.png">
+  <style>
+    :root {
+      --primary: #006699;
+      --primary-dark: #004d73;
+      --success: #2e7d32;
+      --bg: #f8f9fa;
+      --card-bg: #ffffff;
+      --text: #202122;
+      --text-muted: #54595d;
+      --border: #e0e0e0;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --primary: #3399cc;
+        --primary-dark: #297aa3;
+        --success: #4caf50;
+        --bg: #121212;
+        --card-bg: #1e1e1e;
+        --text: #e0e0e0;
+        --text-muted: #a0a0a0;
+        --border: #333333;
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 24px;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px 32px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    }
+    .icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      background: rgba(0, 102, 153, 0.1);
+      color: var(--primary);
+    }
+    .icon.success {
+      background: rgba(46, 125, 50, 0.1);
+      color: var(--success);
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    p {
+      color: var(--text-muted);
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .code-container {
+      background: rgba(0,0,0,0.04);
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-family: monospace;
+      font-size: 14px;
+      word-break: break-all;
+      margin-bottom: 20px;
+      border: 1px dashed var(--border);
+      display: none;
+    }
+    .btn {
+      display: inline-block;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      text-decoration: none;
+    }
+    .btn:hover { background: var(--primary-dark); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div id="icon" class="icon">🔄</div>
+    <h1 id="title">Connecting to WikiNusa</h1>
+    <p id="message">Relaying authorization code to your desktop app...</p>
+    <div id="codeDisplay" class="code-container"></div>
+    <button id="actionBtn" class="btn" style="display:none;" onclick="copyCode()">Copy Code</button>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    const error = params.get('error');
+
+    const iconEl = document.getElementById('icon');
+    const titleEl = document.getElementById('title');
+    const messageEl = document.getElementById('message');
+    const codeDisplayEl = document.getElementById('codeDisplay');
+    const actionBtn = document.getElementById('actionBtn');
+
+    if (code) {
+      // 1. Try sending to local desktop server
+      const loopbackUrl = `http://127.0.0.1:8765/callback?code=${encodeURIComponent(code)}`;
+      
+      fetch(loopbackUrl, { method: 'GET', mode: 'cors' })
+        .then(response => {
+          if (response.ok) {
+            iconEl.innerText = '✓';
+            iconEl.classList.add('success');
+            titleEl.innerText = 'Login Successful!';
+            messageEl.innerText = 'You can now close this browser tab and return to WikiNusa.';
+          } else {
+            fallbackManual();
+          }
+        })
+        .catch(() => {
+          // If fetch to 127.0.0.1 failed, try localhost
+          fetch(`http://localhost:8765/callback?code=${encodeURIComponent(code)}`, { method: 'GET', mode: 'cors' })
+            .then(res => {
+              if (res.ok) {
+                iconEl.innerText = '✓';
+                iconEl.classList.add('success');
+                titleEl.innerText = 'Login Successful!';
+                messageEl.innerText = 'You can now close this browser tab and return to WikiNusa.';
+              } else {
+                fallbackManual();
+              }
+            })
+            .catch(() => {
+              fallbackManual();
+            });
+        });
+    } else if (error) {
+      // Forward error to loopback server so app doesn't hang
+      fetch(`http://127.0.0.1:8765/callback?error=${encodeURIComponent(error)}`, { method: 'GET', mode: 'cors' }).catch(() => {});
+      iconEl.innerText = '✕';
+      titleEl.innerText = 'Authorization Denied';
+      messageEl.innerText = `Wikimedia reported: ${error}. Please return to WikiNusa and try again.`;
+    } else {
+      iconEl.innerText = 'ℹ';
+      titleEl.innerText = 'WikiNusa Callback';
+      messageEl.innerText = 'No authorization parameters found. Please initiate login from inside WikiNusa.';
+    }
+
+    function fallbackManual() {
+      // Copy to clipboard automatically if permitted
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(code).catch(() => {});
+      }
+      iconEl.innerText = '📋';
+      titleEl.innerText = 'Authorization Code Ready';
+      messageEl.innerText = 'Return to WikiNusa and paste the code below into the login dialog:';
+      codeDisplayEl.innerText = code;
+      codeDisplayEl.style.display = 'block';
+      actionBtn.style.display = 'inline-block';
+    }
+
+    function copyCode() {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(code).then(() => {
+          actionBtn.innerText = 'Copied to Clipboard!';
+          setTimeout(() => { actionBtn.innerText = 'Copy Code'; }, 2000);
+        });
+      }
+    }
+  </script>
+</body>
+</html>

@@ -261,8 +261,13 @@ class _ModuleSettingsScreenState extends ConsumerState<ModuleSettingsScreen> {
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('settings_saved'.tr())),
+        SnackBar(
+          content: Text('settings_saved'.tr()),
+          duration: const Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+        ),
       );
+      Navigator.of(context).pop();
     }
   }
 
@@ -313,6 +318,13 @@ class _ModuleSettingsScreenState extends ConsumerState<ModuleSettingsScreen> {
     return Scaffold(
       drawer: showPermanentDrawer ? null : const DrawerMenu(),
       appBar: AppBar(
+        leading: Navigator.canPop(context)
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back),
+                tooltip: 'back'.tr(),
+                onPressed: () => Navigator.of(context).pop(),
+              )
+            : null,
         title: Text('module_settings'.tr()),
         actions: [
           IconButton(

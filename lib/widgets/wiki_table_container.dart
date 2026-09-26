@@ -2,10 +2,34 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
+import 'wiki_quote_container.dart';
+
 /// A custom [WidgetFactory] that enhances Wikipedia tables with
 /// horizontal scrolling, responsive cell breathing space, and
 /// modern card presentation while keeping infoboxes and navboxes fitting normally.
+/// It also formats blockquotes with italic serif typography and decorative quote marks.
 class WikiWidgetFactory extends WidgetFactory {
+  @override
+  void parse(BuildTree meta) {
+    if (meta.element.localName == 'blockquote') {
+      meta.register(
+        BuildOp(
+          defaultStyles: (_) => const {
+            'font-style': 'italic',
+            'font-family': 'Georgia, "Noto Serif", serif',
+            'line-height': '1.5',
+            'margin': '4px 0',
+          },
+          onRenderBlock: (tree, placeholder) => placeholder.wrapWith(
+            (context, child) => WikiQuoteContainer(child: child),
+          ),
+          priority: 100,
+        ),
+      );
+    }
+    super.parse(meta);
+  }
+
   @override
   Widget? buildHorizontalScrollView(BuildTree tree, Widget child) {
     final element = tree.element;

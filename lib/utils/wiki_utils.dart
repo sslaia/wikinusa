@@ -166,6 +166,19 @@ class WikiUtils {
       }
     }
 
+    if (element.localName == 'blockquote') {
+      styles['font-style'] = 'italic';
+      styles['font-family'] = 'Georgia, "Noto Serif", serif';
+      styles['line-height'] = '1.5';
+      styles['margin'] = '4px 0';
+    }
+    if (element.localName == 'cite') {
+      styles['display'] = 'block';
+      styles['font-style'] = 'normal';
+      styles['font-size'] = '0.85em';
+      styles['margin-top'] = '4px';
+      styles['color'] = '#888888';
+    }
     if (element.localName == 'sup' || element.classes.contains('reference')) {
       return {
         'display': 'inline-block',

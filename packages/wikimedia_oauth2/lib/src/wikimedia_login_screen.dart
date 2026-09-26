@@ -25,6 +25,12 @@ class _WikimediaLoginScreenState extends State<WikimediaLoginScreen> {
   bool _isMobile = false;
   String? _errorMessage;
 
+  // Local loopback server for desktop OAuth callback relay
+  HttpServer? _loopbackServer;
+  static const int loopbackPort = 8765;
+  bool _isListening = false;
+  bool _showManualInput = false;
+
   @override
   void initState() {
     super.initState();
@@ -70,11 +76,81 @@ class _WikimediaLoginScreenState extends State<WikimediaLoginScreen> {
         ..loadRequest(Uri.parse(widget.authorizationUrl));
     } else {
       _webViewController = null;
+      _startLoopbackServer();
+      // Automatically launch external browser on desktop
+      Future.microtask(() => _launchAuthUrl());
+    }
+  }
+
+  Future<void> _startLoopbackServer() async {
+    try {
+      _loopbackServer = await HttpServer.bind(
+        InternetAddress.loopbackIPv4,
+        loopbackPort,
+        shared: true,
+      );
+      if (mounted) {
+        setState(() {
+          _isListening = true;
+        });
+      }
+
+      _loopbackServer?.listen((HttpRequest request) async {
+        // Handle CORS preflight & headers
+        request.response.headers.add('Access-Control-Allow-Origin', '*');
+        request.response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        request.response.headers.add('Access-Control-Allow-Headers', '*');
+
+        if (request.method == 'OPTIONS') {
+          request.response.statusCode = HttpStatus.ok;
+          await request.response.close();
+          return;
+        }
+
+        final code = request.uri.queryParameters['code'];
+        final error = request.uri.queryParameters['error'];
+
+        if (code != null && code.isNotEmpty) {
+          request.response.statusCode = HttpStatus.ok;
+          request.response.headers.contentType = ContentType.json;
+          request.response.write('{"status":"ok"}');
+          await request.response.close();
+
+          if (mounted) {
+            // Slight delay so HTTP response completes before widget unmounts & closes server
+            Future.delayed(const Duration(milliseconds: 50), () {
+              if (mounted) {
+                Navigator.of(context).pop(code);
+              }
+            });
+          }
+        } else if (error != null && error.isNotEmpty) {
+          request.response.statusCode = HttpStatus.ok;
+          request.response.headers.contentType = ContentType.json;
+          request.response.write('{"status":"error"}');
+          await request.response.close();
+
+          if (mounted) {
+            Future.delayed(const Duration(milliseconds: 50), () {
+              if (mounted) {
+                Navigator.of(context).pop('ERROR:$error');
+              }
+            });
+          }
+        } else {
+          request.response.statusCode = HttpStatus.badRequest;
+          request.response.write('Missing code parameter');
+          await request.response.close();
+        }
+      });
+    } catch (e) {
+      debugPrint('Desktop OAuth loopback server error: $e');
     }
   }
 
   @override
   void dispose() {
+    _loopbackServer?.close();
     _codeController.dispose();
     super.dispose();
   }
@@ -109,13 +185,25 @@ class _WikimediaLoginScreenState extends State<WikimediaLoginScreen> {
   }
 
   Future<void> _launchAuthUrl() async {
-    final url = Uri.parse(widget.authorizationUrl);
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    } else {
-      setState(() {
-        _errorMessage = 'Could not launch the browser. Please copy and open the URL manually.';
-      });
+    try {
+      final url = Uri.parse(widget.authorizationUrl);
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      } else {
+        if (mounted) {
+          setState(() {
+            _errorMessage = 'Could not launch the browser. Please copy and open the URL manually.';
+            _showManualInput = true;
+          });
+        }
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Could not launch the browser. Please copy and open the URL manually.';
+          _showManualInput = true;
+        });
+      }
     }
   }
 
@@ -139,7 +227,7 @@ class _WikimediaLoginScreenState extends State<WikimediaLoginScreen> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 500),
+            constraints: const BoxConstraints(maxWidth: 520),
             child: Card(
               elevation: 4,
               shape: RoundedRectangleBorder(
@@ -152,7 +240,7 @@ class _WikimediaLoginScreenState extends State<WikimediaLoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Icon(
-                      Icons.security,
+                      Icons.security_rounded,
                       size: 64,
                       color: theme.colorScheme.primary,
                     ),
@@ -165,34 +253,52 @@ class _WikimediaLoginScreenState extends State<WikimediaLoginScreen> {
                         color: theme.colorScheme.onSurface,
                       ),
                     ),
-                    const SizedBox(height: 24),
-                    Text(
-                      'Since webview is not supported on this platform, please complete authentication using your external web browser.',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                    ),
                     const SizedBox(height: 16),
-                    // Step-by-step guide
-                    _buildStep(
-                      context,
-                      '1',
-                      'Click the button below to open the Wikimedia authorization page in your browser.',
-                    ),
-                    _buildStep(
-                      context,
-                      '2',
-                      'Log in (if required) and approve the application permissions.',
-                    ),
-                    _buildStep(
-                      context,
-                      '3',
-                      'You will be redirected to a blank/callback page. Copy the entire redirect URL from your browser\'s address bar (or copy the code).',
-                    ),
-                    _buildStep(
-                      context,
-                      '4',
-                      'Paste the URL or code into the text field below and press Submit.',
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primaryContainer.withValues(alpha: 0.35),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  _isListening
+                                      ? 'Waiting for browser approval...'
+                                      : 'Preparing authentication...',
+                                  style: theme.textTheme.titleSmall?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: theme.colorScheme.onSurface,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Complete login in your browser. This window will automatically finish logging in once approved.',
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: theme.colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 24),
                     Row(
@@ -200,10 +306,10 @@ class _WikimediaLoginScreenState extends State<WikimediaLoginScreen> {
                         Expanded(
                           child: ElevatedButton.icon(
                             onPressed: _launchAuthUrl,
-                            icon: const Icon(Icons.open_in_new),
-                            label: const Text('Open Browser to Log In'),
+                            icon: const Icon(Icons.open_in_new_rounded),
+                            label: const Text('Open Browser Again'),
                             style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -212,7 +318,7 @@ class _WikimediaLoginScreenState extends State<WikimediaLoginScreen> {
                         ),
                         const SizedBox(width: 8),
                         IconButton(
-                          icon: const Icon(Icons.copy),
+                          icon: const Icon(Icons.copy_rounded),
                           tooltip: 'Copy login link',
                           onPressed: () async {
                             await Clipboard.setData(ClipboardData(text: widget.authorizationUrl));
@@ -227,46 +333,72 @@ class _WikimediaLoginScreenState extends State<WikimediaLoginScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 24),
-                    TextField(
-                      controller: _codeController,
-                      decoration: InputDecoration(
-                        labelText: 'Authorization URL or Code',
-                        hintText: 'https://sslaia.github.io/wikinusa/callback?code=...',
-                        errorText: _errorMessage,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.paste),
-                          tooltip: 'Paste from clipboard',
-                          onPressed: () async {
-                            final data = await Clipboard.getData(Clipboard.kTextPlain);
-                            if (data?.text != null) {
-                              _codeController.text = data!.text!;
-                              setState(() {
-                                _errorMessage = null;
-                              });
-                            }
-                          },
+                    const SizedBox(height: 16),
+                    TextButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          _showManualInput = !_showManualInput;
+                        });
+                      },
+                      icon: Icon(
+                        _showManualInput
+                            ? Icons.keyboard_arrow_up_rounded
+                            : Icons.keyboard_arrow_down_rounded,
+                        size: 20,
+                      ),
+                      label: Text(
+                        _showManualInput
+                            ? 'Hide manual code entry'
+                            : 'Having trouble? Enter code manually',
+                        style: TextStyle(
+                          color: theme.colorScheme.secondary,
+                          fontSize: 13,
                         ),
                       ),
-                      onSubmitted: (_) => _submitCode(),
                     ),
-                    const SizedBox(height: 24),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: const Text('Cancel'),
+                    if (_showManualInput) ...[
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: _codeController,
+                        decoration: InputDecoration(
+                          labelText: 'Authorization Code or URL',
+                          hintText: 'Paste code or redirect URL here',
+                          errorText: _errorMessage,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.paste_rounded),
+                            tooltip: 'Paste from clipboard',
+                            onPressed: () async {
+                              final data = await Clipboard.getData(Clipboard.kTextPlain);
+                              if (data?.text != null) {
+                                _codeController.text = data!.text!;
+                                setState(() {
+                                  _errorMessage = null;
+                                });
+                              }
+                            },
+                          ),
                         ),
-                        const SizedBox(width: 12),
-                        FilledButton(
+                        onSubmitted: (_) => _submitCode(),
+                      ),
+                      const SizedBox(height: 12),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: FilledButton(
                           onPressed: _submitCode,
-                          child: const Text('Submit'),
+                          child: const Text('Submit Code'),
                         ),
-                      ],
+                      ),
+                    ],
+                    const SizedBox(height: 16),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('Cancel'),
+                      ),
                     ),
                   ],
                 ),
@@ -274,38 +406,6 @@ class _WikimediaLoginScreenState extends State<WikimediaLoginScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildStep(BuildContext context, String number, String text) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CircleAvatar(
-            radius: 12,
-            backgroundColor: theme.colorScheme.primaryContainer,
-            child: Text(
-              number,
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: theme.colorScheme.onPrimaryContainer,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              text,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

@@ -275,14 +275,17 @@ class DrawerContent extends ConsumerWidget {
               theme,
               icon: Icons.tune_rounded,
               title: 'module_settings'.tr(),
-              onTap: () {
-                _closeDrawer(context);
-                Navigator.push(
+              onTap: () async {
+                final scaffoldState = Scaffold.maybeOf(context);
+                await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (_) => const ModuleSettingsScreen(),
                   ),
                 );
+                if (scaffoldState != null && !scaffoldState.isDrawerOpen) {
+                  scaffoldState.openDrawer();
+                }
               },
             ),
           ],
