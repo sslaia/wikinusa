@@ -71,18 +71,13 @@ class CustomBottomAppBar extends ConsumerWidget {
               },
             ),
             const SizedBox(width: 4),
-            Flexible(
-              child: Text(
-                'WikiNusa',
-                // overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-                softWrap: false,
-                style: GoogleFonts.cinzelDecorative(
-                  textStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
+            Text(
+              'WikiNusa',
+              style: GoogleFonts.cinzelDecorative(
+                textStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
