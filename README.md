@@ -7,13 +7,18 @@ An Android app for reading and editing Wikipedia, Wiktionary and Wikibooks in In
 ## Version's history
 
 <!-- WHATS_NEW_START -->
+### New 1.5.9
+
+- 
+
+<!-- WHATS_NEW_END -->
+
 ### New 1.5.8
 
 - Dynamic community registry architecture. Adding new language or wiki project only requires adding its domain and home section selectors in JSON, without modifying core Dart code.
 - Language management UI & expanded regional translation. Users can now enable or disable languages (13 languages in total) in the Settings.
 - Modular & config-driven community features: the interactive modules (WikiChat, Crosswords, Community Newsletter, Language Course and Gallery) can be configured, enabled or disabled from the Settings.
 - Custom hero header images: users can customize the project header banners across wiki projects by choosing images from the Wikimedia Commons
-<!-- WHATS_NEW_END -->
 
 ### New 1.5.7
 
