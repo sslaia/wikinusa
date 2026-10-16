@@ -9,7 +9,9 @@ An Android app for reading and editing Wikipedia, Wiktionary and Wikibooks in In
 <!-- WHATS_NEW_START -->
 ### New 1.5.9
 
-- 
+- Fixed search results
+- Fixed Wikibooks random pages
+- Improved wikichat
 
 <!-- WHATS_NEW_END -->
 

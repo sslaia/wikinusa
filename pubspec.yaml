@@ -1,7 +1,7 @@
 name: wikinusa
 description: "An Android app for reading and editing Wikipedia, Wiktionary and Wikibooks in Indonesian, local languages and beyond."
 publish_to: 'none'
-version: 1.5.8+11
+version: 1.5.9+12
 
 environment:
   sdk: ^3.11.4
