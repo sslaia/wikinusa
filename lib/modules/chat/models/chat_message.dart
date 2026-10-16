@@ -10,6 +10,7 @@ class WikiChatMessage {
   final int level;
   final String? parentId;
   final String? replyingToAuthor;
+  final String? replyingToSnippet;
   final bool isPending;
   final bool hasError;
 
@@ -21,9 +22,45 @@ class WikiChatMessage {
     this.level = 1,
     this.parentId,
     this.replyingToAuthor,
+    this.replyingToSnippet,
     this.isPending = false,
     this.hasError = false,
   });
+
+  /// Extracts the first clean line of text from [htmlContent] to display
+  /// as a preview/snippet when quoting or replying, just like in WhatsApp.
+  String get firstLineSnippet {
+    if (htmlContent.isEmpty) return '';
+
+    // Replace breaks and block boundaries with newlines
+    var text = htmlContent
+        .replaceAll(RegExp(r'<br\s*/?>', caseSensitive: false), '\n')
+        .replaceAll(
+            RegExp(r'</(p|div|h[1-6]|li|dd|dt|tr)>', caseSensitive: false),
+            '\n');
+
+    // Remove all remaining HTML tags
+    text = text.replaceAll(RegExp(r'<[^>]*>'), '');
+
+    // Decode common HTML entities
+    text = text
+        .replaceAll('&quot;', '"')
+        .replaceAll('&amp;', '&')
+        .replaceAll('&lt;', '<')
+        .replaceAll('&gt;', '>')
+        .replaceAll('&apos;', "'")
+        .replaceAll('&#039;', "'")
+        .replaceAll('&nbsp;', ' ')
+        .replaceAll('&#160;', ' ');
+
+    for (final line in text.split('\n')) {
+      final trimmed = line.trim();
+      if (trimmed.isNotEmpty) {
+        return trimmed;
+      }
+    }
+    return '';
+  }
 
   /// The DiscussionTools comment or heading ID to use when replying to this message.
   /// If this message was generated from heading othercontent (ending with `_content`),
@@ -40,6 +77,7 @@ class WikiChatMessage {
     Map<String, dynamic> json, {
     String? parentId,
     String? replyingToAuthor,
+    String? replyingToSnippet,
   }) {
     final id = json['id'] as String? ?? '';
     final author = json['author'] as String? ?? 'Anonymous';
@@ -51,10 +89,7 @@ class WikiChatMessage {
       } catch (_) {}
     }
 
-    String html = json['html'] as String? ?? '';
-    // DiscussionTools HTML comments may contain trailing signatures or elements;
-    // We clean unnecessary empty paragraphs or break tags if needed.
-
+    final html = json['html'] as String? ?? '';
     final level = (json['level'] as num?)?.toInt() ?? 1;
 
     return WikiChatMessage(
@@ -65,6 +100,7 @@ class WikiChatMessage {
       level: level,
       parentId: parentId,
       replyingToAuthor: replyingToAuthor,
+      replyingToSnippet: replyingToSnippet,
     );
   }
 
@@ -76,6 +112,7 @@ class WikiChatMessage {
     int? level,
     String? parentId,
     String? replyingToAuthor,
+    String? replyingToSnippet,
     bool? isPending,
     bool? hasError,
   }) {
@@ -87,6 +124,7 @@ class WikiChatMessage {
       level: level ?? this.level,
       parentId: parentId ?? this.parentId,
       replyingToAuthor: replyingToAuthor ?? this.replyingToAuthor,
+      replyingToSnippet: replyingToSnippet ?? this.replyingToSnippet,
       isPending: isPending ?? this.isPending,
       hasError: hasError ?? this.hasError,
     );

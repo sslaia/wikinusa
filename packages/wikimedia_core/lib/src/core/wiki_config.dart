@@ -61,6 +61,13 @@ class WikiConfig {
     );
   }
 
+  static String? getRandomPagesFile(String languageCode, String projectStr) {
+    return CommunityRegistry.getRandomPagesFile(
+      languageCode,
+      _parseProject(projectStr),
+    );
+  }
+
   /// Get the processing flags for a given language code and project.
   static List<String> getProcessingFlags(
     String languageCode,

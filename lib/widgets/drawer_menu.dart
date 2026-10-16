@@ -628,50 +628,70 @@ class DrawerContent extends ConsumerWidget {
         RadioGroup<ProjectType>(
           groupValue: currentProject,
           onChanged: (ProjectType? newValue) {
-            if (newValue != null) {
+            if (newValue != null && newValue != currentProject) {
               ref
                   .read(appStateProvider.notifier)
                   .setProject(newValue, currentLanguage);
-              _closeDrawer(context);
-              Navigator.of(context).popUntil((route) => route.isFirst);
             }
+            _closeDrawer(context);
+            Navigator.of(context).popUntil((route) => route.isFirst);
           },
           child: Column(
             children: visibleProjects.map((project) {
               final isSupported = project.isSupported(currentLanguage);
-              return RadioListTile<ProjectType>(
-                value: project,
-                enabled: isSupported,
-                title: Row(
-                  children: [
-                    Icon(
-                      Icons.circle,
-                      size: 8,
-                      color: isSupported
-                          ? project.primaryColor
-                          : Colors.grey.withValues(alpha: 0.3),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      project.getLocalizedDisplayName(currentLanguage),
-                      style: TextStyle(
-                        color: !isSupported
-                            ? Colors.grey.withValues(alpha: 0.5)
-                            : (project == currentProject
-                                  ? project.primaryColor
-                                  : theme.colorScheme.onSurface),
-                        fontWeight: project == currentProject
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                        decoration: !isSupported
-                            ? TextDecoration.lineThrough
-                            : null,
+              return InkWell(
+                borderRadius: BorderRadius.circular(8),
+                onTap: isSupported
+                    ? () {
+                        if (project != currentProject) {
+                          ref
+                              .read(appStateProvider.notifier)
+                              .setProject(project, currentLanguage);
+                        }
+                        _closeDrawer(context);
+                        Navigator.of(context).popUntil((route) => route.isFirst);
+                      }
+                    : null,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                  child: Row(
+                    children: [
+                      Radio<ProjectType>(
+                        value: project,
+                        activeColor: project.primaryColor,
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        visualDensity: VisualDensity.compact,
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 8),
+                      Icon(
+                        Icons.circle,
+                        size: 8,
+                        color: isSupported
+                            ? project.primaryColor
+                            : Colors.grey.withValues(alpha: 0.3),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          project.getLocalizedDisplayName(currentLanguage),
+                          style: TextStyle(
+                            color: !isSupported
+                                ? Colors.grey.withValues(alpha: 0.5)
+                                : (project == currentProject
+                                      ? project.primaryColor
+                                      : theme.colorScheme.onSurface),
+                            fontWeight: project == currentProject
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                            decoration: !isSupported
+                                ? TextDecoration.lineThrough
+                                : null,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                activeColor: project.primaryColor,
-                contentPadding: EdgeInsets.zero,
               );
             }).toList(),
           ),

@@ -165,12 +165,33 @@ class ChatBubble extends StatelessWidget {
                         left: BorderSide(color: accentColor, width: 3),
                       ),
                     ),
-                    child: Text(
-                      '${'chat_replying_to'.tr()}: @${message.replyingToAuthor}',
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: accentColor,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '${'chat_replying_to'.tr()}: @${message.replyingToAuthor!.replaceFirst(RegExp(r"^@"), "")}',
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: accentColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        if (message.replyingToSnippet != null &&
+                            message.replyingToSnippet!.trim().isNotEmpty) ...[
+                          const SizedBox(height: 2),
+                          Text(
+                            message.replyingToSnippet!,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              fontSize: 11.5,
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ],
                     ),
                   ),
                 ],
@@ -183,21 +204,8 @@ class ChatBubble extends StatelessWidget {
                     height: 1.4,
                   ),
                   onTapUrl: (url) async {
-                    final uri = Uri.tryParse(url);
-                    if (uri != null) {
-                      try {
-                        final launched = await launchUrl(
-                          uri,
-                          mode: LaunchMode.inAppBrowserView,
-                        );
-                        if (!launched) {
-                          await launchUrl(uri, mode: LaunchMode.platformDefault);
-                        }
-                      } catch (_) {
-                        await launchUrl(uri, mode: LaunchMode.platformDefault);
-                      }
-                    }
-                    return true;
+                    final domain = WikiConfig.getDomain(langCode, project.name.toLowerCase());
+                    return await openUrl(url, domain);
                   },
                 ),
 
@@ -266,5 +274,63 @@ class ChatBubble extends StatelessWidget {
       includeYear: true,
       langCode: langCode,
     );
+  }
+
+  /// Resolves relative or scheme-less URLs from MediaWiki HTML content into
+  /// canonical HTTPS URIs targeting the active wiki domain.
+  static Uri? resolveUri(String url, String domain) {
+    var resolved = url.trim();
+    if (resolved.isEmpty) return null;
+
+    final cleanDomain = domain.trim().isEmpty ? 'id.wikipedia.org' : domain.trim();
+
+    if (resolved.startsWith('//')) {
+      resolved = 'https:$resolved';
+    } else if (resolved.startsWith('./')) {
+      resolved = 'https://$cleanDomain/wiki/${resolved.substring(2)}';
+    } else if (resolved.startsWith('/wiki/')) {
+      resolved = 'https://$cleanDomain$resolved';
+    } else if (resolved.startsWith('/')) {
+      resolved = 'https://$cleanDomain$resolved';
+    } else if (resolved.startsWith('#')) {
+      resolved = 'https://$cleanDomain/wiki/$resolved';
+    } else if (!resolved.startsWith('http://') &&
+        !resolved.startsWith('https://') &&
+        !resolved.startsWith('mailto:') &&
+        !resolved.startsWith('tel:')) {
+      resolved = 'https://$cleanDomain/wiki/$resolved';
+    }
+
+    return Uri.tryParse(resolved) ?? Uri.tryParse(Uri.encodeFull(resolved));
+  }
+
+  /// Opens the given URL in an in-app browser view if HTTP/HTTPS, falling back
+  /// to platform default if unavailable, so users can easily return to the app.
+  static Future<bool> openUrl(String url, String domain) async {
+    final uri = resolveUri(url, domain);
+    if (uri == null) return false;
+
+    final scheme = uri.scheme.toLowerCase();
+    if (scheme == 'http' || scheme == 'https') {
+      try {
+        final launched = await launchUrl(
+          uri,
+          mode: LaunchMode.inAppBrowserView,
+        );
+        if (launched) return true;
+      } catch (_) {}
+
+      try {
+        return await launchUrl(uri, mode: LaunchMode.platformDefault);
+      } catch (_) {
+        return false;
+      }
+    } else {
+      try {
+        return await launchUrl(uri, mode: LaunchMode.platformDefault);
+      } catch (_) {
+        return false;
+      }
+    }
   }
 }

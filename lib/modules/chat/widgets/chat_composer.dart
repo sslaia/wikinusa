@@ -1,3 +1,4 @@
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:wikimedia_core/wikimedia_core.dart';
@@ -11,6 +12,7 @@ class ChatComposer extends StatefulWidget {
   final VoidCallback onCancelReply;
   final Future<void> Function(String message) onSend;
   final bool isSubmitting;
+  final String? draftKey;
 
   const ChatComposer({
     super.key,
@@ -19,6 +21,7 @@ class ChatComposer extends StatefulWidget {
     required this.onCancelReply,
     required this.onSend,
     this.isSubmitting = false,
+    this.draftKey,
   });
 
   @override
@@ -34,12 +37,31 @@ class _ChatComposerState extends State<ChatComposer> {
   void initState() {
     super.initState();
     _textController.addListener(_onTextChanged);
+    if (widget.draftKey != null) {
+      SharedPreferences.getInstance().then((prefs) {
+        final saved = prefs.getString('wikichat_draft_${widget.draftKey}');
+        if (saved != null && saved.isNotEmpty && mounted) {
+          _textController.text = saved;
+          setState(() => _canSend = true);
+        }
+      });
+    }
   }
 
   void _onTextChanged() {
-    final canSend = _textController.text.trim().isNotEmpty;
+    final text = _textController.text;
+    final canSend = text.trim().isNotEmpty;
     if (canSend != _canSend) {
       setState(() => _canSend = canSend);
+    }
+    if (widget.draftKey != null) {
+      SharedPreferences.getInstance().then((prefs) {
+        if (text.trim().isEmpty) {
+          prefs.remove('wikichat_draft_${widget.draftKey}');
+        } else {
+          prefs.setString('wikichat_draft_${widget.draftKey}', text);
+        }
+      });
     }
   }
 
@@ -63,6 +85,13 @@ class _ChatComposerState extends State<ChatComposer> {
   Future<void> _handleSend() async {
     final text = _textController.text.trim();
     if (text.isEmpty || widget.isSubmitting) return;
+
+    if (widget.draftKey != null) {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove('wikichat_draft_${widget.draftKey}');
+      } catch (_) {}
+    }
 
     _textController.clear();
     await widget.onSend(text);

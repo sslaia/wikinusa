@@ -234,6 +234,7 @@
       "displayName": "Wikibooks",
       "domain": "incubator.wikimedia.org",
       "apiPrefix": "Wb/nia/",
+      "randomPagesFile": "assets/data/nia_wikibooks_pages.json",
       "mainPageTitle": "Olayama",
       "chatPageTitle": "Wb/nia/Wikibooks:Monganga_afo",
       "homePageSections": {

@@ -1,7 +1,12 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:wikimedia_core/wikimedia_core.dart';
 import '../screens/article_screen.dart';
 import '../services/connectivity_service.dart';
@@ -11,7 +16,66 @@ import 'database_provider.dart';
 class RandomArticleNotifier extends StateNotifier<bool> {
   RandomArticleNotifier() : super(false);
 
-  Future<void> navigateToRandomArticle(BuildContext context, WidgetRef ref) async {
+  static final Map<String, List<String>> _inMemoryCatalogCache = {};
+
+  Future<String?> _getRandomTitleFromCatalog(
+    String langCode,
+    String projectStr,
+  ) async {
+    final catalogKey = '${langCode}_$projectStr';
+    if (_inMemoryCatalogCache.containsKey(catalogKey) &&
+        _inMemoryCatalogCache[catalogKey]!.isNotEmpty) {
+      final list = _inMemoryCatalogCache[catalogKey]!;
+      return list[Random().nextInt(list.length)];
+    }
+
+    final configuredPath = WikiConfig.getRandomPagesFile(langCode, projectStr);
+    final candidates = [
+      if (configuredPath != null && configuredPath.isNotEmpty) configuredPath,
+      'assets/data/${langCode}_${projectStr}_pages.json',
+    ];
+
+    for (final relPath in candidates) {
+      try {
+        String? jsonStr;
+        // 1. Try local documents directory (OTA synced)
+        try {
+          final docDir = await getApplicationDocumentsDirectory();
+          final localFile = File('${docDir.path}/$relPath');
+          if (await localFile.exists()) {
+            jsonStr = await localFile.readAsString();
+          }
+        } catch (_) {}
+
+        // 2. Try bundled asset
+        if (jsonStr == null || jsonStr.isEmpty) {
+          try {
+            jsonStr = await rootBundle.loadString(relPath);
+          } catch (_) {}
+        }
+
+        if (jsonStr != null && jsonStr.isNotEmpty) {
+          final decoded = jsonDecode(jsonStr);
+          if (decoded is List) {
+            final titles = decoded
+                .map((e) => e.toString().trim())
+                .where((t) => t.isNotEmpty)
+                .toList();
+            if (titles.isNotEmpty) {
+              _inMemoryCatalogCache[catalogKey] = titles;
+              return titles[Random().nextInt(titles.length)];
+            }
+          }
+        }
+      } catch (_) {}
+    }
+    return null;
+  }
+
+  Future<void> navigateToRandomArticle(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
     state = true;
     try {
       final currentProject = ref.read(appStateProvider);
@@ -24,19 +88,26 @@ class RandomArticleNotifier extends StateNotifier<bool> {
       String? randomTitle;
       bool isFromOfflineCache = false;
 
-      if (isOnline) {
+      // 1. Check if a pre-generated page catalog exists (e.g. Nias Wikibooks)
+      randomTitle = await _getRandomTitleFromCatalog(langCode, projectStr);
+
+      // 2. If not found in catalog, query online API
+      if (randomTitle == null && isOnline) {
         try {
-          randomTitle = await WikiApiService.fetchRandomArticleTitle(langCode, projectStr);
+          randomTitle = await WikiApiService.fetchRandomArticleTitle(
+            langCode,
+            projectStr,
+          );
           if (randomTitle != null) {
             ref.read(isOnlineProvider.notifier).setOnline(true);
           }
         } catch (_) {
-          // If online fetch fails unexpectedly, fall back to offline
+          // Fall back to offline database
         }
       }
 
+      // 3. If still null, draw from local cached database
       if (randomTitle == null) {
-        // Offline or online fetch returned null/failed: draw from local database
         final cachedArticle = await db.getRandomCachedArticle(
           project: projectStr,
           languageCode: langCode,
@@ -84,6 +155,7 @@ class RandomArticleNotifier extends StateNotifier<bool> {
   }
 }
 
-final randomArticleProvider = StateNotifierProvider<RandomArticleNotifier, bool>((ref) {
-  return RandomArticleNotifier();
-});
+final randomArticleProvider =
+    StateNotifierProvider<RandomArticleNotifier, bool>((ref) {
+      return RandomArticleNotifier();
+    });

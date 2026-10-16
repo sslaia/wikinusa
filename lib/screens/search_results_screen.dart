@@ -174,7 +174,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surfaceContainerLow,
-      drawer: showPermanentDrawer ? null : const DrawerMenu(),
+      drawer: null,
       body: Row(
         children: [
           if (showPermanentDrawer)
@@ -186,6 +186,10 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
             child: CustomScrollView(
         slivers: [
           SliverAppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
             floating: true,
             pinned: true,
             elevation: 0,

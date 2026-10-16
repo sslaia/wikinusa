@@ -22,11 +22,8 @@ class QuoteReplyPreview extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
     final accentColor = project.getThemedColor(isDark);
 
-    // Strip HTML tags for clean preview snippet
-    final plainSnippet = message.htmlContent
-        .replaceAll(RegExp(r'<[^>]*>|&[^;]+;'), ' ')
-        .replaceAll(RegExp(r'\s+'), ' ')
-        .trim();
+    // Use clean first-line snippet for preview
+    final plainSnippet = message.firstLineSnippet;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),

@@ -332,6 +332,12 @@ class CommunityRegistry {
     return projConfig?.apiPrefix ?? '';
   }
 
+  /// Retrieve the optional pre-generated random pages catalog file path for a project.
+  static String? getRandomPagesFile(String langCode, ProjectType project) {
+    final projConfig = getProject(langCode, project);
+    return projConfig?.randomPagesFile;
+  }
+
   /// Get global rules for a project type.
   static Map<String, dynamic> getGlobalRules(ProjectType project) {
     return _manifest.globalRules[project] ??

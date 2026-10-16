@@ -302,6 +302,7 @@ class _ChatConversationScreenState
           ChatComposer(
             project: target.project,
             replyingToMessage: _replyingToMessage,
+            draftKey: widget.topicId,
             onCancelReply: () {
               setState(() {
                 _replyingToMessage = null;

@@ -407,23 +407,72 @@ class WikiApiService {
 
     if (apiPrefix.isNotEmpty) {
       try {
+        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        final randomLetter = letters[DateTime.now().millisecondsSinceEpoch % letters.length];
         final url = Uri.parse(
-          'https://$domain/w/api.php?action=query&list=search&srsearch=prefix:$apiPrefix&srlimit=50&format=json',
+          'https://$domain/w/api.php?action=query&list=allpages&apprefix=$apiPrefix&apfrom=$apiPrefix$randomLetter&aplimit=30&format=json',
         );
         final response = await http
-            .get(url)
+            .get(url, headers: {'User-Agent': 'WikiNusa/1.5.8 (info@wikinusa.org)'})
             .timeout(const Duration(seconds: 10));
         if (response.statusCode == 200) {
           final data = json.decode(utf8.decode(response.bodyBytes));
-          final searchResults = data['query']?['search'] as List?;
-          if (searchResults != null && searchResults.isNotEmpty) {
-            final randomIndex =
-                (DateTime.now().millisecondsSinceEpoch % searchResults.length);
-            String title = searchResults[randomIndex]['title'] as String;
-            if (title.startsWith(apiPrefix)) {
-              title = title.replaceFirst(apiPrefix, '');
+          final pages = data['query']?['allpages'] as List?;
+          if (pages != null && pages.isNotEmpty) {
+            final validTitles = pages
+                .map((p) => p['title'] as String)
+                .where((t) {
+                  final clean = t.startsWith(apiPrefix) ? t.substring(apiPrefix.length) : t;
+                  return !clean.startsWith('Wikibooks:') &&
+                      !clean.startsWith('Help:') &&
+                      !clean.startsWith('Fanolo:') &&
+                      !clean.startsWith('Category:') &&
+                      !clean.startsWith('Kategori:') &&
+                      clean != 'Olayama';
+                })
+                .toList();
+            if (validTitles.isNotEmpty) {
+              final randomIndex = DateTime.now().millisecondsSinceEpoch % validTitles.length;
+              var title = validTitles[randomIndex];
+              if (title.startsWith(apiPrefix)) {
+                title = title.substring(apiPrefix.length);
+              }
+              return title;
             }
-            return title;
+          }
+        }
+      } catch (_) {}
+
+      try {
+        final url = Uri.parse(
+          'https://$domain/w/api.php?action=query&list=allpages&apprefix=$apiPrefix&aplimit=50&format=json',
+        );
+        final response = await http
+            .get(url, headers: {'User-Agent': 'WikiNusa/1.5.8 (info@wikinusa.org)'})
+            .timeout(const Duration(seconds: 10));
+        if (response.statusCode == 200) {
+          final data = json.decode(utf8.decode(response.bodyBytes));
+          final pages = data['query']?['allpages'] as List?;
+          if (pages != null && pages.isNotEmpty) {
+            final validTitles = pages
+                .map((p) => p['title'] as String)
+                .where((t) {
+                  final clean = t.startsWith(apiPrefix) ? t.substring(apiPrefix.length) : t;
+                  return !clean.startsWith('Wikibooks:') &&
+                      !clean.startsWith('Help:') &&
+                      !clean.startsWith('Fanolo:') &&
+                      !clean.startsWith('Category:') &&
+                      clean != 'Olayama';
+                })
+                .toList();
+            if (validTitles.isNotEmpty) {
+              final randomIndex = DateTime.now().millisecondsSinceEpoch % validTitles.length;
+              var title = validTitles[randomIndex];
+              if (title.startsWith(apiPrefix)) {
+                title = title.substring(apiPrefix.length);
+              }
+              return title;
+            }
           }
         }
       } catch (_) {}

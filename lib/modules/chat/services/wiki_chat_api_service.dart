@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../config/chat_module_config.dart';
@@ -37,7 +38,13 @@ class WikiChatApiService {
       throw Exception('Failed to load discussions (HTTP ${response.statusCode})');
     }
 
-    final data = json.decode(response.body) as Map<String, dynamic>;
+    // Run heavy JSON decoding and tree flattening in background isolate
+    return await compute(_parseTopicsIsolate, response.body);
+  }
+
+  /// Top-level isolate worker for compute()
+  static List<WikiChatTopic> _parseTopicsIsolate(String responseBody) {
+    final data = json.decode(responseBody) as Map<String, dynamic>;
 
     if (data.containsKey('error')) {
       final code = data['error']?['code'] as String?;

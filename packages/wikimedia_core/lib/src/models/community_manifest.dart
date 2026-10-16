@@ -62,6 +62,7 @@ class CommunityProjectConfig {
   final List<String> referenceKeywords;
   final List<String> processingFlags;
   final List<String> keepSelectors;
+  final String? randomPagesFile;
 
   const CommunityProjectConfig({
     this.enabled = true,
@@ -78,6 +79,7 @@ class CommunityProjectConfig {
     this.referenceKeywords = const [],
     this.processingFlags = const [],
     this.keepSelectors = const [],
+    this.randomPagesFile,
   });
 
   Map<String, dynamic> toJson() => {
@@ -95,6 +97,7 @@ class CommunityProjectConfig {
     if (referenceKeywords.isNotEmpty) 'referenceKeywords': referenceKeywords,
     if (processingFlags.isNotEmpty) 'processingFlags': processingFlags,
     if (keepSelectors.isNotEmpty) 'keep': keepSelectors,
+    if (randomPagesFile != null) 'randomPagesFile': randomPagesFile,
   };
 
   factory CommunityProjectConfig.fromJson(Map<String, dynamic> json) {
@@ -133,6 +136,7 @@ class CommunityProjectConfig {
       keepSelectors: (json['keep'] is List)
               ? (json['keep'] as List<dynamic>).map((e) => e.toString()).toList()
               : const [],
+      randomPagesFile: json['randomPagesFile'] as String?,
     );
   }
 }

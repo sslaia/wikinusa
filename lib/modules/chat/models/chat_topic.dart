@@ -91,6 +91,7 @@ class WikiChatTopic {
       Map<String, dynamic> item, {
       String? parentId,
       String? replyingToAuthor,
+      String? replyingToSnippet,
     }) {
       final type = item['type'] as String?;
       final headingLevel = (item['headingLevel'] as num?)?.toInt() ??
@@ -110,17 +111,20 @@ class WikiChatTopic {
           },
           parentId: parentId,
           replyingToAuthor: replyingToAuthor,
+          replyingToSnippet: replyingToSnippet,
         );
         flattenedMessages.add(msg);
 
         // Child replies
         final children = item['replies'] as List<dynamic>? ?? [];
+        final snippet = msg.firstLineSnippet;
         for (final child in children) {
           if (child is Map<String, dynamic>) {
             processItem(
               child,
               parentId: msg.id,
               replyingToAuthor: msg.author,
+              replyingToSnippet: snippet,
             );
           }
         }
