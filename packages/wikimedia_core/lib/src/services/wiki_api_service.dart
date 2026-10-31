@@ -4,7 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/home_page_section.dart';
 import '../models/project_type.dart';
-import 'html_processor.dart';
 import 'home_page_builder.dart';
 import '../core/wiki_config.dart';
 import '../core/community_registry.dart';
@@ -145,17 +144,20 @@ class WikiApiService {
     }
 
     String url;
-    if (isArticle || useActionApiForHome) {
+    final formattedTitle = finalTitle.replaceAll(' ', '_');
+    if (isArticle) {
+      url =
+          'https://$domain/w/rest.php/v1/page/${Uri.encodeComponent(formattedTitle)}/html';
+      if (forceRefresh) {
+        url += '?_t=${DateTime.now().millisecondsSinceEpoch}';
+      }
+    } else if (useActionApiForHome) {
       url =
           'https://$domain/w/api.php?action=parse&page=${Uri.encodeComponent(finalTitle)}&format=json&prop=text|images&mobileformat=1&redirects=1';
-      if (forceRefresh || isArticle) {
-        url += '&smaxage=0&maxage=0&nocache=1';
-        if (forceRefresh) {
-          url += '&_t=${DateTime.now().millisecondsSinceEpoch}';
-        }
+      if (forceRefresh) {
+        url += '&smaxage=0&maxage=0&nocache=1&_t=${DateTime.now().millisecondsSinceEpoch}';
       }
     } else {
-      final formattedTitle = finalTitle.replaceAll(' ', '_');
       url =
           'https://$domain/w/rest.php/v1/page/${Uri.encodeComponent(formattedTitle)}/html';
     }
@@ -175,55 +177,78 @@ class WikiApiService {
 
       if (response.statusCode == 200) {
         if (isArticle) {
-          final bodyStr = utf8.decode(response.bodyBytes);
-          final decoded = jsonDecode(bodyStr);
-          String htmlContent = '';
-          if (decoded['parse'] != null && decoded['parse']['text'] != null) {
-            htmlContent = decoded['parse']['text']['*'] ?? '';
+          final parsoidHtml = utf8.decode(response.bodyBytes);
 
-            final processedResult = await HtmlProcessor.processArticleHtml(
-              htmlContent,
-              languageCode,
-              project,
-            );
-
-            /// Fetch and append category members if it's a category page
-            final bool isCategory =
-                finalTitle.contains('Category:') ||
-                finalTitle.contains('Kategori:');
-            if (isCategory) {
-              final categoryHtml = await _fetchCategoryContent(
-                domain,
-                finalTitle,
-                languageCode,
-              );
-              processedResult['html'] =
-                  (processedResult['html'] ?? '') + categoryHtml;
+          // Extract candidate hero image from Wikimedia summary API or Parsoid HTML
+          String? heroImageUrl;
+          try {
+            final summaryUrl =
+                'https://$domain/api/rest_v1/page/summary/${Uri.encodeComponent(formattedTitle)}';
+            final summaryResp = await http
+                .get(Uri.parse(summaryUrl), headers: WikiConfig.uaHeaders)
+                .timeout(const Duration(seconds: 4));
+            if (summaryResp.statusCode == 200) {
+              final summaryData =
+                  jsonDecode(utf8.decode(summaryResp.bodyBytes));
+              heroImageUrl = summaryData['thumbnail']?['source'] ??
+                  summaryData['originalimage']?['source'];
             }
+          } catch (_) {}
 
-            await prefs.setString(cacheKey, jsonEncode(processedResult));
-            await prefs.setString(
-              cacheTimestampKey,
-              DateTime.now().toIso8601String(),
-            );
-
-            if (saveCachedPage != null) {
-              await saveCachedPage(
-                project.name.toLowerCase(),
-                languageCode,
-                pageTitle,
-                jsonEncode(processedResult),
-                processedResult['imageUrl'] as String?,
-                isArticle,
-              );
+          if (heroImageUrl == null || heroImageUrl.isEmpty) {
+            final imgMatch = RegExp(r'<img[^>]+src="([^">]+)"', caseSensitive: false)
+                .firstMatch(parsoidHtml);
+            if (imgMatch != null) {
+              final rawSrc = imgMatch.group(1) ?? '';
+              if (!rawSrc.contains('icon') &&
+                  !rawSrc.contains('.svg') &&
+                  !rawSrc.contains('Red_Pencil') &&
+                  !rawSrc.contains('Disambig')) {
+                heroImageUrl = rawSrc.startsWith('//') ? 'https:$rawSrc' : rawSrc;
+              }
             }
-
-            return processedResult;
           }
-          return {
-            'html': '<i>Error: Could not parse article content.</i>',
-            'imageUrl': null,
+
+          String processedHtml = parsoidHtml;
+
+          /// Fetch and append category members if it's a category page
+          final bool isCategory =
+              finalTitle.contains('Category:') ||
+              finalTitle.contains('Kategori:');
+          if (isCategory) {
+            final categoryHtml = await _fetchCategoryContent(
+              domain,
+              finalTitle,
+              languageCode,
+            );
+            processedHtml += categoryHtml;
+          }
+
+          final processedResult = {
+            'html': processedHtml,
+            'imageUrl': heroImageUrl,
+            'title': finalTitle,
+            'domain': domain,
           };
+
+          await prefs.setString(cacheKey, jsonEncode(processedResult));
+          await prefs.setString(
+            cacheTimestampKey,
+            DateTime.now().toIso8601String(),
+          );
+
+          if (saveCachedPage != null) {
+            await saveCachedPage(
+              project.name.toLowerCase(),
+              languageCode,
+              pageTitle,
+              jsonEncode(processedResult),
+              heroImageUrl,
+              isArticle,
+            );
+          }
+
+          return processedResult;
         } else {
           List<int> htmlBytes;
           if (useActionApiForHome) {

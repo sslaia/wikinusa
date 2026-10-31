@@ -4,9 +4,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -15,15 +12,14 @@ import '../utils/responsive_utils.dart';
 import 'package:wikimedia_core/wikimedia_core.dart';
 import '../providers/history_provider.dart';
 import '../providers/bookmarks_provider.dart';
-import '../widgets/wiki_footer.dart';
 import '../providers/app_state.dart';
 import '../providers/wiki_api_provider.dart';
 import '../providers/custom_hero_image_provider.dart';
-import '../widgets/article_hero_image.dart';
+import '../providers/font_size_provider.dart';
 import '../widgets/custom_bottom_app_bar.dart';
 import '../widgets/drawer_menu.dart';
 import '../widgets/adaptive_nav_actions.dart';
-import '../widgets/wiki_table_container.dart';
+import '../widgets/pcs_article_view.dart';
 import '../providers/auth_provider.dart';
 import '../providers/database_provider.dart';
 import 'edit_page_screen.dart';
@@ -46,16 +42,12 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
   final FocusNode _searchFocusNode = FocusNode();
   int _currentMatchIndex = 0;
   int _totalMatchCount = 0;
-  String _rawHtml = '';
-  String _highlightedHtml = '';
   String? _lastArticleKey;
-  late GlobalKey<HtmlWidgetState> _htmlWidgetKey;
-  List<GlobalKey> _matchKeys = [];
+  final PcsArticleController _pcsController = PcsArticleController();
 
   @override
   void initState() {
     super.initState();
-    _htmlWidgetKey = GlobalKey<HtmlWidgetState>();
 
     /// Register this article in history when opened
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -84,84 +76,55 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
   }
 
   void _closeSearch() {
+    _pcsController.clearSearch();
     setState(() {
       _isSearchActive = false;
       _searchController.clear();
       _totalMatchCount = 0;
       _currentMatchIndex = 0;
-      _highlightedHtml = _rawHtml;
-      _matchKeys.clear();
     });
     _searchFocusNode.unfocus();
   }
 
-  void _runSearch(String query, {bool updateIndex = true}) {
+  void _runSearch(String query) async {
     if (query.isEmpty) {
-      setState(() {
-        _highlightedHtml = _rawHtml;
-        _totalMatchCount = 0;
-        _currentMatchIndex = 0;
-        _matchKeys.clear();
-      });
+      await _pcsController.clearSearch();
+      if (mounted) {
+        setState(() {
+          _totalMatchCount = 0;
+          _currentMatchIndex = 0;
+        });
+      }
       return;
     }
 
-    int count = 0;
-    final highlighted = WikiUtils.highlightHtml(_rawHtml, query, _currentMatchIndex, (c) {
-      count = c;
-    });
-
-    setState(() {
-      _highlightedHtml = highlighted;
-      _totalMatchCount = count;
-      if (_matchKeys.length != count) {
-        _matchKeys = List.generate(count, (index) => GlobalKey());
-      }
-      if (updateIndex) {
-        if (count > 0) {
-          _currentMatchIndex = 0;
-        } else {
-          _currentMatchIndex = -1;
-        }
-      }
-    });
-
-    if (count > 0 && updateIndex) {
-      _scrollToCurrentMatch();
+    final count = await _pcsController.search(query);
+    if (mounted) {
+      setState(() {
+        _totalMatchCount = count;
+        _currentMatchIndex = count > 0 ? 0 : -1;
+      });
     }
   }
 
-  void _nextMatch() {
+  void _nextMatch() async {
     if (_totalMatchCount <= 1) return;
-    setState(() {
-      _currentMatchIndex = (_currentMatchIndex + 1) % _totalMatchCount;
-    });
-    _runSearch(_searchController.text, updateIndex: false);
-    _scrollToCurrentMatch();
+    final idx = await _pcsController.nextMatch();
+    if (mounted && idx >= 0) {
+      setState(() {
+        _currentMatchIndex = idx;
+      });
+    }
   }
 
-  void _prevMatch() {
+  void _prevMatch() async {
     if (_totalMatchCount <= 1) return;
-    setState(() {
-      _currentMatchIndex = (_currentMatchIndex - 1 + _totalMatchCount) % _totalMatchCount;
-    });
-    _runSearch(_searchController.text, updateIndex: false);
-    _scrollToCurrentMatch();
-  }
-
-  void _scrollToCurrentMatch() {
-    if (_totalMatchCount == 0 || _currentMatchIndex < 0 || _currentMatchIndex >= _matchKeys.length) return;
-    final key = _matchKeys[_currentMatchIndex];
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final context = key.currentContext;
-      if (context != null) {
-        Scrollable.ensureVisible(
-          context,
-          duration: const Duration(milliseconds: 300),
-          alignment: 0.5,
-        );
-      }
-    });
+    final idx = await _pcsController.previousMatch();
+    if (mounted && idx >= 0) {
+      setState(() {
+        _currentMatchIndex = idx;
+      });
+    }
   }
 
   @override
@@ -169,14 +132,10 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     final currentProject = ref.watch(appStateProvider);
     final wikiContent = ref.watch(wikiApiProvider(widget.title));
     final langCode = ref.watch(languageProvider);
+    final fontSize = ref.watch(fontSizeProvider);
     final theme = Theme.of(context);
-
-    /// Fallback fonts for Javanese and other scripts
-    final List<String> fontFallbacks = [
-      'PlusJakartaSans',
-      GoogleFonts.notoSansJavanese().fontFamily!,
-      'Roboto',
-    ];
+    final isDark = theme.brightness == Brightness.dark;
+    final projectColor = currentProject.getThemedColor(isDark);
 
     /// Temporary solution while Nias Wikibooks is still in the Incubator
     String pageUrl;
@@ -215,14 +174,10 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
     final articleKey = 'html_${widget.title}_${currentProject.name}_$langCode';
     if (_lastArticleKey != articleKey) {
       _lastArticleKey = articleKey;
-      _htmlWidgetKey = GlobalKey<HtmlWidgetState>();
       _isSearchActive = false;
       _searchController.clear();
       _totalMatchCount = 0;
       _currentMatchIndex = 0;
-      _rawHtml = '';
-      _highlightedHtml = '';
-      _matchKeys.clear();
     }
 
     return CallbackShortcuts(
@@ -267,7 +222,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                           constraints: const BoxConstraints(maxWidth: 900),
                           child: wikiContent.when(
                             data: (data) {
-                              String htmlContent;
+                              String htmlContent = '';
                               String? imageUrl;
                               bool isOfflineCache = false;
 
@@ -281,267 +236,86 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                                 isOfflineCache = data['isOfflineCache'] == true;
                               } else if (data is String) {
                                 htmlContent = data;
-                              } else {
-                                htmlContent = '';
                               }
 
-                              if (_rawHtml != htmlContent) {
-                                _rawHtml = htmlContent;
-                                if (_isSearchActive && _searchController.text.isNotEmpty) {
-                                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                                    _runSearch(_searchController.text, updateIndex: false);
-                                  });
-                                }
-                              }
+                              final customHero = ref.watch(customHeroImageProvider)[currentProject];
+                              final effectiveHeroUrl = (imageUrl != null && imageUrl.isNotEmpty)
+                                  ? imageUrl
+                                  : customHero;
 
-                              final displayedHtml = (_isSearchActive && _searchController.text.isNotEmpty)
-                                  ? _highlightedHtml
-                                  : htmlContent;
+                              final pcsTheme = isDark ? 'dark' : 'light';
+                              final domain = WikiConfig.getDomain(langCode, currentProject.name.toLowerCase());
+                              final baseUrl = 'https://$domain/';
 
-                              return SingleChildScrollView(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    if (isOfflineCache)
-                                      Container(
-                                        width: double.infinity,
-                                        color: Theme.of(context).colorScheme.surfaceContainerHigh,
-                                        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
-                                        child: Row(
-                                          children: [
-                                            Icon(
-                                              Icons.offline_pin_outlined,
-                                              size: 16,
-                                              color: Theme.of(context).colorScheme.primary,
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  if (isOfflineCache)
+                                    Container(
+                                      width: double.infinity,
+                                      color: Theme.of(context).colorScheme.surfaceContainerHigh,
+                                      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.offline_pin_outlined,
+                                            size: 16,
+                                            color: Theme.of(context).colorScheme.primary,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: Text(
+                                              'offline_saved_version'.tr(),
+                                              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                                  ),
                                             ),
-                                            const SizedBox(width: 8),
-                                            Expanded(
-                                              child: Text(
-                                                'offline_saved_version'.tr(),
-                                                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                                                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                                    ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
-                                    ArticleHeroImage(
-                                      theme: Theme.of(context),
+                                    ),
+                                  Expanded(
+                                    child: PcsArticleWebView(
+                                      key: ValueKey('pcs_${widget.title}_${currentProject.name}_$langCode'),
+                                      htmlContent: htmlContent,
+                                      baseUrl: baseUrl,
                                       title: widget.title,
-                                      imageUrl: imageUrl ?? '',
+                                      heroImageUrl: effectiveHeroUrl,
                                       project: currentProject,
-                                      customHeroUrl: ref.watch(customHeroImageProvider)[currentProject],
+                                      theme: pcsTheme,
+                                      languageCode: langCode,
+                                      fontSizeScale: fontSize.scale,
+                                      controller: _pcsController,
+                                      onLinkClicked: (href, linkTitle) {
+                                        WikiUtils.handleTapUrl(
+                                          context,
+                                          href,
+                                          htmlContent,
+                                          currentProject,
+                                          langCode,
+                                        );
+                                      },
+                                      onReferenceClicked: (refId, refHtml) {
+                                        WikiUtils.showReferencePopup(
+                                          context,
+                                          refId,
+                                          refHtml.isNotEmpty ? refHtml : htmlContent,
+                                        );
+                                      },
+                                      onImageClicked: (src, imgTitle) {
+                                        final fullSrc = src.startsWith('//')
+                                            ? 'https:$src'
+                                            : (src.startsWith('/') ? 'https://$domain$src' : src);
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => ImageScreen(imagePath: fullSrc),
+                                          ),
+                                        );
+                                      },
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: SelectionArea(
-                                        child: HtmlWidget(
-                                          displayedHtml,
-                                          key: _htmlWidgetKey,
-                                          factoryBuilder: () =>
-                                              WikiWidgetFactory(),
-                                          textStyle:
-                                              GoogleFonts.plusJakartaSans(
-                                                fontSize: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium
-                                                    ?.fontSize,
-                                                height: 1.8,
-                                                color: theme.colorScheme.onSurface,
-                                              ).copyWith(
-                                                fontFamilyFallback:
-                                                    fontFallbacks,
-                                              ),
-                                          onTapUrl: (url) =>
-                                              WikiUtils.handleTapUrl(
-                                                context,
-                                                url,
-                                                htmlContent,
-                                                currentProject,
-                                                langCode,
-                                              ),
-                                          customStylesBuilder: (element) =>
-                                              WikiUtils.customStyles(
-                                                context,
-                                                element,
-                                              ),
-                                          customWidgetBuilder: (element) {
-                                            final sharedWidget =
-                                                WikiUtils.customWidgetBuilder(
-                                                  context,
-                                                  element,
-                                                  onTapUrl: (url) =>
-                                                      WikiUtils.handleTapUrl(
-                                                        context,
-                                                        url,
-                                                        htmlContent,
-                                                        currentProject,
-                                                        langCode,
-                                                      ),
-                                                  textStyle: GoogleFonts.plusJakartaSans(
-                                                    fontSize: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyMedium
-                                                        ?.fontSize,
-                                                    height: 1.6,
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .onSurface
-                                                        .withValues(alpha: 0.9),
-                                                  ).copyWith(
-                                                    fontFamilyFallback:
-                                                        fontFallbacks,
-                                                  ),
-                                                  fontFallbacks: fontFallbacks,
-                                                );
-                                            if (sharedWidget != null) {
-                                              return sharedWidget;
-                                            }
-
-                                            if (element.localName == 'span' &&
-                                                element.classes.contains(
-                                                  'search-highlight',
-                                                )) {
-                                              final indexStr =
-                                                  element.attributes[
-                                                    'data-index'
-                                                  ] ??
-                                                  '0';
-                                              final index =
-                                                  int.tryParse(indexStr) ?? 0;
-                                              final text = element.text;
-                                              final isActive =
-                                                  index == _currentMatchIndex;
-
-                                              if (index >= 0 &&
-                                                  index < _matchKeys.length) {
-                                                return InlineCustomWidget(
-                                                  alignment:
-                                                      PlaceholderAlignment
-                                                          .baseline,
-                                                  baseline:
-                                                      TextBaseline.alphabetic,
-                                                  child: Container(
-                                                    key: _matchKeys[index],
-                                                    color: isActive
-                                                        ? Colors.orange
-                                                        : Colors.yellow,
-                                                    padding:
-                                                        const EdgeInsets
-                                                            .symmetric(
-                                                          vertical: 2,
-                                                        ),
-                                                    child: Text(
-                                                      text,
-                                                      style: GoogleFonts
-                                                          .plusJakartaSans(
-                                                            fontSize: Theme.of(
-                                                                  context,
-                                                                )
-                                                                .textTheme
-                                                                .bodyMedium
-                                                                ?.fontSize,
-                                                            height: 1.8,
-                                                            color: Theme.of(
-                                                                  context,
-                                                                )
-                                                                .colorScheme
-                                                                .onSurface
-                                                                .withValues(
-                                                                  alpha: 0.9,
-                                                                ),
-                                                          )
-                                                          .copyWith(
-                                                            fontFamilyFallback:
-                                                                fontFallbacks,
-                                                            fontWeight:
-                                                                isActive
-                                                                    ? FontWeight
-                                                                        .bold
-                                                                    : FontWeight
-                                                                        .normal,
-                                                          ),
-                                                    ),
-                                                  ),
-                                                );
-                                              }
-                                            }
-
-                                            if (element.classes.contains(
-                                              'gallery',
-                                            )) {
-                                              return _buildNativeGallery(
-                                                element,
-                                              );
-                                            }
-
-                                            final isThumb =
-                                                element.classes.contains(
-                                                  'thumb',
-                                                ) ||
-                                                (element.localName ==
-                                                        'figure' &&
-                                                    element.attributes['typeof']
-                                                            ?.contains(
-                                                              'mw:File/Thumb',
-                                                            ) ==
-                                                        true);
-
-                                            if (isThumb) {
-                                              if (element.classes.contains(
-                                                'hidden-hero-container',
-                                              )) {
-                                                return const SizedBox.shrink();
-                                              }
-
-                                              final img =
-                                                  element.localName == 'img'
-                                                  ? element
-                                                  : element.querySelector(
-                                                      'img',
-                                                    );
-
-                                              if (img != null &&
-                                                  img.classes.contains(
-                                                    'wiki-inline-icon',
-                                                  )) {
-                                                return null;
-                                              }
-
-                                              if (img != null) {
-                                                final caption =
-                                                    element
-                                                        .querySelector(
-                                                          '.caption',
-                                                        )
-                                                        ?.text ??
-                                                    element
-                                                        .querySelector(
-                                                          '.thumbcaption',
-                                                        )
-                                                        ?.text ??
-                                                    element
-                                                        .querySelector(
-                                                          'figcaption',
-                                                        )
-                                                        ?.text;
-
-                                                return _buildFullWidthImage(
-                                                  img,
-                                                  caption,
-                                                );
-                                              }
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                    const WikiFooter(),
-                                    const SizedBox(height: 100),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               );
                             },
                             loading: () => const Center(
@@ -558,6 +332,43 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                           ),
                         ),
                       ),
+                      if (!_isSearchActive)
+                        Positioned(
+                          top: 10 + MediaQuery.paddingOf(context).top,
+                          left: 12,
+                          child: Material(
+                            color: Colors.transparent,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: isDark
+                                    ? theme.colorScheme.surfaceContainerHigh
+                                        .withValues(alpha: 0.92)
+                                    : theme.colorScheme.surface
+                                        .withValues(alpha: 0.92),
+                                border: Border.all(
+                                  color: projectColor.withValues(alpha: isDark ? 0.5 : 0.25),
+                                  width: 1.5,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: projectColor.withValues(alpha: isDark ? 0.25 : 0.15),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: IconButton(
+                                icon: Icon(Icons.arrow_back, color: projectColor),
+                                tooltip: 'back'.tr(),
+                                onPressed: () {
+                                  ref.read(historyProvider.notifier).goBack();
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
                       if (_isSearchActive)
                         Positioned(
                           top: 16 + MediaQuery.paddingOf(context).top,
@@ -636,158 +447,6 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
         );
       },
     ),
-    );
-  }
-
-  Widget _buildNativeGallery(dom.Element galleryElement) {
-    final items = galleryElement.querySelectorAll('.gallerybox');
-    if (items.isEmpty) return const SizedBox.shrink();
-
-    return Container(
-      height: 280,
-      margin: const EdgeInsets.symmetric(vertical: 24),
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        physics: const BouncingScrollPhysics(),
-        itemCount: items.length,
-        itemBuilder: (context, index) {
-          final box = items[index];
-          final img = box.querySelector('img');
-          final caption = box.querySelector('.gallerytext')?.text ?? '';
-
-          if (img == null) return const SizedBox.shrink();
-          final src = img.attributes['src'] ?? '';
-          final fullImageUrl = src.startsWith('http') ? src : 'https:$src';
-
-          return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => ImageScreen(imagePath: fullImageUrl),
-                ),
-              );
-            },
-            child: Container(
-              width: 300,
-              margin: const EdgeInsets.only(right: 16),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Hero(
-                      tag: fullImageUrl,
-                      child: Image.network(
-                        fullImageUrl,
-                        fit: BoxFit.cover,
-                        headers: WikiConfig.uaHeaders,
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.transparent,
-                              Colors.black.withValues(alpha: 0.8),
-                            ],
-                          ),
-                        ),
-                        child: Text(
-                          caption,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontStyle: FontStyle.italic,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildFullWidthImage(dom.Element img, String? caption) {
-    final src = img.attributes['src'] ?? '';
-    if (src.isEmpty) return const SizedBox.shrink();
-    final fullImageUrl = src.startsWith('http') ? src : 'https:$src';
-    final theme = Theme.of(context);
-
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.symmetric(vertical: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => ImageScreen(imagePath: fullImageUrl),
-                ),
-              );
-            },
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Hero(
-                tag: fullImageUrl,
-                child: Image.network(
-                  fullImageUrl,
-                  width: double.infinity,
-                  fit: BoxFit.fitWidth,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Container(
-                      height: 200,
-                      width: double.infinity,
-                      color: theme.colorScheme.onSurface.withValues(
-                        alpha: 0.05,
-                      ),
-                      child: const Center(child: CircularProgressIndicator()),
-                    );
-                  },
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    height: 100,
-                    width: double.infinity,
-                    color: theme.colorScheme.errorContainer.withValues(
-                      alpha: 0.1,
-                    ),
-                    child: const Icon(Icons.broken_image),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          if (caption != null && caption.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-              child: Text(
-                caption,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontStyle: FontStyle.italic,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ),
-        ],
-      ),
     );
   }
 

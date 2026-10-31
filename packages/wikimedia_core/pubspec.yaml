@@ -9,7 +9,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  beautiful_soup_dart: ^0.3.0
   html: ^0.15.6
   http: ^1.6.0
   shared_preferences: ^2.5.5

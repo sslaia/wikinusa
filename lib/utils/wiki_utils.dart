@@ -49,7 +49,7 @@ class WikiUtils {
 
     if (intent is ShowReferenceIntent) {
       if (htmlContent != null) {
-        _showReferencePopup(context, intent.referenceId, htmlContent);
+        showReferencePopup(context, intent.referenceId, htmlContent);
       }
       return true;
     }
@@ -241,35 +241,54 @@ class WikiUtils {
     return null;
   }
 
-  static void _showReferencePopup(
+  static void showReferencePopup(
     BuildContext context,
     String referenceId,
-    String htmlContent,
+    String htmlContentOrSnippet,
   ) {
     final theme = Theme.of(context);
-    final document = html_parser.parse(htmlContent);
-    final decodedId = Uri.decodeComponent(referenceId);
+    String cleanHtml = htmlContentOrSnippet;
 
-    // Robust search: getElementById or suffix match (for Wikibooks/Incubator IDs)
-    dom.Element? refElement =
-        document.getElementById(decodedId) ??
-        document.getElementById(referenceId);
+    // If htmlContentOrSnippet is a full page HTML, locate the reference element
+    if (htmlContentOrSnippet.contains('<!DOCTYPE') || htmlContentOrSnippet.contains('<section') || htmlContentOrSnippet.contains('data-mw-section-id')) {
+      final document = html_parser.parse(htmlContentOrSnippet);
+      final decodedId = Uri.decodeComponent(referenceId);
+      final noteId = decodedId.replaceFirst('cite_ref-', 'cite_note-');
+      final refId = decodedId.replaceFirst('cite_note-', 'cite_ref-');
+      dom.Element? refElement =
+          document.getElementById(decodedId) ??
+          document.getElementById(referenceId) ??
+          document.getElementById(noteId) ??
+          document.getElementById(refId);
 
-    if (refElement == null) {
-      final allWithId = document.querySelectorAll('[id]');
-      for (var el in allWithId) {
-        final id = el.attributes['id'] ?? '';
-        if (id.endsWith(decodedId) || id.endsWith(referenceId)) {
-          refElement = el;
-          break;
+      if (refElement == null) {
+        final allWithId = document.querySelectorAll('[id]');
+        for (var el in allWithId) {
+          final id = el.attributes['id'] ?? '';
+          if (id.endsWith(decodedId) ||
+              id.endsWith(referenceId) ||
+              id.endsWith(noteId) ||
+              id.endsWith(refId)) {
+            refElement = el;
+            break;
+          }
         }
+      }
+
+      if (refElement == null) return;
+      final refClone = refElement.clone(true);
+      refClone.querySelectorAll('.mw-cite-backlink').forEach((e) => e.remove());
+      cleanHtml = refClone.innerHtml;
+    } else {
+      // It is already the extracted reference snippet from PCS
+      if (cleanHtml.contains('mw-cite-backlink')) {
+        final fragment = html_parser.parseFragment(cleanHtml);
+        fragment.querySelectorAll('.mw-cite-backlink').forEach((e) => e.remove());
+        cleanHtml = fragment.children.map((c) => c.outerHtml).join();
       }
     }
 
-    if (refElement == null) return;
-
-    final refClone = refElement.clone(true);
-    refClone.querySelectorAll('.mw-cite-backlink').forEach((e) => e.remove());
+    if (cleanHtml.trim().isEmpty) return;
 
     showModalBottomSheet(
       context: context,
@@ -311,11 +330,18 @@ class WikiUtils {
             Flexible(
               child: SingleChildScrollView(
                 child: HtmlWidget(
-                  refClone.innerHtml,
+                  cleanHtml,
                   textStyle: theme.textTheme.bodyMedium?.copyWith(
                     fontSize: 14,
                     height: 1.6,
                   ),
+                  onTapUrl: (url) {
+                    launchUrl(
+                      Uri.parse(url),
+                      mode: LaunchMode.inAppBrowserView,
+                    );
+                    return true;
+                  },
                 ),
               ),
             ),

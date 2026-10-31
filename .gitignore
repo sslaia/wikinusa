@@ -58,6 +58,7 @@ wb_nia_olayama.json
 MODULAR_MODULES_SPECIFICATION.md
 ADDING_A_LANGUAGE.md
 guide-image-processing.md
+PCS-REFACTORING.md
 
 # OAuth Configuration & Secrets
 lib/oauth_config.dart
