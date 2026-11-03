@@ -221,6 +221,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                         child: ConstrainedBox(
                           constraints: const BoxConstraints(maxWidth: 900),
                           child: wikiContent.when(
+                            skipLoadingOnRefresh: false,
                             data: (data) {
                               String htmlContent = '';
                               String? imageUrl;
@@ -245,7 +246,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
 
                               final pcsTheme = isDark ? 'dark' : 'light';
                               final domain = WikiConfig.getDomain(langCode, currentProject.name.toLowerCase());
-                              final baseUrl = 'https://$domain/';
+                              final baseUrl = 'https://$domain/wiki/';
 
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -276,7 +277,7 @@ class _ArticleScreenState extends ConsumerState<ArticleScreen> {
                                     ),
                                   Expanded(
                                     child: PcsArticleWebView(
-                                      key: ValueKey('pcs_${widget.title}_${currentProject.name}_$langCode'),
+                                      key: ValueKey('pcs_${widget.title}_${currentProject.name}_${langCode}_${htmlContent.hashCode}'),
                                       htmlContent: htmlContent,
                                       baseUrl: baseUrl,
                                       title: widget.title,

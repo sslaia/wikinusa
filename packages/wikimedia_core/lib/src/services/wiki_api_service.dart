@@ -9,6 +9,9 @@ import '../core/wiki_config.dart';
 import '../core/community_registry.dart';
 
 class WikiApiService {
+  static final Set<String> _forceRefreshKeys = {};
+  static final Map<String, int> _editedRevisions = {};
+
   static String _getCacheKey(
     ProjectType project,
     String languageCode,
@@ -19,6 +22,17 @@ class WikiApiService {
     return isArticle
         ? 'article_${projectStr}_${languageCode}_$pageTitle'
         : 'home_page_${projectStr}_$languageCode';
+  }
+
+  static void recordEditedRevision(
+    ProjectType project,
+    String languageCode,
+    String pageTitle,
+    int revisionId,
+  ) {
+    final cacheKey = _getCacheKey(project, languageCode, pageTitle, true);
+    _editedRevisions[cacheKey] = revisionId;
+    _forceRefreshKeys.add(cacheKey);
   }
 
   static Future<void> clearCache(
@@ -34,6 +48,7 @@ class WikiApiService {
       pageTitle ?? 'Main Page',
       isArticle,
     );
+    _forceRefreshKeys.add(cacheKey);
     await prefs.remove(cacheKey);
     await prefs.remove('${cacheKey}_timestamp');
   }
@@ -61,6 +76,9 @@ class WikiApiService {
   }) async {
     final cacheKey = _getCacheKey(project, languageCode, pageTitle, isArticle);
     final cacheTimestampKey = '${cacheKey}_timestamp';
+    if (_forceRefreshKeys.remove(cacheKey)) {
+      forceRefresh = true;
+    }
 
     final prefs = await SharedPreferences.getInstance();
 
@@ -143,13 +161,49 @@ class WikiApiService {
         }
     }
 
+    final requestHeaders = {
+      ...WikiConfig.uaHeaders,
+      if (forceRefresh || isArticle) ...{
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+      },
+    };
+
     String url;
     final formattedTitle = finalTitle.replaceAll(' ', '_');
+    int? targetRevId = forceRefresh ? _editedRevisions[cacheKey] : null;
+
+    if (isArticle && forceRefresh && targetRevId == null) {
+      try {
+        final revQueryUrl =
+            'https://$domain/w/api.php?action=query&prop=revisions&titles=${Uri.encodeComponent(finalTitle)}&rvprop=ids&format=json&redirects=1&smaxage=0&maxage=0&requestid=${DateTime.now().millisecondsSinceEpoch}';
+        final revResp = await http
+            .get(Uri.parse(revQueryUrl), headers: requestHeaders)
+            .timeout(const Duration(seconds: 6));
+        if (revResp.statusCode == 200) {
+          final revData = jsonDecode(utf8.decode(revResp.bodyBytes));
+          final pages = revData['query']?['pages'] as Map<String, dynamic>?;
+          if (pages != null && pages.isNotEmpty) {
+            final pageObj = pages.values.first;
+            final revisions = pageObj['revisions'] as List?;
+            if (revisions != null && revisions.isNotEmpty) {
+              final revId = revisions.first['revid'];
+              if (revId is int) {
+                targetRevId = revId;
+              }
+            }
+          }
+        }
+      } catch (_) {}
+    }
+
     if (isArticle) {
-      url =
-          'https://$domain/w/rest.php/v1/page/${Uri.encodeComponent(formattedTitle)}/html';
-      if (forceRefresh) {
-        url += '?_t=${DateTime.now().millisecondsSinceEpoch}';
+      if (targetRevId != null) {
+        url =
+            'https://$domain/w/rest.php/v1/revision/$targetRevId/html?_t=${DateTime.now().millisecondsSinceEpoch}';
+      } else {
+        url =
+            'https://$domain/w/rest.php/v1/page/${Uri.encodeComponent(formattedTitle)}/html?_t=${DateTime.now().millisecondsSinceEpoch}';
       }
     } else if (useActionApiForHome) {
       url =
@@ -160,20 +214,42 @@ class WikiApiService {
     } else {
       url =
           'https://$domain/w/rest.php/v1/page/${Uri.encodeComponent(formattedTitle)}/html';
+      if (forceRefresh) {
+        url += '?_t=${DateTime.now().millisecondsSinceEpoch}';
+      }
     }
 
-    final requestHeaders = {
-      ...WikiConfig.uaHeaders,
-      if (forceRefresh || isArticle) ...{
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-      },
-    };
-
     try {
-      final response = await http
+      var response = await http
           .get(Uri.parse(url), headers: requestHeaders)
           .timeout(const Duration(seconds: 15));
+
+      if (isArticle && response.statusCode != 200 && targetRevId != null) {
+        final fallbackUrl =
+            'https://$domain/w/rest.php/v1/page/${Uri.encodeComponent(formattedTitle)}/html?_t=${DateTime.now().millisecondsSinceEpoch}';
+        response = await http
+            .get(Uri.parse(fallbackUrl), headers: requestHeaders)
+            .timeout(const Duration(seconds: 15));
+      } else if (isArticle &&
+          response.statusCode == 200 &&
+          targetRevId == null &&
+          _editedRevisions.containsKey(cacheKey)) {
+        final minRevId = _editedRevisions[cacheKey]!;
+        final returnedRevId =
+            int.tryParse(response.headers['content-revision-id'] ?? '');
+        if (returnedRevId != null && returnedRevId < minRevId) {
+          final revUrl =
+              'https://$domain/w/rest.php/v1/revision/$minRevId/html?_t=${DateTime.now().millisecondsSinceEpoch}';
+          final revResponse = await http
+              .get(Uri.parse(revUrl), headers: requestHeaders)
+              .timeout(const Duration(seconds: 15));
+          if (revResponse.statusCode == 200) {
+            response = revResponse;
+          }
+        } else if (returnedRevId != null && returnedRevId >= minRevId) {
+          _editedRevisions.remove(cacheKey);
+        }
+      }
 
       if (response.statusCode == 200) {
         if (isArticle) {

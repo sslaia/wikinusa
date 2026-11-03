@@ -19,11 +19,31 @@ class AppTheme {
     return isDark ? linkBlueDark : linkBlueLight;
   }
 
+  static final Map<(ProjectType, Brightness, AppFontSize), ThemeData> _themeCache = {};
+
   static ThemeData getTheme(
-      ProjectType projectType, {
-        Brightness brightness = Brightness.light,
-        AppFontSize fontSize = AppFontSize.normal,
-      }) {
+    ProjectType projectType, {
+    Brightness brightness = Brightness.light,
+    AppFontSize fontSize = AppFontSize.normal,
+  }) {
+    final key = (projectType, brightness, fontSize);
+    final cached = _themeCache[key];
+    if (cached != null) return cached;
+
+    final theme = _buildTheme(
+      projectType,
+      brightness: brightness,
+      fontSize: fontSize,
+    );
+    _themeCache[key] = theme;
+    return theme;
+  }
+
+  static ThemeData _buildTheme(
+    ProjectType projectType, {
+    Brightness brightness = Brightness.light,
+    AppFontSize fontSize = AppFontSize.normal,
+  }) {
     final primaryColor = projectType.primaryColor;
     final bool isLight = brightness == Brightness.light;
 

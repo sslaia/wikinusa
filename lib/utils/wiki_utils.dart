@@ -81,7 +81,18 @@ class WikiUtils {
             screen = CreatePageScreen(initialTitle: intent.title);
             break;
         }
-        Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+        final didCreate = await Navigator.push<bool>(
+          context,
+          MaterialPageRoute(builder: (_) => screen),
+        );
+        if (didCreate == true && context.mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ArticleScreen(title: intent.title),
+            ),
+          );
+        }
       } else {
         Navigator.push(
           context,

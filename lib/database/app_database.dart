@@ -151,6 +151,16 @@ LazyDatabase _openConnection() {
     final cachebase = await getTemporaryDirectory();
     sqlite3.tempDirectory = cachebase.path;
 
-    return NativeDatabase.createInBackground(file);
+    return NativeDatabase.createInBackground(
+      file,
+      setup: (rawDb) {
+        // Cap SQLite page cache at ~2 MB instead of default 8-16 MB
+        rawDb.execute('PRAGMA cache_size = -2000;');
+        // Store temporary tables/indices on disk rather than RAM
+        rawDb.execute('PRAGMA temp_store = FILE;');
+        // Enable WAL for non-blocking concurrent reads
+        rawDb.execute('PRAGMA journal_mode = WAL;');
+      },
+    );
   });
 }

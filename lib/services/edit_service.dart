@@ -45,10 +45,14 @@ class EditService {
     final finalTitle = _getFinalTitle(title, languageCode, projectStr);
 
     final url = Uri.parse(
-        'https://$domain/w/api.php?action=query&prop=revisions&rvprop=content&rvslots=main&titles=${Uri.encodeComponent(finalTitle)}&format=json');
+        'https://$domain/w/api.php?action=query&prop=revisions&rvprop=content&rvslots=main&titles=${Uri.encodeComponent(finalTitle)}&format=json&smaxage=0&maxage=0&requestid=${DateTime.now().millisecondsSinceEpoch}');
 
     try {
-      final response = await http.get(url, headers: WikiConfig.uaHeaders).timeout(const Duration(seconds: 15));
+      final response = await http.get(url, headers: {
+        ...WikiConfig.uaHeaders,
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+      }).timeout(const Duration(seconds: 15));
       if (response.statusCode == 200) {
         final data = json.decode(utf8.decode(response.bodyBytes));
         final pages = data['query']?['pages'] as Map<String, dynamic>?;
@@ -128,6 +132,43 @@ class EditService {
       if (response.statusCode == 200) {
         final data = json.decode(utf8.decode(response.bodyBytes));
         if (data['edit'] != null && data['edit']['result'] == 'Success') {
+          final newRevId = data['edit']['newrevid'];
+          if (newRevId is int) {
+            WikiApiService.recordEditedRevision(
+              project,
+              languageCode,
+              title,
+              newRevId,
+            );
+            if (finalTitle != title) {
+              WikiApiService.recordEditedRevision(
+                project,
+                languageCode,
+                finalTitle,
+                newRevId,
+              );
+            }
+          } else {
+            await WikiApiService.clearCache(project, languageCode, title);
+          }
+
+          try {
+            await http.post(
+              url,
+              headers: {
+                'Authorization': 'Bearer $accessToken',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                ...WikiConfig.uaHeaders,
+              },
+              body: {
+                'action': 'purge',
+                'titles': finalTitle,
+                'forcelinkupdate': '1',
+                'format': 'json',
+              },
+            ).timeout(const Duration(seconds: 5));
+          } catch (_) {}
+
           return true;
         }
       }

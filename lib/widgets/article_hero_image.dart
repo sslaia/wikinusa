@@ -41,6 +41,7 @@ class ArticleHeroImage extends StatelessWidget {
               ? Image.network(
                   effectiveImageUrl,
                   fit: BoxFit.cover,
+                  cacheHeight: 700,
                   headers: WikiConfig.uaHeaders,
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) return child;
@@ -53,11 +54,13 @@ class ArticleHeroImage extends StatelessWidget {
                   errorBuilder: (context, error, stackTrace) => Image.asset(
                     project.articleHeroImagePath,
                     fit: BoxFit.cover,
+                    cacheHeight: 700,
                   ),
                 )
               : Image.asset(
                   project.articleHeroImagePath,
                   fit: BoxFit.cover,
+                  cacheHeight: 700,
                 ),
         ),
         Positioned.fill(

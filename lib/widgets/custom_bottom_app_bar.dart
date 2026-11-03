@@ -42,6 +42,7 @@ class CustomBottomAppBar extends ConsumerWidget {
     return BottomAppBar(
       color: colorScheme.primary,
       height: 72,
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       child: IconTheme(
         data: IconThemeData(color: colorScheme.onPrimary),
         child: Row(
@@ -71,13 +72,16 @@ class CustomBottomAppBar extends ConsumerWidget {
               },
             ),
             const SizedBox(width: 4),
-            Text(
-              'WikiNusa',
-              style: GoogleFonts.cinzelDecorative(
-                textStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
+            Flexible(
+              child: Text(
+                'WikiNusa',
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.cinzelDecorative(
+                  textStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),

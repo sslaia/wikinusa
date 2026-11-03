@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:isolate';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -62,6 +64,76 @@ class PcsAssetLoader {
 }
 
 class PcsHtmlProcessor {
+  /// Asynchronously processes HTML, offloading DOM parsing to [Isolate.run]
+  /// for payloads >= 4 KB to prevent UI jank on 2 GB RAM / low-end devices.
+  static Future<String> processAsync({
+    required String rawHtml,
+    required String? heroImageUrl,
+    String languageCode = 'id',
+    ProjectType project = ProjectType.wikipedia,
+    List<String>? referenceKeywords,
+  }) async {
+    if (rawHtml.isEmpty) return rawHtml;
+
+    final projectStr = project.name.toLowerCase();
+    final removeSelectors = WikiConfig.getCombinedRulesList(
+      languageCode,
+      projectStr,
+      'remove',
+    );
+    final hideSelectors = WikiConfig.getCombinedRulesList(
+      languageCode,
+      projectStr,
+      'hide',
+    );
+    final removeEmptySections = WikiConfig.hasProcessingFlag(
+      languageCode,
+      projectStr,
+      'removeEmptySections',
+    );
+    final removeEmptyImageSections = WikiConfig.hasProcessingFlag(
+      languageCode,
+      projectStr,
+      'removeEmptyImageSections',
+    );
+    final configuredRefKeywords = WikiConfig.getCombinedRulesList(
+      languageCode,
+      projectStr,
+      'referenceKeywords',
+    );
+    final tableScrollHint = 'table_scroll_hint'.tr();
+
+    // Short strings (< 4 KB) parse faster inline without isolate spawn overhead
+    if (rawHtml.length < 4096) {
+      return _processWithRules(
+        rawHtml: rawHtml,
+        heroImageUrl: heroImageUrl,
+        removeSelectors: removeSelectors,
+        hideSelectors: hideSelectors,
+        removeEmptySections: removeEmptySections,
+        removeEmptyImageSections: removeEmptyImageSections,
+        configuredRefKeywords: configuredRefKeywords,
+        referenceKeywords: referenceKeywords,
+        tableScrollHint: tableScrollHint,
+      );
+    }
+
+    return Isolate.run(
+      () => _processWithRules(
+        rawHtml: rawHtml,
+        heroImageUrl: heroImageUrl,
+        removeSelectors: removeSelectors,
+        hideSelectors: hideSelectors,
+        removeEmptySections: removeEmptySections,
+        removeEmptyImageSections: removeEmptyImageSections,
+        configuredRefKeywords: configuredRefKeywords,
+        referenceKeywords: referenceKeywords,
+        tableScrollHint: tableScrollHint,
+      ),
+    );
+  }
+
+  /// Synchronous processing fallback for small payloads or legacy calls.
   static String process({
     required String rawHtml,
     required String? heroImageUrl,
@@ -72,46 +144,74 @@ class PcsHtmlProcessor {
     if (rawHtml.isEmpty) return rawHtml;
 
     final projectStr = project.name.toLowerCase();
+    return _processWithRules(
+      rawHtml: rawHtml,
+      heroImageUrl: heroImageUrl,
+      removeSelectors: WikiConfig.getCombinedRulesList(
+        languageCode,
+        projectStr,
+        'remove',
+      ),
+      hideSelectors: WikiConfig.getCombinedRulesList(
+        languageCode,
+        projectStr,
+        'hide',
+      ),
+      removeEmptySections: WikiConfig.hasProcessingFlag(
+        languageCode,
+        projectStr,
+        'removeEmptySections',
+      ),
+      removeEmptyImageSections: WikiConfig.hasProcessingFlag(
+        languageCode,
+        projectStr,
+        'removeEmptyImageSections',
+      ),
+      configuredRefKeywords: WikiConfig.getCombinedRulesList(
+        languageCode,
+        projectStr,
+        'referenceKeywords',
+      ),
+      referenceKeywords: referenceKeywords,
+      tableScrollHint: 'table_scroll_hint'.tr(),
+    );
+  }
+
+  static String _processWithRules({
+    required String rawHtml,
+    required String? heroImageUrl,
+    required List<String> removeSelectors,
+    required List<String> hideSelectors,
+    required bool removeEmptySections,
+    required bool removeEmptyImageSections,
+    required List<String> configuredRefKeywords,
+    List<String>? referenceKeywords,
+    required String tableScrollHint,
+  }) {
+    if (rawHtml.isEmpty) return rawHtml;
+
     final document = html_parser.parse(rawHtml);
 
     // Multi-lingual Community Rules: Apply removals
-    final removeSelectors = WikiConfig.getCombinedRulesList(
-      languageCode,
-      projectStr,
-      'remove',
-    );
     for (final s in removeSelectors) {
       document.querySelectorAll(s).forEach((el) => el.remove());
     }
 
     // Multi-lingual Community Rules: Apply hides
-    final hideSelectors = WikiConfig.getCombinedRulesList(
-      languageCode,
-      projectStr,
-      'hide',
-    );
     for (final s in hideSelectors) {
       document.querySelectorAll(s).forEach((el) => el.classes.add('wikinusa-hidden'));
     }
 
     // Multi-lingual Community Rules: Apply empty section cleanups
-    if (WikiConfig.hasProcessingFlag(
-      languageCode,
-      projectStr,
-      'removeEmptySections',
-    )) {
+    if (removeEmptySections) {
       _removeEmptySections(document);
     }
-    if (WikiConfig.hasProcessingFlag(
-      languageCode,
-      projectStr,
-      'removeEmptyImageSections',
-    )) {
+    if (removeEmptyImageSections) {
       _removeEmptyImageSections(document);
     }
 
     // Data Tables: Wrap with contextual swipe hint container
-    _wrapDataTables(document, languageCode);
+    _wrapDataTables(document, tableScrollHint);
 
     // Hide and remove edit pencil icons (links to edit headings, infobox fields, or Wikidata entries)
     final editElements = document.querySelectorAll(
@@ -315,11 +415,6 @@ class PcsHtmlProcessor {
     }
 
     // 2. Hide Reference sections and footnote lists
-    final configuredRefKeywords = WikiConfig.getCombinedRulesList(
-      languageCode,
-      projectStr,
-      'referenceKeywords',
-    );
     final combinedKeywords = {
       'referensi',
       'rujukan',
@@ -383,16 +478,7 @@ class PcsHtmlProcessor {
     return document.body?.innerHtml ?? rawHtml;
   }
 
-  static void _wrapDataTables(dom.Document document, String languageCode) {
-    String hintText;
-    if (languageCode == 'en') {
-      hintText = 'Scroll horizontally to view more columns ↔';
-    } else if (languageCode == 'nia') {
-      hintText = 'Fadöni lumalö ba gaere wamaigi ngawawa tanö bö\'ö ↔';
-    } else {
-      hintText = 'Geser ke samping untuk melihat kolom lainnya ↔';
-    }
-
+  static void _wrapDataTables(dom.Document document, String hintText) {
     final tables = document.querySelectorAll('table');
     for (final table in tables) {
       final isInfobox = table.classes.any((c) =>
@@ -624,6 +710,9 @@ class _PcsArticleWebViewState extends State<PcsArticleWebView> {
   }
 
   Future<void> _loadPcsContent() async {
+    if (mounted && !_isLoading) {
+      setState(() => _isLoading = true);
+    }
     await PcsAssetLoader.ensureLoaded();
     if (!mounted) return;
 
@@ -637,12 +726,13 @@ class _PcsArticleWebViewState extends State<PcsArticleWebView> {
         await PcsAssetLoader.getHeroFallback(widget.project);
     if (!mounted) return;
 
-    final processedHtml = PcsHtmlProcessor.process(
+    final processedHtml = await PcsHtmlProcessor.processAsync(
       rawHtml: widget.htmlContent,
       heroImageUrl: widget.heroImageUrl,
       languageCode: widget.languageCode,
       project: widget.project,
     );
+    if (!mounted) return;
 
     final documentHtml = _buildDocument(
       parsoidHtml: processedHtml,
@@ -670,10 +760,8 @@ class _PcsArticleWebViewState extends State<PcsArticleWebView> {
         ? '<img src="data:image/webp;base64,$spacerBase64" class="wikinusa-footer-spacer" alt="Spacer" />'
         : '<div style="height:20px;"></div>';
 
-    final disclaimerLabel =
-        langCode == 'en' ? 'Disclaimer' : 'Penyangkalan';
-    final privacyLabel =
-        langCode == 'en' ? 'Privacy Policy' : 'Kebijakan Privasi';
+    final disclaimerLabel = 'disclaimer_label'.tr();
+    final privacyLabel = 'privacy_policy'.tr();
 
     return '''
 <footer class="wikinusa-footer">
@@ -765,6 +853,7 @@ class _PcsArticleWebViewState extends State<PcsArticleWebView> {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <base href="${widget.baseUrl}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Noto+Sans+Balinese:wght@400;700&family=Noto+Sans+Javanese:wght@400;700&family=Noto+Sans+Sundanese:wght@400;700&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
@@ -1403,6 +1492,30 @@ class _PcsArticleWebViewState extends State<PcsArticleWebView> {
       box-sizing: border-box !important;
       background-color: transparent !important;
     }
+    .content caption,
+    .content table caption,
+    .wikinusa-table-scroll-wrapper table caption,
+    table:not(.infobox):not(.navbox):not(.ambox) caption {
+      display: table-caption !important;
+      caption-side: top !important;
+      width: 100% !important;
+      padding: 10px 14px !important;
+      font-weight: 700 !important;
+      text-align: center !important;
+      color: var(--wikinusa-text) !important;
+      background-color: transparent !important;
+      box-sizing: border-box !important;
+    }
+    .infobox caption,
+    table.infobox caption {
+      display: table-caption !important;
+      caption-side: top !important;
+      width: 100% !important;
+      padding: 10px 12px 6px 12px !important;
+      font-weight: 700 !important;
+      text-align: center !important;
+      box-sizing: border-box !important;
+    }
     table:not(.infobox):not(.navbox):not(.ambox) th {
       padding: 10px 14px !important;
       font-weight: 700 !important;
@@ -1548,6 +1661,89 @@ class _PcsArticleWebViewState extends State<PcsArticleWebView> {
               data: { url: href }
             }));
           }
+          return;
+        }
+      }
+
+      // 3. Footnote / Reference links
+      var refAnchor = e.target.closest('sup.reference a, .mw-ref a, a[href*="#cite_note"], a[href*="#cite_ref"]');
+      if (refAnchor) {
+        var refHref = refAnchor.getAttribute('href') || '';
+        if (refHref.indexOf('#') !== -1) {
+          e.preventDefault();
+          e.stopPropagation();
+          var refId = refHref.split('#').pop() || '';
+          var decodedRefId = refId;
+          try { decodedRefId = decodeURIComponent(refId); } catch (_) {}
+          var noteId = decodedRefId.replace('cite_ref-', 'cite_note-');
+          var refEl = document.getElementById(decodedRefId) ||
+                      document.getElementById(refId) ||
+                      document.getElementById(noteId);
+          var refHtml = refEl ? refEl.innerHTML : '';
+          if (window.pcsBridge) {
+            window.pcsBridge.postMessage(JSON.stringify({
+              action: 'reference',
+              data: { id: decodedRefId || refId, text: refHtml, href: refHref }
+            }));
+          }
+          return;
+        }
+      }
+
+      // 4. Content image tap (standalone figures, thumbnails, infobox images)
+      var tappedImg = e.target.tagName === 'IMG' ? e.target : null;
+      var fileLink = e.target.closest('a.mw-file-description, a.image');
+      if (!tappedImg && fileLink) {
+        tappedImg = fileLink.querySelector('img');
+      }
+      if (tappedImg &&
+          !tappedImg.classList.contains('wiki-inline-icon') &&
+          !tappedImg.classList.contains('wikinusa-hero-img') &&
+          !tappedImg.classList.contains('wikinusa-footer-spacer')) {
+        var inFigureOrInfobox = tappedImg.closest('figure, .thumb, .infobox-image, .wikinusa-infobox-image-cell, .wikinusa-fullwidth-image-container');
+        if (inFigureOrInfobox || fileLink) {
+          e.preventDefault();
+          e.stopPropagation();
+          var imgSrc = tappedImg.currentSrc || tappedImg.src || tappedImg.getAttribute('src') || '';
+          var figCaption = inFigureOrInfobox ? inFigureOrInfobox.querySelector('figcaption, .thumbcaption, .infobox-caption') : null;
+          var imgTitle = figCaption ? figCaption.innerText : (tappedImg.getAttribute('alt') || '');
+          if (imgSrc && window.pcsBridge) {
+            window.pcsBridge.postMessage(JSON.stringify({
+              action: 'image',
+              data: { href: imgSrc, title: imgTitle }
+            }));
+          }
+          return;
+        }
+      }
+
+      // 5. General anchor links (internal wiki links, red links, same-page anchors, external links)
+      var link = e.target.closest('a, area');
+      if (link) {
+        var rawHref = link.getAttribute('href') || '';
+        if (!rawHref) return;
+        if (rawHref.charAt(0) === '#') {
+          e.preventDefault();
+          e.stopPropagation();
+          var anchorId = rawHref.slice(1);
+          var decodedAnchorId = anchorId;
+          try { decodedAnchorId = decodeURIComponent(anchorId); } catch (_) {}
+          var targetEl = document.getElementById(decodedAnchorId) || document.getElementById(anchorId);
+          if (targetEl) {
+            targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+          return;
+        }
+        e.preventDefault();
+        e.stopPropagation();
+        if (window.pcsBridge) {
+          window.pcsBridge.postMessage(JSON.stringify({
+            action: 'link',
+            data: {
+              href: rawHref,
+              title: link.getAttribute('title') || ''
+            }
+          }));
         }
       }
     }, true);
@@ -1790,12 +1986,14 @@ class _PcsArticleWebViewState extends State<PcsArticleWebView> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        WebViewWidget(controller: _webViewController),
-        if (_isLoading)
-          const Center(child: CircularProgressIndicator()),
-      ],
+    return RepaintBoundary(
+      child: Stack(
+        children: [
+          WebViewWidget(controller: _webViewController),
+          if (_isLoading)
+            const Center(child: CircularProgressIndicator()),
+        ],
+      ),
     );
   }
 }

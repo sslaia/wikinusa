@@ -239,6 +239,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               child: Image.asset(
                 page.imagePath,
                 fit: BoxFit.contain,
+                cacheWidth: 600,
               ),
             ),
           ),
@@ -290,7 +291,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               height: isCompact ? size.height * 0.35 : size.height * 0.4,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage(page.imagePath),
+                  image: ResizeImage(AssetImage(page.imagePath), width: 600),
                   fit: BoxFit.contain,
                 ),
               ),

@@ -16,8 +16,23 @@ class MultiSourceAssetLoader extends AssetLoader {
   @override
   Future<Map<String, dynamic>?> load(String path, Locale locale) async {
     final langCode = locale.languageCode;
+    Map<String, dynamic>? bundledMap;
 
-    // 1. Try loading from local storage if provided and exists
+    // 1. Load bundled assets from rootBundle as the authoritative base
+    try {
+      final assetPath = '$path/$langCode.json';
+      final content = await rootBundle.loadString(assetPath);
+      final decoded = jsonDecode(content);
+      if (decoded is Map<String, dynamic>) {
+        bundledMap = decoded;
+      }
+    } catch (e) {
+      debugPrint(
+        'MultiSourceAssetLoader: Error loading bundled translation for $langCode: $e',
+      );
+    }
+
+    // 2. Check local OTA storage for newly added languages or missing keys
     if (!kIsWeb && localTranslationsDirectory != null) {
       try {
         final localFile = File('$localTranslationsDirectory/$langCode.json');
@@ -25,7 +40,12 @@ class MultiSourceAssetLoader extends AssetLoader {
           final content = await localFile.readAsString();
           final decoded = jsonDecode(content);
           if (decoded is Map<String, dynamic>) {
-            return decoded;
+            if (bundledMap == null) {
+              return decoded;
+            }
+            // Merge so local OTA keys can add new entries without overriding
+            // updated bundled keys or leaving new bundled keys missing.
+            return <String, dynamic>{...decoded, ...bundledMap};
           }
         }
       } catch (e) {
@@ -35,20 +55,6 @@ class MultiSourceAssetLoader extends AssetLoader {
       }
     }
 
-    // 2. Fallback to bundled assets in rootBundle
-    try {
-      final assetPath = '$path/$langCode.json';
-      final content = await rootBundle.loadString(assetPath);
-      final decoded = jsonDecode(content);
-      if (decoded is Map<String, dynamic>) {
-        return decoded;
-      }
-    } catch (e) {
-      debugPrint(
-        'MultiSourceAssetLoader: Error loading bundled translation for $langCode: $e',
-      );
-    }
-
-    return null;
+    return bundledMap;
   }
 }

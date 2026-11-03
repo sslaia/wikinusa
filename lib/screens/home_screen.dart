@@ -281,6 +281,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     fit: BoxFit.cover,
                     width: double.infinity,
                     height: double.infinity,
+                    cacheHeight: 600,
                     headers: WikiConfig.uaHeaders, // Added headers
                     errorBuilder: (context, error, stackTrace) => Image.asset(
                       currentProject.homeHeroImagePath,
@@ -288,6 +289,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                       fit: BoxFit.cover,
                       width: double.infinity,
                       height: double.infinity,
+                      cacheHeight: 600,
                     ),
                   )
                 : Image.asset(
@@ -296,6 +298,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                     fit: BoxFit.cover,
                     width: double.infinity,
                     height: double.infinity,
+                    cacheHeight: 600,
                   ),
           ),
         ),

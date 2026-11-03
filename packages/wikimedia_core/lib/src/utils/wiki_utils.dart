@@ -247,13 +247,16 @@ class CoreWikiUtils {
   }
 
   static Future<WikiLinkIntent> handleTapUrl(String url, String languageCode, ProjectType currentProject) async {
-    if (url.startsWith('#') || url.contains('cite_note')) {
+    if (url.startsWith('#') ||
+        url.contains('#cite_note') ||
+        url.contains('#cite_ref') ||
+        url.contains('cite_note')) {
       final refId = url.split('#').last;
       return ShowReferenceIntent(refId);
     }
 
     final lowerUrl = url.toLowerCase();
-    final mediaExtensions = ['.mp3', '.ogg', '.wav', '.m4a', '.mp4', '.webm', '.ogv'];
+    final mediaExtensions = ['.mp3', '.ogg', '.wav', '.m4a', '.flac', '.mp4', '.webm', '.ogv'];
     bool isMediaLink = mediaExtensions.any((ext) => lowerUrl.endsWith(ext) || lowerUrl.contains('$ext?') || lowerUrl.contains('$ext#')) ||
         (lowerUrl.contains('upload.wikimedia.org') && mediaExtensions.any((ext) => lowerUrl.contains(ext))) ||
         lowerUrl.contains('/wiki/file:') ||
@@ -268,27 +271,57 @@ class CoreWikiUtils {
       }
     }
 
-    String? title;
+    final domain = WikiConfig.getDomain(languageCode, currentProject.name.toLowerCase());
+    final apiPrefix = WikiConfig.getApiPrefix(languageCode, currentProject.name.toLowerCase());
     bool isRedLink = url.contains('action=edit') || url.contains('redlink=1');
+    String workingUrl = url.trim();
 
-    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('//')) {
-      return OpenExternalUrlIntent(url);
+    if (workingUrl.startsWith('http://') ||
+        workingUrl.startsWith('https://') ||
+        workingUrl.startsWith('//')) {
+      final normalizedUrl =
+          workingUrl.startsWith('//') ? 'https:$workingUrl' : workingUrl;
+      final uri = Uri.tryParse(normalizedUrl);
+      if (uri != null && uri.host.toLowerCase() == domain.toLowerCase()) {
+        final queryAction = uri.queryParameters['action'];
+        final hasDiffOrOldId = uri.queryParameters.containsKey('diff') ||
+            uri.queryParameters.containsKey('oldid');
+        if ((queryAction != null &&
+                queryAction != 'edit' &&
+                queryAction != 'view') ||
+            hasDiffOrOldId) {
+          return OpenExternalUrlIntent(normalizedUrl);
+        }
+        workingUrl = uri.path + (uri.hasQuery ? '?${uri.query}' : '');
+      } else {
+        return OpenExternalUrlIntent(normalizedUrl);
+      }
     }
 
-    if (url.contains('/wiki/')) {
-      title = url.split('/wiki/').last.split('?').first.split('#').first;
-    } else if (url.startsWith('./')) {
-      title = url.substring(2).split('?').first.split('#').first;
-    } else if (url.contains('title=') && url.contains('/w/index.php')) {
+    String? title;
+    if (workingUrl.contains('/wiki/')) {
+      title = workingUrl.split('/wiki/').last.split('?').first.split('#').first;
+    } else if (workingUrl.startsWith('./')) {
+      title = workingUrl.substring(2).split('?').first.split('#').first;
+    } else if (workingUrl.contains('title=') &&
+        (workingUrl.contains('/w/index.php') ||
+            workingUrl.startsWith('index.php'))) {
       try {
-        final uri = Uri.parse(url);
+        final uri = Uri.parse(workingUrl);
         title = uri.queryParameters['title'];
       } catch (_) {
-        final match = RegExp(r'title=([^&]+)').firstMatch(url);
+        final match = RegExp(r'title=([^&]+)').firstMatch(workingUrl);
         title = match?.group(1);
       }
-    } else if (!url.contains(':') && !url.contains('/') && url.isNotEmpty && !url.startsWith('http')) {
-      title = url.split('?').first.split('#').first;
+    } else if (workingUrl.startsWith('/') &&
+        !workingUrl.startsWith('/w/') &&
+        !workingUrl.startsWith('/static/') &&
+        !workingUrl.startsWith('/api/')) {
+      title = workingUrl.substring(1).split('?').first.split('#').first;
+    } else if (workingUrl.isNotEmpty &&
+        !workingUrl.startsWith('http') &&
+        !workingUrl.startsWith('/')) {
+      title = workingUrl.split('?').first.split('#').first;
     }
 
     if (title != null) {
@@ -299,9 +332,19 @@ class CoreWikiUtils {
         decodedTitle = title.replaceAll('_', ' ');
       }
 
-      final apiPrefix = WikiConfig.getApiPrefix(languageCode, currentProject.name.toLowerCase());
+      while (decodedTitle.startsWith('./')) {
+        decodedTitle = decodedTitle.substring(2);
+      }
+      while (decodedTitle.startsWith('/')) {
+        decodedTitle = decodedTitle.substring(1);
+      }
+
       if (apiPrefix.isNotEmpty && decodedTitle.contains(apiPrefix)) {
-          decodedTitle = decodedTitle.replaceFirst(apiPrefix, '');
+        decodedTitle = decodedTitle.replaceFirst(apiPrefix, '');
+      }
+
+      while (decodedTitle.startsWith('/')) {
+        decodedTitle = decodedTitle.substring(1);
       }
 
       if (decodedTitle.isNotEmpty) {

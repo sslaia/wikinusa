@@ -10,6 +10,7 @@ import 'localizations/fallback_localizations_delegate.dart';
 import 'localizations/multi_source_asset_loader.dart';
 import 'providers/shared_prefs_provider.dart';
 import 'services/community_sync_service.dart';
+import 'services/memory_manager.dart';
 
 import 'providers/theme_provider.dart';
 import 'providers/font_size_provider.dart';
@@ -39,9 +40,8 @@ void main() async {
   // Initialize wikimedia_core configuration
   await WikiConfig.init(appName: 'wikinusa');
 
-  // Memory optimization: Cap Flutter image cache to reduce memory footprint (RSS)
-  PaintingBinding.instance.imageCache.maximumSize = 100;
-  PaintingBinding.instance.imageCache.maximumSizeBytes = 40 * 1024 * 1024; // 40 MB
+  // Memory optimization: Cap Flutter image cache to 24MB / 45 images for 2 GB RAM devices
+  MemoryManager.instance.initialize();
 
   final prefs = await SharedPreferences.getInstance();
 
@@ -108,20 +108,18 @@ class _WikiNusaAppState extends ConsumerState<WikiNusaApp>
   @override
   void didHaveMemoryPressure() {
     super.didHaveMemoryPressure();
-    // Comply with Google Play Android Vitals memory requirements: purge bitmap cache under pressure
-    PaintingBinding.instance.imageCache.clear();
-    PaintingBinding.instance.imageCache.clearLiveImages();
+    // Reclaim decoded bitmap memory on OS low memory pressure
+    MemoryManager.instance.clearImageCache();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    // Release bitmap resources when app is paused/hidden to avoid holding bitmaps in background
+    // Release bitmap resources when app is paused/hidden/detached to avoid holding bitmaps in background
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.hidden ||
         state == AppLifecycleState.detached) {
-      PaintingBinding.instance.imageCache.clear();
-      PaintingBinding.instance.imageCache.clearLiveImages();
+      MemoryManager.instance.clearImageCache();
     }
   }
 

@@ -138,6 +138,7 @@ class AdaptiveSectionCard extends ConsumerWidget {
             fit: BoxFit.cover,
             width: double.infinity,
             height: isVertical ? 200 : 140,
+            cacheWidth: 600,
             headers: WikiConfig.uaHeaders,
             loadingBuilder: (context, child, loadingProgress) {
               if (loadingProgress == null) return child;
