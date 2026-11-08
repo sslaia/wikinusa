@@ -7,13 +7,20 @@ An Android app for reading and editing Wikipedia, Wiktionary and Wikibooks in In
 ## Version's history
 
 <!-- WHATS_NEW_START -->
+### Version 1.5.10+13
+
+- Migrated article rendering to Wikimedia PCS replacing custom HTML processing
+- Optimized memory & performance for low-end devices
+- Fixed internal article link resolution & reference popups
+- Restored post-edit refresh & redlink creation flow
+- Improved translation merging & UI polish
+<!-- WHATS_NEW_END -->
+
 ### New 1.5.9
 
 - Fixed search results
 - Fixed Wikibooks random pages
 - Improved wikichat
-
-<!-- WHATS_NEW_END -->
 
 ### New 1.5.8
 
